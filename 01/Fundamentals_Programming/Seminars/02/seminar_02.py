@@ -26,10 +26,39 @@ def to_str(z: tuple) -> str:
     """
     return f"{z[0]} + {z[1]}i"
 
-z = create_z(1, 2)
-print(to_str(z))
+def print_instructions():
+    print("1. Add a complex numeber")
+    print("2. Display all complex numbers")
+    print("3. Add a random complex number")
+    print("0. Exit")
 
 
+number_list = []
 
+while True:
+    print_instructions()
+    cmd = input("Enter command: ")
+
+    if cmd == "1":
+        real = int(input("Enter real part: "))
+        imaginary = int(input("Enter imaginary part: "))
+        z = create_z(real, imaginary)
+        number_list.append(z)
+        print(to_str(z))
+
+    elif cmd == "2":
+        print("----------")
+        for z in number_list:
+            print(to_str(z))
+        print("----------")
+
+    elif cmd == "3":
+        pass
+
+    elif cmd == "0":
+        break
+
+    else:
+        print("Invalid command!")
 
 # fn that implement program requirements
