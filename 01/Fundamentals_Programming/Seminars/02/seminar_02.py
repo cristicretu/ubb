@@ -25,7 +25,7 @@ def to_str(z: tuple) -> str:
     :param z: the complex number
     :return: a string representing the complex number
     """
-    return f"{z[0] if z[0] != 0 else ''}{'' if z[0] == 0 else '' if z[1] < 0 else '+'}{z[1] if z[1] != 0 else ''}{'' if z[1] == 0 else 'i'}"
+    return f"{z[0] if z[0] != 0 else ''}{'' if z[0] == 0 else '' if z[1] < 0 else '' if z[1] == 0 else '+'}{z[1] if z[1] != 0 else ''}{'' if z[1] == 0 else 'i'}"
 
 def get_modulo(z: tuple) -> float:
     return (z[0] ** 2 + z[1] ** 2) ** 0.5
@@ -65,8 +65,8 @@ while True:
 
 
     elif cmd == "3":
-        real_part = random.randint(-100, 100)
-        imaginary_part = random.randint(-100, 100)
+        real_part = random.randint(-10000, 10000)
+        imaginary_part = random.randint(-10000, 10000)
 
         z_number = create_z(real_part, imaginary_part)
         number_list.append(z_number)
