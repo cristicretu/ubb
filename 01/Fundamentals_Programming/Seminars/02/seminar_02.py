@@ -8,6 +8,7 @@ Manage a list of complex nr
 - exit the program
 
 """
+import random
 
 def create_z(real : int, imaginary: int) -> tuple:
     """
@@ -26,10 +27,18 @@ def to_str(z: tuple) -> str:
     """
     return f"{z[0]} + {z[1]}i"
 
+def get_modulo(z: tuple) -> float:
+    return (z[0] ** 2 + z[1] ** 2) ** 0.5
+
+
+
+# fn that implement program requirements
+
 def print_instructions():
     print("1. Add a complex numeber")
     print("2. Display all complex numbers")
     print("3. Add a random complex number")
+    print("4. Sort by modulo")
     print("0. Exit")
 
 
@@ -42,9 +51,9 @@ while True:
     if cmd == "1":
         real = int(input("Enter real part: "))
         imaginary = int(input("Enter imaginary part: "))
+
         z = create_z(real, imaginary)
         number_list.append(z)
-        print(to_str(z))
 
     elif cmd == "2":
         print("----------")
@@ -53,12 +62,17 @@ while True:
         print("----------")
 
     elif cmd == "3":
-        pass
+        real_part = random.randint(0, 100)
+        imaginary_part = random.randint(0, 100)
+
+        z_number = create_z(real_part, imaginary_part)
+        number_list.append(z_number)
+
+    elif cmd == "4":
+        number_list.sort(key=get_modulo)
 
     elif cmd == "0":
         break
 
     else:
         print("Invalid command!")
-
-# fn that implement program requirements
