@@ -25,6 +25,7 @@ def to_str(z: tuple) -> str:
     :param z: the complex number
     :return: a string representing the complex number
     """
+    # best code here :)
     return f"{z[0] if z[0] != 0 else ''}{'' if z[0] == 0 else '' if z[1] < 0 else '' if z[1] == 0 else '+'}{z[1] if z[1] != 0 else ''}{'' if z[1] == 0 else 'i'}"
 
 def get_modulo(z: tuple) -> float:
