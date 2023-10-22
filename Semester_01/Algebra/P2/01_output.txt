@@ -1,0 +1,25 @@
+Number of associative operations on a set A of size 2 is: 8
+Table 1:
+(a1, a1)
+(a1, a1)
+Table 2:
+(a1, a1)
+(a1, a2)
+Table 3:
+(a1, a1)
+(a2, a2)
+Table 4:
+(a1, a2)
+(a1, a2)
+Table 5:
+(a1, a2)
+(a2, a1)
+Table 6:
+(a1, a2)
+(a2, a2)
+Table 7:
+(a2, a1)
+(a1, a2)
+Table 8:
+(a2, a2)
+(a2, a2)
