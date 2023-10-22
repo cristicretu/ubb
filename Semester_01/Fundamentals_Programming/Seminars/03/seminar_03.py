@@ -1,3 +1,6 @@
+from typing import List, TypeVar, Generic
+
+
 """
     Determine the time complexity of the following algorithms as a function of n.
     source: https://complex-systems-ai.com/en/algorithmic/corrected-exercises-time-complexity/
@@ -30,6 +33,9 @@
 
 
 # T(n) = 10 * n * 1 => O(n)
+from typing_extensions import Generic
+
+
 def f_1(n: int):
     for i in range(10):  # 0 .. 9  -> does not depend on n
         for j in range(n):  # 0 .. (n - 1)
@@ -277,6 +283,32 @@ def f_15(data: list):
         - we've already seen this element -> increase number of appearances by 1
     - return the element with highest no of appearances
 """
+T = TypeVar('T')
+
+def enhanced_f_15(data: List[T]) -> T:
+    if not data:
+            raise ValueError("The data list cannot be empty")
+
+
+    appearances = dict()
+
+    for el in data:
+        if el not in appearances:
+            appearances[el] = 1
+        else:
+            appearances[el] += 1
+
+    max_appearances = 0
+    max_element = data[0]
+    for el, no_appearances in appearances.items():
+        if no_appearances > max_appearances:
+            max_appearances = no_appearances
+            max_element = el
+
+    return max_element
+
+# print(enhanced_f_15([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 3, 3, 3, 3, 3]))
+# print(enhanced_f_15(['a', 'c', 'b', 'a', 'a', 'b']))
 
 """
 What is the time complexity when the following algorithm is implemented via linear exponentiation. How can this be
@@ -291,9 +323,17 @@ def f_16(x, n: int):
     :param n:
     :return:
     """
-    # TODO Implement me
-    pass
+    if n == 0:
+        return 1
 
+    m = n // 2
+    if n & 1 == 0:
+        return f_16(x, m) * f_16(x, m)
+
+    return f_16(x, m) * f_16(x, m) * x
+
+# print(f_16(2, 10))
+# print(f_16(6, 36))
 
 """
 Implement and discuss the complexity of merge sort
@@ -301,5 +341,29 @@ Implement and discuss the complexity of merge sort
 
 
 def merge_sort(data: list):
-    # TODO Implement me
-    pass
+    if len(data) <= 1:
+        return data
+
+    m = len(data) // 2
+    left = merge_sort(data[:m])
+    right = merge_sort(data[m:])
+    return merge(left, right)
+
+def merge(left: list, right: list):
+    result = []
+    i = j = 0
+
+    while i < len(left) and j < len(right):
+        if left[i] < right[j]:
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+
+    result.extend(left[i:])
+    result.extend(right[j:])
+
+    return result
+
+print(merge_sort([2, 1, 3, 5, 4, 6, 7, 8, 9, 10, 10, 3, 3, 3, 3, 3]))
