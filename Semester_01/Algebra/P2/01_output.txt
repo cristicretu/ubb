@@ -1,4 +1,5 @@
-Number of associative operations on a set A of size 2 is: 8
+1. the number of associative operations on a set A of size 2 is: 8
+2. the operation tables of each associative operation on a set A of size 2 are: 
 Table 1:
 (a1, a1)
 (a1, a1)
