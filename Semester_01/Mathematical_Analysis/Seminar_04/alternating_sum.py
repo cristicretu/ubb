@@ -84,6 +84,10 @@ def plot_sum(length_of_terms: int, function_to_plot, title: str, **kwargs):
 
     plt.figure(figsize=(10, 6))
     plt.plot(X_, Y_, label=f'n up to {length_of_terms}')
+
+    plt.xscale('log')
+    # plt.yscale('log')
+
     plt.xlabel('n')
     plt.ylabel('Sum Value')
     plt.title(title)
@@ -115,11 +119,11 @@ if __name__ == "__main__":
 
     # Plot for each length for original sum
     for length in lengths:
-        plot_sum(int(length / 100) * 2, original_sum, "Smooth Curve for Original Sum")
+        plot_sum(length, original_sum, "Smooth Curve for Original Sum")
 
     # Plot for each length for rearranged sum
     for length in lengths:
-        plot_sum(int(length / 100) * 2, rearranged_sum, f"Smooth Curve for Rearranged Sum; p = {p1} q = {q1}", p=p1, q=q1)
+        plot_sum(length, rearranged_sum, f"Smooth Curve for Rearranged Sum; p = {p1} q = {q1}", p=p1, q=q1)
 
     for length in lengths:
-        plot_sum(int(length / 100) * 2, rearranged_sum, f"Smooth Curve for Rearranged Sum; p = {p2} q = {q2}", p=p2, q=q2)
+        plot_sum(length, rearranged_sum, f"Smooth Curve for Rearranged Sum; p = {p2} q = {q2}", p=p2, q=q2)
