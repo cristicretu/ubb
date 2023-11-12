@@ -227,7 +227,7 @@ def divide_in_base_p(number1: str, number2: str, base: int) -> (str, str):
     map_value_to_digit = {}
     map_value_to_char = {}
 
-    for index in range(base):
+    for index in range(16):
         ch = hex_digits[index]
         map_value_to_digit[ch] = index
         map_value_to_char[index] = ch
@@ -253,15 +253,10 @@ def divide_in_base_p(number1: str, number2: str, base: int) -> (str, str):
         result_digit = current // divisor
         remainder = current % divisor
 
-        # Save the result
         result += map_value_to_char[result_digit]
 
     # Remove leading zeros from the result
-    result = result.lstrip("0")
-
-    # If the result is empty, it means the dividend was smaller than the divisor
-    if not result:
-        result = "0"
+    result = result.lstrip("0") or "0"
 
     # If the original divisor was negative, add the negative sign to the result
     if negative_divisor:
@@ -294,41 +289,21 @@ def convert_number_with_substitution_method(number: str, b: int, h: int) -> str:
     map_value_to_char = {index: ch for index, ch in enumerate(hex_digits[:h])}
 
     # Convert the base b to its representation in base h
-    base_b_in_base_h = ""
-    temp_b = b
-    while temp_b > 0:
-        base_b_in_base_h = map_value_to_char[temp_b % h] + base_b_in_base_h
-        temp_b //= h
+    base_b_in_base_h = map_value_to_char[b]
 
     result = "0"  # Start with zero in the destination base
     multiplier = "1"  # This will be b^i in base h, starting with i=0
-    fractional_part = (
-        False  # Flag to indicate if we are in the fractional part of the number
-    )
+
+    integer_part = number.split(".")[0]
 
     # Iterate over each digit in the source number from least significant to most
-    for digit in reversed(number):
-        if digit == ".":
-            fractional_part = True
-            multiplier = "1"  # Reset the multiplier for the fractional part
-            continue
-        # Convert the digit to its integer representation
-        if digit.upper() not in map_value_to_digit:
-            raise ValueError("Invalid digit '{}' for base {}".format(digit, b))
+    for digit in reversed(integer_part):
         digit_value = map_value_to_digit[digit.upper()]
-
-        # Convert the digit to its representation in base h
         digit_in_base_h = map_value_to_char[digit_value]
 
-        # Multiply the digit by b^i in base h and add to the result
-        term = multiply_in_base_p(digit_in_base_h, multiplier, h)
+        term = multiply_in_base_p(multiplier, digit_in_base_h, h)
         result = add_in_base_p(result, term, h)
-
-        # Update the multiplier for the next digit by multiplying by b in base h
-        if fractional_part:
-            multiplier = multiply_in_base_p(multiplier, int(b), h)
-        else:
-            multiplier = multiply_in_base_p(multiplier, base_b_in_base_h, h)
+        multiplier = multiply_in_base_p(multiplier, base_b_in_base_h, h)
 
     # Remove leading zeros from the result
     result = result.lstrip("0")
@@ -340,4 +315,41 @@ def convert_number_with_substitution_method(number: str, b: int, h: int) -> str:
     return result
 
 
-print(convert_number_with_substitution_method("10.10", 2, 4))
+def convert_a_number_with_successive_divisions(number: str, b: int, h: int) -> str:
+    """
+    Converts a number from base b to base h using successive divisions.
+
+    :param number: The number to be converted as a string.
+    :param b: The base of the number.
+    :param h: The base to convert to.
+
+    :return: The converted number as a string.
+    """
+
+    # Check the validity of the bases
+    if not check_if_valid_base(b) or not check_if_valid_base(h):
+        raise ValueError("Base must be one of the following: {2,3,4,5,6,7,8,9,10,16}")
+
+    # digit mapping
+    hex_digits = "0123456789ABCDEF"
+    map_value_to_digit = {}
+    map_value_to_char = {}
+
+    for index in range(16):
+        ch = hex_digits[index]
+        map_value_to_digit[ch] = index
+        map_value_to_char[index] = ch
+
+    result = ""
+
+    while number != "0":
+        # Divide the number by the destination base h
+        number, remainder = divide_in_base_p(number, str(h), b)
+
+        # Convert the remainder to its representation in base h
+        digit_in_base_h = map_value_to_char[map_value_to_digit[remainder]]
+
+        # Add the digit to the result
+        result = digit_in_base_h + result
+
+    return result
