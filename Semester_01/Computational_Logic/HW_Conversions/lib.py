@@ -383,4 +383,9 @@ def convert_a_number_using_10_as_intermediary_base(number: str, b: int, h: int) 
     return {"base 10": intermediary_result, "result": result}
 
 
-print(convert_a_number_using_10_as_intermediary_base("11101", 2, 16))
+def read_integer_from_keyboard(prompt: str) -> None:
+    while True:
+        try:
+            return int(input(prompt))
+        except ValueError:
+            print("Invalid number. Please try again.")
