@@ -1,121 +1,311 @@
 # @author: Crețu Cristian
 
-def is_valid_base(b: int, h: int) -> bool:
+
+def check_if_valid_base(base: int) -> bool:
     """
-    Checks if the bases are valid. A base is valid if it is between 2 and 16.
-
-    :param b: base of the number
-    :param h: base to convert to
-
-    :return: True if the bases are valid, False otherwise
+    Checks if a given base is valid.
+    :param base: The base to be checked.
+    :return: True if the base is valid, False otherwise.
     """
-    return b >= 2 and h >= 2 and b <= 16 and h <= 16
+    return base in {2, 3, 4, 5, 6, 7, 8, 9, 10, 16}
 
-def char_to_digit(c: str) -> int:
-    return int(c, 16) if 'A' <= c <= 'F' else int(c)
 
-def digit_to_char(d: int) -> str:
-    return hex(d)[2:].upper()
+def add_in_base_p(number1: str, number2: str, base: int) -> str:
+    """
+    Adds two numbers represented as strings in a given base p.
 
-def multiply_in_base(a: str, b: str, base: int) -> str:
-    result = ''
+    :param number1: The first number as a string.
+    :param number2: The second number as a string.
+    :param base: The base in which the numbers are represented, and the result should be.
+                 Must be an integer within the set {2,3,4,5,6,7,8,9,10,16}.
+    :return: The result of the addition as a string in the same base.
+
+    The function performs the addition by converting each digit to its decimal equivalent,
+    adding them with carry, and then converting back to the base 'p' representation.
+    """
+
+    if check_if_valid_base(base) is False:
+        raise ValueError("Base must be one of the following: {2,3,4,5,6,7,8,9,10,16}")
+
+    # digit mapping
+    hex_digits = "0123456789ABCDEF"
+    map_value_to_digit = {}
+    map_value_to_char = {}
+
+    for index in range(base):
+        ch = hex_digits[index]
+        map_value_to_digit[ch] = index
+        map_value_to_char[index] = ch
+
+    # Make both numbers the same length
+    max_length = max(len(number1), len(number2))
+    number1 = number1.zfill(max_length)
+    number2 = number2.zfill(max_length)
+
+    result = ""
     carry = 0
-    max_len = max(len(a), len(b))
-    for digit_a, digit_b in zip(a.zfill(max_len), b.zfill(max_len)):
-        mult = char_to_digit(digit_a) * char_to_digit(digit_b) + carry
-        carry, result_digit = divmod(mult, base)
-        result = digit_to_char(result_digit) + result
-    while carry:
-        carry, result_digit = divmod(carry, base)
-        result = digit_to_char(result_digit) + result
-    return result
 
-def add_in_base(a: str, b: str, base: int) -> str:
-    result = ''
-    carry = 0
-    max_len = max(len(a), len(b))
-    for digit_a, digit_b in zip(a.zfill(max_len), b.zfill(max_len)):
-        summ = char_to_digit(digit_a) + char_to_digit(digit_b) + carry
-        carry, result_digit = divmod(summ, base)
-        result = digit_to_char(result_digit) + result
-    if carry:
-        result = digit_to_char(carry) + result
-    return result
+    # Start iterations from the rightmost digit
+    for i in range(max_length - 1, -1, -1):
+        # Convert the digit to decimal
+        digit1 = map_value_to_digit[number1[i]]
+        digit2 = map_value_to_digit[number2[i]]
 
-def add_2_numbers_in_base_p(num1, num2, base):
-    carry = 0
-    result = []
-    len_diff = len(num1) - len(num2)
-
-    # Making both numbers of the same length
-    if len_diff > 0:
-        num2 = '0' * len_diff + num2
-    else:
-        num1 = '0' * (-len_diff) + num1
-
-    for ch1, ch2 in zip(reversed(num1), reversed(num2)):
-        total = char_to_digit(ch1) + char_to_digit(ch2) + carry
-        result.append(digit_to_char(total % base))
+        # Iteration  'i'
+        total = digit1 + digit2 + carry
         carry = total // base
+        result_digit = total % base
 
-    while carry:
-        result.append(digit_to_char(carry % base))
-        carry //= base
+        # Save the result
+        result = map_value_to_char[result_digit] + result
 
-    return ''.join(reversed(result))
-
-def multiply_a_number_to_a_digit_in_base_p(num, digit, base):
-    carry = 0
-    result = []
-    digit_value = char_to_digit(digit)
-
-    for ch in reversed(num):
-        prod = char_to_digit(ch) * digit_value + carry
-        result.append(digit_to_char(prod % base))
-        carry = prod // base
-
-    while carry:
-        result.append(digit_to_char(carry % base))
-        carry //= base
-
-    return ''.join(reversed(result))
-
-def conversion_with_substitution_method(n: str, b: int, h: int):
-    """
-    Converts number 'n' from base b to base h using substitution method.
-    :param n: number to be converted
-    :param b: base of the number
-    :param h: base to convert to
-    :return: converted number
-    """
-    if not is_valid_base(b, h):
-            return "Invalid bases"
-
-    list_of_digits = '0123456789ABCDEF'
-    integral_part, _, fractional_part = n.partition(".")
-
-    # Convert base b to base h as a string
-    b_in_base_h = base_conversion(str(b), 10, h)
-
-    result = '0'
-    multiplier = '1'
-
-    # Convert the integral part
-    for digit in reversed(integral_part):
-        term = multiply_in_base(digit_to_char(digit), multiplier, h)
-        result = add_in_base(result, term, h)
-        multiplier = multiply_in_base(multiplier, b_in_base_h, h)
-
-    # Convert the fractional part (if present)
-    if fractional_part:
-        result += '.'
-        multiplier = b_in_base_h
-        for digit in fractional_part:
-            term = multiply_in_base(digit_to_char(digit), multiplier, h)
-            result = add_in_base(result, term, h)
-            multiplier = multiply_in_base(multiplier, b_in_base_h, h)
+    # Add carry from the latest iteration
+    if carry > 0:
+        result = map_value_to_char[carry] + result
 
     return result
 
-print(conversion_with_substitution_method("A54", 11, 16))
-print(conversion_with_substitution_method("1001", 2, 10))
+
+def subtract_in_base_p(number1: str, number2: str, base: int) -> str:
+    """
+    Subtracts two numbers represented as strings in a given base p.
+
+    :param number1: The first number as a string, representing the minuend.
+    :param number2: The second number as a string, representing the subtrahend.
+    :param base: The base in which the numbers are represented, and the result should be.
+                 Must be an integer within the set {2,3,4,5,6,7,8,9,10,16}.
+    :return: The result of the subtraction as a string in the same base.
+
+    The function performs the subtraction by converting each digit to its decimal equivalent,
+    subtracting them with borrow, and then converting back to the base 'p' representation.
+    """
+
+    if check_if_valid_base(base) is False:
+        raise ValueError("Base must be one of the following: {2,3,4,5,6,7,8,9,10,16}")
+
+    # digit mapping
+    hex_digits = "0123456789ABCDEF"
+    map_value_to_digit = {}
+    map_value_to_char = {}
+
+    for index in range(base):
+        ch = hex_digits[index]
+        map_value_to_digit[ch] = index
+        map_value_to_char[index] = ch
+
+    # Make both numbers the same length
+    max_length = max(len(number1), len(number2))
+    number1 = number1.zfill(max_length)
+    number2 = number2.zfill(max_length)
+
+    # Check if the result will be negative
+    if number1 < number2:
+        number1, number2 = number2, number1
+        negative_result = True
+    else:
+        negative_result = False
+
+    result = ""
+    borrow = 0
+
+    # Start iterations from the rightmost digit
+    for i in range(max_length - 1, -1, -1):
+        # Convert the digit to decimal
+        digit1 = map_value_to_digit[number1[i]]
+        digit2 = map_value_to_digit[number2[i]]
+
+        # Subtract the digits and account for borrow
+        total = digit1 - digit2 - borrow
+        if total < 0:
+            total += base
+            borrow = 1
+        else:
+            borrow = 0
+
+        result_digit = total % base
+
+        # Save the result
+        result = map_value_to_char[result_digit] + result
+
+    # Remove leading zeros
+    result = result.lstrip("0")
+
+    # If result is empty, it means the numbers were equal
+    if not result:
+        result = "0"
+
+    # Add minus sign if the result is negative
+    if negative_result:
+        result = "-" + result
+
+    return result
+
+
+def multiply_in_base_p(number1: str, number2: str, base: int) -> str:
+    """
+    Multiplies a number by a single-digit number, which may be negative, both represented as strings in a given base p.
+
+    :param number1: The first number as a string, representing the multiplicand.
+    :param number2: The second number as a string, representing the single-digit multiplier, which may be negative.
+    :param base: The base in which the numbers are represented, and the result should be.
+                 Must be an integer within the set {2,3,4,5,6,7,8,9,10,16}.
+    :return: The result of the multiplication as a string in the same base.
+    """
+
+    # Check if number2 is a single digit
+    if len(number2) != 1 and number2[0] != "-":
+        raise ValueError("number2 must be a single digit.")
+
+    if check_if_valid_base(base) is False:
+        raise ValueError("Base must be one of the following: {2,3,4,5,6,7,8,9,10,16}")
+
+    # digit mapping
+    hex_digits = "0123456789ABCDEF"
+    map_value_to_digit = {}
+    map_value_to_char = {}
+
+    for index in range(base):
+        ch = hex_digits[index]
+        map_value_to_digit[ch] = index
+        map_value_to_char[index] = ch
+
+    # Check for negative multiplier and adjust accordingly
+    negative_multiplier = number2.startswith("-")
+    if negative_multiplier:
+        number2 = number2[1:]
+
+    # Convert the single-digit multiplier to its decimal equivalent
+    multiplier = map_value_to_digit[number2]
+
+    result = ""
+    carry = 0
+
+    # Multiply each digit of the number1 by the multiplier starting from the rightmost digit
+    for i in range(len(number1) - 1, -1, -1):
+        # Convert the current digit of number1 to decimal
+        current_digit = map_value_to_digit[number1[i]]
+
+        # Multiply the current digit by the multiplier and add the carry
+        total = current_digit * multiplier + carry
+        carry = total // base
+        result_digit = total % base
+
+        # Save the result
+        result = map_value_to_char[result_digit] + result
+
+    # Add carry from the latest iteration
+    if carry > 0:
+        result = map_value_to_char[carry] + result
+
+    # If the original multiplier was negative, add the negative sign to the result
+    if negative_multiplier:
+        result = "-" + result
+
+    return result
+
+
+def divide_in_base_p(number1: str, number2: str, base: int) -> (str, str):
+    """
+    Divides a number by a single-digit number, both represented as strings in a given base p, and also returns the remainder.
+
+    :param number1: The first number as a string, representing the dividend.
+    :param number2: The second number as a string, representing the single-digit divisor.
+    :param base: The base in which the numbers are represented, and the result should be.
+                 Must be an integer within the set {2,3,4,5,6,7,8,9,10,16}.
+    :return: A tuple containing the result of the division as a string and the remainder as a string in the same base.
+    """
+
+    # Check if number2 is a single digit
+    if len(number2) != 1 and number2[0] != "-":
+        raise ValueError("number2 must be a single digit.")
+
+    if check_if_valid_base(base) is False:
+        raise ValueError("Base must be one of the following: {2,3,4,5,6,7,8,9,10,16}")
+
+    # digit mapping
+    hex_digits = "0123456789ABCDEF"
+    map_value_to_digit = {}
+    map_value_to_char = {}
+
+    for index in range(base):
+        ch = hex_digits[index]
+        map_value_to_digit[ch] = index
+        map_value_to_char[index] = ch
+
+    # Check for negative divisor and adjust accordingly
+    negative_divisor = number2.startswith("-")
+    if negative_divisor:
+        number2 = number2[1:]
+
+    # Convert the single-digit divisor to its decimal equivalent
+    divisor = map_value_to_digit[number2]
+
+    if divisor == 0:
+        raise ValueError("Division by zero is not allowed.")
+
+    result = ""
+    remainder = 0
+
+    # Divide each digit of the number1 by the divisor starting from the leftmost digit
+    for ch in number1:
+        # Bring down the next digit
+        current = remainder * base + map_value_to_digit[ch]
+        result_digit = current // divisor
+        remainder = current % divisor
+
+        # Save the result
+        result += map_value_to_char[result_digit]
+
+    # Remove leading zeros from the result
+    result = result.lstrip("0")
+
+    # If the result is empty, it means the dividend was smaller than the divisor
+    if not result:
+        result = "0"
+
+    # If the original divisor was negative, add the negative sign to the result
+    if negative_divisor:
+        result = "-" + result
+
+    # Convert the remainder back to a string in the original base
+    remainder_str = map_value_to_char[remainder] if remainder else "0"
+
+    return result, remainder_str
+
+
+# def conversion_with_substitution_method(n: str, b: int, h: int):
+#     """
+#     Converts number 'n' from base b to base h using substitution method.
+#     :param n: number to be converted
+#     :param b: base of the number
+#     :param h: base to convert to
+#     :return: converted number
+#     """
+#     if not is_valid_base(b, h):
+#         return "Invalid bases"
+
+#     list_of_digits = "0123456789ABCDEF"
+#     integral_part, _, fractional_part = n.partition(".")
+
+#     # Convert base b to base h as a string
+#     b_in_base_h = base_conversion(str(b), 10, h)
+
+#     result = "0"
+#     multiplier = "1"
+
+#     # Convert the integral part
+#     for digit in reversed(integral_part):
+#         term = multiply_in_base(digit_to_char(digit), multiplier, h)
+#         result = add_in_base(result, term, h)
+#         multiplier = multiply_in_base(multiplier, b_in_base_h, h)
+
+#     # Convert the fractional part (if present)
+#     if fractional_part:
+#         result += "."
+#         multiplier = b_in_base_h
+#         for digit in fractional_part:
+#             term = multiply_in_base(digit_to_char(digit), multiplier, h)
+#             result = add_in_base(result, term, h)
+#             multiplier = multiply_in_base(multiplier, b_in_base_h, h)
+
+#     return result
