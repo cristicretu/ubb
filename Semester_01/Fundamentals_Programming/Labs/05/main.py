@@ -377,20 +377,25 @@ def main_program() -> None:
 
     print(f"Running the program with {representation} representation.\n")
 
+    READ_NUMBERS = 1
+    DISPLAY_ENTIRE_LIST = 2
+    DISPLAY_PROPERTIES = 3
+    CLOSE_PROGRAM = 4
+
     while True:
         print_menu()
 
         user_option = read_integer_from_keyboard(">Please select an option: ")
 
-        if user_option == 1:
+        if user_option == READ_NUMBERS:
             user_option_1_read_complex_numbers(array_of_complex_numbers, representation)
 
-        elif user_option == 2:
+        elif user_option == DISPLAY_ENTIRE_LIST:
             user_option_2_display_entire_list_of_numbers(
                 array_of_complex_numbers, representation
             )
 
-        elif user_option == 3:
+        elif user_option == DISPLAY_PROPERTIES:
             (
                 length_of_longest_subarray_of_distinct_complex_numbers,
                 longest_subarray_of_distinct_complex_numbers,
@@ -426,7 +431,7 @@ def main_program() -> None:
                 f"Elements of the maximum subarray sum of real parts: {maximum_subarray_sum_of_real_parts}"
             )
 
-        elif user_option == 4:
+        elif user_option == CLOSE_PROGRAM:
             print("Exiting the application...")
             return
         else:
