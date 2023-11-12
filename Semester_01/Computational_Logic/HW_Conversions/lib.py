@@ -353,3 +353,34 @@ def convert_a_number_with_successive_divisions(number: str, b: int, h: int) -> s
         result = digit_in_base_h + result
 
     return result
+
+
+def convert_a_number_using_10_as_intermediary_base(number: str, b: int, h: int) -> str:
+    """
+    Converts a number from base b to base h using 10 as an intermediary base.
+
+    :param number: The number to be converted as a string.
+    :param b: The base of the number.
+    :param h: The base to convert to.
+    """
+
+    if not check_if_valid_base(b) or not check_if_valid_base(h):
+        raise ValueError("Base must be one of the following: {2,3,4,5,6,7,8,9,10,16}")
+
+    intermediary_result = ""
+    result = ""
+
+    if h == 16:
+        intermediary_result = convert_number_with_substitution_method(number, b, 10)
+        result = convert_number_with_substitution_method(intermediary_result, 10, 16)
+    elif b == 16:
+        intermediary_result = convert_a_number_with_successive_divisions(number, 16, 10)
+        result = convert_a_number_with_successive_divisions(intermediary_result, 10, h)
+    else:
+        intermediary_result = convert_number_with_substitution_method(number, b, 10)
+        result = convert_a_number_with_successive_divisions(intermediary_result, 10, h)
+
+    return {"base 10": intermediary_result, "result": result}
+
+
+print(convert_a_number_using_10_as_intermediary_base("11101", 2, 16))
