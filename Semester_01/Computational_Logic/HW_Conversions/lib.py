@@ -273,39 +273,71 @@ def divide_in_base_p(number1: str, number2: str, base: int) -> (str, str):
     return result, remainder_str
 
 
-# def conversion_with_substitution_method(n: str, b: int, h: int):
-#     """
-#     Converts number 'n' from base b to base h using substitution method.
-#     :param n: number to be converted
-#     :param b: base of the number
-#     :param h: base to convert to
-#     :return: converted number
-#     """
-#     if not is_valid_base(b, h):
-#         return "Invalid bases"
+def convert_number_with_substitution_method(number: str, b: int, h: int) -> str:
+    """
+    Converts a number from base b to base h using substitution method.
 
-#     list_of_digits = "0123456789ABCDEF"
-#     integral_part, _, fractional_part = n.partition(".")
+    :param number: The number to be converted as a string.
+    :param b: The base of the number.
+    :param h: The base to convert to.
 
-#     # Convert base b to base h as a string
-#     b_in_base_h = base_conversion(str(b), 10, h)
+    :return: The converted number as a string.
+    """
 
-#     result = "0"
-#     multiplier = "1"
+    # Check the validity of the bases
+    if not check_if_valid_base(b) or not check_if_valid_base(h):
+        raise ValueError("Base must be one of the following: {2,3,4,5,6,7,8,9,10,16}")
 
-#     # Convert the integral part
-#     for digit in reversed(integral_part):
-#         term = multiply_in_base(digit_to_char(digit), multiplier, h)
-#         result = add_in_base(result, term, h)
-#         multiplier = multiply_in_base(multiplier, b_in_base_h, h)
+    # digit mapping for destination base h
+    hex_digits = "0123456789ABCDEF"
+    map_value_to_digit = {ch: index for index, ch in enumerate(hex_digits[:h])}
+    map_value_to_char = {index: ch for index, ch in enumerate(hex_digits[:h])}
 
-#     # Convert the fractional part (if present)
-#     if fractional_part:
-#         result += "."
-#         multiplier = b_in_base_h
-#         for digit in fractional_part:
-#             term = multiply_in_base(digit_to_char(digit), multiplier, h)
-#             result = add_in_base(result, term, h)
-#             multiplier = multiply_in_base(multiplier, b_in_base_h, h)
+    # Convert the base b to its representation in base h
+    base_b_in_base_h = ""
+    temp_b = b
+    while temp_b > 0:
+        base_b_in_base_h = map_value_to_char[temp_b % h] + base_b_in_base_h
+        temp_b //= h
 
-#     return result
+    result = "0"  # Start with zero in the destination base
+    multiplier = "1"  # This will be b^i in base h, starting with i=0
+    fractional_part = (
+        False  # Flag to indicate if we are in the fractional part of the number
+    )
+
+    # Iterate over each digit in the source number from least significant to most
+    for digit in reversed(number):
+        if digit == ".":
+            fractional_part = True
+            multiplier = "1"  # Reset the multiplier for the fractional part
+            continue
+        # Convert the digit to its integer representation
+        if digit.upper() not in map_value_to_digit:
+            raise ValueError("Invalid digit '{}' for base {}".format(digit, b))
+        digit_value = map_value_to_digit[digit.upper()]
+
+        # Convert the digit to its representation in base h
+        digit_in_base_h = map_value_to_char[digit_value]
+
+        # Multiply the digit by b^i in base h and add to the result
+        term = multiply_in_base_p(digit_in_base_h, multiplier, h)
+        result = add_in_base_p(result, term, h)
+
+        # Update the multiplier for the next digit by multiplying by b in base h
+        if fractional_part:
+            multiplier = multiply_in_base_p(multiplier, int(b), h)
+        else:
+            multiplier = multiply_in_base_p(multiplier, base_b_in_base_h, h)
+
+    # Remove leading zeros from the result
+    result = result.lstrip("0")
+
+    # If the result is empty, it means the number was zero
+    if not result:
+        result = "0"
+
+    return result
+
+
+print(convert_number_with_substitution_method("10.10", 2, 4))
