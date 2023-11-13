@@ -1,4 +1,4 @@
-# @author: Crețu Cristian
+# @author: Crețu Cristian, Group 913
 
 
 def check_if_valid_base(base: int) -> bool:
@@ -380,12 +380,21 @@ def convert_a_number_using_10_as_intermediary_base(number: str, b: int, h: int) 
         intermediary_result = convert_number_with_substitution_method(number, b, 10)
         result = convert_a_number_with_successive_divisions(intermediary_result, 10, h)
 
-    return {"base 10": intermediary_result, "result": result}
+    return intermediary_result, result
 
 
 def read_integer_from_keyboard(prompt: str) -> None:
     while True:
         try:
             return int(input(prompt))
+        except ValueError:
+            print("Invalid number. Please try again.")
+
+
+def read_string_from_keyboard(prompt: str) -> None:
+    while True:
+        try:
+            # remove whitespace
+            return str(input(prompt)).strip()
         except ValueError:
             print("Invalid number. Please try again.")
