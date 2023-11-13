@@ -1,6 +1,4 @@
 """
-1, 11
-
 A5. 1 and 11
 
 @Author: Cretu Cristian, 913
@@ -40,8 +38,11 @@ def generate_random_complex_number_as_list() -> list:
 
     :return: a list representing a complex number
     """
-    real_part = randint(-100, 100)
-    imaginary_part = randint(-100, 100)
+    LOWER_BOUND = -100
+    UPPER_BOUND = 100
+
+    real_part = randint(LOWER_BOUND, UPPER_BOUND)
+    imaginary_part = randint(LOWER_BOUND, UPPER_BOUND)
 
     return [real_part, imaginary_part]
 
@@ -84,8 +85,11 @@ def generate_random_complex_number_as_dict() -> dict:
 
     :return: a dict representing a complex number
     """
-    real_part = randint(-100, 100)
-    imaginary_part = randint(-100, 100)
+    LOWER_BOUND = -100
+    UPPER_BOUND = 100
+
+    real_part = randint(LOWER_BOUND, UPPER_BOUND)
+    imaginary_part = randint(LOWER_BOUND, UPPER_BOUND)
 
     return {"real_part": real_part, "imaginary_part": imaginary_part}
 
@@ -202,15 +206,15 @@ def compute_length_and_elements_of_maximum_subarray_sum_of_real_parts(
     start_sum_index, end_sum_index, temporary_start_index = 0, 0, 0
     maximum_subarray = []
 
-    for i, complex_number in enumerate(array_of_complex_numbers):
+    for current_index, complex_number in enumerate(array_of_complex_numbers):
         current_sum += get_real_part_of_complex_number(complex_number, representation)
 
         if current_sum > maximum_sum:
             maximum_sum = current_sum
-            start_sum_index, end_sum_index = temporary_start_index, i
+            start_sum_index, end_sum_index = temporary_start_index, current_index
         if current_sum < 0:
             current_sum = 0
-            temporary_start_index = i + 1
+            temporary_start_index = current_index + 1
 
     maximum_subarray = (
         array_of_complex_numbers[start_sum_index : end_sum_index + 1]
@@ -432,7 +436,7 @@ def main_program() -> None:
             )
 
         elif user_option == CLOSE_PROGRAM:
-            print("Exiting the application...")
+            print("Exiting the aplication...")
             return
         else:
             print("! Invalid option. Please try again.")
