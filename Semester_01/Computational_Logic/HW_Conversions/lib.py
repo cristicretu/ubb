@@ -1,5 +1,13 @@
 # @author: Crețu Cristian, Group 913
 
+"""
+Lib contains all helper functions for the program, including
+`add_in_base_p`, `subtract_in_base_p`, `multiply_in_base_p`, `divide_in_base_p`,
+for operations in base `p`, and
+`convert_number_with_substitution_method`, `convert_a_number_with_successive_divisions`,
+`convert_a_number_using_10_as_intermediary_base`, and `rapid_conversion` for conversions between bases.
+"""
+
 
 def check_if_valid_base(base: int) -> bool:
     """
@@ -43,7 +51,7 @@ def add_in_base_p(number1: str, number2: str, base: int) -> str:
     :return: The result of the addition as a string in the same base.
 
     The function performs the addition by converting each digit to its decimal equivalent,
-    adding them with carry, and then converting back to the base 'p' representation.
+    adding them with carry, and then converting back to the base `p` representation.
 
     Pseudocode:
 
@@ -95,7 +103,7 @@ def add_in_base_p(number1: str, number2: str, base: int) -> str:
         digit1 = map_value_to_digit[number1[i]]
         digit2 = map_value_to_digit[number2[i]]
 
-        # Iteration  'i'
+        # Iteration  `i`
         total = digit1 + digit2 + carry
         carry = total // base
         result_digit = total % base
@@ -121,7 +129,7 @@ def subtract_in_base_p(number1: str, number2: str, base: int) -> str:
     :return: The result of the subtraction as a string in the same base.
 
     The function performs the subtraction by converting each digit to its decimal equivalent,
-    subtracting them with borrow, and then converting back to the base 'p' representation.
+    subtracting them with borrow, and then converting back to the base `p` representation.
 
     Pseudocode:
 
@@ -220,7 +228,7 @@ def multiply_in_base_p(number1: str, number2: str, base: int) -> str:
     :return: The result of the multiplication as a string in the same base.
 
     The function performs the multiplication by converting each digit to its decimal equivalent,
-    multiplying them with carry, and then converting back to the base 'p' representation.
+    multiplying them with carry, and then converting back to the base `p` representation.
 
     Pseudocode:
 
@@ -318,7 +326,7 @@ def divide_in_base_p(number1: str, number2: str, base: int) -> (str, str):
     :return: A tuple containing the result of the division as a string and the remainder as a string in the same base.
 
     The function performs the division by converting each digit to its decimal equivalent,
-    dividing them with remainder, and then converting back to the base 'p' representation.
+    dividing them with remainder, and then converting back to the base `p` representation.
 
     Pseudocode:
 
@@ -537,6 +545,134 @@ def convert_a_number_using_10_as_intermediary_base(number: str, b: int, h: int) 
         result = convert_a_number_with_successive_divisions(intermediary_result, 10, h)
 
     return intermediary_result, result
+
+
+import math
+
+
+def rapid_conversion(number, b=None, h=None) -> str:
+    """
+    Converts a number from base b to base h using 10 as an intermediary base.
+
+    :param number: The number to be converted as a string.
+
+    :param b: the source base if converting to binary (destination base is assumed to be binary).
+    :param h: the destination base if converting from binary (source base is assumed to be binary).
+
+    :return: The converted number as a string.
+    """
+
+    rapid_tables = {
+        2: [
+            "0",
+            "1",
+            "10",
+            "11",
+            "100",
+            "101",
+            "110",
+            "111",
+            "1000",
+            "1001",
+            "1010",
+            "1011",
+            "1100",
+            "1101",
+            "1110",
+            "1111",
+        ],
+        4: [
+            "0",
+            "1",
+            "2",
+            "3",
+            "10",
+            "11",
+            "12",
+            "13",
+            "20",
+            "21",
+            "22",
+            "23",
+            "30",
+            "31",
+            "32",
+            "33",
+        ],
+        8: [
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+        ],
+        16: [
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "A",
+            "B",
+            "C",
+            "D",
+            "E",
+            "F",
+        ],
+    }
+
+    def from_binary(a, base):
+        # Calculate the number of binary digits needed for a single base 'b' digit
+        k = int(math.log(base, 2))
+        result = ""
+        while len(a) > 0:
+            # Extract k bits from the end of the binary number
+            group = a[-k:] if len(a) >= k else "0" * (k - len(a)) + a
+            a = a[:-k] if len(a) >= k else ""
+            # Find the equivalent in the destination base
+            result = rapid_tables[base][int(group, 2)] + result
+        return result
+
+    def to_binary(a, base):
+        result = ""
+        for digit in a:
+            # Find the binary equivalent of the digit
+            group = bin(rapid_tables[base].index(digit))[2:]
+            # Add zeros manually to the group if it's not long enough
+            while len(group) < k:
+                group = "0" + group
+            result += group
+        # Trim leading zeros manually
+        while len(result) > 1 and result[0] == "0":
+            result = result[1:]
+        return result
+
+    # Determine which conversion to perform based on the arguments provided
+    if h is not None:
+        return from_binary(number, h)
+    if b is not None:
+        k = int(
+            math.log(b, 2)
+        )  # Calculate the number of binary digits needed for a single base 'b' digit
+        return to_binary(number, b)
+
+    raise ValueError("Either destination base (h) or source base (b) must be provided.")
 
 
 def read_integer_from_keyboard(prompt: str) -> None:
