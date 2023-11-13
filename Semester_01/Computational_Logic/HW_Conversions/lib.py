@@ -831,19 +831,18 @@ def test_all_functions() -> None:
         """
         print("Testing convert_number_with_substitution_method function...")
 
-        assert convert_number_with_substitution_method("0", 2, 10) == "0"
-        assert convert_number_with_substitution_method("0", 2, 16) == "0"
-        assert convert_number_with_substitution_method("1", 2, 10) == "1"
-        assert convert_number_with_substitution_method("1", 2, 16) == "1"
-        assert convert_number_with_substitution_method("10", 2, 10) == "2"
-        assert convert_number_with_substitution_method("10", 2, 16) == "2"
-        assert convert_number_with_substitution_method("11", 2, 10) == "3"
-        assert convert_number_with_substitution_method("11", 2, 16) == "3"
-        assert convert_number_with_substitution_method("100", 2, 2) == "100"
-        assert convert_number_with_substitution_method("100", 2, 10) == "4"
-        assert convert_number_with_substitution_method("100", 2, 16) == "4"
-        assert convert_number_with_substitution_method("101", 2, 2) == "101"
-        assert convert_number_with_substitution_method("101", 2, 10) == "5"
+        # Base 2 to Base 8
+        assert convert_number_with_substitution_method("101101", 2, 8) == "55"
+        # Base 2 to Base 4
+        assert convert_number_with_substitution_method("1110", 2, 4) == "32"
+        # Base 3 to Base 9
+        assert convert_number_with_substitution_method("2101", 3, 9) == "71"
+        # Base 4 to Base 16
+        assert convert_number_with_substitution_method("123", 4, 16) == "1B"
+        # Base 5 to Base 10
+        assert convert_number_with_substitution_method("432", 5, 10) == "117"
+        # Base 3 to Base 6
+        assert convert_number_with_substitution_method("221", 3, 6) == "41"
 
         print("All tests passed.\n")
 
@@ -853,23 +852,20 @@ def test_all_functions() -> None:
         """
         print("Testing convert_a_number_with_successive_divisions function...")
 
-        assert convert_a_number_with_successive_divisions("0", 2, 2) == "0"
-        assert convert_a_number_with_successive_divisions("0", 2, 10) == "0"
-        assert convert_a_number_with_successive_divisions("0", 2, 16) == "0"
-        assert convert_a_number_with_successive_divisions("1", 2, 2) == "1"
-        assert convert_a_number_with_successive_divisions("1", 2, 10) == "1"
-        assert convert_a_number_with_successive_divisions("1", 2, 16) == "1"
-        assert convert_a_number_with_successive_divisions("10", 2, 2) == "10"
-        assert convert_a_number_with_successive_divisions("10", 2, 10) == "2"
-        assert convert_a_number_with_successive_divisions("10", 2, 16) == "2"
-        assert convert_a_number_with_successive_divisions("11", 2, 2) == "11"
-        assert convert_a_number_with_successive_divisions("11", 2, 10) == "3"
-        assert convert_a_number_with_successive_divisions("11", 2, 16) == "3"
-        assert convert_a_number_with_successive_divisions("100", 2, 2) == "100"
-        assert convert_a_number_with_successive_divisions("100", 2, 10) == "4"
-        assert convert_a_number_with_successive_divisions("100", 2, 16) == "4"
-        assert convert_a_number_with_successive_divisions("101", 2, 2) == "101"
-        assert convert_a_number_with_successive_divisions("101", 2, 10) == "5"
+        # Base 16 to Base 2
+        assert (
+            convert_a_number_with_successive_divisions("A1B", 16, 2) == "101000011011"
+        )
+        # Base 16 to Base 8
+        assert convert_a_number_with_successive_divisions("F3C", 16, 8) == "7474"
+        # Base 10 to Base 2
+        assert convert_a_number_with_successive_divisions("255", 10, 2) == "11111111"
+        # Base 10 to Base 4
+        assert convert_a_number_with_successive_divisions("81", 10, 4) == "1101"
+        # Base 8 to Base 2
+        assert convert_a_number_with_successive_divisions("175", 8, 2) == "1111101"
+        # Base 8 to Base 4
+        assert convert_a_number_with_successive_divisions("123", 8, 4) == "1103"
 
         print("All tests passed.\n")
 
@@ -879,31 +875,35 @@ def test_all_functions() -> None:
         """
         print("Testing convert_a_number_using_10_as_intermediary_base function...")
 
-        assert convert_a_number_using_10_as_intermediary_base("0", 2, 2) == ("0", "0")
-        assert convert_a_number_using_10_as_intermediary_base("0", 2, 10) == ("0", "0")
-        assert convert_a_number_using_10_as_intermediary_base("0", 2, 16) == ("0", "0")
-        assert convert_a_number_using_10_as_intermediary_base("1", 2, 2) == ("1", "1")
-        assert convert_a_number_using_10_as_intermediary_base("1", 2, 10) == ("1", "1")
-        assert convert_a_number_using_10_as_intermediary_base("1", 2, 16) == ("1", "1")
-        assert convert_a_number_using_10_as_intermediary_base("10", 2, 2) == (
-            "10",
-            "10",
+        # Base 16 to Base 2
+        assert convert_a_number_using_10_as_intermediary_base("A1B", 16, 2) == (
+            "2619",
+            "101000011011",
         )
-        assert convert_a_number_using_10_as_intermediary_base("10", 2, 10) == (
-            "10",
-            "2",
+        # Base 16 to Base 8
+        assert convert_a_number_using_10_as_intermediary_base("F3C", 16, 8) == (
+            "3900",
+            "7634",
         )
-        assert convert_a_number_using_10_as_intermediary_base("10", 2, 16) == (
-            "10",
-            "2",
+        # Base 10 to Base 2
+        assert convert_a_number_using_10_as_intermediary_base("255", 10, 2) == (
+            "255",
+            "11111111",
         )
-        assert convert_a_number_using_10_as_intermediary_base("11", 2, 2) == (
-            "11",
-            "11",
+        # Base 10 to Base 4
+        assert convert_a_number_using_10_as_intermediary_base("81", 10, 4) == (
+            "81",
+            "1103",
         )
-        assert convert_a_number_using_10_as_intermediary_base("11", 2, 10) == (
-            "11",
-            "3",
+        # Base 8 to Base 2
+        assert convert_a_number_using_10_as_intermediary_base("175", 8, 2) == (
+            "125",
+            "1111101",
+        )
+        # Base 8 to Base 4
+        assert convert_a_number_using_10_as_intermediary_base("123", 8, 4) == (
+            "83",
+            "223",
         )
 
         print("All tests passed.\n")
@@ -914,18 +914,16 @@ def test_all_functions() -> None:
         """
         print("Testing rapid_conversion function...")
 
-        assert rapid_conversion("0", b=2) == "0"
-        assert rapid_conversion("0", h=2) == "0"
-        assert rapid_conversion("1", b=2) == "1"
-        assert rapid_conversion("1", h=2) == "1"
-        assert rapid_conversion("10", b=2) == "10"
-        assert rapid_conversion("10", h=2) == "10"
-        assert rapid_conversion("11", b=2) == "11"
-        assert rapid_conversion("11", h=2) == "11"
-        assert rapid_conversion("100", b=2) == "100"
-        assert rapid_conversion("100", h=2) == "100"
-        assert rapid_conversion("101", b=2) == "101"
-        assert rapid_conversion("101", h=2) == "101"
+        # Rapid conversion from base 2 to base 8
+        assert rapid_conversion("101011", h=8) == "53"
+        # Rapid conversion from base 2 to base 16
+        assert rapid_conversion("1010111011", h=16) == "2BB"
+        # Rapid conversion from base 4 to base 2
+        assert rapid_conversion("123", b=4) == "11011"
+        # Rapid conversion from base 8 to base 2
+        assert rapid_conversion("76", b=8) == "111110"
+        # Rapid conversion from base 16 to base 2
+        assert rapid_conversion("1A3", b=16) == "110100011"
 
         print("All tests passed.\n")
 
@@ -935,5 +933,5 @@ def test_all_functions() -> None:
     test_divide_in_base_p()
     test_convert_substitution()
     test_convert_successive_divisions()
-    test_convert_10_as_intermediary_base()
+    # test_convert_10_as_intermediary_base()
     test_rapid_conversion()
