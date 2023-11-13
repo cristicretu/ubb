@@ -8,12 +8,14 @@ This module contains the user interface of the program
 The user can choose between the following options:
 `1. Conversion from base b to base h`
 `2. Operation with two numbers`
+`3. Test all functions`
 `0. Exit`
 
 If the user chooses option 1, he can choose between the following conversion methods:
 `1. Conversion using substitution method; b < h`
 `2. Conversion using successive divisions method; b > h`
 `3. Conversion using 10 as an intermediary base; b != 10, h != 10`
+`4. Rapid conversion between two bases p,q in{2, 4, 8, 16}`
 
 
 If the user chooses option 2, he can choose between the following operations:
@@ -61,10 +63,12 @@ def print_menu():
 
     1. Conversion from base b to base h
     2. Operation with two numbers
+    3. Test all functions
     0. Exit
     """
     print("\n1. Conversion from base b to base h")
     print("2. Operation with two numbers")
+    print("3. Test all functions")
     print("0. Exit\n")
 
 
@@ -218,6 +222,13 @@ def main():
                 print(
                     f"\nResult: {number1}({base}) / {number2}({base}) = {result}({base}), remainder: {remainder}({base})\n"
                 )
+
+        elif option == 3:
+            print("\nTesting all functions...\n")
+
+            test_all_functions()
+
+            print("\nTesting finished!\n")
 
         elif option == 0:
             print("\nExiting!\n")
