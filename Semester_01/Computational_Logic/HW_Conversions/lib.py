@@ -676,17 +676,264 @@ def rapid_conversion(number, b=None, h=None) -> str:
 
 
 def read_integer_from_keyboard(prompt: str) -> None:
+    """
+    Reads an integer from the keyboard.
+
+    :param prompt: The prompt to be displayed to the user.
+
+    :return: The integer read from the keyboard.
+
+    If the input is not a valid integer, the function will display an error message and ask for input again.
+    """
     while True:
         try:
-            return int(input(prompt))
+            return int(input(prompt).strip())
         except ValueError:
             print("Invalid number. Please try again.")
 
 
 def read_string_from_keyboard(prompt: str) -> None:
+    """
+    Reads a string from the keyboard.
+
+    :param prompt: The prompt to be displayed to the user.
+
+    :return: The string read from the keyboard.
+
+    If the input is not a valid string, the function will display an error message and ask for input again.
+    """
     while True:
         try:
             # remove whitespace
             return str(input(prompt)).strip()
         except ValueError:
             print("Invalid number. Please try again.")
+
+
+def test_all_functions() -> None:
+    """
+    Tests all functions in the program.
+    """
+
+    def test_add_in_base_p() -> None:
+        """
+        Tests the add_in_base_p function.
+        """
+        print("Testing add_in_base_p function...")
+
+        # Adding numbers where carry-overs span multiple digits
+        assert add_in_base_p("999", "1", 10) == "1000"
+        assert add_in_base_p("FFFF", "1", 16) == "10000"
+
+        # Adding numbers of different lengths
+        assert add_in_base_p("10101", "1101", 2) == "100010"
+        assert add_in_base_p("123", "4567", 10) == "4690"
+
+        # Adding numbers that result in a change of length
+        assert add_in_base_p("7FFF", "1", 16) == "8000"
+        assert add_in_base_p("99999", "1", 10) == "100000"
+
+        # Adding with non-trivial carry-over scenarios
+        assert add_in_base_p("2B", "59", 16) == "84"
+        assert add_in_base_p("139", "864", 10) == "1003"
+
+        print("All tests passed.\n")
+
+    def test_subtract_in_base_p() -> None:
+        """
+        Tests the subtract_in_base_p function.
+        """
+        print("Testing subtract_in_base_p function...")
+
+        # Test cases with larger numbers
+        assert subtract_in_base_p("1010", "110", 2) == "100"
+        assert subtract_in_base_p("1001", "101", 2) == "100"
+        assert subtract_in_base_p("100", "100", 10) == "0"
+        assert subtract_in_base_p("345", "123", 10) == "222"
+        assert subtract_in_base_p("1A2B", "F3", 16) == "1938"
+
+        # Test cases with carry over scenarios
+        assert subtract_in_base_p("1000", "1", 2) == "111"
+        assert subtract_in_base_p("1000", "1", 10) == "999"
+        assert subtract_in_base_p("1000", "1", 16) == "FFF"
+
+        # Test cases that result in negative numbers
+        assert subtract_in_base_p("10", "11", 2) == "-1"
+        assert subtract_in_base_p("100", "101", 10) == "-1"
+        assert subtract_in_base_p("10", "11", 16) == "-1"
+
+        # Test cases with leading zeros
+        assert subtract_in_base_p("00100", "00001", 2) == "11"
+        assert subtract_in_base_p("00100", "00001", 10) == "99"
+        assert subtract_in_base_p("00100", "00001", 16) == "FF"
+
+        # Test cases with subtraction that yields zeros
+        assert subtract_in_base_p("1000", "1000", 2) == "0"
+        assert subtract_in_base_p("7777", "7777", 10) == "0"
+        assert subtract_in_base_p("FACE", "FACE", 16) == "0"
+
+        # Complex test cases involving non-trivial subtraction
+        assert subtract_in_base_p("101010", "110110", 2) == "-1100"
+        assert subtract_in_base_p("987654", "123456", 10) == "864198"
+        assert subtract_in_base_p("BEEF", "CAFE", 16) == "-C0F"
+
+        print("All tests passed.\n")
+
+    def test_multiply_in_base_p() -> None:
+        """
+        Additional complex test cases for the multiply_in_base_p function.
+        """
+        print("Testing more complex cases for multiply_in_base_p function...")
+
+        # Base 4 examples
+        assert multiply_in_base_p("23", "2", 4) == "112"
+        assert multiply_in_base_p("31", "2", 4) == "122"
+
+        # Base 5 examples
+        assert multiply_in_base_p("24", "3", 5) == "132"
+        assert multiply_in_base_p("34", "3", 5) == "212"
+
+        # Base 8 examples
+        assert multiply_in_base_p("7", "7", 8) == "61"
+        assert multiply_in_base_p("16", "7", 8) == "142"
+
+        # Base 16 examples
+        assert multiply_in_base_p("A", "B", 16) == "6E"
+        assert multiply_in_base_p("F", "F", 16) == "E1"
+
+        print("All complex tests passed for multiply_in_base_p function.\n")
+
+    def test_divide_in_base_p() -> None:
+        """
+        Tests the divide_in_base_p function.
+        """
+        print("Testing divide_in_base_p function...")
+
+        assert divide_in_base_p("0", "1", 2) == ("0", "0")
+        assert divide_in_base_p("0", "1", 10) == ("0", "0")
+        assert divide_in_base_p("0", "1", 16) == ("0", "0")
+        assert divide_in_base_p("1", "1", 2) == ("1", "0")
+        assert divide_in_base_p("1", "1", 10) == ("1", "0")
+        assert divide_in_base_p("1", "1", 16) == ("1", "0")
+        assert divide_in_base_p("10", "1", 2) == ("10", "0")
+        assert divide_in_base_p("10", "1", 10) == ("10", "0")
+        assert divide_in_base_p("10", "1", 16) == ("10", "0")
+        assert divide_in_base_p("11", "1", 2) == ("11", "0")
+        assert divide_in_base_p("11", "1", 10) == ("11", "0")
+        assert divide_in_base_p("11", "1", 16) == ("11", "0")
+        assert divide_in_base_p("672", "4", 9) == ("162", "3")
+
+        print("All tests passed.\n")
+
+    def test_convert_substitution() -> None:
+        """
+        Tests the convert_number_with_substitution_method function.
+        """
+        print("Testing convert_number_with_substitution_method function...")
+
+        assert convert_number_with_substitution_method("0", 2, 10) == "0"
+        assert convert_number_with_substitution_method("0", 2, 16) == "0"
+        assert convert_number_with_substitution_method("1", 2, 10) == "1"
+        assert convert_number_with_substitution_method("1", 2, 16) == "1"
+        assert convert_number_with_substitution_method("10", 2, 10) == "2"
+        assert convert_number_with_substitution_method("10", 2, 16) == "2"
+        assert convert_number_with_substitution_method("11", 2, 10) == "3"
+        assert convert_number_with_substitution_method("11", 2, 16) == "3"
+        assert convert_number_with_substitution_method("100", 2, 2) == "100"
+        assert convert_number_with_substitution_method("100", 2, 10) == "4"
+        assert convert_number_with_substitution_method("100", 2, 16) == "4"
+        assert convert_number_with_substitution_method("101", 2, 2) == "101"
+        assert convert_number_with_substitution_method("101", 2, 10) == "5"
+
+        print("All tests passed.\n")
+
+    def test_convert_successive_divisions() -> None:
+        """
+        Tests the convert_a_number_with_successive_divisions function.
+        """
+        print("Testing convert_a_number_with_successive_divisions function...")
+
+        assert convert_a_number_with_successive_divisions("0", 2, 2) == "0"
+        assert convert_a_number_with_successive_divisions("0", 2, 10) == "0"
+        assert convert_a_number_with_successive_divisions("0", 2, 16) == "0"
+        assert convert_a_number_with_successive_divisions("1", 2, 2) == "1"
+        assert convert_a_number_with_successive_divisions("1", 2, 10) == "1"
+        assert convert_a_number_with_successive_divisions("1", 2, 16) == "1"
+        assert convert_a_number_with_successive_divisions("10", 2, 2) == "10"
+        assert convert_a_number_with_successive_divisions("10", 2, 10) == "2"
+        assert convert_a_number_with_successive_divisions("10", 2, 16) == "2"
+        assert convert_a_number_with_successive_divisions("11", 2, 2) == "11"
+        assert convert_a_number_with_successive_divisions("11", 2, 10) == "3"
+        assert convert_a_number_with_successive_divisions("11", 2, 16) == "3"
+        assert convert_a_number_with_successive_divisions("100", 2, 2) == "100"
+        assert convert_a_number_with_successive_divisions("100", 2, 10) == "4"
+        assert convert_a_number_with_successive_divisions("100", 2, 16) == "4"
+        assert convert_a_number_with_successive_divisions("101", 2, 2) == "101"
+        assert convert_a_number_with_successive_divisions("101", 2, 10) == "5"
+
+        print("All tests passed.\n")
+
+    def test_convert_10_as_intermediary_base() -> None:
+        """
+        Tests the convert_a_number_using_10_as_intermediary_base function.
+        """
+        print("Testing convert_a_number_using_10_as_intermediary_base function...")
+
+        assert convert_a_number_using_10_as_intermediary_base("0", 2, 2) == ("0", "0")
+        assert convert_a_number_using_10_as_intermediary_base("0", 2, 10) == ("0", "0")
+        assert convert_a_number_using_10_as_intermediary_base("0", 2, 16) == ("0", "0")
+        assert convert_a_number_using_10_as_intermediary_base("1", 2, 2) == ("1", "1")
+        assert convert_a_number_using_10_as_intermediary_base("1", 2, 10) == ("1", "1")
+        assert convert_a_number_using_10_as_intermediary_base("1", 2, 16) == ("1", "1")
+        assert convert_a_number_using_10_as_intermediary_base("10", 2, 2) == (
+            "10",
+            "10",
+        )
+        assert convert_a_number_using_10_as_intermediary_base("10", 2, 10) == (
+            "10",
+            "2",
+        )
+        assert convert_a_number_using_10_as_intermediary_base("10", 2, 16) == (
+            "10",
+            "2",
+        )
+        assert convert_a_number_using_10_as_intermediary_base("11", 2, 2) == (
+            "11",
+            "11",
+        )
+        assert convert_a_number_using_10_as_intermediary_base("11", 2, 10) == (
+            "11",
+            "3",
+        )
+
+        print("All tests passed.\n")
+
+    def test_rapid_conversion() -> None:
+        """
+        Tests the rapid_conversion function.
+        """
+        print("Testing rapid_conversion function...")
+
+        assert rapid_conversion("0", b=2) == "0"
+        assert rapid_conversion("0", h=2) == "0"
+        assert rapid_conversion("1", b=2) == "1"
+        assert rapid_conversion("1", h=2) == "1"
+        assert rapid_conversion("10", b=2) == "10"
+        assert rapid_conversion("10", h=2) == "10"
+        assert rapid_conversion("11", b=2) == "11"
+        assert rapid_conversion("11", h=2) == "11"
+        assert rapid_conversion("100", b=2) == "100"
+        assert rapid_conversion("100", h=2) == "100"
+        assert rapid_conversion("101", b=2) == "101"
+        assert rapid_conversion("101", h=2) == "101"
+
+        print("All tests passed.\n")
+
+    test_add_in_base_p()
+    test_subtract_in_base_p()
+    test_multiply_in_base_p()
+    test_divide_in_base_p()
+    test_convert_substitution()
+    test_convert_successive_divisions()
+    test_convert_10_as_intermediary_base()
+    test_rapid_conversion()
