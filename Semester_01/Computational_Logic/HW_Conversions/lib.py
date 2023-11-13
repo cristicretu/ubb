@@ -4,10 +4,32 @@
 def check_if_valid_base(base: int) -> bool:
     """
     Checks if a given base is valid.
+    A base is valid if it is an integer within the set {2,3,4,5,6,7,8,9,10,16}.
+
     :param base: The base to be checked.
     :return: True if the base is valid, False otherwise.
     """
     return base in {2, 3, 4, 5, 6, 7, 8, 9, 10, 16}
+
+
+def get_digit_mappings(base: int) -> (dict, dict):
+    """
+    Generates two dictionaries for digit-to-value and value-to-digit mappings based on the given base.
+
+    :param base: The base for which the mappings are to be created.
+    :return: A tuple containing two dictionaries, one for digit-to-value and another for value-to-digit mappings.
+
+    The digit-to-value dictionary maps a digit to its decimal equivalent.
+    The value-to-digit dictionary maps a decimal value to its digit equivalent.
+    """
+    if check_if_valid_base(base) is False:
+        raise ValueError("Base must be one of the following: {2,3,4,5,6,7,8,9,10,16}")
+
+    hex_digits = "0123456789ABCDEF"
+    value_to_digit = {index: hex_digits[index] for index in range(base)}
+    digit_to_value = {ch: index for index, ch in value_to_digit.items()}
+
+    return digit_to_value, value_to_digit
 
 
 def add_in_base_p(number1: str, number2: str, base: int) -> str:
@@ -22,20 +44,39 @@ def add_in_base_p(number1: str, number2: str, base: int) -> str:
 
     The function performs the addition by converting each digit to its decimal equivalent,
     adding them with carry, and then converting back to the base 'p' representation.
+
+    Pseudocode:
+
+    1. Make both numbers the same length by adding leading zeros to the shorter one.
+    2. Start iterations from the rightmost digit.
+    3. Convert the current digit to decimal.
+    4. Add the digits and account for carry.
+    5. Save the result.
+
+    if check_if_valid_base(base) is False:
+        stop the program and raise an error
+
+    result <- ""
+    carry <- 0
+
+    for i <- max_length - 1 to 0:
+        digit1 <- convert number1[i] to decimal
+        digit2 <- convert number2[i] to decimal
+
+        total <- digit1 + digit2 + carry
+        carry <- total // base
+        result_digit <- total % base
+
+        result <- convert result_digit to base p + result
+
+    if carry > 0:
+        result <- convert carry to base p + result
+
+    return result
     """
 
     if check_if_valid_base(base) is False:
         raise ValueError("Base must be one of the following: {2,3,4,5,6,7,8,9,10,16}")
-
-    # digit mapping
-    hex_digits = "0123456789ABCDEF"
-    map_value_to_digit = {}
-    map_value_to_char = {}
-
-    for index in range(base):
-        ch = hex_digits[index]
-        map_value_to_digit[ch] = index
-        map_value_to_char[index] = ch
 
     # Make both numbers the same length
     max_length = max(len(number1), len(number2))
@@ -44,6 +85,9 @@ def add_in_base_p(number1: str, number2: str, base: int) -> str:
 
     result = ""
     carry = 0
+
+    # digit mapping
+    map_value_to_digit, map_value_to_char = get_digit_mappings(base)
 
     # Start iterations from the rightmost digit
     for i in range(max_length - 1, -1, -1):
@@ -78,20 +122,44 @@ def subtract_in_base_p(number1: str, number2: str, base: int) -> str:
 
     The function performs the subtraction by converting each digit to its decimal equivalent,
     subtracting them with borrow, and then converting back to the base 'p' representation.
+
+    Pseudocode:
+
+    1. Make both numbers the same length by adding leading zeros to the shorter one.
+    2. Check if the result will be negative.
+    3. Start iterations from the rightmost digit.
+    4. Convert the current digit to decimal.
+    5. Subtract the digits and account for borrow.
+    6. Save the result.
+
+    if check_if_valid_base(base) is False:
+        stop the program and raise an error
+
+    result <- ""
+    borrow <- 0
+
+    for i <- max_length - 1 to 0:
+        digit1 <- convert number1[i] to decimal
+        digit2 <- convert number2[i] to decimal
+
+        total <- digit1 - digit2 - borrow
+        if total < 0:
+            total += base
+            borrow <- 1
+        else:
+            borrow <- 0
+
+        result_digit <- total % base
+
+        result <- convert result_digit to base p + result
+
+    return result
     """
 
     if check_if_valid_base(base) is False:
         raise ValueError("Base must be one of the following: {2,3,4,5,6,7,8,9,10,16}")
 
-    # digit mapping
-    hex_digits = "0123456789ABCDEF"
-    map_value_to_digit = {}
-    map_value_to_char = {}
-
-    for index in range(base):
-        ch = hex_digits[index]
-        map_value_to_digit[ch] = index
-        map_value_to_char[index] = ch
+    map_value_to_digit, map_value_to_char = get_digit_mappings(base)
 
     # Make both numbers the same length
     max_length = max(len(number1), len(number2))
@@ -150,24 +218,59 @@ def multiply_in_base_p(number1: str, number2: str, base: int) -> str:
     :param base: The base in which the numbers are represented, and the result should be.
                  Must be an integer within the set {2,3,4,5,6,7,8,9,10,16}.
     :return: The result of the multiplication as a string in the same base.
+
+    The function performs the multiplication by converting each digit to its decimal equivalent,
+    multiplying them with carry, and then converting back to the base 'p' representation.
+
+    Pseudocode:
+
+    1. Check if the multiplier is negative and adjust accordingly.
+    2. Convert the single-digit multiplier to its decimal equivalent.
+    3. Start iterations from the rightmost digit.
+    4. Convert the current digit to decimal.
+    5. Multiply the current digit by the multiplier and add the carry.
+    6. Save the result.
+
+    if check_if_valid_base(base) is False:
+        stop the program and raise an error
+
+    if number2 is negative:
+        number2 <- number2 without the minus sign
+        negative_multiplier <- True
+    else:
+        negative_multiplier <- False
+
+    result <- ""
+    carry <- 0
+
+    for i <- max_length - 1 to 0:
+        digit1 <- convert number1[i] to decimal
+
+        total <- digit1 * multiplier + carry
+        carry <- total // base
+        result_digit <- total % base
+
+        result <- convert result_digit to base p + result
+
+    if carry > 0:
+        result <- convert carry to base p + result
+
+    if negative_multiplier:
+        result <- "-" + result
+
+    return result
     """
 
     # Check if number2 is a single digit
     if len(number2) != 1 and number2[0] != "-":
+        print(number2)
         raise ValueError("number2 must be a single digit.")
 
     if check_if_valid_base(base) is False:
         raise ValueError("Base must be one of the following: {2,3,4,5,6,7,8,9,10,16}")
 
     # digit mapping
-    hex_digits = "0123456789ABCDEF"
-    map_value_to_digit = {}
-    map_value_to_char = {}
-
-    for index in range(base):
-        ch = hex_digits[index]
-        map_value_to_digit[ch] = index
-        map_value_to_char[index] = ch
+    map_value_to_digit, map_value_to_char = get_digit_mappings(base)
 
     # Check for negative multiplier and adjust accordingly
     negative_multiplier = number2.startswith("-")
@@ -213,6 +316,46 @@ def divide_in_base_p(number1: str, number2: str, base: int) -> (str, str):
     :param base: The base in which the numbers are represented, and the result should be.
                  Must be an integer within the set {2,3,4,5,6,7,8,9,10,16}.
     :return: A tuple containing the result of the division as a string and the remainder as a string in the same base.
+
+    The function performs the division by converting each digit to its decimal equivalent,
+    dividing them with remainder, and then converting back to the base 'p' representation.
+
+    Pseudocode:
+
+    1. Check if the divisor is negative and adjust accordingly.
+    2. Convert the single-digit divisor to its decimal equivalent.
+    3. Start iterations from the leftmost digit.
+    4. Bring down the next digit.
+    5. Convert the current digit to decimal.
+    6. Divide the current digit by the divisor and save the remainder.
+
+    if check_if_valid_base(base) is False:
+        stop the program and raise an error
+
+    if number2 is negative:
+        number2 <- number2 without the minus sign
+        negative_divisor <- True
+    else:
+        negative_divisor <- False
+
+    result <- ""
+    remainder <- 0
+
+    for i <- 0 to max_length - 1:
+        current <- remainder * base + convert number1[i] to decimal
+        result_digit <- current // divisor
+        remainder <- current % divisor
+
+        result <- convert result_digit to base p + result
+
+    result <- remove leading zeros from result
+
+    if negative_divisor:
+        result <- "-" + result
+
+    remainder_str <- convert remainder to base p
+
+    return result, remainder_str
     """
 
     # Check if number2 is a single digit
@@ -222,15 +365,7 @@ def divide_in_base_p(number1: str, number2: str, base: int) -> (str, str):
     if check_if_valid_base(base) is False:
         raise ValueError("Base must be one of the following: {2,3,4,5,6,7,8,9,10,16}")
 
-    # digit mapping
-    hex_digits = "0123456789ABCDEF"
-    map_value_to_digit = {}
-    map_value_to_char = {}
-
-    for index in range(16):
-        ch = hex_digits[index]
-        map_value_to_digit[ch] = index
-        map_value_to_char[index] = ch
+    map_value_to_digit, map_value_to_char = get_digit_mappings(base)
 
     # Check for negative divisor and adjust accordingly
     negative_divisor = number2.startswith("-")
@@ -277,19 +412,48 @@ def convert_number_with_substitution_method(number: str, b: int, h: int) -> str:
     :param h: The base to convert to.
 
     :return: The converted number as a string.
+
+    The function performs the conversion by converting each digit to its base h equivalent.
+    Then performs all calculations in the destination (h) base.
+
+    Pseudocode:
+
+    1. Check if the bases are valid.
+    2. Convert the number to its representation in base h.
+    3. Start iterations from the rightmost digit.
+    4. Multiply the current digit by b^i in base h.
+    5. Add the term to the result.
+
+    if check_if_valid_base(b) is False or check_if_valid_base(h) is False:
+        stop the program and raise an error
+
+    result <- "0"
+    multiplier <- "1"  # This will be b^i in base h, starting with i=0
+
+    for i <- 0 to max_length - 1:
+        digit <- convert number[i] to decimal
+        term <- multiply_in_base_p(multiplier, digit, h)
+        result <- add_in_base_p(result, term, h)
+
+        multiplier <- multiply_in_base_p(multiplier, b, h)
+
+    result <- remove leading zeros from result
+
+    if result is empty:
+        result <- "0"
+
+    return result
     """
 
     # Check the validity of the bases
     if not check_if_valid_base(b) or not check_if_valid_base(h):
         raise ValueError("Base must be one of the following: {2,3,4,5,6,7,8,9,10,16}")
 
-    # digit mapping for destination base h
-    hex_digits = "0123456789ABCDEF"
-    map_value_to_digit = {ch: index for index, ch in enumerate(hex_digits[:h])}
-    map_value_to_char = {index: ch for index, ch in enumerate(hex_digits[:h])}
+    # digit mapping
+    map_value_to_digit, map_value_to_char = get_digit_mappings(b)
 
     # Convert the base b to its representation in base h
-    base_b_in_base_h = map_value_to_char[b]
+    base_b_in_base_h = str(b)
 
     result = "0"  # Start with zero in the destination base
     multiplier = "1"  # This will be b^i in base h, starting with i=0
@@ -330,15 +494,7 @@ def convert_a_number_with_successive_divisions(number: str, b: int, h: int) -> s
     if not check_if_valid_base(b) or not check_if_valid_base(h):
         raise ValueError("Base must be one of the following: {2,3,4,5,6,7,8,9,10,16}")
 
-    # digit mapping
-    hex_digits = "0123456789ABCDEF"
-    map_value_to_digit = {}
-    map_value_to_char = {}
-
-    for index in range(16):
-        ch = hex_digits[index]
-        map_value_to_digit[ch] = index
-        map_value_to_char[index] = ch
+    map_value_to_digit, map_value_to_char = get_digit_mappings(b)
 
     result = ""
 
