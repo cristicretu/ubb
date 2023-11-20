@@ -271,7 +271,6 @@ def multiply_in_base_p(number1: str, number2: str, base: int) -> str:
 
     # Check if number2 is a single digit
     if len(number2) != 1 and number2[0] != "-":
-        print(number2)
         raise ValueError("number2 must be a single digit.")
 
     if check_if_valid_base(base) is False:
@@ -526,6 +525,20 @@ def convert_a_number_using_10_as_intermediary_base(number: str, b: int, h: int) 
     :param number: The number to be converted as a string.
     :param b: The base of the number.
     :param h: The base to convert to.
+
+    :return: The converted number as a string.
+
+    The function performs the conversion by converting the number to base 10 first,
+    then converting the result to the destination base.
+
+    Pseudocode:
+
+    1. Check if the bases are valid.
+    2. Determine which conversion to perform based on the arguments provided.
+    3. Perform the conversion. If the destination base is 16, convert to base 10 first using substitution method, then convert to base 16.
+         Otherwise, convert to base 10 first using successive divisions, then convert to the destination base.
+    4. Return the result.
+
     """
 
     if not check_if_valid_base(b) or not check_if_valid_base(h):
@@ -560,7 +573,19 @@ def rapid_conversion(number, b=None, h=None) -> str:
     :param h: the destination base if converting from binary (source base is assumed to be binary).
 
     :return: The converted number as a string.
+
+    The function performs the conversion by using a lookup table for the source and destination bases.
+
+    Pseudocode:
+
+    1. Check if the bases are valid.
+    2. Determine which conversion to perform based on the arguments provided.
+    3. Perform the conversion by either converting from binary or to binary, using the lookup table.
+    4. Return the result.
+
     """
+    if b is not None and h is not None:
+        raise ValueError("Only one of b and h can be provided.")
 
     rapid_tables = {
         2: [
@@ -924,6 +949,10 @@ def test_all_functions() -> None:
         assert rapid_conversion("76", b=8) == "111110"
         # Rapid conversion from base 16 to base 2
         assert rapid_conversion("1A3", b=16) == "110100011"
+        assert (
+            rapid_conversion("FFFF0000FFF", b=16)
+            == "11111111111111110000000000000000111111111111"
+        )
 
         print("All tests passed.\n")
 
@@ -933,5 +962,5 @@ def test_all_functions() -> None:
     test_divide_in_base_p()
     test_convert_substitution()
     test_convert_successive_divisions()
-    # test_convert_10_as_intermediary_base()
+    test_convert_10_as_intermediary_base()
     test_rapid_conversion()
