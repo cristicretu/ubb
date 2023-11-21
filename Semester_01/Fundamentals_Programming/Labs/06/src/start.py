@@ -4,6 +4,6 @@
 import test_program as tests
 import ui
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     tests.test_all_functions()
     ui.print_ui()
