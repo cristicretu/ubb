@@ -217,7 +217,9 @@ def subtract_in_base_p(number1: str, number2: str, base: int) -> str:
     return result
 
 
-def multiply_in_base_p(number1: str, number2: str, base: int) -> str:
+def multiply_in_base_p(
+    number1: str, number2: str, base: int, intermediary: bool = False
+) -> str:
     """
     Multiplies a number by a single-digit number, which may be negative, both represented as strings in a given base p.
 
@@ -225,6 +227,7 @@ def multiply_in_base_p(number1: str, number2: str, base: int) -> str:
     :param number2: The second number as a string, representing the single-digit multiplier, which may be negative.
     :param base: The base in which the numbers are represented, and the result should be.
                  Must be an integer within the set {2,3,4,5,6,7,8,9,10,16}.
+    :param intermediary: A flag indicating if the function is used as an intermediary step in another conversion.
     :return: The result of the multiplication as a string in the same base.
 
     The function performs the multiplication by converting each digit to its decimal equivalent,
@@ -270,7 +273,7 @@ def multiply_in_base_p(number1: str, number2: str, base: int) -> str:
     """
 
     # Check if number2 is a single digit
-    if len(number2) != 1 and number2[0] != "-":
+    if len(number2) != 1 and number2[0] != "-" and not intermediary:
         raise ValueError("number2 must be a single digit.")
 
     if check_if_valid_base(base) is False:
@@ -285,7 +288,10 @@ def multiply_in_base_p(number1: str, number2: str, base: int) -> str:
         number2 = number2[1:]
 
     # Convert the single-digit multiplier to its decimal equivalent
-    multiplier = map_value_to_digit[number2]
+    if len(number2) > 1:
+        multiplier = map_value_to_digit[map_value_to_char[int(number2)]]
+    else:
+        multiplier = map_value_to_digit[number2]
 
     result = ""
     carry = 0
@@ -314,7 +320,9 @@ def multiply_in_base_p(number1: str, number2: str, base: int) -> str:
     return result
 
 
-def divide_in_base_p(number1: str, number2: str, base: int) -> (str, str):
+def divide_in_base_p(
+    number1: str, number2: str, base: int, intermediary: bool = False
+) -> (str, str):
     """
     Divides a number by a single-digit number, both represented as strings in a given base p, and also returns the remainder.
 
@@ -366,7 +374,7 @@ def divide_in_base_p(number1: str, number2: str, base: int) -> (str, str):
     """
 
     # Check if number2 is a single digit
-    if len(number2) != 1 and number2[0] != "-":
+    if len(number2) != 1 and number2[0] != "-" and not intermediary:
         raise ValueError("number2 must be a single digit.")
 
     if check_if_valid_base(base) is False:
@@ -380,7 +388,7 @@ def divide_in_base_p(number1: str, number2: str, base: int) -> (str, str):
         number2 = number2[1:]
 
     # Convert the single-digit divisor to its decimal equivalent
-    divisor = map_value_to_digit[number2]
+    divisor = map_value_to_digit[map_value_to_char[int(number2)]]
 
     if divisor == 0:
         raise ValueError("Division by zero is not allowed.")
@@ -410,13 +418,16 @@ def divide_in_base_p(number1: str, number2: str, base: int) -> (str, str):
     return result, remainder_str
 
 
-def convert_number_with_substitution_method(number: str, b: int, h: int) -> str:
+def convert_number_with_substitution_method(
+    number: str, b: int, h: int, intermediary: bool = False
+) -> str:
     """
     Converts a number from base b to base h using substitution method.
 
     :param number: The number to be converted as a string.
     :param b: The base of the number.
     :param h: The base to convert to.
+    :param intermediary: A flag indicating if the function is used as an intermediary step in another conversion.
 
     :return: The converted number as a string.
 
@@ -472,9 +483,9 @@ def convert_number_with_substitution_method(number: str, b: int, h: int) -> str:
         digit_value = map_value_to_digit[digit.upper()]
         digit_in_base_h = map_value_to_char[digit_value]
 
-        term = multiply_in_base_p(multiplier, digit_in_base_h, h)
+        term = multiply_in_base_p(multiplier, digit_in_base_h, h, intermediary)
         result = add_in_base_p(result, term, h)
-        multiplier = multiply_in_base_p(multiplier, base_b_in_base_h, h)
+        multiplier = multiply_in_base_p(multiplier, base_b_in_base_h, h, intermediary)
 
     # Remove leading zeros from the result
     result = result.lstrip("0")
@@ -486,13 +497,16 @@ def convert_number_with_substitution_method(number: str, b: int, h: int) -> str:
     return result
 
 
-def convert_a_number_with_successive_divisions(number: str, b: int, h: int) -> str:
+def convert_a_number_with_successive_divisions(
+    number: str, b: int, h: int, intermediary: bool = False
+) -> str:
     """
     Converts a number from base b to base h using successive divisions.
 
     :param number: The number to be converted as a string.
     :param b: The base of the number.
     :param h: The base to convert to.
+    :param intermediary: A flag indicating if the function is used as an intermediary step in another conversion.
 
     :return: The converted number as a string.
     """
@@ -507,7 +521,7 @@ def convert_a_number_with_successive_divisions(number: str, b: int, h: int) -> s
 
     while number != "0":
         # Divide the number by the destination base h
-        number, remainder = divide_in_base_p(number, str(h), b)
+        number, remainder = divide_in_base_p(number, str(h), b, intermediary)
 
         # Convert the remainder to its representation in base h
         digit_in_base_h = map_value_to_char[map_value_to_digit[remainder]]
@@ -541,18 +555,32 @@ def convert_a_number_using_10_as_intermediary_base(number: str, b: int, h: int) 
 
     """
 
-    if not check_if_valid_base(b) or not check_if_valid_base(h):
-        raise ValueError("Base must be one of the following: {2,3,4,5,6,7,8,9,10,16}")
+    if (
+        not check_if_valid_base(b)
+        or not check_if_valid_base(h)
+        or b == h
+        or b == 10
+        or h == 10
+    ):
+        raise ValueError("Base must be one of the following: {2,3,4,5,6,7,8,9,16}")
 
     intermediary_result = ""
     result = ""
 
     if h == 16:
-        intermediary_result = convert_number_with_substitution_method(number, b, 10)
-        result = convert_number_with_substitution_method(intermediary_result, 10, 16)
+        intermediary_result = convert_number_with_substitution_method(
+            number, b, 10, True
+        )
+        result = convert_number_with_substitution_method(
+            intermediary_result, 10, h, True
+        )
     elif b == 16:
-        intermediary_result = convert_a_number_with_successive_divisions(number, 16, 10)
-        result = convert_a_number_with_successive_divisions(intermediary_result, 10, h)
+        intermediary_result = convert_a_number_with_successive_divisions(
+            number, b, 10, True
+        )
+        result = convert_a_number_with_successive_divisions(
+            intermediary_result, 10, h, True
+        )
     else:
         intermediary_result = convert_number_with_substitution_method(number, b, 10)
         result = convert_a_number_with_successive_divisions(intermediary_result, 10, h)
@@ -675,18 +703,17 @@ def rapid_conversion(number, b=None, h=None) -> str:
         return result
 
     def to_binary(a, base):
+        # Calculate the number of binary digits needed for a single base 'b' digit
+        k = int(math.log(base, 2))
         result = ""
         for digit in a:
-            # Find the binary equivalent of the digit
-            group = bin(rapid_tables[base].index(digit))[2:]
-            # Add zeros manually to the group if it's not long enough
-            while len(group) < k:
-                group = "0" + group
+            # Find the index of the digit in the source base
+            index = rapid_tables[base].index(digit.upper())
+            # Convert the index to binary and add leading zeros
+            group = bin(index)[2:].zfill(k)
             result += group
-        # Trim leading zeros manually
-        while len(result) > 1 and result[0] == "0":
-            result = result[1:]
-        return result
+        # Remove leading zeros
+        return result.lstrip("0") or "0"
 
     # Determine which conversion to perform based on the arguments provided
     if h is not None:
@@ -808,7 +835,7 @@ def test_all_functions() -> None:
         """
         Additional complex test cases for the multiply_in_base_p function.
         """
-        print("Testing more complex cases for multiply_in_base_p function...")
+        print("Testing for multiply_in_base_p function...")
 
         # Base 4 examples
         assert multiply_in_base_p("23", "2", 4) == "112"
@@ -826,7 +853,7 @@ def test_all_functions() -> None:
         assert multiply_in_base_p("A", "B", 16) == "6E"
         assert multiply_in_base_p("F", "F", 16) == "E1"
 
-        print("All complex tests passed for multiply_in_base_p function.\n")
+        print("All tests passed. \n")
 
     def test_divide_in_base_p() -> None:
         """
@@ -901,34 +928,29 @@ def test_all_functions() -> None:
         print("Testing convert_a_number_using_10_as_intermediary_base function...")
 
         # Base 16 to Base 2
-        assert convert_a_number_using_10_as_intermediary_base("A1B", 16, 2) == (
-            "2619",
-            "101000011011",
+        assert convert_a_number_using_10_as_intermediary_base("A5", 16, 2) == (
+            "165",
+            "10100101",
         )
         # Base 16 to Base 8
         assert convert_a_number_using_10_as_intermediary_base("F3C", 16, 8) == (
             "3900",
-            "7634",
+            "7474",
         )
         # Base 10 to Base 2
-        assert convert_a_number_using_10_as_intermediary_base("255", 10, 2) == (
-            "255",
-            "11111111",
+        assert convert_a_number_using_10_as_intermediary_base("255", 6, 2) == (
+            "107",
+            "1101011",
         )
         # Base 10 to Base 4
-        assert convert_a_number_using_10_as_intermediary_base("81", 10, 4) == (
-            "81",
-            "1103",
+        assert convert_a_number_using_10_as_intermediary_base("81", 9, 4) == (
+            "73",
+            "1021",
         )
         # Base 8 to Base 2
         assert convert_a_number_using_10_as_intermediary_base("175", 8, 2) == (
             "125",
             "1111101",
-        )
-        # Base 8 to Base 4
-        assert convert_a_number_using_10_as_intermediary_base("123", 8, 4) == (
-            "83",
-            "223",
         )
 
         print("All tests passed.\n")

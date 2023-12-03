@@ -107,10 +107,15 @@ def main():
                     )
                     continue
 
-                result = convert_number_with_substitution_method(
-                    str(number), base, target_base
-                )
-                print(f"\nResult: {number}({base}) = {result}({target_base})\n")
+                try:
+                    result = convert_number_with_substitution_method(
+                        str(number), base, target_base
+                    )
+                    print(f"\nResult: {number}({base}) = {result}({target_base})\n")
+                except ValueError as error:
+                    print(error)
+                except KeyError as error:
+                    print(error)
 
             elif conversion_method == 2:
                 if not check_if_valid_base(base) or not check_if_valid_base(
@@ -121,10 +126,15 @@ def main():
                     )
                     continue
 
-                result = convert_a_number_with_successive_divisions(
-                    str(number), base, target_base
-                )
-                print(f"\nResult: {number}({base}) = {result}({target_base})\n")
+                try:
+                    result = convert_a_number_with_successive_divisions(
+                        str(number), base, target_base
+                    )
+                    print(f"\nResult: {number}({base}) = {result}({target_base})\n")
+                except ValueError as error:
+                    print(error)
+                except KeyError as error:
+                    print(error)
 
             elif conversion_method == 3:
                 if not check_if_valid_base(base) or not check_if_valid_base(
@@ -135,11 +145,14 @@ def main():
                     )
                     continue
 
-                base10, result = convert_a_number_using_10_as_intermediary_base(
-                    str(number), base, target_base
-                )
-                print(f"\nResult: {number}({base}) = {result}({target_base})")
-                print(f"Base 10 Result: {number}({base}) = {base10}(10)\n")
+                try:
+                    base10, result = convert_a_number_using_10_as_intermediary_base(
+                        str(number), base, target_base
+                    )
+                    print(f"\nResult: {number}({base}) = {result}({target_base})")
+                    print(f"Base 10 Result: {number}({base}) = {base10}(10)\n")
+                except ValueError as error:
+                    print(error)
 
             elif conversion_method == 4:
                 if not check_if_valid_base(base) or not check_if_valid_base(
@@ -152,15 +165,15 @@ def main():
 
                 result = ""
 
-                if (
-                    base == 2
-                    and target_base == 4
-                    or target_base == 8
-                    or target_base == 16
+                if base == 2 and (
+                    target_base == 4 or target_base == 8 or target_base == 16
                 ):
                     result = rapid_conversion(number, h=target_base)
-                elif target_base == 2 and base == 4 or base == 8 or base == 16:
-                    result = rapid_conversion(number, b=base)
+                elif target_base == 2 and (base == 4 or base == 8 or base == 16):
+                    result = rapid_conversion(number, b=target_base)
+                else:
+                    in_base_2 = rapid_conversion(number, b=base)
+                    result = rapid_conversion(in_base_2, h=target_base)
                 print(f"\nResult: {number}({base}) = {result}({target_base})\n")
 
             else:
@@ -182,10 +195,13 @@ def main():
                     )
                     continue
 
-                result = add_in_base_p(number1, number2, base)
-                print(
-                    f"\nResult: {number1}({base}) + {number2}({base}) = {result}({base})\n"
-                )
+                try:
+                    result = add_in_base_p(number1, number2, base)
+                    print(
+                        f"\nResult: {number1}({base}) + {number2}({base}) = {result}({base})\n"
+                    )
+                except ValueError as error:
+                    print(error)
 
             elif operation == 2:
                 if not check_if_valid_base(base):
@@ -194,10 +210,13 @@ def main():
                     )
                     continue
 
-                result = subtract_in_base_p(number1, number2, base)
-                print(
-                    f"\nResult: {number1}({base}) - {number2}({base}) = {result}({base})\n"
-                )
+                try:
+                    result = subtract_in_base_p(number1, number2, base)
+                    print(
+                        f"\nResult: {number1}({base}) - {number2}({base}) = {result}({base})\n"
+                    )
+                except ValueError as error:
+                    print(error)
 
             elif operation == 3:
                 if not check_if_valid_base(base):
@@ -206,10 +225,13 @@ def main():
                     )
                     continue
 
-                result = multiply_in_base_p(number1, number2, base)
-                print(
-                    f"\nResult: {number1}({base}) * {number2}({base}) = {result}({base})\n"
-                )
+                try:
+                    result = multiply_in_base_p(number1, number2, base)
+                    print(
+                        f"\nResult: {number1}({base}) * {number2}({base}) = {result}({base})\n"
+                    )
+                except ValueError as error:
+                    print(error)
 
             elif operation == 4:
                 if not check_if_valid_base(base):
@@ -218,10 +240,13 @@ def main():
                     )
                     continue
 
-                result, remainder = divide_in_base_p(number1, number2, base)
-                print(
-                    f"\nResult: {number1}({base}) / {number2}({base}) = {result}({base}), remainder: {remainder}({base})\n"
-                )
+                try:
+                    result, remainder = divide_in_base_p(number1, number2, base)
+                    print(
+                        f"\nResult: {number1}({base}) / {number2}({base}) = {result}({base}), remainder: {remainder}({base})\n"
+                    )
+                except ValueError as error:
+                    print(error)
 
         elif option == 3:
             print("\nTesting all functions...\n")
