@@ -388,7 +388,11 @@ def divide_in_base_p(
         number2 = number2[1:]
 
     # Convert the single-digit divisor to its decimal equivalent
-    divisor = map_value_to_digit[map_value_to_char[int(number2)]]
+    divisor = 0
+    if number2 == int(number2):
+        divisor = map_value_to_digit[number2]
+    else:
+        divisor = map_value_to_digit[map_value_to_char[int(number2)]]
 
     if divisor == 0:
         raise ValueError("Division by zero is not allowed.")

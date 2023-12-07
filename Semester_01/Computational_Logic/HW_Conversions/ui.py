@@ -94,9 +94,9 @@ def main():
                 print("\nInvalid conversion method!\n")
                 continue
 
-            number = read_string_from_keyboard(">Number: ")
             base = read_integer_from_keyboard(">Source Base: ")
             target_base = read_integer_from_keyboard(">Target Base: ")
+            number = read_string_from_keyboard(">Number: ")
 
             if conversion_method == 1:
                 if not check_if_valid_base(base) or not check_if_valid_base(
@@ -105,6 +105,10 @@ def main():
                     print(
                         "\nInvalid base!\nBase must be 2, 3, 4, 5, 6, 7, 8, 9, 10, or 16\n"
                     )
+                    continue
+
+                if base > target_base:
+                    print("\nThe source base must be smaller than the target base!\n")
                     continue
 
                 try:
@@ -126,6 +130,10 @@ def main():
                     )
                     continue
 
+                if base < target_base:
+                    print("\nThe source base must be greater than the target base!\n")
+                    continue
+
                 try:
                     result = convert_a_number_with_successive_divisions(
                         str(number), base, target_base
@@ -142,6 +150,12 @@ def main():
                 ):
                     print(
                         "\nInvalid base!\nBase must be 2, 3, 4, 5, 6, 7, 8, 9, 10, or 16\n"
+                    )
+                    continue
+
+                if base == 10 or target_base == 10:
+                    print(
+                        "\nInvalid base!\nBase must be 2, 3, 4, 5, 6, 7, 8, 9, or 16 for the intermediary method 10 is not allowed\n"
                     )
                     continue
 
@@ -170,7 +184,7 @@ def main():
                 ):
                     result = rapid_conversion(number, h=target_base)
                 elif target_base == 2 and (base == 4 or base == 8 or base == 16):
-                    result = rapid_conversion(number, b=target_base)
+                    result = rapid_conversion(number, b=base)
                 else:
                     in_base_2 = rapid_conversion(number, b=base)
                     result = rapid_conversion(in_base_2, h=target_base)
@@ -184,9 +198,9 @@ def main():
             print_operations()
 
             operation = read_integer_from_keyboard(">Operation: ")
+            base = read_integer_from_keyboard(">Base: ")
             number1 = read_string_from_keyboard(">Number 1: ")
             number2 = read_string_from_keyboard(">Number 2: ")
-            base = read_integer_from_keyboard(">Base: ")
 
             if operation == 1:
                 if not check_if_valid_base(base):
