@@ -1,0 +1,454 @@
+1. the number of associative operations on a set A of size 3 is: 113
+2. the operation tables of each associative operation on a set A of size 3 are: 
+Table 1:
+(a1, a1, a1)
+(a1, a1, a1)
+(a1, a1, a1)
+Table 2:
+(a1, a1, a1)
+(a1, a1, a1)
+(a1, a1, a2)
+Table 3:
+(a1, a1, a1)
+(a1, a1, a1)
+(a1, a1, a3)
+Table 4:
+(a1, a1, a1)
+(a1, a1, a1)
+(a1, a2, a3)
+Table 5:
+(a1, a1, a1)
+(a1, a1, a1)
+(a3, a3, a3)
+Table 6:
+(a1, a1, a1)
+(a1, a1, a2)
+(a1, a1, a3)
+Table 7:
+(a1, a1, a1)
+(a1, a1, a2)
+(a1, a2, a3)
+Table 8:
+(a1, a1, a1)
+(a1, a2, a1)
+(a1, a1, a1)
+Table 9:
+(a1, a1, a1)
+(a1, a2, a1)
+(a1, a1, a3)
+Table 10:
+(a1, a1, a1)
+(a1, a2, a1)
+(a1, a3, a1)
+Table 11:
+(a1, a1, a1)
+(a1, a2, a1)
+(a3, a3, a3)
+Table 12:
+(a1, a1, a1)
+(a1, a2, a2)
+(a1, a2, a2)
+Table 13:
+(a1, a1, a1)
+(a1, a2, a2)
+(a1, a2, a3)
+Table 14:
+(a1, a1, a1)
+(a1, a2, a2)
+(a1, a3, a3)
+Table 15:
+(a1, a1, a1)
+(a1, a2, a3)
+(a1, a1, a1)
+Table 16:
+(a1, a1, a1)
+(a1, a2, a3)
+(a1, a2, a3)
+Table 17:
+(a1, a1, a1)
+(a1, a2, a3)
+(a1, a3, a1)
+Table 18:
+(a1, a1, a1)
+(a1, a2, a3)
+(a1, a3, a2)
+Table 19:
+(a1, a1, a1)
+(a1, a2, a3)
+(a1, a3, a3)
+Table 20:
+(a1, a1, a1)
+(a1, a2, a3)
+(a3, a3, a3)
+Table 21:
+(a1, a1, a1)
+(a1, a3, a1)
+(a1, a1, a1)
+Table 22:
+(a3, a1, a1)
+(a1, a2, a3)
+(a1, a3, a3)
+Table 23:
+(a1, a1, a1)
+(a1, a3, a2)
+(a1, a2, a3)
+Table 24:
+(a1, a1, a1)
+(a1, a3, a3)
+(a1, a3, a3)
+Table 25:
+(a3, a1, a1)
+(a1, a3, a3)
+(a1, a3, a3)
+Table 26:
+(a1, a1, a1)
+(a2, a2, a2)
+(a1, a1, a1)
+Table 27:
+(a1, a1, a1)
+(a2, a2, a2)
+(a1, a1, a3)
+Table 28:
+(a1, a1, a1)
+(a2, a2, a2)
+(a1, a2, a3)
+Table 29:
+(a1, a1, a1)
+(a2, a2, a2)
+(a2, a2, a2)
+Table 30:
+(a1, a1, a1)
+(a2, a2, a2)
+(a2, a2, a3)
+Table 31:
+(a1, a1, a1)
+(a2, a2, a2)
+(a3, a3, a3)
+Table 32:
+(a3, a1, a2)
+(a1, a2, a3)
+(a2, a3, a1)
+Table 33:
+(a1, a1, a1)
+(a3, a2, a3)
+(a3, a3, a3)
+Table 34:
+(a1, a1, a1)
+(a3, a3, a3)
+(a3, a3, a3)
+Table 35:
+(a3, a1, a3)
+(a1, a2, a3)
+(a3, a3, a3)
+Table 36:
+(a3, a1, a3)
+(a3, a2, a3)
+(a3, a3, a3)
+Table 37:
+(a1, a1, a3)
+(a1, a1, a3)
+(a1, a1, a3)
+Table 38:
+(a1, a1, a3)
+(a1, a1, a3)
+(a3, a3, a1)
+Table 39:
+(a2, a1, a1)
+(a1, a2, a2)
+(a1, a2, a2)
+Table 40:
+(a3, a2, a1)
+(a2, a2, a2)
+(a1, a2, a3)
+Table 41:
+(a2, a1, a1)
+(a1, a2, a2)
+(a1, a2, a3)
+Table 42:
+(a1, a1, a3)
+(a1, a1, a3)
+(a3, a3, a3)
+Table 43:
+(a1, a1, a3)
+(a1, a2, a3)
+(a1, a1, a3)
+Table 44:
+(a1, a1, a3)
+(a1, a2, a3)
+(a1, a3, a3)
+Table 45:
+(a3, a2, a2)
+(a2, a2, a2)
+(a2, a2, a2)
+Table 46:
+(a2, a1, a2)
+(a1, a2, a1)
+(a2, a1, a2)
+Table 47:
+(a1, a1, a3)
+(a1, a2, a3)
+(a3, a3, a1)
+Table 48:
+(a1, a1, a3)
+(a1, a2, a3)
+(a3, a3, a3)
+Table 49:
+(a1, a1, a3)
+(a2, a2, a3)
+(a3, a3, a3)
+Table 50:
+(a2, a1, a3)
+(a1, a2, a3)
+(a3, a3, a3)
+Table 51:
+(a1, a2, a1)
+(a1, a2, a1)
+(a1, a2, a1)
+Table 52:
+(a1, a2, a1)
+(a1, a2, a1)
+(a1, a2, a3)
+Table 53:
+(a1, a2, a1)
+(a1, a2, a2)
+(a1, a2, a3)
+Table 54:
+(a3, a2, a3)
+(a2, a2, a2)
+(a3, a2, a3)
+Table 55:
+(a3, a2, a3)
+(a2, a3, a2)
+(a3, a2, a3)
+Table 56:
+(a1, a2, a1)
+(a2, a1, a2)
+(a1, a2, a1)
+Table 57:
+(a1, a2, a1)
+(a2, a1, a2)
+(a1, a2, a3)
+Table 58:
+(a2, a2, a1)
+(a2, a2, a2)
+(a1, a2, a3)
+Table 59:
+(a3, a2, a3)
+(a3, a2, a3)
+(a3, a2, a3)
+Table 60:
+(a2, a2, a1)
+(a2, a2, a2)
+(a2, a2, a3)
+Table 61:
+(a1, a2, a1)
+(a2, a2, a2)
+(a1, a2, a1)
+Table 62:
+(a1, a2, a1)
+(a2, a2, a2)
+(a1, a2, a3)
+Table 63:
+(a1, a2, a1)
+(a2, a2, a2)
+(a3, a2, a3)
+Table 64:
+(a3, a3, a1)
+(a3, a3, a1)
+(a1, a1, a3)
+Table 65:
+(a2, a2, a2)
+(a2, a2, a2)
+(a1, a2, a3)
+Table 66:
+(a2, a2, a2)
+(a2, a2, a2)
+(a2, a2, a1)
+Table 67:
+(a2, a2, a2)
+(a2, a2, a2)
+(a2, a2, a2)
+Table 68:
+(a1, a2, a2)
+(a1, a2, a2)
+(a1, a2, a2)
+Table 69:
+(a1, a2, a2)
+(a1, a2, a2)
+(a1, a2, a3)
+Table 70:
+(a3, a3, a2)
+(a3, a3, a2)
+(a2, a2, a3)
+Table 71:
+(a3, a3, a3)
+(a1, a2, a3)
+(a3, a3, a3)
+Table 72:
+(a3, a3, a3)
+(a2, a2, a2)
+(a3, a3, a3)
+Table 73:
+(a2, a2, a2)
+(a2, a2, a2)
+(a2, a2, a3)
+Table 74:
+(a2, a2, a2)
+(a2, a2, a2)
+(a3, a3, a3)
+Table 75:
+(a1, a2, a2)
+(a2, a1, a1)
+(a2, a1, a1)
+Table 76:
+(a1, a2, a2)
+(a2, a2, a2)
+(a2, a2, a2)
+Table 77:
+(a1, a2, a2)
+(a2, a2, a2)
+(a2, a2, a3)
+Table 78:
+(a1, a2, a2)
+(a2, a2, a2)
+(a3, a2, a2)
+Table 79:
+(a1, a2, a2)
+(a2, a2, a2)
+(a3, a3, a3)
+Table 80:
+(a2, a2, a3)
+(a2, a2, a3)
+(a2, a2, a3)
+Table 81:
+(a2, a2, a3)
+(a2, a2, a3)
+(a3, a3, a2)
+Table 82:
+(a2, a2, a3)
+(a2, a2, a3)
+(a3, a3, a3)
+Table 83:
+(a1, a2, a3)
+(a1, a2, a3)
+(a1, a2, a3)
+Table 84:
+(a1, a2, a3)
+(a1, a2, a3)
+(a3, a3, a3)
+Table 85:
+(a2, a3, a1)
+(a3, a1, a2)
+(a1, a2, a3)
+Table 86:
+(a3, a3, a3)
+(a3, a1, a3)
+(a3, a3, a3)
+Table 87:
+(a3, a3, a3)
+(a3, a2, a3)
+(a3, a3, a3)
+Table 88:
+(a3, a3, a3)
+(a3, a3, a3)
+(a3, a3, a3)
+Table 89:
+(a1, a2, a3)
+(a2, a1, a3)
+(a3, a3, a3)
+Table 90:
+(a1, a2, a3)
+(a2, a2, a2)
+(a1, a2, a3)
+Table 91:
+(a1, a2, a3)
+(a2, a2, a2)
+(a2, a2, a2)
+Table 92:
+(a1, a2, a3)
+(a2, a2, a2)
+(a3, a2, a1)
+Table 93:
+(a1, a2, a3)
+(a2, a2, a2)
+(a3, a2, a2)
+Table 94:
+(a1, a2, a3)
+(a2, a2, a2)
+(a3, a2, a3)
+Table 95:
+(a1, a2, a3)
+(a2, a2, a2)
+(a3, a3, a3)
+Table 96:
+(a1, a2, a3)
+(a2, a2, a3)
+(a2, a2, a3)
+Table 97:
+(a1, a2, a3)
+(a2, a2, a3)
+(a3, a2, a3)
+Table 98:
+(a1, a2, a3)
+(a2, a2, a3)
+(a3, a3, a2)
+Table 99:
+(a1, a2, a3)
+(a2, a2, a3)
+(a3, a3, a3)
+Table 100:
+(a2, a3, a2)
+(a3, a2, a3)
+(a2, a3, a2)
+Table 101:
+(a1, a2, a3)
+(a2, a3, a1)
+(a3, a1, a2)
+Table 102:
+(a1, a2, a3)
+(a2, a3, a2)
+(a3, a2, a3)
+Table 103:
+(a1, a2, a3)
+(a2, a3, a3)
+(a3, a3, a3)
+Table 104:
+(a1, a2, a3)
+(a3, a2, a3)
+(a3, a2, a3)
+Table 105:
+(a2, a3, a3)
+(a3, a3, a3)
+(a3, a3, a3)
+Table 106:
+(a1, a2, a3)
+(a3, a3, a3)
+(a3, a3, a3)
+Table 107:
+(a1, a3, a3)
+(a1, a2, a3)
+(a1, a3, a3)
+Table 108:
+(a1, a3, a3)
+(a1, a3, a3)
+(a1, a3, a3)
+Table 109:
+(a1, a3, a3)
+(a2, a2, a2)
+(a3, a3, a3)
+Table 110:
+(a1, a3, a3)
+(a2, a3, a3)
+(a3, a3, a3)
+Table 111:
+(a1, a3, a3)
+(a3, a1, a1)
+(a3, a1, a1)
+Table 112:
+(a1, a3, a3)
+(a3, a2, a3)
+(a3, a3, a3)
+Table 113:
+(a1, a3, a3)
+(a3, a3, a3)
+(a3, a3, a3)

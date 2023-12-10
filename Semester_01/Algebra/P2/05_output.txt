@@ -1,0 +1,1 @@
+1. the number of associative operations on a set A of size 6 is: 17061118
