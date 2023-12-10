@@ -1,0 +1,1 @@
+1. the number of bases for Z2^n over Z2 is 9999360
