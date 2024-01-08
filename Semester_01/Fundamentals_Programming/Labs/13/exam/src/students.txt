@@ -1,0 +1,11 @@
+101, angel mihail, 13, 10
+102, avram ionut, 13, 10
+103, vaxim raluca, 12, 9
+104, popescu roxana, 10, 10
+105, popescu andrei, 9, 10
+106, popescu marius, 8, 10
+107, micu mati, 14, 6
+108, micu alexia, 11, 8
+109, micu maria, 5, 8
+110, marius ioan, 12, 6
+111, mesi ron, 13, 4
