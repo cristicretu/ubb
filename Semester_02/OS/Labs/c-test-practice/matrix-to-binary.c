@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
 
     m = (int**)malloc(rows * sizeof(int*));
     for(i=0; i<rows; i++) {
-        m[i] = (int*)malloc(sizeof(int));
+        m[i] = (int*)malloc(cols * sizeof(int));
         for(j=0; j<cols; j++) {
             fscanf(f, "%d", &m[i][j]);
         }
@@ -35,13 +35,13 @@ int main(int argc, char** argv) {
         free(m);
         return 1;
     }
-    write(fd, rows, sizeof(int));
-    write(fd, cols, sizeof(int));
+    write(fd, &rows, sizeof(int));
+    write(fd, &cols, sizeof(int));
 
 
     for(i=0; i<rows; i++) {
         for(j=0; j<cols; j++) {
-            write(fd, m[i][j], sizeof(int));
+            write(fd, &m[i][j], sizeof(int));
         }
     }
     close(fd);
