@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <stdlib.h>
+
 int main(int argc, char** argv) {
     FILE* f;
     int rows, cols, i, j;
@@ -9,26 +12,28 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    fscanf(f, "%d %d", rows, cols);
-    m = (int*)malloc(rows*sizeof(int*));
+    fscanf(f, "%d %d", &rows, &cols);
+    m = (int**)malloc(rows*sizeof(int*));
     for(i=0; i<rows; i++) {
         m[i] = (int*)malloc(sizeof(int));
         for(j=0; j<cols; j++) {
-            fscanf(f, "%d", m[i][j]);
+            fscanf(f, "%d", &m[i][j]);
         }
     }
     fclose(f);
 
-    for(i=0; i<rows i++) {
+    for(i=0; i<rows; i++) {
         for(j=0; j<cols; j++) {
             printf("%2d ", m[i][j]);
         }
-        printf("\n);
+        printf("\n");
     }
 
     for(i=0; i<rows; i++) {
         free(m[i]);
     }
+
+    free(m);
 
     return 0;
 }
