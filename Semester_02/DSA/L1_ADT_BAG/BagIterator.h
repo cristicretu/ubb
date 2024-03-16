@@ -2,14 +2,16 @@
 
 class BagIterator
 {
-	//DO NOT CHANGE THIS PART
+	// DO NOT CHANGE THIS PART
 	friend class Bag;
-	
-private:
-	const Bag& bag;
-	//TODO  - Representation
 
-	BagIterator(const Bag& c);
+private:
+	const Bag &bag;
+	// TODO  - Representation
+	int position;
+
+	BagIterator(const Bag &c);
+
 public:
 	void first();
 	void next();

@@ -4,31 +4,36 @@
 
 using namespace std;
 
-
-BagIterator::BagIterator(const Bag& c): bag(c)
+BagIterator::BagIterator(const Bag &c) : bag(c)
 {
-	//TODO - Implementation
+	// TODO - Implementation
+	this->position = 0;
 }
 
-void BagIterator::first() {
-	//TODO - Implementation
+/*
+BC: Θ(1)
+WC: Θ(1)
+TC: Θ(1)
+*/
+void BagIterator::first()
+{
+	// TODO - Implementation
+	this->position = 0;
 }
 
-
-void BagIterator::next() {
-	//TODO - Implementation
+void BagIterator::next()
+{
+	// TODO - Implementation
 }
 
+bool BagIterator::valid() const
+{
 
-bool BagIterator::valid() const {
-	//TODO - Implementation
-	return false;
+	return this->bag.length != 0 &&
+		   this->position != -1;
 }
-
-
 
 TElem BagIterator::getCurrent() const
 {
-	//TODO - Implementation
-	return NULL_TELEM 
+	return NULL_TELEM
 }

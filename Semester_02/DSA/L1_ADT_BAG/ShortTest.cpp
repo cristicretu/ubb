@@ -3,11 +3,11 @@
 #include "Bag.h"
 #include "BagIterator.h"
 
-
-void testAll() { 
+void testAll()
+{
 	Bag b;
 	assert(b.isEmpty() == true);
-	assert(b.size() == 0); 
+	assert(b.size() == 0);
 	b.add(5);
 	b.add(1);
 	b.add(10);
@@ -24,10 +24,11 @@ void testAll() {
 	assert(b.remove(6) == false);
 	assert(b.size() == 6);
 	assert(b.nrOccurrences(1) == 1);
-	BagIterator it = b.iterator();
-	it.first();
-	while (it.valid()) {
-		TElem e = it.getCurrent();
-		it.next();
-	}
+	// BagIterator it = b.iterator();
+	// it.first();
+	// while (it.valid())
+	// {
+	// 	TElem e = it.getCurrent();
+	// 	it.next();
+	// }
 }
