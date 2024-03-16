@@ -19,11 +19,10 @@ element).
 	*/
 
 private:
-	TElem *elements;
-	int *frequencies;
+	TElem *frequencies;
 
 	int length;
-	// capacity is given by (maximum + abs(minimum) + 1)
+	int capacity;
 	TElem minimum;
 	TElem maximum;
 
@@ -55,6 +54,8 @@ public:
 
 	// checks if the bag is empty
 	bool isEmpty() const;
+
+	void printBag();
 
 	// destructor
 	~Bag();
