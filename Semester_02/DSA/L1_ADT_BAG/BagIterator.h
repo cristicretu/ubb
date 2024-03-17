@@ -9,6 +9,7 @@ private:
 	const Bag &bag;
 	// TODO  - Representation
 	int position;
+	int occurrences;
 
 	BagIterator(const Bag &c);
 

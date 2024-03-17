@@ -24,11 +24,11 @@ void testAll()
 	assert(b.remove(6) == false);
 	assert(b.size() == 6);
 	assert(b.nrOccurrences(1) == 1);
-	// BagIterator it = b.iterator();
-	// it.first();
-	// while (it.valid())
-	// {
-	// 	TElem e = it.getCurrent();
-	// 	it.next();
-	// }
+	BagIterator it = b.iterator();
+	it.first();
+	while (it.valid())
+	{
+		TElem e = it.getCurrent();
+		it.next();
+	}
 }

@@ -28,7 +28,7 @@ void Bag::add(TElem elem)
 		this->maximum = elem;
 
 		this->frequencies[0] = 1;
-		this->length = this->length + 1;
+		this->length = 1;
 		return;
 	}
 
@@ -116,8 +116,19 @@ bool Bag::remove(TElem elem)
 		}
 		else
 		{
+			if (this->length == 1)
+			{
+				this->minimum = NULL_TELEM;
+				this->maximum = NULL_TELEM;
+				this->length = 0;
+				this->capacity = 1;
+				delete[] this->frequencies;
+				this->frequencies = new int[1];
+				return true;
+			}
+
 			int oldMinimum = this->minimum;
-			for (int i = 0; i < this->capacity; i++)
+			for (int i = 1; i < this->capacity; i++)
 			{
 				if (this->frequencies[i] > 0)
 				{
@@ -156,7 +167,18 @@ bool Bag::remove(TElem elem)
 		}
 		else
 		{
-			for (int i = this->capacity - 1; i >= 0; i--)
+			if (this->length == 1)
+			{
+				this->minimum = NULL_TELEM;
+				this->maximum = NULL_TELEM;
+				this->length = 0;
+				this->capacity = 1;
+				delete[] this->frequencies;
+				this->frequencies = new int[1];
+				return true;
+			}
+
+			for (int i = this->capacity - 2; i >= 0; i--)
 			{
 				if (this->frequencies[i] > 0)
 				{
@@ -166,6 +188,7 @@ bool Bag::remove(TElem elem)
 			}
 
 			int newCapacity = this->maximum - this->minimum + 1;
+
 			int *newFrequencies = new int[newCapacity];
 
 			for (int i = 0; i < newCapacity; i++)
@@ -180,7 +203,7 @@ bool Bag::remove(TElem elem)
 		}
 	}
 
-	return false;
+	return true;
 }
 
 /*
@@ -190,6 +213,7 @@ TC: Θ(1)
 */
 bool Bag::search(TElem elem) const
 {
+	// cout << "I AM SEARCHING FOR " <<elem << "having F[] " << this->frequencies[elem - this->minimum] << " reuslt is" << (elem >= this->minimum && elem <= this->maximum && this->frequencies[elem - this->minimum] > 0) << endl;
 	return elem >= this->minimum && elem <= this->maximum && this->frequencies[elem - this->minimum] > 0;
 }
 
@@ -200,6 +224,10 @@ TC: Θ(1)
 */
 int Bag::nrOccurrences(TElem elem) const
 {
+	if (elem < this->minimum || elem > this->maximum)
+	{
+		return 0;
+	}
 	return this->frequencies[elem - this->minimum];
 }
 
@@ -230,20 +258,23 @@ BagIterator Bag::iterator() const
 
 void Bag::printBag()
 {
-	for (int i = 0; i < this->capacity; i++)
-	{
-		// if (this->frequencies[i] > 0)
-		// cout << i + this->minimum << " ";
-		cout << i + this->minimum << " ";
-		// cout << i << " ";
-	}
-	cout << endl;
-	for (int i = 0; i < this->capacity; i++)
-	{
-		// if (this->frequencies[i] > 0)
-		// cout << this->frequencies[i] << " ";
-		cout << this->frequencies[i] << " ";
-	}
+	cout << "I AM CAPACITY " << this->capacity << endl;
+	cout << "I AM LENGTH " << this->length << endl;
+	// for (int i = 0; i < this->capacity; i++)
+	// {
+	// if (this->frequencies[i] > 0)
+	// cout << i + this->minimum << " ";
+	// cout << i + this->minimum << " ";
+	// cout << i << " ";
+	// }
+	// cout << endl;
+	// cout << this->capacity << endl;
+	// for (int i = 0; i < this->capacity; i++)
+	// {
+	// if (this->frequencies[i] > 0)
+	// cout << this->frequencies[i] << " ";
+	// cout << this->frequencies[i] << " ";
+	// }
 	cout << endl;
 }
 
