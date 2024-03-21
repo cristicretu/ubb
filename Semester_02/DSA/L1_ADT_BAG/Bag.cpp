@@ -258,8 +258,8 @@ BagIterator Bag::iterator() const
 
 void Bag::printBag()
 {
-	cout << "I AM CAPACITY " << this->capacity << endl;
-	cout << "I AM LENGTH " << this->length << endl;
+	// cout << "I AM CAPACITY " << this->capacity << endl;
+	// cout << "I AM LENGTH " << this->length << endl;
 	// for (int i = 0; i < this->capacity; i++)
 	// {
 	// if (this->frequencies[i] > 0)
