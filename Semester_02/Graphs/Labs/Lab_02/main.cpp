@@ -61,6 +61,14 @@ class Graph {
     return std::vector<std::pair<uint32_t, uint32_t>>();
   }
 
+  std::vector<std::pair<uint32_t, uint32_t>> getInEdges(uint32_t vertex) const {
+    if (inbound.find(vertex) != inbound.end()) {
+      return std::vector<std::pair<uint32_t, uint32_t>>(
+          inbound.at(vertex).begin(), inbound.at(vertex).end());
+    }
+    return std::vector<std::pair<uint32_t, uint32_t>>();
+  }
+
   std::vector<uint32_t> getVerticesList() const {
     std::vector<uint32_t> verticesList;
     for (auto edge : outbound) {
@@ -168,6 +176,36 @@ class Graph {
 
     return copy;
   }
+
+  static Graph createRandomGraph(uint32_t vertices, uint32_t maxEdges) {
+    Graph randomGraph;
+    randomGraph.setVertices(vertices);
+
+    for (uint32_t i = 0; i < maxEdges; i++) {
+      uint32_t source = rand() % vertices;
+      uint32_t target = rand() % vertices;
+
+      if (source != target && !randomGraph.isEdge(source, target)) {
+        int cost = rand() % 100;
+        randomGraph.addEdge(source, target, cost);
+      } else {
+        i--;
+      }
+    }
+
+    return randomGraph;
+  }
+
+  // Graph createRandomGraph(uint32_t vertices, uint32_t edges) {
+  //   Graph randomGraph(vertices, edges);
+  //   for (uint32_t i = 0; i < edges; i++) {
+  //     uint32_t source = rand() % vertices;
+  //     uint32_t target = rand() % vertices;
+  //     int cost = rand() % 100;
+  //     randomGraph.addEdge(source, target, cost);
+  //   }
+  //   return randomGraph;
+  // }
 };
 class UI {
  private:
