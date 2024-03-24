@@ -294,9 +294,7 @@ class UI {
         std::cout << "Enter Edge ID: ";
         std::cin >> edges;
         std::pair<uint32_t, uint32_t> endpoints = graph.getEndpoints(edges);
-        if (endpoints.first !=
-            static_cast<uint32_t>(
-                -1)) {  // Adjusted to handle unsigned type comparison
+        if (endpoints.first != static_cast<uint32_t>(-1)) {
           std::cout << "Source: " << endpoints.first
                     << ", Target: " << endpoints.second << std::endl;
         } else {
@@ -458,8 +456,5 @@ class UI {
 int main() {
   UI ui;
   ui.run();
-
-  // ui.readGraphFromFile("graph1k.txt");
-  // ui.printGraph();
   return 0;
 }
