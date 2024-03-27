@@ -1,16 +1,15 @@
-#include "Bag.h"
-#include "ShortTest.h"
-#include "ExtendedTest.h"
 #include <iostream>
+
+#include "Bag.h"
+#include "ExtendedTest.h"
+#include "ShortTest.h"
 
 using namespace std;
 
-int main()
-{
+int main() {
+  testAll();
+  cout << "Short tests over" << endl;
+  testAllExtended();
 
-	testAll();
-	cout << "Short tests over" << endl;
-	testAllExtended();
-
-	cout << "All test over" << endl;
+  cout << "All test over" << endl;
 }

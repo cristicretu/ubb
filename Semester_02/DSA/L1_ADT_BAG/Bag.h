@@ -5,58 +5,47 @@
 #define NULL_TELEM -111111;
 typedef int TElem;
 class BagIterator;
-class Bag
-{
+class Bag {
+ private:
+  TElem *frequencies;
 
-	/*
-ADT Bag – represented as a dynamic array of frequencies.
-For example, the bag [5, 10, -1, 2, 3, 10, 5, 5, -5] will be represented as [1, 0, 0, 0, 1, 0, 0, 1,
-1, 0, 3, 0, 0, 0, 0, 2], built in the following way:
-- the interval of values [-5, 10] is translated into the interval [0, 16] of positions
-- at position 0 we have the frequency of -5 (minimum element), on position 1 we
-have the frequency of -4, …, on position 15 we have the frequency of 10 (maximum
-element).
-	*/
+  int length;
+  int capacity;
+  TElem minimum;
+  TElem maximum;
 
-private:
-	TElem *frequencies;
+  // DO NOT CHANGE THIS PART
+  friend class BagIterator;
 
-	int length;
-	int capacity;
-	TElem minimum;
-	TElem maximum;
+ public:
+  // constructor
+  Bag();
 
-	// DO NOT CHANGE THIS PART
-	friend class BagIterator;
+  // adds an element to the bag
+  void add(TElem e);
 
-public:
-	// constructor
-	Bag();
+  // removes one occurence of an element from a bag
+  // returns true if an element was removed, false otherwise (if e was not part
+  // of the bag)
+  bool remove(TElem e);
 
-	// adds an element to the bag
-	void add(TElem e);
+  // checks if an element appearch is the bag
+  bool search(TElem e) const;
 
-	// removes one occurence of an element from a bag
-	// returns true if an element was removed, false otherwise (if e was not part of the bag)
-	bool remove(TElem e);
+  // returns the number of occurrences for an element in the bag
+  int nrOccurrences(TElem e) const;
 
-	// checks if an element appearch is the bag
-	bool search(TElem e) const;
+  // returns the number of elements from the bag
+  int size() const;
 
-	// returns the number of occurrences for an element in the bag
-	int nrOccurrences(TElem e) const;
+  // returns an iterator for this bag
+  BagIterator iterator() const;
 
-	// returns the number of elements from the bag
-	int size() const;
+  // checks if the bag is empty
+  bool isEmpty() const;
 
-	// returns an iterator for this bag
-	BagIterator iterator() const;
+  void printBag();
 
-	// checks if the bag is empty
-	bool isEmpty() const;
-
-	void printBag();
-
-	// destructor
-	~Bag();
+  // destructor
+  ~Bag();
 };
