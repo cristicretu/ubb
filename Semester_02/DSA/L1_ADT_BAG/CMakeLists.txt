@@ -1,8 +1,13 @@
 cmake_minimum_required(VERSION 3.22.4)
 project(Bag)
 
+
+add_compile_options(-fprofile-arcs -ftest-coverage)
+add_link_options(-fprofile-arcs -ftest-coverage)
+
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS_DEBUG "-g -DDEBUG")
+
 
 include_directories(.)
 
@@ -16,4 +21,4 @@ add_executable(Bag
         ExtendedTest.h
         ShortTest.cpp
         ShortTest.h)
-target_compile_options(Bag PRIVATE -g -Wall -O2)
+target_compile_options(Bag PRIVATE -g -Wall --coverage)
