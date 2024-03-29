@@ -1,11 +1,11 @@
 #!/bin/bash
 
+# calculates the sum and average of all the pid's in the system
 
-for arg in $@; do
-    if [ -f $arg ]; then
-        sed "s/[0-9A-Za-z]//g" $arg
-    fi
+sum=0
+for pid in $(ps -e | tail -n +2 | awk '{print $2}'); do
+    sum=$((sum + pid))
+done
 
-    shift 1
-done | sort | uniq
-
+echo "Sum: $sum"
+echo "Average: $((sum / $(ps -e | wc -l)))"
