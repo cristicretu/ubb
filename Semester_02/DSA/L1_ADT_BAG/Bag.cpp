@@ -18,7 +18,8 @@ Bag::Bag() {
 /*
 BC: Θ(1) - element is between minimum and maximum
 WC: Θ(n) - element is not between minimum and maximum, so we need to resize the
-array TC: O(n)
+array
+TC: O(n)
 */
 void Bag::add(TElem elem) {
   int oldMinimum = this->minimum, oldMaximum = this->maximum;
@@ -261,13 +262,35 @@ void Bag::printBag() {
   // }
   // cout << endl;
   // cout << this->capacity << endl;
-  // for (int i = 0; i < this->capacity; i++)
-  // {
-  // if (this->frequencies[i] > 0)
-  // cout << this->frequencies[i] << " ";
-  // cout << this->frequencies[i] << " ";
-  // }
+  for (int i = 0; i < this->capacity; i++) {
+    if (this->frequencies[i] > 0) cout << this->frequencies[i] << " ";
+  }
   cout << endl;
+}
+
+/*
+BC: Θ(1) if the element already exists
+WC: Θ(n) element is does not exist and is outside the [min, max] interval
+TC: O(n)
+*/
+void Bag::addOccurences(int nr, TElem elem) {
+  if (nr < 0) {
+    throw nr;
+  }
+
+  bool found = Bag::search(elem);
+
+  if (found) {
+    this->frequencies[elem - this->minimum] += nr;
+  } else {
+    // for (int i = 0; i < nr; i++) {
+    //   Bag::add(elem);
+    // }
+    Bag::add(elem);
+    this->frequencies[elem - this->minimum] += nr - 1;
+  }
+
+  this->length = this->length + nr;
 }
 
 Bag::~Bag() { delete[] this->frequencies; }
