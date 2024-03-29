@@ -31,4 +31,23 @@ void testAll() {
     TElem e = it.getCurrent();
     it.next();
   }
+
+  b.addOccurences(20, 6);
+  assert(b.nrOccurrences(6) == 20);
+
+  b.addOccurences(200, 60);
+  assert(b.nrOccurrences(60) == 200);
+
+  try {
+    b.addOccurences(-200, 6);
+    assert(false);
+  } catch (int nr) {
+    assert(true);
+  }
+
+  b.addOccurences(99999, 99999);
+  assert(b.nrOccurrences(99999) == 99999);
+
+  b.addOccurences(10, 10);
+  assert(b.nrOccurrences(10) == 11);
 }

@@ -44,6 +44,8 @@ class Bag {
   // checks if the bag is empty
   bool isEmpty() const;
 
+  void addOccurences(int nr, TElem elem);
+
   void printBag();
 
   // destructor
