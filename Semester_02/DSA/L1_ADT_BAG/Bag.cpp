@@ -22,6 +22,8 @@ array TC: O(n)
 */
 void Bag::add(TElem elem) {
   int oldMinimum = this->minimum, oldMaximum = this->maximum;
+  // exception if it's the first element, so both maximum and minimum are the
+  // same
   if (Bag::size() == 0) {
     this->minimum = elem;
     this->maximum = elem;
@@ -31,6 +33,8 @@ void Bag::add(TElem elem) {
     return;
   }
 
+  // If we got a new mininum or a new maximum, we have to resize the array,
+  // otherwise we just increment the frequencies
   bool resize = false;
   if (elem < this->minimum) {
     this->minimum = elem;
@@ -42,11 +46,13 @@ void Bag::add(TElem elem) {
   }
 
   if (!resize) {
+    // Just increment the frequencies
     this->frequencies[elem - this->minimum]++;
     this->length = this->length + 1;
     return;
   }
 
+  // the new cpacity adjusted for the new maximum or minimum
   int newCapacity = maximum - minimum + 1;
 
   int *newFrequencies = new int[newCapacity];
@@ -55,6 +61,8 @@ void Bag::add(TElem elem) {
     newFrequencies[i] = 0;
   }
 
+  // if we have a new minimum ,we have to shirt to the right all element by the
+  // difference of the old minimum and the new minimum
   if (oldMinimum > this->minimum) {
     int j = 0;
     for (int i = oldMinimum - this->minimum; i < newCapacity; i++) {
@@ -63,13 +71,16 @@ void Bag::add(TElem elem) {
     newFrequencies[0]++;
   }
   if (oldMaximum < this->maximum) {
+    // otherwise we just copy everything
     for (int i = 0; i < this->capacity; i++) {
       newFrequencies[i] = this->frequencies[i];
     }
 
+    // and adjust the last element frequency (the maximum)
     newFrequencies[newCapacity - 1]++;
   }
 
+  // cleanup after resze
   delete[] this->frequencies;
   this->frequencies = newFrequencies;
   this->capacity = newCapacity;
@@ -100,6 +111,7 @@ bool Bag::remove(TElem elem) {
       this->length = this->length - 1;
       return true;
     } else {
+      // If we only have one element, then go back to the initial structure
       if (this->length == 1) {
         this->minimum = NULL_TELEM;
         this->maximum = NULL_TELEM;
@@ -110,6 +122,7 @@ bool Bag::remove(TElem elem) {
         return true;
       }
 
+      // Find the new minimum
       int oldMinimum = this->minimum;
       for (int i = 1; i < this->capacity; i++) {
         if (this->frequencies[i] > 0) {
@@ -118,18 +131,22 @@ bool Bag::remove(TElem elem) {
         }
       }
 
+      // Calculate the new capacity based on the new minimum element
       int newCapacity = this->maximum - this->minimum + 1;
       int *newFrequencies = new int[newCapacity];
 
+      // Init a new list with 0
       for (int i = 0; i < newCapacity; i++) {
         newFrequencies[i] = 0;
       }
 
+      // Logic for copying all frequencies starting from the new minimum element
       int j = 0;
       for (int i = this->minimum - oldMinimum; i < this->capacity; i++) {
         newFrequencies[j++] = this->frequencies[i];
       }
 
+      // cleanup
       delete[] this->frequencies;
       this->frequencies = newFrequencies;
       this->capacity = newCapacity;
@@ -137,11 +154,14 @@ bool Bag::remove(TElem elem) {
     }
   }
   if (elem == this->maximum) {
+    // If the element appears more than 1 time, good, just decrement
     if (this->frequencies[elem - this->minimum] > 1) {
       this->frequencies[elem - this->minimum]--;
       this->length = this->length - 1;
       return true;
     } else {
+      // Else check if it's the only element, and go back to the initial
+      // structure
       if (this->length == 1) {
         this->minimum = NULL_TELEM;
         this->maximum = NULL_TELEM;
@@ -152,6 +172,7 @@ bool Bag::remove(TElem elem) {
         return true;
       }
 
+      // find the new maximum for the array
       for (int i = this->capacity - 2; i >= 0; i--) {
         if (this->frequencies[i] > 0) {
           this->maximum = i + this->minimum;
@@ -159,14 +180,17 @@ bool Bag::remove(TElem elem) {
         }
       }
 
+      // calculate the new capacity for the new maximum
       int newCapacity = this->maximum - this->minimum + 1;
 
       int *newFrequencies = new int[newCapacity];
 
+      // just copy everything as it was until we reach the new maximum element
       for (int i = 0; i < newCapacity; i++) {
         newFrequencies[i] = this->frequencies[i];
       }
 
+      // cleanup
       delete[] this->frequencies;
       this->frequencies = newFrequencies;
       this->capacity = newCapacity;
