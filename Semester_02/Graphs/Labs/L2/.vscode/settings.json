@@ -58,6 +58,8 @@
     "unordered_map": "cpp",
     "variant": "cpp",
     "algorithm": "cpp",
-    "list": "cpp"
+    "list": "cpp",
+    "deque": "cpp",
+    "queue": "cpp"
   }
 }

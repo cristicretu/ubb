@@ -249,38 +249,56 @@ class Graph {
     return verticesList;
   }
 
+  /// @brief  Find the lowest length path between two vertices using BFS
+  /// @param startVertex The starting vertex
+  /// @param endVertex The ending vertex
+  /// @return The lowest length path between the two vertices (if it exists)
   std::vector<uint32_t> findLowestLengthPath(uint32_t startVertex,
                                              uint32_t endVertex) {
-    std::unordered_map<uint32_t, uint32_t> distance;
-    std::unordered_map<uint32_t, uint32_t> predecessor;
-    std::queue<uint32_t> queue;
+    std::unordered_map<uint32_t, uint32_t>
+        distance;  /// For storing the distances from the endVertex, we use this
+                   /// to mark the vertices as visited or not
 
-    for (const auto& p : outbound) {
+    std::unordered_map<uint32_t, uint32_t>
+        predecessor;  /// For storing the predecessor of each vertex, to
+                      /// reconstruct the path
+
+    std::queue<uint32_t> queue;  /// For BFS traversal
+
+    for (const auto& p : outbound) {  /// Mark all vertices as unvisited
       distance[p.first] = UINT_MAX;
     }
 
-    distance[endVertex] = 0;
-    queue.push(endVertex);
+    distance[endVertex] = 0;  /// Distance from endVertex to itself is 0
+    queue.push(endVertex);    /// Start from the endVertex
 
-    while (!queue.empty()) {
-      uint32_t currentVertex = queue.front();
-      queue.pop();
+    while (!queue.empty()) {                   /// BFS traversal
+      uint32_t currentVertex = queue.front();  /// Retrieve the current vertex
+      queue.pop();  /// Remove the current vertex from the queue
 
-      for (const auto& edge : getInEdges(currentVertex)) {
+      for (const auto& edge :
+           getInEdges(currentVertex)) {  /// Traverse through all inboung edges
+                                         /// of the current vertex
         uint32_t neighbor = edge.first;
-        if (distance[neighbor] == UINT_MAX) {
-          distance[neighbor] = distance[currentVertex] + 1;
+        if (distance[neighbor] ==
+            UINT_MAX) {  /// If the neighbor vertex is unvisited, push it to the
+                         /// queue, update the distance and predecessor
+          distance[neighbor] =
+              distance[currentVertex] + getCost(neighbor, currentVertex);
           predecessor[neighbor] = currentVertex;
           queue.push(neighbor);
         }
       }
     }
 
-    std::vector<uint32_t> path;
-    if (distance[startVertex] != UINT_MAX) {
+    std::vector<uint32_t> path;  /// Reconstruct the path from startVertex to
+                                 /// endVertex using the predecessor map
+    if (distance[startVertex] != UINT_MAX) {  /// This means that a path exists
+      /// Go down the tree from startVertex to endVertex
       for (uint32_t at = startVertex; at != endVertex; at = predecessor[at]) {
         path.push_back(at);
       }
+      /// Push also the endVertex
       path.push_back(endVertex);
     }
 
@@ -428,18 +446,12 @@ class UI {
         std::cout << "Random graph created.\n";
         break;
       case 17:
-        std::cout << "Enter ending vertex for backwards BFS: ";
+        std::cout << "Enter starting vertex for backwards BFS: ";
         std::cin >> v1;
+        std::cout << "Enter ending vertex for backwards BFS: ";
+        std::cin >> v2;
+
         std::cout << "Backwards BFS: ";
-        for (auto vertex : graph.backwards_bfs(v1)) {
-          std::cout << vertex << " ";
-        }
-        std::cout << std::endl;
-        break;
-      case 18:
-        std::cout << "Enter starting and ending vertices for the path: ";
-        std::cin >> v1 >> v2;
-        std::cout << "Lowest length path: ";
         for (auto vertex : graph.findLowestLengthPath(v1, v2)) {
           std::cout << vertex << " ";
         }
