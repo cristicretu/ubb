@@ -4,10 +4,28 @@
 typedef int TElem;
 #define NULL_TELEM 0
 
+/*
+ADT Matrix - represented as a sparse matrix, using a Double linked list with <line, column, value> triples ordered lexicographifcally considering the line and column of every element
+*/
+
+typedef struct Node {
+	int line;
+	int column;
+	TElem value;
+	Node* next;
+	Node* prev;
+};
+
 class Matrix {
 
 private:
 	//TODO - Representation
+	Node* head;
+	Node* tail;
+	int lines;
+	int cols;
+	int length;
+
 public:
 	//constructor
 	Matrix(int nrLines, int nrCols);
@@ -27,4 +45,5 @@ public:
 	//throws exception if (i,j) is not a valid position in the Matrix
 	TElem modify(int i, int j, TElem e);
 
+	bool isInBounds(int i, int j) const;
 };

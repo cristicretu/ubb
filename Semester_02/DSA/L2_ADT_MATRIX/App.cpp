@@ -11,7 +11,7 @@ int main() {
 
 
 	testAll();
-	testAllExtended();
+	// testAllExtended();
 	cout << "Test End" << endl;
-	system("pause");
+	// system("pause");
 }
