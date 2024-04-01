@@ -1,0 +1,1 @@
+grep -E -c '.*' ceva
