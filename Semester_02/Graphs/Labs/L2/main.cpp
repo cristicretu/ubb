@@ -14,6 +14,11 @@ class Graph {
   std::unordered_map<int, std::list<std::pair<uint32_t, uint32_t>>> inbound;
   std::unordered_map<int, int> cost;
 
+  /// For the biconnected components
+  std::vector<int> discoveryLevel, lowReach;
+  std::stack<uint32_t> stack;
+  std::vector<std::vector<uint32_t>> articulated_components;
+
   int generateEdgeID() { return edges++; }
 
  public:
@@ -318,30 +323,41 @@ class Graph {
     return g;
   }
 
-  void DFS1(uint32_t node, std::vector<bool>& visited,
-            std::stack<uint32_t>& finishStack) {
+  /// @brief Visit the vertex and all its out edges
+  /// @param node  The current vertex
+  /// @param visited  The vector of visited vertices
+  /// @param finishStack  The stack of vertices (used for computing the strongly
+  /// connected components)
+  void DFS_Outbound(uint32_t node, std::vector<bool>& visited,
+                    std::stack<uint32_t>& finishStack) {
     visited[node] = true;
     auto edges = this->getOutEdges(node);  /// Iterate over out edges
     for (const auto& edge : edges) {  /// If the vertex is not visited, visit it
       if (!visited[edge.first]) {
-        DFS1(edge.first, visited, finishStack);
+        DFS_Outbound(edge.first, visited, finishStack);
       }
     }
     finishStack.push(node);  /// Push the vertex to the stack
   }
 
-  void DFS2(uint32_t node, std::vector<bool>& visited,
-            std::vector<uint32_t>& component) {
+  /// @brief Visit the vertex and all its in edges
+  /// @param node  The current vertex
+  /// @param visited  The vector of visited vertices
+  /// @param component  The vector of the current strongly connected component
+  void DFS_Inbound(uint32_t node, std::vector<bool>& visited,
+                   std::vector<uint32_t>& component) {
     visited[node] = true;
     component.push_back(node);
     auto edges = this->getInEdges(node);  /// Iterate over in edges
     for (const auto& edge : edges) {
       if (!visited[edge.first]) {
-        DFS2(edge.first, visited, component);
+        DFS_Inbound(edge.first, visited, component);
       }
     }
   }
 
+  /// @brief Find the strongly connected components of the graph
+  /// @return The vector of strongly connected components
   std::vector<std::vector<uint32_t>> findStronglyConnectedComponents() {
     std::vector<bool> visited(
         this->vertices, false);  /// Initialize all vertices as not visited
@@ -353,7 +369,7 @@ class Graph {
     // Fill vertices in stack according to their finishing times
     for (uint32_t i = 0; i < this->vertices; ++i) {
       if (!visited[i]) {
-        DFS1(i, visited, finishStack);
+        DFS_Outbound(i, visited, finishStack);
       }
     }
 
@@ -367,7 +383,7 @@ class Graph {
       // Get one strongly connected component of the popped vertex
       if (!visited[v]) {
         std::vector<uint32_t> component;
-        this->DFS2(v, visited, component);
+        this->DFS_Inbound(v, visited, component);
         stronglyConnectedComponents.push_back(component);
       }
     }
@@ -375,6 +391,66 @@ class Graph {
     std::cout << "Size of strongly connected components: "
               << stronglyConnectedComponents.size() << "\n";
     return stronglyConnectedComponents;
+  }
+
+  /// @brief Use Kosaraju's algorithm to find the strongly connected components
+  /// @param currentNode  The current node
+  /// @param parent  The parent node (used for the discovery level)
+  void ExploreBiconnectedComponents(uint32_t currentNode, uint32_t parent) {
+    discoveryLevel[currentNode] =
+        discoveryLevel[parent] +
+        1;  /// Set the discovery level of the current node
+    lowReach[currentNode] =
+        discoveryLevel[currentNode];  /// Set the low reach of the current node
+    stack.push(currentNode);          /// Push the current node to the stack
+
+    auto edges = getOutEdges(currentNode);
+    for (auto& edge :
+         edges) {  /// Iterate over the out edges of the current node
+      uint32_t neighbour = edge.first;
+      if (neighbour == parent) continue;  /// Skip the parent node
+      if (discoveryLevel[neighbour] !=
+          0) {  /// If the neighbour is already visited
+        lowReach[currentNode] = std::min(
+            lowReach[currentNode],
+            discoveryLevel[neighbour]);  /// Update the low reach, by the
+                                         /// discovery level of the neighbour
+      } else {
+        ExploreBiconnectedComponents(neighbour, currentNode);  /// Start DFS to
+                                                               /// the neighbour
+        lowReach[currentNode] = std::min(lowReach[currentNode],
+                                         lowReach[neighbour]);  /// Update the
+                                                                /// low reach
+        if (lowReach[neighbour] >= discoveryLevel[currentNode]) {
+          articulated_components.push_back({});  /// Start a new component
+          while (stack.top() != neighbour) {     /// Pop the stack until the
+                                                 /// neighbour is reached
+            articulated_components.back().push_back(stack.top());
+            stack.pop();
+          }
+          articulated_components.back().push_back(stack.top());
+          stack.pop();
+          articulated_components.back().push_back(currentNode);
+        }
+      }
+    }
+  }
+
+  /// @brief Find the biconnected components of the graph
+  /// @return The vector of biconnected components
+  std::vector<std::vector<uint32_t>> FindBiconnectedComponents() {
+    discoveryLevel.assign(getVertices(), 0);  /// Initialize the discovery level
+    lowReach.assign(getVertices(), 0);        /// Initialize the low reach
+    while (!stack.empty()) stack.pop();       /// Clear the stack
+    articulated_components.clear();
+
+    for (uint32_t i = 0; i < getVertices(); ++i) {  /// Construct the components
+      if (discoveryLevel[i] == 0) {
+        ExploreBiconnectedComponents(i, i);
+      }
+    }
+
+    return articulated_components;
   }
 };
 class UI {
@@ -408,6 +484,7 @@ class UI {
     std::cout << "|==========================|\n";
     std::cout << "17. Backwards BFS\n";
     std::cout << "18. Strongly Connected Components\n";
+    std::cout << "19. Biconnected Components\n";
     std::cout << "0. Exit\n\n";
     std::cout << "Enter your choice: ";
   }
@@ -533,6 +610,15 @@ class UI {
       case 18:  /// Strongly Connected Components, L2 Bonus
         std::cout << "Strongly Connected Components:\n";
         for (const auto& component : graph.findStronglyConnectedComponents()) {
+          for (const auto& vertex : component) {
+            std::cout << vertex << " ";
+          }
+          std::cout << std::endl;
+        }
+        break;
+      case 19:  /// Biconnected Components, L2 Bonus
+        std::cout << "Biconnected Components:\n";
+        for (const auto& component : graph.FindBiconnectedComponents()) {
           for (const auto& vertex : component) {
             std::cout << vertex << " ";
           }
