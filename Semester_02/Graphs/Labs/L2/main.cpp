@@ -3,6 +3,7 @@
 #include <list>
 #include <map>
 #include <queue>
+#include <stack>
 #include <unordered_map>
 #include <vector>
 
@@ -304,6 +305,77 @@ class Graph {
 
     return path;
   }
+
+  /// @brief Get the transpose of the graph, by reversing the edges
+  /// @return The transpose of the graph
+  Graph getTranspose() const {
+    Graph g(vertices);
+    for (auto& vertex : outbound) {
+      for (auto& pair : vertex.second) {
+        g.addEdge(pair.first, vertex.first, getCost(vertex.first, pair.first));
+      }
+    }
+    return g;
+  }
+
+  void DFS1(uint32_t node, std::vector<bool>& visited,
+            std::stack<uint32_t>& finishStack) {
+    visited[node] = true;
+    auto edges = this->getOutEdges(node);  /// Iterate over out edges
+    for (const auto& edge : edges) {  /// If the vertex is not visited, visit it
+      if (!visited[edge.first]) {
+        DFS1(edge.first, visited, finishStack);
+      }
+    }
+    finishStack.push(node);  /// Push the vertex to the stack
+  }
+
+  void DFS2(uint32_t node, std::vector<bool>& visited,
+            std::vector<uint32_t>& component) {
+    visited[node] = true;
+    component.push_back(node);
+    auto edges = this->getInEdges(node);  /// Iterate over in edges
+    for (const auto& edge : edges) {
+      if (!visited[edge.first]) {
+        DFS2(edge.first, visited, component);
+      }
+    }
+  }
+
+  std::vector<std::vector<uint32_t>> findStronglyConnectedComponents() {
+    std::vector<bool> visited(
+        this->vertices, false);  /// Initialize all vertices as not visited
+    std::stack<uint32_t> finishStack;  /// Stack to store the finishing times
+    std::vector<std::vector<uint32_t>>
+        stronglyConnectedComponents;  /// Store the strongly connected
+                                      /// components
+
+    // Fill vertices in stack according to their finishing times
+    for (uint32_t i = 0; i < this->vertices; ++i) {
+      if (!visited[i]) {
+        DFS1(i, visited, finishStack);
+      }
+    }
+
+    // Mark all the vertices as not visited (for the second DFS)
+    std::fill(visited.begin(), visited.end(), false);
+
+    while (!finishStack.empty()) {
+      uint32_t v = finishStack.top();
+      finishStack.pop();
+
+      // Get one strongly connected component of the popped vertex
+      if (!visited[v]) {
+        std::vector<uint32_t> component;
+        this->DFS2(v, visited, component);
+        stronglyConnectedComponents.push_back(component);
+      }
+    }
+
+    std::cout << "Size of strongly connected components: "
+              << stronglyConnectedComponents.size() << "\n";
+    return stronglyConnectedComponents;
+  }
 };
 class UI {
  private:
@@ -335,6 +407,7 @@ class UI {
     std::cout << "16. Create a random graph\n";
     std::cout << "|==========================|\n";
     std::cout << "17. Backwards BFS\n";
+    std::cout << "18. Strongly Connected Components\n";
     std::cout << "0. Exit\n\n";
     std::cout << "Enter your choice: ";
   }
@@ -445,7 +518,7 @@ class UI {
         graph = Graph::createRandomGraph(vertices, edges);
         std::cout << "Random graph created.\n";
         break;
-      case 17:
+      case 17:  /// Backwards BFS, L2 Assignment
         std::cout << "Enter starting vertex for backwards BFS: ";
         std::cin >> v1;
         std::cout << "Enter ending vertex for backwards BFS: ";
@@ -456,6 +529,15 @@ class UI {
           std::cout << vertex << " ";
         }
         std::cout << std::endl;
+        break;
+      case 18:  /// Strongly Connected Components, L2 Bonus
+        std::cout << "Strongly Connected Components:\n";
+        for (const auto& component : graph.findStronglyConnectedComponents()) {
+          for (const auto& vertex : component) {
+            std::cout << vertex << " ";
+          }
+          std::cout << std::endl;
+        }
         break;
       case 0:
         std::cout << "Exiting...\n";
@@ -477,6 +559,8 @@ class UI {
   void readGraphFromFile(std::string filename) {
     std::ifstream file(filename);
     if (file.is_open()) {
+      graph = Graph();
+
       uint32_t vertices, edges;
       file >> vertices >> edges;
 
