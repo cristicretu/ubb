@@ -92,6 +92,7 @@ TElem Matrix::modify(int i, int j, TElem e) {
     if (e == NULL_TELEM) {  /// If the new value is zero, remove the node
       if (prev) prev->next = current->next;
       if (current->next) current->next->prev = prev;
+
       if (current == head) head = current->next;
       if (current == tail) tail = prev;
       delete current;
@@ -99,7 +100,8 @@ TElem Matrix::modify(int i, int j, TElem e) {
     } else {  /// If the new value is not zero, just update the value
       current->value = e;
     }
-    return old;                  /// Return the old value
+    return old;  /// Return the old value
+
   } else if (e != NULL_TELEM) {  /// If the element is not found and e is not
                                  /// zero, insert a new node
     Node* newNode = new Node{i, j, e, current, prev};
@@ -116,4 +118,59 @@ TElem Matrix::modify(int i, int j, TElem e) {
     length++;
   }
   return NULL_TELEM;
+}
+
+void Matrix::setElemsOnLine(int line, TElem elem) {
+  if (line < 0 || line >= this->nrLines()) throw line;
+
+  Node* current = head;
+  Node* prev = nullptr;
+
+  while (current != nullptr && current->line < line) {
+    prev = current;
+    current = current->next;
+  }
+
+  while (current != nullptr && current->line == line) {
+    if (elem == NULL_TELEM) {
+      Node* toDelete = current;
+      if (prev) {
+        prev->next = current->next;
+      } else {
+        head = current->next;
+      }
+      if (current->next) {
+        current->next->prev = prev;
+      } else {
+        tail = prev;
+      }
+      current = current->next;
+      delete toDelete;
+      length--;
+    } else if (current->value != elem) {
+      current->value = elem;
+      current = current->next;
+    } else {
+      current = current->next;
+      prev = prev->next;
+    }
+  }
+
+  if (elem != NULL_TELEM && (prev == nullptr || prev->line < line)) {
+    for (int col = 0; col < this->nrColumns(); col++) {
+      Node* newNode = new Node{line, col, elem, current, prev};
+      if (prev) {
+        prev->next = newNode;
+      } else {
+        head = newNode;
+      }
+      if (current) {
+        current->prev = newNode;
+      } else {
+        tail = newNode;
+      }
+      prev = newNode;
+      length++;
+    }
+  }
 }

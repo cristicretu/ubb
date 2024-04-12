@@ -49,4 +49,6 @@ class Matrix {
   TElem modify(int i, int j, TElem e);
 
   bool isInBounds(int i, int j) const;
+
+  void setElemsOnLine(int line, TElem elem);
 };
