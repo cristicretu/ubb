@@ -1,20 +1,14 @@
+#include <iostream>
+
 #include "ExtendedTest.h"
 #include "ShortTest.h"
-
 #include "SortedMap.h"
-
-
-#include <iostream>
 using namespace std;
 
-
 int main() {
-	testAll();
-	testAllExtended();
+  testAll();
+  testAllExtended();
 
-	cout << "That's all!" << endl;
-	system("pause");
-	return 0;
+  cout << "That's all!" << endl;
+  return 0;
 }
-
-
