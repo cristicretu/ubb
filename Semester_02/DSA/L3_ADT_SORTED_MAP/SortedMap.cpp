@@ -29,6 +29,9 @@ void SortedMap::resize() {
   capacity = newCapacity;
 }
 
+// BC: Theta(1)
+// WC: Theta(1)
+// AC: Theta(1)
 SortedMap::SortedMap(Relation r) {
   this->relation = r;
   this->capacity = 1;
@@ -40,6 +43,10 @@ SortedMap::SortedMap(Relation r) {
   this->next[0] = -1;  /// No next element
 }
 
+// BC: Theta(1), when the key is the first element or the map is empty
+// WC: Theta(n), when the key is the last element, so we have to iterate through
+// all the elements
+// AC : O(n)
 TValue SortedMap::add(TKey k, TValue v) {
   if (firstEmpty == -1) {  /// No more empty spaces, resize
     resize();
@@ -77,6 +84,10 @@ TValue SortedMap::add(TKey k, TValue v) {
   return NULL_TVALUE;
 }
 
+// BC: Theta(1), when the key is the first element
+// WC: Theta(n), when the key is the last element, so we have to iterate through
+// all the elements
+// AC: O(n)
 TValue SortedMap::search(TKey k) const {
   int current = head;
   while (current != -1) {  /// Iterate through the elements
@@ -89,6 +100,10 @@ TValue SortedMap::search(TKey k) const {
   return NULL_TVALUE;
 }
 
+// BC: Theta(1), when the key is the first element, or the map is empty
+// WC: Theta(n), when the key is the last element, so we have to iterate through
+// all the elements
+// AC: O(n)
 TValue SortedMap::remove(TKey k) {
   int current = head;  /// Use 2 pointers to keep track of the current and
                        /// previous element
@@ -121,8 +136,14 @@ TValue SortedMap::remove(TKey k) {
   return removedValue;
 }
 
+// BC: Theta(1)
+// WC: Theta(1)
+// AC: Theta(1)
 int SortedMap::size() const { return this->len; }
 
+// BC: Theta(1)
+// WC: Theta(1)
+// AC: Theta(1)
 bool SortedMap::isEmpty() const { return this->len == 0; }
 
 SMIterator SortedMap::iterator() const { return SMIterator(*this); }
