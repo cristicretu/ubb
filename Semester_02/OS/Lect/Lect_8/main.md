@@ -18,6 +18,7 @@ unlock(&l)  | unlock(&l)
 
 lock(&m)
 while (ceva) {
+    wait(&c, &m); -> unlock(&m), wait to temp, lock(&m)
     // do something
 }
 unlock(&m);
