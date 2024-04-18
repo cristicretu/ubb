@@ -32,3 +32,9 @@ if (ceva) {
 // do something
 unlock(&l);
 
+## sem_t
+
+init
+wait
+post
+destroy
