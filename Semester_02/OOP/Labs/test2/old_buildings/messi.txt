@@ -1,0 +1,4 @@
+Block B1 was built in 1960 and has 100 apartments, out of which 90 are occupied.
+Block B2 was built in 1980 and has 50 apartments, out of which 5 are occupied.
+House H1 was built in 1900 and is historical.
+House H2 was built in 2000 and is not historical.
