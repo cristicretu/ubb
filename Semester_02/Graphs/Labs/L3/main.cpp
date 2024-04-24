@@ -391,7 +391,7 @@ class Graph {
     for (int i = 0; i < V; ++i) {
       for (int j = 0; j < V; ++j) {
         for (int k = 0; k < V; ++k) {
-          if (A[i][k] != INT_MAX && B[k][j] != INT_MAX) {
+          if (A[i][k] < INT_MAX && B[k][j] < INT_MAX) {
             int possibleCost = A[i][k] + B[k][j];
             if (possibleCost < C[i][j]) {
               C[i][j] = possibleCost;
@@ -411,7 +411,7 @@ class Graph {
     for (int i = 0; i < V; ++i) {
       for (int j = 0; j < V; ++j) {
         for (int k = 0; k < V; ++k) {
-          if (A[i][k] != INT_MAX && B[k][j] != INT_MAX) {
+          if (A[i][k] < INT_MAX && B[k][j] < INT_MAX) {
             int possibleCost = A[i][k] + B[k][j];
             if (possibleCost < C[i][j]) {
               C[i][j] = possibleCost;
@@ -491,12 +491,14 @@ class Graph {
 
       // Construct the path
 
-      std::vector<int> resultPath = getPath(path, source, target);
+      std::vector<int> result = getPath(path, source, target);
       std::cout << "Path: ";
-      for (int v : resultPath) {
-        std::cout << v << " ";
+      for (int i = 0; i < result.size(); ++i) {
+        std::cout << result[i];
+        if (i < result.size() - 1) {
+          std::cout << " -> ";
+        }
       }
-      std::cout << "\n";
     }
   }
 
