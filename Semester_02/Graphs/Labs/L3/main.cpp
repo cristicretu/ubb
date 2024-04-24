@@ -364,6 +364,8 @@ class Graph {
     return stronglyConnectedComponents;
   }
 
+  /* --------------------------------------------------------------- */
+
   std::vector<int> getPath(const std::vector<std::vector<int>>& path,
                            int source, int target) {
     if (path[source][target] == -1) return {};  // No path exists
