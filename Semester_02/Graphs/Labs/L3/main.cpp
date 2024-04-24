@@ -364,11 +364,44 @@ class Graph {
     return stronglyConnectedComponents;
   }
 
+  std::vector<int> getPath(const std::vector<std::vector<int>>& path,
+                           int source, int target) {
+    if (path[source][target] == -1) return {};  // No path exists
+    std::vector<int> result = {source};
+    while (source != target && path[source][target] != source) {
+      source = path[source][target];
+      result.push_back(source);
+    }
+    result.push_back(target);
+    return result;
+  }
+
   /// @brief Matrix multiplication
   /// @param A  The first matrix
   /// @param B  The second matrix
   /// @param V The number of vertices
   /// @return The resulting matrix C = A * B
+  std::vector<std::vector<int>> multiplyMatrixWithPath(
+      const std::vector<std::vector<int>>& A,
+      const std::vector<std::vector<int>>& B, int V,
+      std::vector<std::vector<int>>& path) {
+    std::vector<std::vector<int>> C(V, std::vector<int>(V, INT_MAX));
+    for (int i = 0; i < V; ++i) {
+      for (int j = 0; j < V; ++j) {
+        for (int k = 0; k < V; ++k) {
+          if (A[i][k] != INT_MAX && B[k][j] != INT_MAX) {
+            int possibleCost = A[i][k] + B[k][j];
+            if (possibleCost < C[i][j]) {
+              C[i][j] = possibleCost;
+              path[i][j] = k;
+            }
+          }
+        }
+      }
+    }
+    return C;
+  }
+
   std::vector<std::vector<int>> multiplyMatrix(
       const std::vector<std::vector<int>>& A,
       const std::vector<std::vector<int>>& B, int V) {
@@ -420,13 +453,16 @@ class Graph {
     std::vector<std::vector<int>> W(
         V,
         std::vector<int>(V, INT_MAX));  /// Create the weight adjacency matrix
+    std::vector<std::vector<int>> path(V, std::vector<int>(V, -1));
 
     for (uint32_t i = 0; i < V; ++i) {
-      W[i][i] = 0;
       for (const auto& edge : this->getOutEdges(i)) {
         W[i][edge.first] =
             this->getCost(i, edge.first);  /// Fill the matrix with the costs
+        path[i][edge.first] = i;           /// Initialize the path
       }
+      W[i][i] = 0;
+      path[i][i] = i;
     }
 
     if (detectNegativeCycle(W, V)) {
@@ -435,11 +471,12 @@ class Graph {
     }
 
     std::vector<std::vector<int>> D =
-        W;                          /// Initialize the distance matrix, has
-                                    /// the same values as the weight matrix
-    for (int m = 1; m < V; ++m) {   /// Iterate over the vertices
-      D = multiplyMatrix(D, W, V);  /// Multiply the distance matrix with the
-                                    /// weight matrix
+        W;                         /// Initialize the distance matrix, has
+                                   /// the same values as the weight matrix
+    for (int m = 1; m < V; ++m) {  /// Iterate over the vertices
+      D = multiplyMatrixWithPath(D, W, V,
+                                 path);  /// Multiply the distance matrix
+                                         /// with the weight matrix
     }
 
     if (D[source][target] == INT_MAX) {  /// If the cost is INT_MAX, there is no
@@ -449,51 +486,93 @@ class Graph {
     } else {  /// Otherwise, output the lowest cost
       std::cout << "The lowest cost from " << source << " to " << target
                 << " is " << D[source][target] << ".\n";
+
+      // Construct the path
+
+      std::vector<int> resultPath = getPath(path, source, target);
+      std::cout << "Path: ";
+      for (int v : resultPath) {
+        std::cout << v << " ";
+      }
+      std::cout << "\n";
     }
   }
 
-  void floydWarshall(Graph& graph) {
-    int V = graph.getVertices();
-    std::vector<std::vector<int>> dist(V, std::vector<int>(V, INT_MAX));
-    std::vector<std::vector<int>> count(V, std::vector<int>(V, 0));
+  /// @brief Count the number of distinct walks of minimum cost between two
+  /// vertices
+  /// @param start The starting vertex
+  /// @return A vector of the minimum costs from the starting vertex to all
+  /// other vertices
+  std::vector<int> dijkstra(uint32_t start) const {
+    std::vector<int> dist(vertices,
+                          INT_MAX);  /// Initialize the distance vector
+    dist[start] = 0;  /// The distance from the starting vertex to itself is 0
+    using pii = std::pair<int, uint32_t>;
+    std::priority_queue<pii, std::vector<pii>, std::greater<pii>>
+        pq;               /// Min heap for the vertices
+    pq.push({0, start});  /// Push the starting vertex to the heap
 
-    // Initialize the distance and path count matrices
-    for (int i = 0; i < V; ++i) {
-      for (const auto& edge : graph.getOutEdges(i)) {
-        dist[i][edge.first] = graph.getCost(i, edge.first);
-        count[i][edge.first] = 1;
-      }
-      dist[i][i] = 0;
-      count[i][i] =
-          1;  // There is one way to stay at the same node (do nothing)
-    }
+    while (!pq.empty()) {
+      auto [cost, u] = pq.top();  /// Retrieve the vertex with the lowest cost
+      pq.pop();
+      if (cost > dist[u]) continue;  /// If the cost is higher, skip the vertex
 
-    // Floyd-Warshall algorithm
-    for (int k = 0; k < V; ++k) {
-      for (int i = 0; i < V; ++i) {
-        for (int j = 0; j < V; ++j) {
-          if (dist[i][k] != INT_MAX && dist[k][j] != INT_MAX) {
-            int newDist = dist[i][k] + dist[k][j];
-            if (newDist < dist[i][j]) {
-              dist[i][j] = newDist;
-              count[i][j] = count[i][k] * count[k][j];
-            } else if (newDist == dist[i][j]) {
-              count[i][j] += count[i][k] * count[k][j];
-            }
-          }
+      auto it_range = getOutboundEdges(u);  /// Iterate over the outbound edges
+      for (auto it = it_range.first; it != it_range.second;
+           ++it) {               /// Relax the edges
+        auto [v, weight] = *it;  /// Retrieve the target vertex and the weight
+        int new_cost = cost + getCost(u, v);  /// Calculate the new cost
+        if (new_cost < dist[v]) {  /// If the new cost is lower, update the
+                                   /// distance and push the vertex to the heap
+          dist[v] = new_cost;      /// Update the distance
+          pq.push({new_cost, v});  /// Push the vertex to the heap
         }
       }
     }
-
-    // Output the number of minimum cost paths between all pairs
-    for (int i = 0; i < V; ++i) {
-      for (int j = 0; j < V; ++j) {
-        std::cout << "The number of minimum-cost paths from " << i << " to "
-                  << j << " is " << count[i][j] << "\n";
-      }
-    }
+    return dist;
   }
 
+  /// @brief Count the number of distinct walks of minimum cost between two
+  /// vertices
+  /// @param u
+  /// @param target
+  /// @param visited
+  /// @param currentCost
+  /// @param minCost
+  /// @return
+  int countPathsDijk(uint32_t u, uint32_t target, std::vector<bool>& visited,
+                     int currentCost, const std::vector<int>& minCost) const {
+    if (u == target)
+      return currentCost == minCost[target]
+                 ? 1
+                 : 0;   /// If the current vertex is the target, return 1 if the
+                        /// cost is the minimum cost, 0 otherwise
+    visited[u] = true;  /// Mark the current vertex as visited
+    int pathCount = 0;
+    auto it_range = getOutboundEdges(u);
+    for (auto it = it_range.first; it != it_range.second;
+         ++it) {  /// Iterate over the outbound edges
+      auto [v, weight] = *it;
+      if (!visited[v] &&
+          currentCost + getCost(u, v) <=
+              minCost[v]) {  /// If the
+                             /// vertex is not visited and the cost is less than
+                             /// the minimum cost, increment the path count
+        pathCount += countPathsDijk(v, target, visited,
+                                    currentCost + getCost(u, v), minCost);
+      }
+    }
+    visited[u] = false;
+    return pathCount;
+  }
+
+  /// @brief Recursive function to count the number of distinct walks between
+  /// two vertices in a DAG
+  /// @param g The graph
+  /// @param v  The current vertex
+  /// @param t  The target vertex
+  /// @param visited The vector of visited vertices
+  /// @param pathCount The current path count
   void countPathsUtil(const Graph& g, uint32_t v, uint32_t t,
                       std::vector<bool>& visited, int& pathCount) {
     visited[v] = true;  /// Mark the current node as visited
@@ -529,6 +608,7 @@ class Graph {
     return pathCount;
   }
 };
+
 class UI {
  private:
   Graph graph;
@@ -566,6 +646,7 @@ class UI {
                  "given vertices.\n";
     std::cout << "21. Find the number of distinct walks of between "
                  "the given vertices.\n";
+    std::cout << "|==========================|\n";
     std::cout << "0. Exit\n\n";
     std::cout << "Enter your choice: ";
   }
@@ -705,12 +786,24 @@ class UI {
         graph.findLowestCostWalk(v1, v2);
         break;
       case 20:  /// Number of Distinct Walks of Minimum Cost, L3 Bonus
+      {
         std::cout << "Enter starting vertex for the walk: ";
         std::cin >> v1;
         std::cout << "Enter ending vertex for the walk: ";
         std::cin >> v2;
-        graph.floydWarshall(graph);
+
+        // std::cout << "The number of distinct walks of minimum cost between "
+        //           << v1 << " and " << v2 << " is "
+        //           << graph.floydWarshall(graph, v1, v2) << ".\n";
+
+        std::vector<int> minCost = graph.dijkstra(v1);
+        std::vector<bool> visited(graph.getVertices(), false);
+
+        int pathCount = graph.countPathsDijk(v1, v2, visited, 0, minCost);
+        std::cout << "The number of distinct walks of minimum cost between "
+                  << v1 << " and " << v2 << " is " << pathCount << ".\n";
         break;
+      }
       case 21:
         std::cout << "Enter starting vertex for the walk: ";
         std::cin >> v1;
