@@ -364,60 +364,11 @@ class Graph {
     return stronglyConnectedComponents;
   }
 
-  // void findLowestCostWalk(uint32_t start, uint32_t end) {
-  //   // Initialize the distance matrix
-  //   std::vector<std::vector<int>> dist(vertices,
-  //                                      std::vector<int>(vertices, INT_MAX));
-  //   for (uint32_t i = 0; i < vertices; i++) {
-  //     dist[i][i] = 0;
-  //   }
-
-  //   for (auto& source : outbound) {
-  //     for (auto& edge : source.second) {
-  //       uint32_t target = edge.first;
-  //       int edgeCost = cost[edge.second];
-  //       dist[source.first][target] = edgeCost;
-  //     }
-  //   }
-
-  //   // Matrix multiplication to find all-pairs shortest paths
-  //   for (uint32_t step = 1; step < vertices; step *= 2) {
-  //     std::vector<std::vector<int>> newDist(
-  //         vertices, std::vector<int>(vertices, INT_MAX));
-  //     for (uint32_t i = 0; i < vertices; i++) {
-  //       for (uint32_t j = 0; j < vertices; j++) {
-  //         for (uint32_t k = 0; k < vertices; k++) {
-  //           if (dist[i][k] != INT_MAX && dist[k][j] != INT_MAX) {
-  //             int possibleDist = dist[i][k] + dist[k][j];
-  //             if (possibleDist < newDist[i][j]) {
-  //               newDist[i][j] = possibleDist;
-  //             }
-  //           }
-  //         }
-  //       }
-  //     }
-  //     dist = newDist;
-  //   }
-
-  //   // Check for negative cycles
-  //   for (uint32_t i = 0; i < vertices; i++) {
-  //     if (dist[i][i] < 0) {
-  //       std::cout << "Graph contains a negative cost cycle\n";
-  //       return;
-  //     }
-  //   }
-
-  //   // Print the result for the specific path
-  //   if (dist[start][end] == INT_MAX) {
-  //     std::cout << "No path exists from vertex " << start << " to vertex "
-  //               << end << "\n";
-  //   } else {
-  //     std::cout << "The lowest cost from vertex " << start << " to vertex "
-  //               << end << " is " << dist[start][end] << "\n";
-  //   }
-  // }
-
-  // Function to multiply two matrices
+  /// @brief Matrix multiplication
+  /// @param A  The first matrix
+  /// @param B  The second matrix
+  /// @param V The number of vertices
+  /// @return The resulting matrix C = A * B
   std::vector<std::vector<int>> multiplyMatrix(
       const std::vector<std::vector<int>>& A,
       const std::vector<std::vector<int>>& B, int V) {
@@ -437,12 +388,25 @@ class Graph {
     return C;
   }
 
-  // Function to check for negative cycles using matrix multiplication
+  /// @brief Detect a negative cycle in the graph, using the A^V matrix
+  /// @param W The weight adjacency matrix
+  /// @param V The number of vertices
+  /// @return True if a negative cycle is detected, false otherwise
   bool detectNegativeCycle(const std::vector<std::vector<int>>& W, int V) {
-    std::vector<std::vector<int>> M = W;  // Start with the base matrix
+    /*
+    Following the observation that for an adjacency matrix, A^n has the property
+    that the entry row i, column j is the number of walks of length n from i to
+    j.
+
+    This means that if the matrix A^n contains at least one non-zero entry on
+    the diagonal, then there is a cycle of negative weight.
+    */
+    std::vector<std::vector<int>> M = W;  /// Initialize the matrix M with W
     for (int m = 1; m < V; ++m) {
-      M = multiplyMatrix(M, W, V);
-      for (int i = 0; i < V; ++i) {
+      M = multiplyMatrix(M, W,
+                         V);  /// Compute the matrix M = W^m for m = 1 to V
+      for (int i = 0; i < V;
+           ++i) {  /// Check the trace of the matrix M for negative values
         if (M[i][i] < 0) {
           return true;  // Negative cycle detected
         }
@@ -451,36 +415,38 @@ class Graph {
     return false;
   }
 
-  // Main function to find the lowest cost walk using matrix multiplication
-  void findLowestCostWalk(Graph& graph, uint32_t source, uint32_t target) {
-    uint32_t V = graph.getVertices();
-    std::vector<std::vector<int>> W(V, std::vector<int>(V, INT_MAX));
+  void findLowestCostWalk(uint32_t source, uint32_t target) {
+    uint32_t V = this->getVertices();
+    std::vector<std::vector<int>> W(
+        V,
+        std::vector<int>(V, INT_MAX));  /// Create the weight adjacency matrix
 
-    // Initialize the matrix W
     for (uint32_t i = 0; i < V; ++i) {
       W[i][i] = 0;
-      for (const auto& edge : graph.getOutEdges(i)) {
-        W[i][edge.first] = graph.getCost(i, edge.first);
+      for (const auto& edge : this->getOutEdges(i)) {
+        W[i][edge.first] =
+            this->getCost(i, edge.first);  /// Fill the matrix with the costs
       }
     }
 
-    // Check for negative cycle
     if (detectNegativeCycle(W, V)) {
       std::cout << "The graph contains a negative cost cycle.\n";
       return;
     }
 
-    // Compute the shortest paths
-    std::vector<std::vector<int>> D = W;
-    for (int m = 1; m < V; ++m) {
-      D = multiplyMatrix(D, W, V);
+    std::vector<std::vector<int>> D =
+        W;                          /// Initialize the distance matrix, has
+                                    /// the same values as the weight matrix
+    for (int m = 1; m < V; ++m) {   /// Iterate over the vertices
+      D = multiplyMatrix(D, W, V);  /// Multiply the distance matrix with the
+                                    /// weight matrix
     }
 
-    // Output the lowest cost from source to target
-    if (D[source][target] == INT_MAX) {
+    if (D[source][target] == INT_MAX) {  /// If the cost is INT_MAX, there is no
+                                         /// path between the source and target
       std::cout << "No path exists from " << source << " to " << target
                 << ".\n";
-    } else {
+    } else {  /// Otherwise, output the lowest cost
       std::cout << "The lowest cost from " << source << " to " << target
                 << " is " << D[source][target] << ".\n";
     }
@@ -527,6 +493,41 @@ class Graph {
       }
     }
   }
+
+  void countPathsUtil(const Graph& g, uint32_t v, uint32_t t,
+                      std::vector<bool>& visited, int& pathCount) {
+    visited[v] = true;  /// Mark the current node as visited
+
+    if (v == t) {
+      pathCount++;  /// If current vertex is the target vertex, increment path
+                    /// count
+    } else {
+      /// Go through all the vertices adjacent to this vertex
+      auto edges = g.getOutEdges(v);
+      for (auto& edge : edges) {
+        if (!visited[edge.first]) {
+          countPathsUtil(g, edge.first, t, visited, pathCount);
+        }
+      }
+    }
+
+    visited[v] =
+        false;  /// Mark the current node as not visited to explore other paths
+  }
+
+  /// @brief Count the number of distinct walks between two vertices in a DAG
+  /// @param g  The graph
+  /// @param s  The source vertex
+  /// @param t  The target vertex
+  /// @return The number of distinct walks between the two vertices
+  int countPaths(const Graph& g, uint32_t s, uint32_t t) {
+    std::vector<bool> visited(g.getVertices(),
+                              false);  /// Mark all vertices as not visited
+    int pathCount = 0;                 /// Initialize path count as 0
+
+    countPathsUtil(g, s, t, visited, pathCount);
+    return pathCount;
+  }
 };
 class UI {
  private:
@@ -563,6 +564,8 @@ class UI {
     std::cout << "19. Find the lowest cost walk\n";
     std::cout << "20. The number of distinct walks of minimum cost between the "
                  "given vertices.\n";
+    std::cout << "21. Find the number of distinct walks of between "
+                 "the given vertices.\n";
     std::cout << "0. Exit\n\n";
     std::cout << "Enter your choice: ";
   }
@@ -699,7 +702,7 @@ class UI {
         std::cin >> v1;
         std::cout << "Enter ending vertex for the lowest cost walk: ";
         std::cin >> v2;
-        graph.findLowestCostWalk(graph, v1, v2);
+        graph.findLowestCostWalk(v1, v2);
         break;
       case 20:  /// Number of Distinct Walks of Minimum Cost, L3 Bonus
         std::cout << "Enter starting vertex for the walk: ";
@@ -707,6 +710,14 @@ class UI {
         std::cout << "Enter ending vertex for the walk: ";
         std::cin >> v2;
         graph.floydWarshall(graph);
+        break;
+      case 21:
+        std::cout << "Enter starting vertex for the walk: ";
+        std::cin >> v1;
+        std::cout << "Enter ending vertex for the walk: ";
+        std::cin >> v2;
+        std::cout << "The number of distinct walks of between " << v1 << " and "
+                  << v2 << " is " << graph.countPaths(graph, v1, v2) << ".\n";
         break;
       case 0:
         std::cout << "Exiting...\n";
