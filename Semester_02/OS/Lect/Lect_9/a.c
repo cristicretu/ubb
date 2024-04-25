@@ -4,7 +4,7 @@
 #include <unistd.h>
 
 #define BEARS 5
-#define BEES 10 
+#define BEES 100 
 
 int honey = 100;
 pthread_mutex_t m;
