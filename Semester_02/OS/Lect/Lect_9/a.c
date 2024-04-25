@@ -2,13 +2,15 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <semaphore.h>
 
 #define BEARS 5
-#define BEES 100 
+#define BEES 30 
 
 int honey = 100;
 pthread_mutex_t m;
 pthread_cond_t c;
+sem_t s;
 
 void* bear(void *a) {
     while (1) {
@@ -54,6 +56,7 @@ int main(int argc, char **argv) {
 
     pthread_mutex_init(&m, NULL);
     pthread_cond_init(&c, NULL);
+    sem_init(&s, 0, 2);
 
     for (i = 0; i < BEES; i++) {
         pthread_create(&bees[i], NULL, bee, NULL);
@@ -79,6 +82,7 @@ int main(int argc, char **argv) {
 
     pthread_mutex_destroy(&m);
     pthread_cond_destroy(&c);
+    sem_destroy(&s);
 
     return 0;
 }
