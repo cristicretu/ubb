@@ -2,7 +2,11 @@
 triple:          'arm64-apple-darwin'
 binary-path:     a.out
 relocations:
-  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _upcase, symObjAddr: 0x0, symBinAddr: 0x100003C1C, symSize: 0xD4 }
-  - { offsetInCU: 0x7A, offset: 0x7A, size: 0x8, addend: 0x0, symName: _upcase, symObjAddr: 0x0, symBinAddr: 0x100003C1C, symSize: 0xD4 }
-  - { offsetInCU: 0xDA, offset: 0xDA, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0xD4, symBinAddr: 0x100003CF0, symSize: 0x214 }
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _r, symObjAddr: 0x0, symBinAddr: 0x100003AD8, symSize: 0x8C }
+  - { offsetInCU: 0x4D, offset: 0x4D, size: 0x8, addend: 0x0, symName: _mtx, symBinAddr: 0x100008000, symSize: 0x0 }
+  - { offsetInCU: 0xAC, offset: 0xAC, size: 0x8, addend: 0x0, symName: _rwlock, symBinAddr: 0x100008048, symSize: 0x0 }
+  - { offsetInCU: 0x104, offset: 0x104, size: 0x8, addend: 0x0, symName: _n, symBinAddr: 0x100008040, symSize: 0x0 }
+  - { offsetInCU: 0x115, offset: 0x115, size: 0x8, addend: 0x0, symName: _r, symObjAddr: 0x0, symBinAddr: 0x100003AD8, symSize: 0x8C }
+  - { offsetInCU: 0x159, offset: 0x159, size: 0x8, addend: 0x0, symName: _w, symObjAddr: 0x8C, symBinAddr: 0x100003B64, symSize: 0x7C }
+  - { offsetInCU: 0x19D, offset: 0x19D, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x108, symBinAddr: 0x100003BE0, symSize: 0x318 }
 ...
