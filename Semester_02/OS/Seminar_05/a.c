@@ -40,6 +40,7 @@ int main(int argc, char *argv[]) {
             perror("pthread_join");
         }
         printf("%s ", (char *)res);
+        free(res);
     }
 
 /*     for (int i = 1; i < argc; i++) { */
@@ -47,6 +48,7 @@ int main(int argc, char *argv[]) {
 /*     } */
 
     free(args);
+
 
     return 0;
 }
