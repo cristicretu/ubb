@@ -75,16 +75,18 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    int res;
+    int res1, res2;
     if (n1 > n2) {
-        res = 1;
+        res1 = 1;
+        res2 = -1;
     } else if (n1 == n2) {
-        res = 0;
+        res1 = res2 = 0;
     } else {
-        res = -1;
+        res1 = -1;
+        res2 = 1;
     }
 
-    if (-1 == write(p_2c1[1], &res, sizeof(res)) || -1 == write(p_2c2[1], &res, sizeof(res))) {
+    if (-1 == write(p_2c1[1], &res1, sizeof(res1)) || -1 == write(p_2c2[1], &res2, sizeof(res2))) {
         perror("write");
         exit(1);
     }
