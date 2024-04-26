@@ -55,6 +55,9 @@ class SortedMap {
   // the iterator will return the keys following the order given by the relation
   SMIterator iterator() const;
 
+  // adds all pairs from sm, whose key is not already in the SortedMap
+  int addIfNotPresent(SortedMap &sm);
+
   // destructor
   ~SortedMap();
 };
