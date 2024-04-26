@@ -36,4 +36,28 @@ void testAll() {
   }
   assert(sm.remove(1) == 3);
   assert(sm.isEmpty());
+
+  SortedMap sm1(relatie1);
+  sm1.add(1, 2);
+  sm1.add(2, 3);
+  sm1.add(3, 4);
+  sm1.add(4, 5);
+
+  SortedMap sm2(relatie1);
+  sm2.add(1, 2);
+  sm2.add(1, 2);
+  sm2.add(1, 2);
+  sm2.add(1, 2);
+
+  assert(sm1.addIfNotPresent(sm2) == 0);
+  assert(sm1.size() == 4);
+
+  sm2.add(5, 6);
+  sm2.add(6, 7);
+  sm2.add(7, 8);
+  sm2.add(2, 3);
+  sm2.add(3, 4);
+
+  assert(sm1.addIfNotPresent(sm2) == 3);
+  assert(sm1.size() == 7);
 }

@@ -146,6 +146,82 @@ int SortedMap::size() const { return this->len; }
 // AC: Theta(1)
 bool SortedMap::isEmpty() const { return this->len == 0; }
 
+int SortedMap::addIfNotPresent(SortedMap& sm) {
+  SMIterator itSelf = this->iterator();
+  SMIterator itSm = sm.iterator();
+  int ans = 0;
+
+  int current = head;
+  int previous = -1;
+
+  TKey currentSelfKey, currentSmKey;
+  TValue currentSmValue;
+
+  while (itSelf.valid() && itSm.valid()) {
+    currentSelfKey = itSelf.getCurrent().first;
+    currentSmKey = itSm.getCurrent().first;
+    currentSmValue = itSm.getCurrent().second;
+
+    if (currentSmKey < currentSelfKey) {
+      int newElem = firstEmpty;
+      if (newElem == -1) {
+        resize();
+        newElem = firstEmpty;
+      }
+      firstEmpty = next[firstEmpty];
+
+      elements[newElem] = make_pair(currentSmKey, currentSmValue);
+      next[newElem] = current;
+
+      if (previous == -1) {
+        head = newElem;
+      } else {
+        next[previous] = newElem;
+      }
+
+      ans++;
+      len++;
+      itSm.next();
+    } else if (currentSmKey == currentSelfKey) {
+      previous = current;
+      current = next[current];
+      itSelf.next();
+      itSm.next();
+    } else {
+      previous = current;
+      current = next[current];
+      itSelf.next();
+    }
+  }
+
+  while (itSm.valid()) {
+    currentSmKey = itSm.getCurrent().first;
+    currentSmValue = itSm.getCurrent().second;
+
+    int newElem = firstEmpty;
+    if (newElem == -1) {
+      resize();
+      newElem = firstEmpty;
+    }
+    firstEmpty = next[firstEmpty];
+
+    elements[newElem] = make_pair(currentSmKey, currentSmValue);
+    next[newElem] = -1;
+
+    if (previous == -1) {
+      head = newElem;
+    } else {
+      next[previous] = newElem;
+    }
+
+    ans++;
+    len++;
+    itSm.next();
+  }
+
+  return ans;
+}
+
 SMIterator SortedMap::iterator() const { return SMIterator(*this); }
 
 SortedMap::~SortedMap() {
