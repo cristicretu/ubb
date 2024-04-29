@@ -1,55 +1,86 @@
 #pragma once
-#include "Repository.h"
-#include "FilePlaylist.h"
-#include "SongValidator.h"
 #include <memory>
+#include <stack>
 
-class Service
-{
-private:
-	Repository repo;
-	FilePlaylist* playList;
-	SongValidator validator;
+#include "Action.h"
+#include "FilePlaylist.h"
+#include "Repository.h"
+#include "SongValidator.h"
 
-public:
-	Service(const Repository& r, FilePlaylist* p, SongValidator v) : repo{ r }, playList{ p }, validator{ v } {}
+class Service {
+ private:
+  Repository repo;
+  FilePlaylist* playList;
+  SongValidator validator;
+  std::stack<std::unique_ptr<Action>> undoActions;
+  std::stack<std::unique_ptr<Action>> redoActions;
 
-	Repository getRepo() const { return repo; }
-	PlayList* getPlaylist() const { return playList; }
+ public:
+  Service(const Repository& r, FilePlaylist* p, SongValidator v)
+      : repo{r}, playList{p}, validator{v} {
+    this->undoActions = std::stack<std::unique_ptr<Action>>();
+    this->redoActions = std::stack<std::unique_ptr<Action>>();
+  }
 
-	/*
-		Adds a song with the given data to the song repository.
-		Throws: SongException - if the song is not valid
-				DuplicateSongException - if there is another song with the same artist and title
-				Throws: FileException - if the repository file cannot be opened.
-	*/
-	void addSongToRepository(const std::string& artist, const std::string& title, double minutes, double seconds, const std::string& source);
+  Repository getRepo() const { return repo; }
+  PlayList* getPlaylist() const { return playList; }
 
-	void removeSongFromRepository(const std::string& artist, const std::string& title);
+  /*
+          Adds a song with the given data to the song repository.
+          Throws: SongException - if the song is not valid
+                          DuplicateSongException - if there is another song with
+     the same artist and title Throws: FileException - if the repository file
+     cannot be opened.
+  */
+  void addSongToRepository(const std::string& artist, const std::string& title,
+                           double minutes, double seconds,
+                           const std::string& source);
 
-	/*
-		Adds a given song to the current playlist.
-		Input: song - Song, the song must belong to the repository.
-		Output: the song is added to the playlist.
-	*/
-	void addSongToPlaylist(const Song& song);
+  void removeSongFromRepository(const std::string& artist,
+                                const std::string& title);
 
-	// Adds all the songs from the repository, that have the given artist, to the current playlist.
-	void addAllSongsByArtistToPlaylist(const std::string& artist);
+  /*
+          Adds a given song to the current playlist.
+          Input: song - Song, the song must belong to the repository.
+          Output: the song is added to the playlist.
+  */
+  void addSongToPlaylist(const Song& song);
 
-	void startPlaylist();
-	void nextSongPlaylist();
+  // Adds all the songs from the repository, that have the given artist, to the
+  // current playlist.
+  void addAllSongsByArtistToPlaylist(const std::string& artist);
 
-	/*
-		Saves the playlist.
-		Throws: FileException - if the given file cannot be opened.
-	*/
-	void savePlaylist(const std::string& filename);
+  void startPlaylist();
+  void nextSongPlaylist();
 
-	/*
-	Opens the playlist, with an appropriate application.
-	Throws: FileException - if the given file cannot be opened.
-	*/
-	void openPlaylist() const;
+  /*
+          Saves the playlist.
+          Throws: FileException - if the given file cannot be opened.
+  */
+  void savePlaylist(const std::string& filename);
+
+  /*
+  Opens the playlist, with an appropriate application.
+  Throws: FileException - if the given file cannot be opened.
+  */
+  void openPlaylist() const;
+
+  void undo() {
+    if (this->undoActions.empty()) {
+      throw std::runtime_error("No more undo actions!");
+    }
+    std::unique_ptr<Action> action = std::move(this->undoActions.top());
+    action->executeUndo();
+    this->redoActions.push(std::move(action));
+    this->undoActions.pop();
+  }
+  void redo() {
+    if (this->redoActions.empty()) {
+      throw std::runtime_error("No more redo actions!");
+    }
+    std::unique_ptr<Action> action = std::move(this->redoActions.top());
+    action->executeRedo();
+    this->undoActions.push(std::move(action));
+    this->redoActions.pop();
+  }
 };
-
