@@ -39,6 +39,13 @@ class Service {
   void removeSongFromRepository(const std::string& artist,
                                 const std::string& title);
 
+  void updateSongFromRepository(const std::string& artist,
+                                const std::string& title, double minutes,
+                                double seconds, const std::string& newArtist,
+                                const std::string& newTitle, double newMinutes,
+                                double newSeconds,
+                                const std::string& newSource);
+
   /*
           Adds a given song to the current playlist.
           Input: song - Song, the song must belong to the repository.
