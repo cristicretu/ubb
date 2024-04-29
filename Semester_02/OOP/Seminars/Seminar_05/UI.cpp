@@ -21,6 +21,7 @@ void UI::printRepositoryMenu() {
   cout << "\t 3 - Display all." << endl;
   cout << "\t 4 - Undo" << endl;
   cout << "\t 5 - Redo" << endl;
+  cout << "\t 6 - Update a song" << endl;
   cout << "\t 0 - Back." << endl;
 }
 
@@ -164,18 +165,52 @@ void UI::run() {
           case 3:
             this->displayAllSongsRepo();
             break;
-          case 4: {
+          case 4:
             try {
               this->serv.undo();
             } catch (std::runtime_error& e) {
               cout << e.what() << endl;
             }
-          } break;
+            commandRepo = 1;
+            break;
 
-          case 5: {
+          case 5:
             try {
               this->serv.redo();
             } catch (std::runtime_error& e) {
+              cout << e.what() << endl;
+            }
+            commandRepo = 1;
+            break;
+
+          case 6: {
+            cout << "Enter the artist: ";
+            std::string artist;
+            getline(cin, artist);
+            cout << "Enter the title: ";
+            std::string title;
+            getline(cin, title);
+            double minutes = 0, seconds = 0;
+            cout << "Enter the new duration: " << endl;
+            cout << "\tMinutes: ";
+            cin >> minutes;
+            cin.ignore();
+            cout << "\tSeconds: ";
+            cin >> seconds;
+            cin.ignore();
+            cout << "Youtube link: ";
+            std::string link;
+            getline(cin, link);
+
+            try {
+              this->serv.updateSongFromRepository(artist, title, minutes,
+                                                  seconds, artist, title,
+                                                  minutes, seconds, link);
+            } catch (SongException& e) {
+              for (auto s : e.getErrors()) cout << s;
+            } catch (RepositoryException& e) {
+              cout << e.what() << endl;
+            } catch (FileException& e) {
               cout << e.what() << endl;
             }
           }

@@ -19,9 +19,7 @@ class ActionAdd : public Action {
 
  public:
   ActionAdd(Repository& repo, const Song& addedSong)
-      : repo{repo}, addedSong{addedSong} {
-    // this->repo.addSong(addedSong);
-  }
+      : repo{repo}, addedSong{addedSong} {}
   ~ActionAdd(){};
   void executeUndo() { this->repo.removeSong(this->addedSong); }
   void executeRedo() { this->repo.addSong(this->addedSong); }
@@ -34,9 +32,7 @@ class ActionRemove : public Action {
 
  public:
   ActionRemove(Repository& repo, const Song& removedSong)
-      : repo{repo}, removedSong{removedSong} {
-    // this->repo.removeSong(removedSong);
-  }
+      : repo{repo}, removedSong{removedSong} {}
   ~ActionRemove(){};
   void executeUndo() { this->repo.addSong(this->removedSong); }
   void executeRedo() { this->repo.removeSong(this->removedSong); }
@@ -50,10 +46,7 @@ class ActionUpdate : public Action {
 
  public:
   ActionUpdate(Repository& repo, const Song& oldSong, const Song& newSong)
-      : repo{repo}, oldSong{oldSong}, newSong{newSong} {
-    // this->repo.removeSong(oldSong);
-    // this->repo.addSong(newSong);
-  }
+      : repo{repo}, oldSong{oldSong}, newSong{newSong} {}
   ~ActionUpdate(){};
   void executeUndo() {
     this->repo.removeSong(this->newSong);

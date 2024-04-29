@@ -7,6 +7,22 @@
 
 using namespace std;
 
+void Service::updateSongFromRepository(
+    const std::string& artist, const std::string& title, double minutes,
+    double seconds, const std::string& newArtist, const std::string& newTitle,
+    double newMinutes, double newSeconds, const std::string& newSource) {
+  Song oldSong = this->repo.findByArtistAndTitle(artist, title);
+  Song newSong{newArtist, newTitle, Duration{newMinutes, newSeconds},
+               newSource};
+  this->repo.updateSong(oldSong, newSong);
+
+  unique_ptr<Action> action =
+      make_unique<ActionUpdate>(this->repo, oldSong, newSong);
+
+  this->undoActions.push(move(action));
+  while (!this->redoActions.empty()) this->redoActions.pop();
+}
+
 void Service::addSongToRepository(const std::string& artist,
                                   const std::string& title, double minutes,
                                   double seconds, const std::string& source) {
