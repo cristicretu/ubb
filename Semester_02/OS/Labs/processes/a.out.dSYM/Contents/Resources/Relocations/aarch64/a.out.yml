@@ -2,7 +2,15 @@
 triple:          'arm64-apple-darwin'
 binary-path:     a.out
 relocations:
-  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _calc, symObjAddr: 0x0, symBinAddr: 0x100003B9C, symSize: 0x16C }
-  - { offsetInCU: 0x127, offset: 0x127, size: 0x8, addend: 0x0, symName: _calc, symObjAddr: 0x0, symBinAddr: 0x100003B9C, symSize: 0x16C }
-  - { offsetInCU: 0x187, offset: 0x187, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x16C, symBinAddr: 0x100003D08, symSize: 0x228 }
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _thread_function, symObjAddr: 0x0, symBinAddr: 0x100003728, symSize: 0x188 }
+  - { offsetInCU: 0x222, offset: 0x222, size: 0x8, addend: 0x0, symName: _thread_function, symObjAddr: 0x0, symBinAddr: 0x100003728, symSize: 0x188 }
+  - { offsetInCU: 0x2AC, offset: 0x2AC, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x188, symBinAddr: 0x1000038B0, symSize: 0x238 }
+  - { offsetInCU: 0x26, offset: 0x394, size: 0x8, addend: 0x0, symName: _pthread_barrier_init, symObjAddr: 0x0, symBinAddr: 0x100003AE8, symSize: 0x198 }
+  - { offsetInCU: 0x33, offset: 0x3A1, size: 0x8, addend: 0x0, symName: _pthread_barrier_init, symObjAddr: 0x0, symBinAddr: 0x100003AE8, symSize: 0x198 }
+  - { offsetInCU: 0xAF, offset: 0x41D, size: 0x8, addend: 0x0, symName: _pthread_barrierattr_getpshared, symObjAddr: 0x198, symBinAddr: 0x100003C80, symSize: 0x2C }
+  - { offsetInCU: 0xE5, offset: 0x453, size: 0x8, addend: 0x0, symName: _pthread_barrier_destroy, symObjAddr: 0x1C4, symBinAddr: 0x100003CAC, symSize: 0xA0 }
+  - { offsetInCU: 0x129, offset: 0x497, size: 0x8, addend: 0x0, symName: _pthread_barrier_wait, symObjAddr: 0x264, symBinAddr: 0x100003D4C, symSize: 0xD8 }
+  - { offsetInCU: 0x16D, offset: 0x4DB, size: 0x8, addend: 0x0, symName: _pthread_barrierattr_init, symObjAddr: 0x33C, symBinAddr: 0x100003E24, symSize: 0x24 }
+  - { offsetInCU: 0x195, offset: 0x503, size: 0x8, addend: 0x0, symName: _pthread_barrierattr_destroy, symObjAddr: 0x360, symBinAddr: 0x100003E48, symSize: 0x24 }
+  - { offsetInCU: 0x1BD, offset: 0x52B, size: 0x8, addend: 0x0, symName: _pthread_barrierattr_setpshared, symObjAddr: 0x384, symBinAddr: 0x100003E6C, symSize: 0x2C }
 ...
