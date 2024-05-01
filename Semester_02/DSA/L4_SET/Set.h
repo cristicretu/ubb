@@ -1,48 +1,51 @@
 #pragma once
-//DO NOT INCLUDE SETITERATOR
+// DO NOT INCLUDE SETITERATOR
 
-//DO NOT CHANGE THIS PART
+// DO NOT CHANGE THIS PART
 #define NULL_TELEM -111111
 typedef int TElem;
 class SetIterator;
 
 class Set {
-	//DO NOT CHANGE THIS PART
-	friend class SetIterator;
+  // DO NOT CHANGE THIS PART
+  friend class SetIterator;
 
-    private:
-		//TODO - Representation
+ private:
+  static const int INITIAL_CAPACITY = 10;
 
-    public:
-        //implicit constructor
-        Set();
+  TElem *elements;
+  int capacity;
+  int length;
 
-        //adds an element to the set
-		//returns true if the element was added, false otherwise (if the element was already in the set and it was not added)
-        bool add(TElem e);
+  int hash(TElem elem) const;
+  int hash2(TElem elem) const;
+  void resize();
 
-        //removes an element from the set
-		//returns true if e was removed, false otherwise
-        bool remove(TElem e);
+ public:
+  // implicit constructor
+  Set();
 
-        //checks whether an element belongs to the set or not
-        bool search(TElem elem) const;
+  // adds an element to the set
+  // returns true if the element was added, false otherwise (if the element was
+  // already in the set and it was not added)
+  bool add(TElem e);
 
-        //returns the number of elements;
-        int size() const;
+  // removes an element from the set
+  // returns true if e was removed, false otherwise
+  bool remove(TElem e);
 
-        //check whether the set is empty or not;
-        bool isEmpty() const;
+  // checks whether an element belongs to the set or not
+  bool search(TElem elem) const;
 
-        //return an iterator for the set
-        SetIterator iterator() const;
+  // returns the number of elements;
+  int size() const;
 
-        // destructor
-        ~Set();
+  // check whether the set is empty or not;
+  bool isEmpty() const;
 
+  // return an iterator for the set
+  SetIterator iterator() const;
+
+  // destructor
+  ~Set();
 };
-
-
-
-
-
