@@ -65,17 +65,18 @@ int Set::hash(TElem elem) const { return elem % capacity; }
 int Set::hash2(TElem elem) const { return 1 + (elem % (capacity - 1)); }
 
 bool Set::remove(TElem elem) {
-  // TODO - Implementation
-  return false;
-}
+  if (!search(elem)) {
+    return false;
+  }
 
-bool Set::search(TElem elem) const {
   int index = hash(elem);
   int step = 1;
   int secondaryStep = hash2(elem);
 
   for (int i = 0; i < capacity; i++, step++) {
     if (elements[index] == elem) {
+      elements[index] = NULL_TELEM;
+      length--;
       return true;
     }
     index = (index + secondaryStep * step) % capacity;
@@ -83,6 +84,8 @@ bool Set::search(TElem elem) const {
 
   return false;
 }
+
+bool Set::search(TElem elem) const { return elements[hash(elem)] == elem; }
 
 int Set::size() const { return length; }
 
