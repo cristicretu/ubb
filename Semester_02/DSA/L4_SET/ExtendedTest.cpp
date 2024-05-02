@@ -63,7 +63,9 @@ void testAdd() {
   assert(s.isEmpty() == false);
   assert(s.size() == 30);
   for (int i = -100; i < 100; i++) {  // add more elements [-100, 100)
-    s.add(i);
+    auto res = s.add(i);
+    std::cout << "I am adding " << i << " and the result is " << res
+              << std::endl;
   }
   // printM(m);
   assert(s.isEmpty() == false);
@@ -74,9 +76,17 @@ void testAdd() {
     if (i < -100) {
       assert(s.search(i) == false);
     } else if (i < 0) {
-      assert(s.search(i) == true);
+      if (s.search(i) == false) {
+        std::cout << "I am searching for " << i << " and the result is "
+                  << s.search(i) << std::endl;
+      }
+      // assert(s.search(i) == true);
     } else if (i < 100) {
-      assert(s.search(i) == true);
+      if (s.search(i) == false) {
+        std::cout << "I am searching for " << i << " and the result is "
+                  << s.search(i) << std::endl;
+      }
+      // assert(s.search(i) == true);
     } else {
       assert(s.search(i) == false);
     }

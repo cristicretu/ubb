@@ -20,20 +20,20 @@ WC: Theta(n)
 TC: Theta(n)
 */
 void Set::resize() {
-  TElem *newElements = new TElem[capacity * 2];
-  for (int i = 0; i < capacity * 2; i++) {
+  int newCapacity = findNextPrime(capacity * 2);
+  TElem *newElements = new TElem[newCapacity];
+  for (int i = 0; i < newCapacity; i++) {
     newElements[i] = NULL_TELEM;
   }
 
   for (int i = 0; i < capacity; i++) {
     if (elements[i] != NULL_TELEM) {
-      int index = hash(elements[i]);
+      int index = hash(elements[i]) % newCapacity;
       int step = 1;
-      int secondaryStep = hash2(elements[i]);
+      int secondaryStep = hash2(elements[i]) % newCapacity;
 
       while (newElements[index] != NULL_TELEM) {
-        index = (index + secondaryStep * step) % (capacity * 2);
-        step++;
+        index = (index + secondaryStep * step++) % newCapacity;
       }
 
       newElements[index] = elements[i];
@@ -42,7 +42,7 @@ void Set::resize() {
 
   delete[] elements;
   elements = newElements;
-  capacity *= 2;
+  capacity = newCapacity;
 }
 
 /*
@@ -63,21 +63,38 @@ bool Set::add(TElem elem) {
   int step = 1;
   int secondaryStep = hash2(elem);
 
-  for (int i = 0; i < capacity; i++, step++) {
-    if (elements[index] == NULL_TELEM) {
-      break;
-    }
+  if (elements[index] == NULL_TELEM) {
+    elements[index] = elem;
+    ++length;
+    return true;
+  }
+
+  for (int i = 0; i < capacity && elements[index] != NULL_TELEM; i++, step++) {
     index = (index + secondaryStep * step) % capacity;
   }
 
+  // if (elements[index] != NULL_TELEM) {
+  //   std::cout << "i am elem " << elem << " and i am not added\n";
+  //   return false;
+  // }
   elements[index] = elem;
-  length++;
+  ++length;
   return true;
 }
 
 int Set::hash(TElem elem) const {
   // return elem % capacity;
-  return (elem ^ (elem << 1) ^ (elem << 4) ^ (elem << 7)) % capacity;
+  // return (elem ^ (elem << 1) ^ (elem << 4) ^ (elem << 7)) % capacity;
+  return (std::hash<int>{}(elem)) % capacity;
+
+  // std::string s = std::to_string(elem);
+  // long sum = 0, mul = 1;
+  // for (int i = 0; i < s.length(); i++) {
+  //   mul = (i % 4 == 0) ? 1 : mul * 256;
+  //   sum += s[i] * mul;
+  // }
+  // return int(abs(sum) % capacity);
+  // return floor(capacity * (elem * 1337 % 1));
 }
 int Set::hash2(TElem elem) const { return 1 + (elem % (capacity - 1)); }
 
@@ -101,6 +118,9 @@ bool Set::remove(TElem elem) {
       length--;
       return true;
     }
+    if (elements[index] == NULL_TELEM) {
+      return false;
+    }
     index = (index + secondaryStep * step) % capacity;
   }
 
@@ -121,9 +141,11 @@ bool Set::search(int elem) const {
     if (elements[index] == elem) {
       return true;
     }
-    // if (elements[index] == NULL_TELEM) {
-    //   return false;
-    // }
+
+    if (elements[index] == NULL_TELEM) {
+      return false;
+    }
+
     index = (index + secondaryStep * step) % capacity;
   }
 

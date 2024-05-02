@@ -1,5 +1,7 @@
 #pragma once
+#include <algorithm>
 #include <iostream>
+#include <set>
 // DO NOT INCLUDE SETITERATOR
 
 // DO NOT CHANGE THIS PART
@@ -12,8 +14,8 @@ class Set {
   friend class SetIterator;
 
  private:
-  static const int INITIAL_CAPACITY = 16;
-  static constexpr float LOAD_FACTOR_THRESHOLD = 0.6f;
+  static const int INITIAL_CAPACITY = 23;
+  static constexpr float LOAD_FACTOR_THRESHOLD = 0.75f;
 
   TElem *elements;
   int capacity;
@@ -47,14 +49,39 @@ class Set {
 
   void print() {
     std::cout << capacity << " " << length << std::endl;
+    std::vector<int> s;
     for (int i = 0; i < capacity; i++) {
-      std::cout << elements[i] << " ";
+      s.push_back(elements[i]);
+    }
+
+    std::sort(s.begin(), s.end());
+
+    for (auto elem : s) {
+      std::cout << elem << " ";
     }
     std::cout << std::endl;
   }
 
   // return an iterator for the set
   SetIterator iterator() const;
+
+  int findNextPrime(int n) {
+    while (true) {
+      bool isPrime = true;
+      for (int i = 2; i <= n / 2; i++) {
+        if (n % i == 0) {
+          isPrime = false;
+          break;
+        }
+      }
+
+      if (isPrime) {
+        return n;
+      }
+
+      n++;
+    }
+  }
 
   // destructor
   ~Set();
