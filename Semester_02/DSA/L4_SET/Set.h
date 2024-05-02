@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 // DO NOT INCLUDE SETITERATOR
 
 // DO NOT CHANGE THIS PART
@@ -11,7 +12,8 @@ class Set {
   friend class SetIterator;
 
  private:
-  static const int INITIAL_CAPACITY = 10;
+  static const int INITIAL_CAPACITY = 16;
+  static constexpr float LOAD_FACTOR_THRESHOLD = 0.6f;
 
   TElem *elements;
   int capacity;
@@ -42,6 +44,14 @@ class Set {
 
   // check whether the set is empty or not;
   bool isEmpty() const;
+
+  void print() {
+    std::cout << capacity << " " << length << std::endl;
+    for (int i = 0; i < capacity; i++) {
+      std::cout << elements[i] << " ";
+    }
+    std::cout << std::endl;
+  }
 
   // return an iterator for the set
   SetIterator iterator() const;

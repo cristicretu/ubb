@@ -23,13 +23,13 @@ void testAll() {
   assert(s.remove(6) == false);
   assert(s.size() == 4);
 
-  // SetIterator it = s.iterator();
-  // it.first();
-  // int sum = 0;
-  // while (it.valid()) {
-  //   TElem e = it.getCurrent();
-  //   sum += e;
-  //   it.next();
-  // }
-  // assert(sum == 19);
+  SetIterator it = s.iterator();
+  it.first();
+  int sum = 0;
+  while (it.valid()) {
+    TElem e = it.getCurrent();
+    sum += e;
+    it.next();
+  }
+  assert(sum == 19);
 }
