@@ -2,11 +2,7 @@
 
 #include "Set.h"
 
-SetIterator::SetIterator(const Set& m) : set(m) {
-  while (set.elements[current] == NULL_TELEM && current < set.capacity) {
-    current++;
-  }
-}
+SetIterator::SetIterator(const Set& m) : set(m), current(0) {}
 
 void SetIterator::first() {
   current = 0;
@@ -16,10 +12,9 @@ void SetIterator::first() {
 }
 
 void SetIterator::next() {
-  current++;
-  while (set.elements[current] == NULL_TELEM && current < set.capacity) {
+  do {
     current++;
-  }
+  } while (current < set.capacity && set.elements[current] == NULL_TELEM);
 }
 
 TElem SetIterator::getCurrent() {

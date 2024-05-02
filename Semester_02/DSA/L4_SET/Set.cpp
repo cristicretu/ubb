@@ -2,6 +2,23 @@
 
 #include "SetIterator.h"
 
+/*
+BC: Theta(n)
+WC: Theta(n)
+TC: Theta(n)
+*/
+Set::Set() : capacity(INITIAL_CAPACITY), length(0) {
+  elements = new TElem[capacity];
+  for (int i = 0; i < capacity; i++) {
+    elements[i] = NULL_TELEM;
+  }
+}
+
+/*
+BC: Theta(n)
+WC: Theta(n)
+TC: Theta(n)
+*/
 void Set::resize() {
   TElem *newElements = new TElem[capacity * 2];
   for (int i = 0; i < capacity * 2; i++) {
@@ -28,18 +45,17 @@ void Set::resize() {
   capacity *= 2;
 }
 
-Set::Set() {
-  elements = new TElem[INITIAL_CAPACITY];
-  capacity = INITIAL_CAPACITY;
-  length = 0;
-}
-
+/*
+BC: Theta(1) - when no collision occurs
+WC: Theta(n) - when probing has to go through all the elements
+TC: O(n)
+*/
 bool Set::add(TElem elem) {
   if (search(elem)) {
     return false;
   }
 
-  if (length == capacity) {
+  if (length >= capacity * LOAD_FACTOR_THRESHOLD) {
     resize();
   }
 
@@ -49,9 +65,7 @@ bool Set::add(TElem elem) {
 
   for (int i = 0; i < capacity; i++, step++) {
     if (elements[index] == NULL_TELEM) {
-      elements[index] = elem;
-      length++;
-      return true;
+      break;
     }
     index = (index + secondaryStep * step) % capacity;
   }
@@ -61,11 +75,19 @@ bool Set::add(TElem elem) {
   return true;
 }
 
-int Set::hash(TElem elem) const { return elem % capacity; }
+int Set::hash(TElem elem) const {
+  // return elem % capacity;
+  return (elem ^ (elem << 1) ^ (elem << 4) ^ (elem << 7)) % capacity;
+}
 int Set::hash2(TElem elem) const { return 1 + (elem % (capacity - 1)); }
 
+/*
+BC: Theta(1)
+WC: Theta(n)
+TC: O(n)
+*/
 bool Set::remove(TElem elem) {
-  if (!search(elem)) {
+  if (isEmpty() || !search(elem)) {
     return false;
   }
 
@@ -85,10 +107,41 @@ bool Set::remove(TElem elem) {
   return false;
 }
 
-bool Set::search(TElem elem) const { return elements[hash(elem)] == elem; }
+/*
+BC: Theta(1)
+WC: Theta(n)
+TC: O(n)
+*/
+bool Set::search(int elem) const {
+  int index = hash(elem);
+  int step = 1;
+  int secondaryStep = hash2(elem);
 
+  for (int i = 0; i < capacity; i++, step++) {
+    if (elements[index] == elem) {
+      return true;
+    }
+    // if (elements[index] == NULL_TELEM) {
+    //   return false;
+    // }
+    index = (index + secondaryStep * step) % capacity;
+  }
+
+  return false;
+}
+
+/*
+BC: Theta(1)
+WC: Theta(1)
+TC: Theta(1)
+*/
 int Set::size() const { return length; }
 
+/*
+BC: Theta(1)
+WC: Theta(1)
+TC: Theta(1)
+*/
 bool Set::isEmpty() const { return length == 0; }
 
 Set::~Set() {
