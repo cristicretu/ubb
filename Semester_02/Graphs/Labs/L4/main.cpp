@@ -20,6 +20,8 @@ class Graph {
   std::stack<uint32_t> stack;
   std::vector<std::vector<uint32_t>> articulated_components;
 
+  std::vector<int> parent, rank;
+
   int generateEdgeID() { return edges++; }
 
  public:
@@ -748,6 +750,72 @@ class Graph {
 
     return count[target];
   }
+
+  void initializeUnionFind() {
+    parent.resize(vertices);
+    rank.resize(vertices, 0);
+    for (uint32_t i = 0; i < vertices; ++i) parent[i] = i;
+  }
+
+  int find(int i) {
+    if (parent[i] == i) return i;
+    return parent[i] = find(parent[i]);
+  }
+
+  void unionSet(int x, int y) {
+    int rootX = find(x);
+    int rootY = find(y);
+    if (rootX != rootY) {
+      if (rank[rootX] > rank[rootY])
+        parent[rootY] = rootX;
+      else if (rank[rootX] < rank[rootY])
+        parent[rootX] = rootY;
+      else {
+        parent[rootY] = rootX;
+        rank[rootX]++;
+      }
+    }
+  }
+
+  bool findLowCostHamiltonianCycle() {
+    initializeUnionFind();
+    std::vector<std::tuple<int, int, int>> edges;
+
+    for (auto& kv : outbound) {
+      int u = kv.first;
+      for (auto& p : kv.second) {
+        int v = p.first, edgeId = p.second;
+        if (u < v) edges.emplace_back(cost[edgeId], u, v);
+      }
+    }
+
+    std::sort(edges.begin(), edges.end());
+
+    std::vector<std::pair<int, int>> cycle;
+    for (auto& edge : edges) {
+      int cost, u, v;
+      std::tie(cost, u, v) = edge;
+
+      if (find(u) != find(v)) {
+        cycle.emplace_back(u, v);
+        unionSet(u, v);
+        if (cycle.size() == vertices - 1) break;
+      }
+    }
+
+    if (cycle.size() == vertices - 1 &&
+        find(cycle.begin()->first) == find(cycle.begin()->second)) {
+      std::cout << "Cycle found: ";
+      for (auto& p : cycle) {
+        std::cout << "(" << p.first << ", " << p.second << ") ";
+      }
+      std::cout << std::endl;
+      return true;
+    }
+
+    std::cout << "No Hamiltonian cycle found." << std::endl;
+    return false;
+  }
 };
 
 class UI {
@@ -794,6 +862,7 @@ class UI {
     std::cout << "25. Number of distinct lowest cost paths between two "
                  "vertices.\n";
     std::cout << "|==========================|\n";
+    std::cout << "26. Find the lowest cost Hamiltonian cycle.\n";
     std::cout << "0. Exit\n\n";
     std::cout << "Enter your choice: ";
   }
@@ -997,6 +1066,9 @@ class UI {
         std::cout << "The number of distinct lowest cost paths between " << v1
                   << " and " << v2 << " is "
                   << graph.countDistinctLowestCostPaths(v1, v2) << ".\n";
+        break;
+      case 26:
+        graph.findLowCostHamiltonianCycle();
         break;
       case 0:
         std::cout << "Exiting...\n";
