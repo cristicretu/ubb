@@ -697,6 +697,57 @@ class Graph {
     std::reverse(path.begin(), path.end());
     return path;
   }
+
+  // the number of distinct paths
+  int countDistinctPaths(int source, int target) {
+    std::vector<int> topologicalOrder;
+    if (!isDAG(topologicalOrder)) {
+      std::cout << "The graph is not a DAG.\n";
+      return 0;
+    }
+
+    std::vector<int> pathCount(outbound.size(), 0);
+    pathCount[source] = 1;
+
+    for (int u : topologicalOrder) {
+      for (auto& edge : outbound[u]) {
+        int v = edge.first;
+        pathCount[v] += pathCount[u];
+      }
+    }
+
+    return pathCount[target];
+  }
+
+  int countDistinctLowestCostPaths(int source, int target) {
+    std::vector<int> topologicalOrder;
+    if (!isDAG(topologicalOrder)) {
+      std::cout << "The graph is not a DAG.\n";
+      return 0;
+    }
+
+    std::vector<int> dist(outbound.size(), INT_MAX);
+    std::vector<int> count(outbound.size(), 0);
+    dist[source] = 0;
+    count[source] = 1;
+
+    for (int u : topologicalOrder) {
+      if (dist[u] != INT_MAX) {
+        for (const auto& edge : outbound[u]) {
+          int v = edge.first;
+          int weight = getCost(u, v);
+          if (dist[u] + weight < dist[v]) {
+            dist[v] = dist[u] + weight;
+            count[v] = count[u];
+          } else if (dist[u] + weight == dist[v]) {
+            count[v] += count[u];
+          }
+        }
+      }
+    }
+
+    return count[target];
+  }
 };
 
 class UI {
@@ -738,6 +789,11 @@ class UI {
                  "the given vertices.\n";
     std::cout << "|==========================|\n";
     std::cout << "22. Find the highest cost path between two vertices.\n";
+    std::cout << "23. Bonus 1\n";
+    std::cout << "24. Number of distinct paths between two vertices.\n";
+    std::cout << "25. Number of distinct lowest cost paths between two "
+                 "vertices.\n";
+    std::cout << "|==========================|\n";
     std::cout << "0. Exit\n\n";
     std::cout << "Enter your choice: ";
   }
@@ -921,6 +977,27 @@ class UI {
         std::cout << std::endl;
         break;
       }
+      case 23:
+        std::cout << "Bonus 1\n";
+        break;
+      case 24:
+        std::cout << "Enter starting vertex for the walk: ";
+        std::cin >> v1;
+        std::cout << "Enter ending vertex for the walk: ";
+        std::cin >> v2;
+        std::cout << "The number of distinct paths between " << v1 << " and "
+                  << v2 << " is " << graph.countDistinctPaths(v1, v2) << ".\n";
+        break;
+
+      case 25:
+        std::cout << "Enter starting vertex for the walk: ";
+        std::cin >> v1;
+        std::cout << "Enter ending vertex for the walk: ";
+        std::cin >> v2;
+        std::cout << "The number of distinct lowest cost paths between " << v1
+                  << " and " << v2 << " is "
+                  << graph.countDistinctLowestCostPaths(v1, v2) << ".\n";
+        break;
       case 0:
         std::cout << "Exiting...\n";
         break;
