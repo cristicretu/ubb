@@ -64,29 +64,25 @@ void testAdd() {
   assert(s.size() == 30);
   for (int i = -100; i < 100; i++) {  // add more elements [-100, 100)
     auto res = s.add(i);
-    std::cout << "I am adding " << i << " and the result is " << res
-              << std::endl;
+    // std::cout << "I am adding " << i << " and the result is " << res
+    // << std::endl;
   }
   // printM(m);
   assert(s.isEmpty() == false);
-  s.print();
-  std::cout << s.size() << std::endl;
+  // s.print();
+  // std::cout << s.size() << std::endl;
   assert(s.size() == 200);
   for (int i = -200; i < 200; i++) {
     if (i < -100) {
       assert(s.search(i) == false);
     } else if (i < 0) {
       if (s.search(i) == false) {
-        std::cout << "I am searching for " << i << " and the result is "
-                  << s.search(i) << std::endl;
       }
-      // assert(s.search(i) == true);
+      assert(s.search(i) == true);
     } else if (i < 100) {
       if (s.search(i) == false) {
-        std::cout << "I am searching for " << i << " and the result is "
-                  << s.search(i) << std::endl;
       }
-      // assert(s.search(i) == true);
+      assert(s.search(i) == true);
     } else {
       assert(s.search(i) == false);
     }
@@ -149,7 +145,8 @@ void testRemove() {
   }
   // printM(m);
   assert(m.size() == 200);
-  for (int i = -200; i < 200; i++) {  // delete existing and inexistent elements
+
+  for (int i = -200; i < 200; i++) {  // delete existing and inexistent
     if (i < -100 || i >= 100) {
       assert(m.remove(i) == false);
     } else {
@@ -158,6 +155,7 @@ void testRemove() {
     }
     testIteratorSteps(m);
   }
+
   assert(m.size() == 0);
 }
 
@@ -267,9 +265,12 @@ void testMix() {
 void testQuantity() {  // add lots of elements
   cout << "Test quantity" << endl;
   Set s;
+  int cnt = 0;
   for (int i = 10; i >= 1; i--) {
     for (int j = -30000; j < 30000; j = j + i) {
       s.add(j);
+      cnt++;
+      std::cout << cnt << std::endl;
     }
   }
   assert(s.size() == 60000);
