@@ -14,15 +14,15 @@ class Set {
   friend class SetIterator;
 
  private:
-  static const int INITIAL_CAPACITY = 23;
-  static constexpr float LOAD_FACTOR_THRESHOLD = 0.75f;
+  const int INITIAL_CAPACITY = 100;
+  const double LOAD_FACTOR_THRESHOLD = 0.75;
 
   TElem *elements;
   int capacity;
   int length;
 
-  int hash(TElem elem) const;
-  int hash2(TElem elem) const;
+  int hash(TElem elem, int cap) const;
+  int hash2(TElem elem, int cap) const;
   void resize();
 
  public:

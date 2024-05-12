@@ -2,25 +2,30 @@
 
 #include "Set.h"
 
-SetIterator::SetIterator(const Set& m) : set(m), current(0) {}
+SetIterator::SetIterator(const Set& m) : set(m), current(0) { first(); }
 
 void SetIterator::first() {
   current = 0;
-  while (set.elements[current] == NULL_TELEM && current < set.capacity) {
+  while (current < set.capacity && set.elements[current] == NULL_TELEM) {
     current++;
   }
 }
 
 void SetIterator::next() {
-  do {
+  if (!valid()) {
+    throw std::exception();
+  }
+  current++;
+  while (current < set.capacity && set.elements[current] == NULL_TELEM) {
     current++;
-  } while (current < set.capacity && set.elements[current] == NULL_TELEM);
+  }
 }
 
 TElem SetIterator::getCurrent() {
-  if (valid()) {
-    return set.elements[current];
+  if (!valid()) {
+    throw std::exception();
   }
+  return set.elements[current];
 }
 
 bool SetIterator::valid() const {
