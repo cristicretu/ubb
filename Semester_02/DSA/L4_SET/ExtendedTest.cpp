@@ -265,12 +265,9 @@ void testMix() {
 void testQuantity() {  // add lots of elements
   cout << "Test quantity" << endl;
   Set s;
-  int cnt = 0;
   for (int i = 10; i >= 1; i--) {
     for (int j = -30000; j < 30000; j = j + i) {
       s.add(j);
-      cnt++;
-      std::cout << cnt << std::endl;
     }
   }
   assert(s.size() == 60000);

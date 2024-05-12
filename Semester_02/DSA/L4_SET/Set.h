@@ -14,8 +14,8 @@ class Set {
   friend class SetIterator;
 
  private:
-  const int INITIAL_CAPACITY = 100;
-  const double LOAD_FACTOR_THRESHOLD = 0.75;
+  const int INITIAL_CAPACITY = 32;
+  const double LOAD_FACTOR_THRESHOLD = 0.5;
 
   TElem *elements;
   int capacity;
