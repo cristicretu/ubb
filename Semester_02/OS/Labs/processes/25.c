@@ -18,14 +18,6 @@ int main(int argc, char **argv) {
     exit(1);
   }
 
-  int a = rand() % 11 + 10;
-  printf("A is sending %d\n", a);
-
-  if (-1 == write(a2d[1], &a, sizeof(int))) {
-    perror("writing a to d");
-    exit(1);
-  }
-
   pid_t b = fork();
 
   if (b < 0) {
@@ -61,6 +53,7 @@ int main(int argc, char **argv) {
 
     close(d2b[0]);
     close(b2d[1]);
+    exit(0);
   }
 
   pid_t c = fork();
@@ -95,6 +88,7 @@ int main(int argc, char **argv) {
     }
     close(c2d[1]);
     close(d2c[0]);
+    exit(0);
   }
 
   pid_t d = fork();
@@ -152,7 +146,21 @@ int main(int argc, char **argv) {
     close(b2d[0]);
     close(c2d[0]);
     close(d2b[1]);
+    exit(0);
   }
+
+  int a = rand() % 11 + 10;
+  printf("A is sending %d\n", a);
+
+  if (-1 == write(a2d[1], &a, sizeof(int))) {
+    perror("writing a to d");
+    exit(1);
+  }
+
+  wait(NULL);
+  wait(NULL);
+  wait(NULL);
+  close(a2d[1]);
 
   return 0;
 }
