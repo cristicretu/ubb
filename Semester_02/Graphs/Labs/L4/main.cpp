@@ -4,6 +4,7 @@
 #include <list>
 #include <map>
 #include <queue>
+#include <set>
 #include <stack>
 #include <unordered_map>
 #include <vector>
@@ -620,14 +621,15 @@ class Graph {
   void dfs(int v, std::unordered_map<int, bool>& visited,
            std::stack<int>& stack, std::unordered_map<int, bool>& recStack,
            bool& isCycle) {
-    visited[v] = true;
-    recStack[v] = true;
+    visited[v] = true;   /// current vertex is visited
+    recStack[v] = true;  /// current vertex is in the recursion stack
 
     for (const auto& edge : outbound[v]) {
-      if (!visited[edge.first]) {
+      if (!visited[edge.first]) {  /// we have not yet visited this vertex
         dfs(edge.first, visited, stack, recStack, isCycle);
         if (isCycle) return;
-      } else if (recStack[edge.first]) {
+      } else if (recStack[edge.first]) {  /// we have visited this vertex and it
+                                          /// is in the recursion stack
         isCycle = true;
         return;
       }
@@ -638,9 +640,10 @@ class Graph {
   }
 
   bool isDAG(std::vector<int>& topologicalOrder) {
-    std::unordered_map<int, bool> visited;
-    std::unordered_map<int, bool> recStack;
-    std::stack<int> stack;
+    std::unordered_map<int, bool> visited;   /// keep track of visited vertices
+    std::unordered_map<int, bool> recStack;  /// keep track of vertices in the
+                                             /// recursion stack
+    std::stack<int> stack;  /// stack to store the topological order of vertices
     bool isCycle = false;
 
     for (const auto& vertex : outbound) {
@@ -653,7 +656,7 @@ class Graph {
     }
 
     topologicalOrder.clear();
-    while (!stack.empty()) {
+    while (!stack.empty()) {  /// store the topological order of vertices
       topologicalOrder.push_back(stack.top());
       stack.pop();
     }
@@ -668,16 +671,19 @@ class Graph {
       return {};
     }
 
-    std::vector<int> dist(outbound.size(), INT_MIN);
-    std::vector<int> predecessor(outbound.size(), -1);
+    /// the graph is DAG
+
+    std::vector<int> dist(outbound.size(), INT_MIN);  /// all dist is -inf
+    std::vector<int> predecessor(outbound.size(),
+                                 -1);  /// for path reconstruction
     dist[source] = 0;
 
     for (int u : topologicalOrder) {
-      if (dist[u] != INT_MIN) {
-        for (auto i : outbound[u]) {
+      if (dist[u] != INT_MIN) {       /// if vertex u is reachable
+        for (auto i : outbound[u]) {  /// for each outbound edge from u
           int v = i.first;
-          int weight = cost[u * 10000 + v];
-          if (dist[v] < dist[u] + weight) {
+          int weight = getCost(u, v);
+          if (dist[v] < dist[u] + weight) {  // if we can relax the edge
             dist[v] = dist[u] + weight;
             predecessor[v] = u;
           }
@@ -700,7 +706,7 @@ class Graph {
     return path;
   }
 
-  // the number of distinct paths
+  /// Bonus 2
   int countDistinctPaths(int source, int target) {
     std::vector<int> topologicalOrder;
     if (!isDAG(topologicalOrder)) {
@@ -721,6 +727,7 @@ class Graph {
     return pathCount[target];
   }
 
+  /// Bonus 3
   int countDistinctLowestCostPaths(int source, int target) {
     std::vector<int> topologicalOrder;
     if (!isDAG(topologicalOrder)) {
@@ -728,8 +735,9 @@ class Graph {
       return 0;
     }
 
-    std::vector<int> dist(outbound.size(), INT_MAX);
-    std::vector<int> count(outbound.size(), 0);
+    std::vector<int> dist(outbound.size(),
+                          INT_MAX);  /// we need low cost, so all are inf
+    std::vector<int> count(outbound.size(), 0);  /// number of paths
     dist[source] = 0;
     count[source] = 1;
 
@@ -738,10 +746,14 @@ class Graph {
         for (const auto& edge : outbound[u]) {
           int v = edge.first;
           int weight = getCost(u, v);
-          if (dist[u] + weight < dist[v]) {
+          if (dist[u] + weight <
+              dist[v]) {  /// if we can relax the edge, update the distance and
+                          /// the number of paths
             dist[v] = dist[u] + weight;
             count[v] = count[u];
-          } else if (dist[u] + weight == dist[v]) {
+          } else if (dist[u] + weight ==
+                     dist[v]) {  /// if we have another path, increment the
+                                 /// number of paths
             count[v] += count[u];
           }
         }
@@ -751,26 +763,35 @@ class Graph {
     return count[target];
   }
 
+  /* --------------------------------------------------------------- */
+  /* L5 */
+
   void initializeUnionFind() {
-    parent.resize(vertices);
-    rank.resize(vertices, 0);
-    for (uint32_t i = 0; i < vertices; ++i) parent[i] = i;
+    parent.resize(vertices);   /// Initialize the parent vector
+    rank.resize(vertices, 0);  /// Initialize the rank vector
+    for (uint32_t i = 0; i < vertices; ++i)
+      parent[i] = i;  /// all vertices are their own parents
   }
 
-  int find(int i) {
-    if (parent[i] == i) return i;
-    return parent[i] = find(parent[i]);
+  int find(int i) {                      /// find the parent of the vertex
+    if (parent[i] == i) return i;        /// if the vertex is its own parent
+    return parent[i] = find(parent[i]);  ///  we need to find
+                                         /// the parent of the parent
   }
 
-  void unionSet(int x, int y) {
+  void unionSet(int x, int y) {  /// we need to merge the sets of x and y
     int rootX = find(x);
     int rootY = find(y);
-    if (rootX != rootY) {
-      if (rank[rootX] > rank[rootY])
+    if (rootX != rootY) {  /// if the roots are different, we need to merge the
+                           /// sets
+      if (rank[rootX] > rank[rootY])  /// if the rank of x is greater than the
+                                      /// rank of y, we merge y into x
         parent[rootY] = rootX;
-      else if (rank[rootX] < rank[rootY])
+      else if (rank[rootX] < rank[rootY])  /// if the rank of y is greater than
+                                           /// the rank of x, we merge x into y
         parent[rootX] = rootY;
-      else {
+      else {  /// if the ranks are equal, we merge x into y and increment the
+              /// rank of y
         parent[rootY] = rootX;
         rank[rootX]++;
       }
@@ -779,7 +800,8 @@ class Graph {
 
   bool findLowCostHamiltonianCycle() {
     initializeUnionFind();
-    std::vector<std::tuple<int, int, int>> edges;
+    std::vector<std::tuple<int, int, int>>
+        edges;  /// convert the graph to a list of edges
 
     for (auto& kv : outbound) {
       int u = kv.first;
@@ -789,28 +811,57 @@ class Graph {
       }
     }
 
-    std::sort(edges.begin(), edges.end());
+    std::sort(edges.begin(), edges.end());  /// sort ascending by cost
 
-    std::vector<std::pair<int, int>> cycle;
+    std::vector<std::pair<int, int>> cycle;  /// keep track of the added edges
     for (auto& edge : edges) {
       int cost, u, v;
       std::tie(cost, u, v) = edge;
 
-      if (find(u) != find(v)) {
-        cycle.emplace_back(u, v);
-        unionSet(u, v);
-        if (cycle.size() == vertices - 1) break;
+      if (find(u) != find(v)) {    /// if the vertices are not in the same set
+        cycle.emplace_back(u, v);  /// add the edge to the cycle
+        unionSet(u, v);            /// merge the sets
+
+        bool formsShortCycle = false;  /// check if this edge forms a cycle of
+                                       /// length less than vertices
+        for (auto& p : cycle) {
+          if (p.first == v && find(p.second) == find(u)) {
+            formsShortCycle = true;
+            break;
+          }
+          if (p.second == u && find(p.first) == find(v)) {
+            formsShortCycle = true;
+            break;
+          }
+        }
+
+        if (formsShortCycle) {
+          cycle.pop_back();  /// remove the edge from the cycle, and reset the
+                             /// sets
+          parent[u] = u;
+          parent[v] = v;
+          continue;
+        }
+
+        if (cycle.size() == vertices - 1)
+          break;  /// stop if we have enough edges
       }
     }
 
-    if (cycle.size() == vertices - 1 &&
-        find(cycle.begin()->first) == find(cycle.begin()->second)) {
-      std::cout << "Cycle found: ";
+    if (cycle.size() == vertices - 1) {
+      std::set<int> verticesInCycle;
       for (auto& p : cycle) {
-        std::cout << "(" << p.first << ", " << p.second << ") ";
+        verticesInCycle.insert(p.first);
+        verticesInCycle.insert(p.second);
       }
-      std::cout << std::endl;
-      return true;
+      if (verticesInCycle.size() == vertices) {
+        std::cout << "Cycle found: ";
+        for (auto& p : cycle) {
+          std::cout << "(" << p.first << ", " << p.second << ") ";
+        }
+        std::cout << std::endl;
+        return true;
+      }
     }
 
     std::cout << "No Hamiltonian cycle found." << std::endl;
@@ -863,6 +914,7 @@ class UI {
                  "vertices.\n";
     std::cout << "|==========================|\n";
     std::cout << "26. Find the lowest cost Hamiltonian cycle.\n";
+    std::cout << "|==========================|\n";
     std::cout << "0. Exit\n\n";
     std::cout << "Enter your choice: ";
   }
@@ -1049,7 +1101,7 @@ class UI {
       case 23:
         std::cout << "Bonus 1\n";
         break;
-      case 24:
+      case 24:  // Bonus 2
         std::cout << "Enter starting vertex for the walk: ";
         std::cin >> v1;
         std::cout << "Enter ending vertex for the walk: ";
@@ -1058,7 +1110,7 @@ class UI {
                   << v2 << " is " << graph.countDistinctPaths(v1, v2) << ".\n";
         break;
 
-      case 25:
+      case 25:  // Bonus 3
         std::cout << "Enter starting vertex for the walk: ";
         std::cin >> v1;
         std::cout << "Enter ending vertex for the walk: ";
@@ -1067,7 +1119,7 @@ class UI {
                   << " and " << v2 << " is "
                   << graph.countDistinctLowestCostPaths(v1, v2) << ".\n";
         break;
-      case 26:
+      case 26:  // L5 Assignment
         graph.findLowCostHamiltonianCycle();
         break;
       case 0:
