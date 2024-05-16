@@ -8,7 +8,7 @@
 #include "pthread_barrier.h"
 
 pthread_barrier_t barrier;
-pthread_mutex_t mutex;
+pthread_mutex_t *mutex;
 int *arr;
 int n;
 
@@ -25,10 +25,12 @@ void *f(void *arg) {
         }
     }
     int steal = arr[other] / 10;
-    pthread_mutex_lock(&mutex);
+    pthread_mutex_lock(&mutex[index]);
+    pthread_mutex_lock(&mutex[other]);
     arr[other] -= steal;
     arr[index] += steal;
-    pthread_mutex_unlock(&mutex);
+    pthread_mutex_unlock(&mutex[index]);
+    pthread_mutex_unlock(&mutex[other]);
     printf("After steal: arr[%d] = %d\n", index, arr[index]);
     return NULL;
 }
@@ -42,7 +44,10 @@ int main(int argc, char **argv) {
 
     pthread_t th[n];
     pthread_barrier_init(&barrier, NULL, n);
-    pthread_mutex_init(&mutex, NULL);
+    mutex = (pthread_mutex_t *)malloc(n * sizeof(pthread_mutex_t));
+    for (int i = 0; i < n; i++) {
+        pthread_mutex_init(&mutex[i], NULL);
+    }
     int *index = (int *)malloc(sizeof(int));
     arr = (int *)malloc(n * sizeof(int));
     for (int i = 0; i < n; i++) {
@@ -61,7 +66,9 @@ int main(int argc, char **argv) {
     }
 
     pthread_barrier_destroy(&barrier);
-    pthread_mutex_destroy(&mutex);
+    for (int i = 0; i < n; i++) {
+        pthread_mutex_destroy(&mutex[i]);
+    }
     free(index);
     free(arr);
     return 0;
