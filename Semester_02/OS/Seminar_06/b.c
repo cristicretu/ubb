@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <unistd.h>
 
 int arr[10];
 int full = 0;
@@ -21,6 +22,7 @@ void *producer(void *arg) {
         for (int i = 0; i < 10; i++) {
             arr[i] = rand() % 100;
         }
+        usleep(100000);
         full = 1;
         pthread_cond_signal(&cond);
         pthread_mutex_unlock(&mutex);

@@ -2,21 +2,20 @@
 triple:          'arm64-apple-darwin'
 binary-path:     a.out
 relocations:
-  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _producer, symObjAddr: 0x0, symBinAddr: 0x1000037A4, symSize: 0x10C }
-  - { offsetInCU: 0x3F, offset: 0x3F, size: 0x8, addend: 0x0, symName: _full, symObjAddr: 0xFA4, symBinAddr: 0x100008008, symSize: 0x0 }
-  - { offsetInCU: 0x5B, offset: 0x5B, size: 0x8, addend: 0x0, symName: _repeats, symObjAddr: 0x344, symBinAddr: 0x100008000, symSize: 0x0 }
-  - { offsetInCU: 0x7E, offset: 0x7E, size: 0x8, addend: 0x0, symName: _arr, symBinAddr: 0x10000800C, symSize: 0x0 }
-  - { offsetInCU: 0x9F, offset: 0x9F, size: 0x8, addend: 0x0, symName: _cond, symBinAddr: 0x100008038, symSize: 0x0 }
-  - { offsetInCU: 0xFE, offset: 0xFE, size: 0x8, addend: 0x0, symName: _mutex, symBinAddr: 0x100008068, symSize: 0x0 }
-  - { offsetInCU: 0x14B, offset: 0x14B, size: 0x8, addend: 0x0, symName: _producer, symObjAddr: 0x0, symBinAddr: 0x1000037A4, symSize: 0x10C }
-  - { offsetInCU: 0x19D, offset: 0x19D, size: 0x8, addend: 0x0, symName: _consumer, symObjAddr: 0x10C, symBinAddr: 0x1000038B0, symSize: 0x118 }
-  - { offsetInCU: 0x1EF, offset: 0x1EF, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x224, symBinAddr: 0x1000039C8, symSize: 0x120 }
-  - { offsetInCU: 0x26, offset: 0x31F, size: 0x8, addend: 0x0, symName: _pthread_barrier_init, symObjAddr: 0x0, symBinAddr: 0x100003AE8, symSize: 0x198 }
-  - { offsetInCU: 0x33, offset: 0x32C, size: 0x8, addend: 0x0, symName: _pthread_barrier_init, symObjAddr: 0x0, symBinAddr: 0x100003AE8, symSize: 0x198 }
-  - { offsetInCU: 0xAF, offset: 0x3A8, size: 0x8, addend: 0x0, symName: _pthread_barrierattr_getpshared, symObjAddr: 0x198, symBinAddr: 0x100003C80, symSize: 0x2C }
-  - { offsetInCU: 0xE5, offset: 0x3DE, size: 0x8, addend: 0x0, symName: _pthread_barrier_destroy, symObjAddr: 0x1C4, symBinAddr: 0x100003CAC, symSize: 0xA0 }
-  - { offsetInCU: 0x129, offset: 0x422, size: 0x8, addend: 0x0, symName: _pthread_barrier_wait, symObjAddr: 0x264, symBinAddr: 0x100003D4C, symSize: 0xD8 }
-  - { offsetInCU: 0x16D, offset: 0x466, size: 0x8, addend: 0x0, symName: _pthread_barrierattr_init, symObjAddr: 0x33C, symBinAddr: 0x100003E24, symSize: 0x24 }
-  - { offsetInCU: 0x195, offset: 0x48E, size: 0x8, addend: 0x0, symName: _pthread_barrierattr_destroy, symObjAddr: 0x360, symBinAddr: 0x100003E48, symSize: 0x24 }
-  - { offsetInCU: 0x1BD, offset: 0x4B6, size: 0x8, addend: 0x0, symName: _pthread_barrierattr_setpshared, symObjAddr: 0x384, symBinAddr: 0x100003E6C, symSize: 0x2C }
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _f, symObjAddr: 0x0, symBinAddr: 0x1000034EC, symSize: 0x138 }
+  - { offsetInCU: 0x4D, offset: 0x4D, size: 0x8, addend: 0x0, symName: _mutex, symBinAddr: 0x100008000, symSize: 0x0 }
+  - { offsetInCU: 0xB1, offset: 0xB1, size: 0x8, addend: 0x0, symName: _n, symBinAddr: 0x100008008, symSize: 0x0 }
+  - { offsetInCU: 0xCD, offset: 0xCD, size: 0x8, addend: 0x0, symName: _sem_1, symBinAddr: 0x10000800C, symSize: 0x0 }
+  - { offsetInCU: 0xED, offset: 0xED, size: 0x8, addend: 0x0, symName: _sem_2, symBinAddr: 0x100008010, symSize: 0x0 }
+  - { offsetInCU: 0x102, offset: 0x102, size: 0x8, addend: 0x0, symName: _sem_3, symBinAddr: 0x100008014, symSize: 0x0 }
+  - { offsetInCU: 0x111, offset: 0x111, size: 0x8, addend: 0x0, symName: _f, symObjAddr: 0x0, symBinAddr: 0x1000034EC, symSize: 0x138 }
+  - { offsetInCU: 0x147, offset: 0x147, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x138, symBinAddr: 0x100003624, symSize: 0x3AC }
+  - { offsetInCU: 0x26, offset: 0x2F2, size: 0x8, addend: 0x0, symName: _pthread_barrier_init, symObjAddr: 0x0, symBinAddr: 0x1000039D0, symSize: 0x198 }
+  - { offsetInCU: 0x33, offset: 0x2FF, size: 0x8, addend: 0x0, symName: _pthread_barrier_init, symObjAddr: 0x0, symBinAddr: 0x1000039D0, symSize: 0x198 }
+  - { offsetInCU: 0xAF, offset: 0x37B, size: 0x8, addend: 0x0, symName: _pthread_barrierattr_getpshared, symObjAddr: 0x198, symBinAddr: 0x100003B68, symSize: 0x2C }
+  - { offsetInCU: 0xE5, offset: 0x3B1, size: 0x8, addend: 0x0, symName: _pthread_barrier_destroy, symObjAddr: 0x1C4, symBinAddr: 0x100003B94, symSize: 0xA0 }
+  - { offsetInCU: 0x129, offset: 0x3F5, size: 0x8, addend: 0x0, symName: _pthread_barrier_wait, symObjAddr: 0x264, symBinAddr: 0x100003C34, symSize: 0xD8 }
+  - { offsetInCU: 0x16D, offset: 0x439, size: 0x8, addend: 0x0, symName: _pthread_barrierattr_init, symObjAddr: 0x33C, symBinAddr: 0x100003D0C, symSize: 0x24 }
+  - { offsetInCU: 0x195, offset: 0x461, size: 0x8, addend: 0x0, symName: _pthread_barrierattr_destroy, symObjAddr: 0x360, symBinAddr: 0x100003D30, symSize: 0x24 }
+  - { offsetInCU: 0x1BD, offset: 0x489, size: 0x8, addend: 0x0, symName: _pthread_barrierattr_setpshared, symObjAddr: 0x384, symBinAddr: 0x100003D54, symSize: 0x2C }
 ...
