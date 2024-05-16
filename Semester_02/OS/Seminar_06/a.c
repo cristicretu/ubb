@@ -8,6 +8,7 @@
 #include "pthread_barrier.h"
 
 pthread_barrier_t barrier;
+pthread_mutex_t mutex;
 int *arr;
 int n;
 
@@ -16,15 +17,18 @@ void *f(void *arg) {
     arr[index] = rand() % 1000;
     printf("arr[%d] = %d\n", index, arr[index]);
     pthread_barrier_wait(&barrier);
-    for (int i = 0; i < n; i++) {
-        if (i == index) {
-            continue;
+    int other;
+    while (1) {
+        other = rand() % n;
+        if (other != index) {
+            break;
         }
-        int steal = arr[i] / 10;
-        arr[i] -= steal;
-        arr[index] += steal;
-        break;
     }
+    int steal = arr[other] / 10;
+    pthread_mutex_lock(&mutex);
+    arr[other] -= steal;
+    arr[index] += steal;
+    pthread_mutex_unlock(&mutex);
     printf("After steal: arr[%d] = %d\n", index, arr[index]);
     return NULL;
 }
@@ -38,6 +42,7 @@ int main(int argc, char **argv) {
 
     pthread_t th[n];
     pthread_barrier_init(&barrier, NULL, n);
+    pthread_mutex_init(&mutex, NULL);
     int *index = (int *)malloc(sizeof(int));
     arr = (int *)malloc(n * sizeof(int));
     for (int i = 0; i < n; i++) {
@@ -56,6 +61,7 @@ int main(int argc, char **argv) {
     }
 
     pthread_barrier_destroy(&barrier);
+    pthread_mutex_destroy(&mutex);
     free(index);
     free(arr);
     return 0;
