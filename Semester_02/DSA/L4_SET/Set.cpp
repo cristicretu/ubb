@@ -14,15 +14,14 @@ AC: Theta(n)
 void Set::resize() {
   int newCapacity = findNextPrime(capacity * 2);
   TElem *newElements = new TElem[newCapacity];
-  std::fill(newElements, newElements + newCapacity,
-            NULL_TELEM);  // fill with NULL_TELEM (empty)
+  std::fill(newElements, newElements + newCapacity, NULL_TELEM);
 
   for (int i = 0; i < capacity; i++) {
-    if (elements[i] != NULL_TELEM) {  /// if the element is not empty, rehash it
-                                      /// using the new capacity
+    if (elements[i] != NULL_TELEM && elements[i] != DELETED_TELEM) {
       int index = hash(elements[i], newCapacity);
       int secondaryStep = hash2(elements[i], newCapacity);
-      while (newElements[index] != NULL_TELEM) {
+      while (newElements[index] != NULL_TELEM &&
+             newElements[index] != DELETED_TELEM) {
         index = (index + secondaryStep) % newCapacity;
       }
       newElements[index] = elements[i];
@@ -44,25 +43,19 @@ bool Set::add(TElem elem) {
   int step = hash2(elem, capacity);
   int originalIndex = index;
 
-  while (elements[index] != NULL_TELEM) {
+  while (elements[index] != NULL_TELEM && elements[index] != DELETED_TELEM) {
     if (elements[index] == elem) {
-      return false;  /// element already exists
+      return false;  // element already exists
     }
     index = (index + step) % capacity;
-    if (index == originalIndex) {  /// if we looped back to the start index,
-                                   /// means the set is full
-      return false;
-    }
   }
 
   elements[index] = elem;
   ++length;
 
   if (length >=
-      capacity *
-          LOAD_FACTOR_THRESHOLD) {  /// if the load factor is
-                                    /// greater than the threshold, resize,
-                                    /// rehash, and recompute the hash indexes
+      capacity * LOAD_FACTOR_THRESHOLD) {  // if the load factor is greater than
+                                           // the threshold
     resize();
   }
   return true;
@@ -74,16 +67,7 @@ WC: Theta(1)
 AC: Theta(1)
 */
 
-/*
-dj2 hash function
-http://www.cse.yorku.ca/~oz/hash.html
-*/
-
-int Set::hash(TElem elem, int cap) const {
-  int hash = 5381;                     // a prime number
-  hash = ((hash << 5) + hash) + elem;  // djb2 algorithm
-  return std::abs(hash % cap);
-}
+int Set::hash(TElem elem, int cap) const { return std::abs(elem) % cap; }
 
 // /*
 // BC: Theta(1)
@@ -106,17 +90,18 @@ bool Set::remove(TElem elem) {
   int originalIndex = index;
 
   while (elements[index] != NULL_TELEM && elements[index] != elem) {
-    index = (index + step) % capacity;
-    if (index == originalIndex) {  /// if we looped back to the start index
-      return false;
+    if (elements[index] == DELETED_TELEM) {
+      index = (index + step) % capacity;
+      continue;
     }
+    index = (index + step) % capacity;
   }
 
-  if (elements[index] != elem) {  /// element not found
+  if (elements[index] != elem) {  // element not found
     return false;
   }
 
-  elements[index] = NULL_TELEM;  /// mark as DELETED
+  elements[index] = DELETED_TELEM;  // mark as DELETED
   length--;
 
   return true;
@@ -141,9 +126,13 @@ bool Set::search(TElem elem) const {
                                           // element is not in the set
       return false;
     }
-    index = (index + secondaryStep) % capacity;  /// move to the next index
+    if (elements[index] == DELETED_TELEM) {
+      index = (index + secondaryStep) % capacity;  // skip over deleted elements
+      continue;
+    }
+    index = (index + secondaryStep) % capacity;  // move to the next index
   } while (index !=
-           originalIndex);  /// while we didn't loop through the entire set
+           originalIndex);  // while we didn't loop through the entire set
 
   return false;
 }
