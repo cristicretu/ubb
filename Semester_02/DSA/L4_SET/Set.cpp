@@ -6,14 +6,20 @@ Set::Set() : capacity(INITIAL_CAPACITY), length(0) {
   elements = new TElem[capacity];
   std::fill(elements, elements + capacity, NULL_TELEM);
 }
-
+/*
+BC: Theta(n)
+WC: Theta(n)
+AC: Theta(n)
+*/
 void Set::resize() {
   int newCapacity = findNextPrime(capacity * 2);
   TElem *newElements = new TElem[newCapacity];
-  std::fill(newElements, newElements + newCapacity, NULL_TELEM);
+  std::fill(newElements, newElements + newCapacity,
+            NULL_TELEM);  // fill with NULL_TELEM (empty)
 
   for (int i = 0; i < capacity; i++) {
-    if (elements[i] != NULL_TELEM) {
+    if (elements[i] != NULL_TELEM) {  /// if the element is not empty, rehash it
+                                      /// using the new capacity
       int index = hash(elements[i], newCapacity);
       int secondaryStep = hash2(elements[i], newCapacity);
       while (newElements[index] != NULL_TELEM) {
@@ -28,6 +34,11 @@ void Set::resize() {
   capacity = newCapacity;
 }
 
+/*
+BC: Theta(1) - if the element is already in the set, at the first hash index
+WC: Theta(n) - if the element is not in the set, or we need to resize the set
+AC: O(n)
+*/
 bool Set::add(TElem elem) {
   if (search(elem)) {
     return false;
@@ -96,6 +107,12 @@ bool Set::remove(TElem elem) {
   return true;
 }
 
+/*
+BC: Theta(1) - if the first hash is the correct one
+WC: Theta(n) - if the element is not in the set
+AC: O(n) - if the element is in the set, but not at the first hash index
+where n is the number of elements in the set
+*/
 bool Set::search(TElem elem) const {
   int index = hash(elem, capacity);
   int secondaryStep = hash2(elem, capacity);
