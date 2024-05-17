@@ -32,4 +32,36 @@ void testAll() {
     it.next();
   }
   assert(sum == 19);
+
+  s.add(9);
+  std::vector<int> v;
+
+  SetIterator it3 = s.iterator();
+  it3.first();
+
+  while (it3.valid()) {
+    TElem e = it3.getCurrent();
+    v.push_back(e);
+    it3.next();
+  }
+
+  // for (int i = 0; i < v.size(); i++) {
+  //   std::cout << v[i] << std::endl;
+  // }
+  // std::cout << std::endl;
+
+  SetIterator it2 = s.iterator();
+  it2.first();
+  assert(it2.valid() == true);
+  int count = 0;
+  while (it2.valid()) {
+    TElem e = it2.getCurrent();
+    assert(e == v[count]);
+    try {
+      it2.jumpForward(2);
+    } catch (std::exception&) {
+      assert(count + 2 >= v.size());
+    }
+    count += 2;
+  }
 }

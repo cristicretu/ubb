@@ -4,6 +4,9 @@
   ],
   "files.associations": {
     "iostream": "cpp",
-    "algorithm": "cpp"
+    "algorithm": "cpp",
+    "vector": "cpp",
+    "ostream": "cpp",
+    "exception": "cpp"
   }
 }

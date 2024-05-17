@@ -1,7 +1,6 @@
 #pragma once
 #include <algorithm>
 #include <iostream>
-#include <set>
 // DO NOT INCLUDE SETITERATOR
 
 // DO NOT CHANGE THIS PART
@@ -15,7 +14,7 @@ class Set {
 
  private:
   const int INITIAL_CAPACITY = 17;
-  const double LOAD_FACTOR_THRESHOLD = 0.5;
+  const double LOAD_FACTOR_THRESHOLD = 0.6;
 
   TElem *elements;
   int capacity;

@@ -35,9 +35,9 @@ void Set::resize() {
 }
 
 /*
-BC: Theta(1) - if the element is already in the set, at the first hash index
-WC: Theta(n) - if the element is not in the set, or we need to resize the set
-AC: O(n)
+BC: Theta(1)
+WC: Theta(alfa)
+AC: O(alfa)
 */
 bool Set::add(TElem elem) {
   int index = hash(elem, capacity);
@@ -78,9 +78,10 @@ AC: Theta(1)
 dj2 hash function
 http://www.cse.yorku.ca/~oz/hash.html
 */
+
 int Set::hash(TElem elem, int cap) const {
-  int hash = 5381;  // prime
-  hash = ((hash << 5) + hash) + elem;
+  int hash = 5381;                     // a prime number
+  hash = ((hash << 5) + hash) + elem;  // djb2 algorithm
   return std::abs(hash % cap);
 }
 
@@ -90,16 +91,15 @@ int Set::hash(TElem elem, int cap) const {
 // AC: Theta(1)
 // */
 
-/*
-fnv1a hash function
-http://www.isthe.com/chongo/tech/comp/fnv/
-*/
 int Set::hash2(TElem elem, int cap) const {
-  elem = (elem ^ (elem << 7)) ^ (elem >> 11);
-  elem = (elem ^ (elem << 31)) ^ (elem >> 22);
-  return std::abs(elem % cap);
+  return 1 + (abs(elem) % (cap - 1));
 }
 
+/*
+BC: Theta(1)
+WC: Theta(alfa)
+AC: O(alfa)
+*/
 bool Set::remove(TElem elem) {
   int index = hash(elem, capacity);
   int step = hash2(elem, capacity);
@@ -124,8 +124,8 @@ bool Set::remove(TElem elem) {
 
 /*
 BC: Theta(1) - if the first hash is the correct one
-WC: Theta(n) - if the element is not in the set
-AC: O(n) - if the element is in the set, but not at the first hash index
+WC: Theta(alfa) - if the element is not in the set
+AC: O(alfa) - if the element is in the set, but not at the first hash index
 where n is the number of elements in the set
 */
 bool Set::search(TElem elem) const {

@@ -31,3 +31,22 @@ TElem SetIterator::getCurrent() {
 bool SetIterator::valid() const {
   return current < set.capacity && set.elements[current] != NULL_TELEM;
 }
+
+void SetIterator::jumpForward(int k) {
+  if (k <= 0) {
+    throw std::exception();
+  }
+
+  int steps = 0;
+  while (steps < k && current < set.capacity) {
+    current++;
+    while (current < set.capacity && set.elements[current] == NULL_TELEM) {
+      current++;
+    }
+    steps++;
+  }
+
+  if (steps < k) {
+    throw std::exception();
+  }
+}

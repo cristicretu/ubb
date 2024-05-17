@@ -18,4 +18,6 @@ class SetIterator {
   void next();
   TElem getCurrent();
   bool valid() const;
+
+  void jumpForward(int k);
 };
