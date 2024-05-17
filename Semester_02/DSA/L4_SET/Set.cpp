@@ -40,30 +40,52 @@ WC: Theta(n) - if the element is not in the set, or we need to resize the set
 AC: O(n)
 */
 bool Set::add(TElem elem) {
-  if (search(elem)) {
-    return false;
-  }
-
-  if (length >= capacity * LOAD_FACTOR_THRESHOLD) {
-    resize();
-  }
-
   int index = hash(elem, capacity);
-  int secondaryStep = hash2(elem, capacity);
+  int step = hash2(elem, capacity);
+  int originalIndex = index;
 
   while (elements[index] != NULL_TELEM) {
-    index = (index + secondaryStep) % capacity;
+    if (elements[index] == elem) {
+      return false;  /// element already exists
+    }
+    index = (index + step) % capacity;
+    if (index == originalIndex) {  /// if we looped back to the start index,
+                                   /// means the set is full
+      return false;
+    }
   }
 
   elements[index] = elem;
   ++length;
+
+  if (length >=
+      capacity *
+          LOAD_FACTOR_THRESHOLD) {  /// if the load factor is
+                                    /// greater than the threshold, resize,
+                                    /// rehash, and recompute the hash indexes
+    resize();
+  }
   return true;
 }
 
+/*
+BC: Theta(1)
+WC: Theta(1)
+AC: Theta(1)
+*/
+
+/// k % m
 int Set::hash(TElem elem, int cap) const {
   return std::abs(static_cast<int>(std::hash<int>{}(elem) % cap));
 }
 
+/*
+BC: Theta(1)
+WC: Theta(1)
+AC: Theta(1)
+*/
+
+/// 1 + (k / m) % (m - 1)
 int Set::hash2(TElem elem, int cap) const {
   int result = 1 + (std::abs(static_cast<int>(std::hash<int>{}(elem) / cap)) %
                     (cap - 1));
@@ -72,37 +94,22 @@ int Set::hash2(TElem elem, int cap) const {
 
 bool Set::remove(TElem elem) {
   int index = hash(elem, capacity);
-  int secondaryStep = hash2(elem, capacity);
-  int probeIndex = index;
+  int step = hash2(elem, capacity);
+  int originalIndex = index;
 
-  while (elements[probeIndex] != NULL_TELEM && elements[probeIndex] != elem) {
-    probeIndex = (probeIndex + secondaryStep) % capacity;
-    if (probeIndex == index) {
+  while (elements[index] != NULL_TELEM && elements[index] != elem) {
+    index = (index + step) % capacity;
+    if (index == originalIndex) {  /// if we looped back to the start index
       return false;
     }
   }
 
-  if (elements[probeIndex] != elem) {
+  if (elements[index] != elem) {  /// element not found
     return false;
   }
 
-  elements[probeIndex] = NULL_TELEM;
+  elements[index] = NULL_TELEM;  /// mark as DELETED
   length--;
-
-  int nextIndex = (probeIndex + secondaryStep) % capacity;
-  while (elements[nextIndex] != NULL_TELEM) {
-    TElem toRehash = elements[nextIndex];
-    elements[nextIndex] = NULL_TELEM;
-    int newIndex = hash(toRehash, capacity);
-    int newStep = hash2(toRehash, capacity);
-
-    while (elements[newIndex] != NULL_TELEM) {
-      newIndex = (newIndex + newStep) % capacity;
-    }
-
-    elements[newIndex] = toRehash;
-    nextIndex = (nextIndex + secondaryStep) % capacity;
-  }
 
   return true;
 }
@@ -122,19 +129,36 @@ bool Set::search(TElem elem) const {
     if (elements[index] == elem) {
       return true;
     }
-    if (elements[index] == NULL_TELEM) {
+    if (elements[index] == NULL_TELEM) {  // we finished probing the set, the
+                                          // element is not in the set
       return false;
     }
-    index = (index + secondaryStep) % capacity;
-  } while (index != originalIndex);
+    index = (index + secondaryStep) % capacity;  /// move to the next index
+  } while (index !=
+           originalIndex);  /// while we didn't loop through the entire set
 
   return false;
 }
 
+/*
+BC: Theta(1)
+WC: Theta(1)
+AC: Theta(1)
+*/
 int Set::size() const { return length; }
 
+/*
+BC: Theta(1)
+WC: Theta(1)
+AC: Theta(1)
+*/
 bool Set::isEmpty() const { return length == 0; }
 
+/*
+BC: Theta(1)
+WC: Theta(1)
+AC: Theta(1)
+*/
 Set::~Set() {
   delete[] elements;
   elements = nullptr;
