@@ -5,6 +5,7 @@
 
 // DO NOT CHANGE THIS PART
 #define NULL_TELEM -111111
+#define DELETED_TELEM -111112
 typedef int TElem;
 class SetIterator;
 
