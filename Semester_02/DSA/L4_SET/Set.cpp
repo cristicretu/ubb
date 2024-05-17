@@ -74,22 +74,30 @@ WC: Theta(1)
 AC: Theta(1)
 */
 
-/// k % m
+/*
+dj2 hash function
+http://www.cse.yorku.ca/~oz/hash.html
+*/
 int Set::hash(TElem elem, int cap) const {
-  return std::abs(static_cast<int>(std::hash<int>{}(elem) % cap));
+  int hash = 5381;  // prime
+  hash = ((hash << 5) + hash) + elem;
+  return std::abs(hash % cap);
 }
 
-/*
-BC: Theta(1)
-WC: Theta(1)
-AC: Theta(1)
-*/
+// /*
+// BC: Theta(1)
+// WC: Theta(1)
+// AC: Theta(1)
+// */
 
-/// 1 + (k / m) % (m - 1)
+/*
+fnv1a hash function
+http://www.isthe.com/chongo/tech/comp/fnv/
+*/
 int Set::hash2(TElem elem, int cap) const {
-  int result = 1 + (std::abs(static_cast<int>(std::hash<int>{}(elem) / cap)) %
-                    (cap - 1));
-  return result;
+  elem = (elem ^ (elem << 7)) ^ (elem >> 11);
+  elem = (elem ^ (elem << 31)) ^ (elem >> 22);
+  return std::abs(elem % cap);
 }
 
 bool Set::remove(TElem elem) {
