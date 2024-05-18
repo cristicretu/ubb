@@ -41,7 +41,6 @@ AC: O(alfa)
 bool Set::add(TElem elem) {
   int index = hash(elem, capacity);
   int step = hash2(elem, capacity);
-  int originalIndex = index;
 
   while (elements[index] != NULL_TELEM && elements[index] != DELETED_TELEM) {
     if (elements[index] == elem) {
@@ -87,7 +86,6 @@ AC: O(alfa)
 bool Set::remove(TElem elem) {
   int index = hash(elem, capacity);
   int step = hash2(elem, capacity);
-  int originalIndex = index;
 
   while (elements[index] != NULL_TELEM && elements[index] != elem) {
     if (elements[index] == DELETED_TELEM) {
@@ -122,15 +120,14 @@ bool Set::search(TElem elem) const {
     if (elements[index] == elem) {
       return true;
     }
-    if (elements[index] == NULL_TELEM) {  // we finished probing the set, the
-                                          // element is not in the set
+    if (elements[index] == NULL_TELEM) {
       return false;
     }
     if (elements[index] == DELETED_TELEM) {
-      index = (index + secondaryStep) % capacity;  // skip over deleted elements
+      index = (index + secondaryStep) % capacity;
       continue;
     }
-    index = (index + secondaryStep) % capacity;  // move to the next index
+    index = (index + secondaryStep) % capacity;
   } while (index !=
            originalIndex);  // while we didn't loop through the entire set
 
