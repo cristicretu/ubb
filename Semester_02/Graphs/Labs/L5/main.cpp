@@ -16,6 +16,9 @@ class Graph {
   std::unordered_map<int, std::list<std::pair<uint32_t, uint32_t>>> inbound;
   std::unordered_map<int, int> cost;
 
+  int minCost;
+  std::vector<int> bestPath;
+
   /// For the biconnected components
   std::vector<int> discoveryLevel, lowReach;
   std::stack<uint32_t> stack;
@@ -816,6 +819,46 @@ class Graph {
 
     return false;
   }
+
+  /*-------------*/
+  void branchAndBound(std::vector<int>& path, std::vector<bool>& visited,
+                      int currentCost, int level) {
+    if (level == vertices - 1) {
+      if (isEdge(path[level], 0)) {
+        int totalCost = currentCost + getCost(path[level], 0);
+        if (totalCost < minCost) {
+          minCost = totalCost;
+          bestPath = path;
+          bestPath.push_back(0);
+        }
+      }
+      return;
+    }
+
+    for (const auto& edge : outbound[path[level]]) {
+      int city = edge.first;
+      int cost = getCost(path[level], city);
+      if (!visited[city] && cost != -1) {
+        int temp = currentCost + cost;
+        if (temp < minCost) {
+          visited[city] = true;
+          path.push_back(city);
+          branchAndBound(path, visited, temp, level + 1);
+          visited[city] = false;
+          path.pop_back();
+        }
+      }
+    }
+  }
+
+  std::vector<int> findHamiltonianCycle2() {
+    std::vector<int> path;
+    std::vector<bool> visited(vertices, false);
+    path.push_back(0);
+    visited[0] = true;
+    branchAndBound(path, visited, 0, 0);
+    return bestPath;
+  }
 };
 
 class UI {
@@ -1081,22 +1124,22 @@ class UI {
         }
         break;
       }
-      // case 26: {
-      // std::vector<int> cycle = graph.findLowestCostHamiltonianCycle();
-      //   if (cycle.size() > 0) {
-      //     std::cout << "Lowest cost Hamiltonian cycle found: ";
-      //     for (int i = 0; i < cycle.size(); ++i) {
-      //       std::cout << cycle[i];
-      //       if (i < cycle.size() - 1) {
-      //         std::cout << " -> ";
-      //       }
-      //     }
-      //     std::cout << std::endl;
-      //   } else {
-      //     std::cout << "No Hamiltonian cycle found.\n";
-      //   }
-      //   break;
-      // }
+      case 27: {
+        std::vector<int> cycle = graph.findHamiltonianCycle2();
+        if (cycle.size() > 0) {
+          std::cout << "Hamiltonian cycle found: ";
+          for (int i = 0; i < cycle.size(); ++i) {
+            std::cout << cycle[i];
+            if (i < cycle.size() - 1) {
+              std::cout << " -> ";
+            }
+          }
+          std::cout << std::endl;
+        } else {
+          std::cout << "No Hamiltonian cycle found.\n";
+        }
+        break;
+      }
       case 0:
         std::cout << "Exiting...\n";
         break;
