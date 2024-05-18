@@ -15,7 +15,7 @@ class Set {
 
  private:
   const int INITIAL_CAPACITY = 17;
-  const double LOAD_FACTOR_THRESHOLD = 0.6;
+  const double LOAD_FACTOR_THRESHOLD = 0.75;
 
   TElem *elements;
   int capacity;
