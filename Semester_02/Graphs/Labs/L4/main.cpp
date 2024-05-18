@@ -766,105 +766,42 @@ class Graph {
   /* --------------------------------------------------------------- */
   /* L5 */
 
-  void initializeUnionFind() {
-    parent.resize(vertices);   /// Initialize the parent vector
-    rank.resize(vertices, 0);  /// Initialize the rank vector
-    for (uint32_t i = 0; i < vertices; ++i)
-      parent[i] = i;  /// all vertices are their own parents
+  std::vector<int> findHamiltonianCycle() {
+    std::vector<int> cycle;
+    std::vector<int> path;
+    std::vector<bool> visited(vertices, false);
+    cycle.push_back(0);
+    visited[0] = true;
+    auto result = hamiltonian_cycle(0, visited, cycle);
+    if (result) {
+      return cycle;
+    }
+    return {};
   }
 
-  int find(int i) {                      /// find the parent of the vertex
-    if (parent[i] == i) return i;        /// if the vertex is its own parent
-    return parent[i] = find(parent[i]);  ///  we need to find
-                                         /// the parent of the parent
-  }
-
-  void unionSet(int x, int y) {  /// we need to merge the sets of x and y
-    int rootX = find(x);
-    int rootY = find(y);
-    if (rootX != rootY) {  /// if the roots are different, we need to merge the
-                           /// sets
-      if (rank[rootX] > rank[rootY])  /// if the rank of x is greater than the
-                                      /// rank of y, we merge y into x
-        parent[rootY] = rootX;
-      else if (rank[rootX] < rank[rootY])  /// if the rank of y is greater than
-                                           /// the rank of x, we merge x into y
-        parent[rootX] = rootY;
-      else {  /// if the ranks are equal, we merge x into y and increment the
-              /// rank of y
-        parent[rootY] = rootX;
-        rank[rootX]++;
-      }
-    }
-  }
-
-  bool findLowCostHamiltonianCycle() {
-    initializeUnionFind();
-    std::vector<std::tuple<int, int, int>>
-        edges;  /// convert the graph to a list of edges
-
-    for (auto& kv : outbound) {
-      int u = kv.first;
-      for (auto& p : kv.second) {
-        int v = p.first, edgeId = p.second;
-        if (u < v) edges.emplace_back(cost[edgeId], u, v);
-      }
-    }
-
-    std::sort(edges.begin(), edges.end());  /// sort ascending by cost
-
-    std::vector<std::pair<int, int>> cycle;  /// keep track of the added edges
-    for (auto& edge : edges) {
-      int cost, u, v;
-      std::tie(cost, u, v) = edge;
-
-      if (find(u) != find(v)) {    /// if the vertices are not in the same set
-        cycle.emplace_back(u, v);  /// add the edge to the cycle
-        unionSet(u, v);            /// merge the sets
-
-        bool formsShortCycle = false;  /// check if this edge forms a cycle of
-                                       /// length less than vertices
-        for (auto& p : cycle) {
-          if (p.first == v && find(p.second) == find(u)) {
-            formsShortCycle = true;
-            break;
-          }
-          if (p.second == u && find(p.first) == find(v)) {
-            formsShortCycle = true;
-            break;
-          }
-        }
-
-        if (formsShortCycle) {
-          cycle.pop_back();  /// remove the edge from the cycle, and reset the
-                             /// sets
-          parent[u] = u;
-          parent[v] = v;
-          continue;
-        }
-
-        if (cycle.size() == vertices - 1)
-          break;  /// stop if we have enough edges
-      }
-    }
-
-    if (cycle.size() == vertices - 1) {
-      std::set<int> verticesInCycle;
-      for (auto& p : cycle) {
-        verticesInCycle.insert(p.first);
-        verticesInCycle.insert(p.second);
-      }
-      if (verticesInCycle.size() == vertices) {
-        std::cout << "Cycle found: ";
-        for (auto& p : cycle) {
-          std::cout << "(" << p.first << ", " << p.second << ") ";
-        }
-        std::cout << std::endl;
+  bool hamiltonian_cycle(int v, std::vector<bool>& visited,
+                         std::vector<int>& cycle) {
+    if (cycle.size() == vertices) {
+      if (isEdge(v, 0)) {
+        cycle.push_back(0);
         return true;
       }
+      return false;
     }
 
-    std::cout << "No Hamiltonian cycle found." << std::endl;
+    for (auto& edge : outbound[v]) {
+      int u = edge.first;
+      if (!visited[u]) {
+        visited[u] = true;
+        cycle.push_back(u);
+        if (hamiltonian_cycle(u, visited, cycle)) {
+          return true;
+        }
+        visited[u] = false;
+        cycle.pop_back();
+      }
+    }
+
     return false;
   }
 };
@@ -1060,11 +997,6 @@ class UI {
         std::cout << "Enter ending vertex for the walk: ";
         std::cin >> v2;
 
-        // std::cout << "The number of distinct walks of minimum cost between
-        // "
-        //           << v1 << " and " << v2 << " is "
-        //           << graph.floydWarshall(graph, v1, v2) << ".\n";
-
         std::vector<int> minCost = graph.dijkstra(v1);
         std::vector<bool> visited(graph.getVertices(), false);
 
@@ -1120,8 +1052,22 @@ class UI {
                   << graph.countDistinctLowestCostPaths(v1, v2) << ".\n";
         break;
       case 26:  // L5 Assignment
-        graph.findLowCostHamiltonianCycle();
+      {
+        std::vector<int> cycle = graph.findHamiltonianCycle();
+        if (cycle.size() > 0) {
+          std::cout << "Hamiltonian cycle found: ";
+          for (int i = 0; i < cycle.size(); ++i) {
+            std::cout << cycle[i];
+            if (i < cycle.size() - 1) {
+              std::cout << " -> ";
+            }
+          }
+          std::cout << std::endl;
+        } else {
+          std::cout << "No Hamiltonian cycle found.\n";
+        }
         break;
+      }
       case 0:
         std::cout << "Exiting...\n";
         break;
