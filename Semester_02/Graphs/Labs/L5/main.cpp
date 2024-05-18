@@ -140,7 +140,7 @@ class Graph {
     if (!this->isEdge(source, target)) {
       int edgeID = generateEdgeID();
       this->outbound[source].push_back({target, edgeID});
-      this->inbound[target].push_back({source, edgeID});
+      this->outbound[target].push_back({source, edgeID});
       this->cost[edgeID] = cost;
     }
   }
@@ -762,6 +762,60 @@ class Graph {
 
     return count[target];
   }
+
+  /* --------------------------------------------------------------- */
+  /* L5 */
+
+  std::vector<int> findHamiltonianCycle() {
+    std::vector<int> cycle;
+    std::vector<int> path;
+    std::vector<bool> visited(vertices, false);
+    cycle.push_back(0);
+    visited[0] = true;
+    auto result = hamiltonian_cycle(0, visited, cycle);
+    if (result) {
+      return cycle;
+    }
+    return {};
+  }
+
+  bool hamiltonian_cycle(int v, std::vector<bool>& visited,
+                         std::vector<int>& cycle) {
+    if (cycle.size() == vertices) {
+      if (isEdge(v, 0)) {
+        cycle.push_back(0);
+        return true;
+      }
+      return false;
+    }
+
+    // Sort edges based on cost
+    std::vector<std::pair<int, int>> sortedEdges;
+
+    for (const auto& edge : outbound[v]) {
+      sortedEdges.push_back({edge.first, getCost(v, edge.first)});
+    }
+
+    std::sort(sortedEdges.begin(), sortedEdges.end(),
+              [](const std::pair<int, int>& a, const std::pair<int, int>& b) {
+                return a.second < b.second;
+              });
+
+    for (const auto& edge : sortedEdges) {
+      int u = edge.first;
+      if (!visited[u]) {
+        visited[u] = true;
+        cycle.push_back(u);
+        if (hamiltonian_cycle(u, visited, cycle)) {
+          return true;
+        }
+        visited[u] = false;
+        cycle.pop_back();
+      }
+    }
+
+    return false;
+  }
 };
 
 class UI {
@@ -1010,6 +1064,39 @@ class UI {
                   << " and " << v2 << " is "
                   << graph.countDistinctLowestCostPaths(v1, v2) << ".\n";
         break;
+      case 26:  // L5 Assignment
+      {
+        std::vector<int> cycle = graph.findHamiltonianCycle();
+        if (cycle.size() > 0) {
+          std::cout << "Hamiltonian cycle found: ";
+          for (int i = 0; i < cycle.size(); ++i) {
+            std::cout << cycle[i];
+            if (i < cycle.size() - 1) {
+              std::cout << " -> ";
+            }
+          }
+          std::cout << std::endl;
+        } else {
+          std::cout << "No Hamiltonian cycle found.\n";
+        }
+        break;
+      }
+      // case 26: {
+      // std::vector<int> cycle = graph.findLowestCostHamiltonianCycle();
+      //   if (cycle.size() > 0) {
+      //     std::cout << "Lowest cost Hamiltonian cycle found: ";
+      //     for (int i = 0; i < cycle.size(); ++i) {
+      //       std::cout << cycle[i];
+      //       if (i < cycle.size() - 1) {
+      //         std::cout << " -> ";
+      //       }
+      //     }
+      //     std::cout << std::endl;
+      //   } else {
+      //     std::cout << "No Hamiltonian cycle found.\n";
+      //   }
+      //   break;
+      // }
       case 0:
         std::cout << "Exiting...\n";
         break;
