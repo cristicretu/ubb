@@ -12,44 +12,267 @@
 #include "../../headers/repository/db_repository.h"
 #include "../../headers/repository/html_repository.h"
 
-DogApp::DogApp(QWidget* parent) : QMainWindow(parent), service(new Service()) {
+DogApp::DogApp(QWidget* parent)
+    : QMainWindow(parent), service(new Service()), chart(nullptr) {
   setWindowTitle("Dog Adoption");
 
   dogTypeRepository = DogTypeRepository();
-
-  QWidget* centralWidget = new QWidget(this);
-  QVBoxLayout* mainLayout = new QVBoxLayout(centralWidget);
   dogDetails = new QTextBrowser();
 
-  currentStack = new QStackedWidget();
+  QTabWidget* tabWidget = new QTabWidget(this);
 
   setupToolbar();
 
-  QWidget* mainMenuWidget = new QWidget();
-  QVBoxLayout* mainMenuLayout = new QVBoxLayout(mainMenuWidget);
+  // Tab 1
+  QWidget* dogListWidget = adminTab();
+  QWidget* tab1 = new QWidget();
+  QVBoxLayout* layout1 = new QVBoxLayout();
+  QLabel* label1 = new QLabel("Admin Mode");
 
-  QHBoxLayout* modeLayout = new QHBoxLayout();
-  modeCombo = new QComboBox();
-  modeCombo->addItem("Administrator mode");
-  modeCombo->addItem("User mode");
-  modeLayout->addWidget(new QLabel("Select Mode:"));
-  modeLayout->addWidget(modeCombo);
-  mainLayout->addLayout(modeLayout);
+  layout1->addWidget(label1);
+  layout1->addWidget(dogListWidget);
+  tab1->setLayout(layout1);
 
-  adminButtons = createAdminButtons();
+  // Tab 2
+  QWidget* tab2 = new QWidget();
+  layout2 = new QVBoxLayout();
   userButtons = createUserButtons();
+  layout2->addLayout(userButtons);
 
-  mainLayout->addLayout(adminButtons);
-  mainLayout->addLayout(userButtons);
+  currentStack = new QStackedWidget();
+  layout2->addWidget(currentStack);
+  tab2->setLayout(layout2);
 
-  currentStack->addWidget(mainMenuWidget);
-  mainLayout->addWidget(currentStack);
+  // Tab 3
+  QWidget* tab3 = new QWidget();
+  layout3 = new QVBoxLayout();
+  QLabel* label3 = new QLabel("Dog charts");
+  layout3->addWidget(label3);
+  tab3->setLayout(layout3);
 
-  connect(modeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
-          &DogApp::switchMode);
-  switchMode(0);
+  auto updateChart = [this]() {
+    if (chart != nullptr) {
+      layout3->removeWidget(chart);
+      delete chart;
+    }
 
-  setCentralWidget(centralWidget);
+    chart = chartDogs();
+    layout3->addWidget(chart);
+  };
+
+  auto onTabChange = [this, updateChart](int index) {
+    if (index == 2) {
+      updateChart();
+    }
+  };
+
+  tabWidget->addTab(tab1, "Admin");
+  tabWidget->addTab(tab2, "User");
+  tabWidget->addTab(tab3, "Chart");
+
+  connect(tabWidget, &QTabWidget::currentChanged, onTabChange);
+
+  setCentralWidget(tabWidget);
+}
+
+void DogApp::populateTable() {
+  int numDogs = service->getNumberOfDogs();
+  dogTable->setRowCount(numDogs);
+
+  for (int i = 0; i < numDogs; ++i) {
+    Dog dog = service->getDog(i);
+    dogTable->setItem(
+        i, 0, new QTableWidgetItem(QString::fromStdString(dog.getName())));
+    dogTable->setItem(
+        i, 1, new QTableWidgetItem(QString::fromStdString(dog.getBreed())));
+    dogTable->setItem(i, 2,
+                      new QTableWidgetItem(QString::number(dog.getAge())));
+
+    QTableWidgetItem* linkItem = new QTableWidgetItem("Link");
+    linkItem->setToolTip(QString::fromStdString(dog.getPhotograph()));
+    linkItem->setFlags(linkItem->flags() | Qt::ItemIsEditable);
+    dogTable->setItem(i, 3, linkItem);
+  }
+
+  connect(dogTable, &QTableWidget::cellClicked, this,
+          &DogApp::expandCellWithUrl);
+  connect(dogTable, &QTableWidget::cellDoubleClicked, this, &DogApp::openLink);
+
+  if (numDogs == 0) {
+    dogTable->setRowCount(1);
+    dogTable->setItem(0, 0, new QTableWidgetItem("No dogs in the database!"));
+    dogTable->setSpan(0, 0, 1, 4);
+  }
+}
+
+void DogApp::expandCellWithUrl(int row, int column) {
+  if (column == 3) {
+    QTableWidgetItem* item = dogTable->item(row, column);
+    if (item) {
+      dogTable->blockSignals(true);
+      QString url =
+          QString::fromStdString(service->getDog(row).getPhotograph());
+      item->setText(url);
+      item->setToolTip(url);
+      dogTable->blockSignals(false);
+    }
+  }
+}
+
+void DogApp::openLink(int row, int column) {
+  if (column == 3) {
+    QTableWidgetItem* item = dogTable->item(row, column);
+    QString url = item->toolTip();
+    QProcess::startDetached("open", QStringList() << url);
+  }
+}
+
+QWidget* DogApp::adminTab() {
+  QWidget* dogListWidget = new QWidget();
+  QVBoxLayout* dogListLayout = new QVBoxLayout(dogListWidget);
+
+  dogTable = new QTableWidget();
+
+  QPushButton* addButton = new QPushButton("Add");
+  connect(addButton, &QPushButton::clicked, this, &DogApp::showAddDogPopup);
+  dogListLayout->addWidget(addButton);
+
+  QPushButton* removeButton = new QPushButton("Remove");
+  connect(removeButton, &QPushButton::clicked, this, &DogApp::removeDog);
+  dogListLayout->addWidget(removeButton);
+
+  dogTable->setColumnCount(4);
+  dogTable->setHorizontalHeaderLabels(QStringList() << "Name" << "Breed"
+                                                    << "Age" << "Photograph");
+  dogListLayout->addWidget(dogTable);
+
+  dogTable->blockSignals(true);
+  populateTable();
+  dogTable->blockSignals(false);
+
+  connect(dogTable, &QTableWidget::itemChanged, this,
+          &DogApp::updateDogFromTable);
+
+  return dogListWidget;
+}
+
+void DogApp::updateDogFromTable(QTableWidgetItem* item) {
+  QTableWidget* dogTable = qobject_cast<QTableWidget*>(item->tableWidget());
+
+  if (!dogTable) return;
+
+  int row = item->row();
+  int column = item->column();
+  if (column == 3) {
+    dogTable->blockSignals(true);
+    QString newUrl = item->text();
+    item->setToolTip(newUrl);
+    item->setText("Link");
+    dogTable->blockSignals(false);
+  }
+  Dog dog = service->getDog(row);
+
+  QString initialName = QString::fromStdString(dog.getName());
+  QString initialBreed = QString::fromStdString(dog.getBreed());
+  int initialAge = dog.getAge();
+  QString initialPhotograph = QString::fromStdString(dog.getPhotograph());
+
+  int index =
+      service->findDog(initialBreed.toStdString(), initialName.toStdString(),
+                       initialAge, initialPhotograph.toStdString());
+
+  QString name = dogTable->item(row, 0)->text();
+  QString breed = dogTable->item(row, 1)->text();
+  QString age = dogTable->item(row, 2)->text();
+  QString photograph = dogTable->item(row, 3)->toolTip();
+
+  std::cout << "I am updating dog " << index << " " << breed.toStdString()
+            << " " << name.toStdString() << " " << age.toInt() << " "
+            << photograph.toStdString() << "\n";
+
+  if (!validateAndUpdateDog(breed, name, age, photograph, index)) {
+    dogTable->item(row, 0)->setText(initialName);
+    dogTable->item(row, 1)->setText(initialBreed);
+    dogTable->item(row, 2)->setText(QString::number(initialAge));
+    dogTable->item(row, 3)->setText(initialPhotograph);
+  }
+}
+
+bool DogApp::validateAndUpdateDog(const QString& breed, const QString& name,
+                                  const QString& age, const QString& photograph,
+                                  int index) {
+  std::string breedStr = breed.toStdString();
+  std::string nameStr = name.toStdString();
+  int ageInt;
+  try {
+    ageInt = std::stoi(age.toStdString());
+  } catch (std::exception& e) {
+    QMessageBox::warning(this, "Error", "Invalid age format!");
+    return false;
+  }
+
+  std::string breedToLowercase = "";
+  for (char c : breedStr) {
+    breedToLowercase += std::tolower(c);
+  }
+
+  std::string photographStr = photograph.toStdString();
+  // if (!photographStr.empty()) {
+  //   photographStr = "https://images.dog.ceo/breeds/" + breedToLowercase + "/"
+  //   +
+  //                   photographStr;
+  // }
+
+  std::string newBreed = breedStr;
+  std::string newName = nameStr;
+  int newAge = ageInt;
+  std::string newPhotograph = photographStr;
+
+  try {
+    this->service->updateDog(index, newBreed, newName, newAge, newPhotograph);
+    QMessageBox::information(this, "Success", "Dog updated successfully!");
+    return true;
+  } catch (std::invalid_argument& e) {
+    QMessageBox::warning(this, "Error", e.what());
+    return false;
+  }
+}
+
+void DogApp::showAddDogPopup() {
+  QDialog dialog;
+  dialog.setWindowTitle("Add Dog");
+
+  QVBoxLayout* layout = new QVBoxLayout(&dialog);
+
+  QLabel* breedLabel = new QLabel("Breed:");
+  QLineEdit* breedInput = new QLineEdit();
+  layout->addWidget(breedLabel);
+  layout->addWidget(breedInput);
+
+  QLabel* nameLabel = new QLabel("Name:");
+  QLineEdit* nameInput = new QLineEdit();
+  layout->addWidget(nameLabel);
+  layout->addWidget(nameInput);
+
+  QLabel* ageLabel = new QLabel("Age:");
+  QLineEdit* ageInput = new QLineEdit();
+  layout->addWidget(ageLabel);
+  layout->addWidget(ageInput);
+
+  QLabel* photographLabel = new QLabel("Photograph:");
+  QLineEdit* photographInput = new QLineEdit();
+  layout->addWidget(photographLabel);
+  layout->addWidget(photographInput);
+
+  QPushButton* addButton = new QPushButton("Add Dog");
+  connect(addButton, &QPushButton::clicked, this,
+          [this, breedInput, nameInput, ageInput, photographInput]() {
+            validateAndAddDog(breedInput->text(), nameInput->text(),
+                              ageInput->text(), photographInput->text());
+          });
+  layout->addWidget(addButton);
+
+  dialog.exec();
 }
 
 void DogApp::setupToolbar() {
@@ -71,7 +294,7 @@ void DogApp::setupToolbar() {
   toolbar->addWidget(adoptedDogsRepoLabel);
   toolbar->addWidget(adoptedDogsRepoCombo);
 
-  this->switchDogRepo(0);
+  this->switchDogRepo(-1);
   this->switchAdoptedDogRepo(0);
 
   connect(dogsRepoCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
@@ -84,11 +307,18 @@ void DogApp::setupToolbar() {
 }
 
 void DogApp::switchDogRepo(int index) {
+  if (index == -1) {
+    service->setRepository(new FileRepository("../dogs.txt"));
+    return;
+  }
   if (index == 0) {
     service->setRepository(new FileRepository("../dogs.txt"));
   } else {
     service->setRepository(new DBRepository("../dogs.db"));
   }
+  dogTable->blockSignals(true);
+  populateTable();
+  dogTable->blockSignals(false);
 }
 
 void DogApp::switchAdoptedDogRepo(int index) {
@@ -97,30 +327,6 @@ void DogApp::switchAdoptedDogRepo(int index) {
   } else {
     service->setAdoptedRepository(new HTMLRepository("../adopted.html"));
   }
-}
-
-QVBoxLayout* DogApp::createAdminButtons() {
-  QVBoxLayout* adminLayout = new QVBoxLayout();
-
-  QPushButton* addButton = new QPushButton("Add Dog");
-  QPushButton* updateButton = new QPushButton("Update Dog");
-  QPushButton* removeButton = new QPushButton("Remove Dog");
-  QPushButton* listButton = new QPushButton("List Dogs");
-  QPushButton* chartButton = new QPushButton("Chart Dogs");
-
-  adminLayout->addWidget(addButton);
-  adminLayout->addWidget(updateButton);
-  adminLayout->addWidget(removeButton);
-  adminLayout->addWidget(listButton);
-  adminLayout->addWidget(chartButton);
-
-  connect(addButton, &QPushButton::clicked, this, &DogApp::addDog);
-  connect(updateButton, &QPushButton::clicked, this, &DogApp::updateDog);
-  connect(removeButton, &QPushButton::clicked, this, &DogApp::removeDog);
-  connect(listButton, &QPushButton::clicked, this, &DogApp::listDogs);
-  connect(chartButton, &QPushButton::clicked, this, &DogApp::chartDogs);
-
-  return adminLayout;
 }
 
 QVBoxLayout* DogApp::createUserButtons() {
@@ -146,32 +352,7 @@ QVBoxLayout* DogApp::createUserButtons() {
   return userLayout;
 }
 
-void DogApp::switchMode(int index) {
-  bool isAdmin = (index == 0);
-
-  for (int i = 0; i < adminButtons->count(); i++) {
-    QWidget* widget = adminButtons->itemAt(i)->widget();
-    if (widget != nullptr) {
-      widget->setVisible(isAdmin);
-    }
-  }
-
-  for (int i = 0; i < userButtons->count(); i++) {
-    QWidget* widget = userButtons->itemAt(i)->widget();
-    if (widget != nullptr) {
-      widget->setVisible(!isAdmin);
-    }
-  }
-}
-
 void DogApp::hideMainMenuButtons() {
-  for (int i = 0; i < adminButtons->count(); i++) {
-    QWidget* widget = adminButtons->itemAt(i)->widget();
-    if (widget != nullptr) {
-      widget->setVisible(false);
-    }
-  }
-
   for (int i = 0; i < userButtons->count(); i++) {
     QWidget* widget = userButtons->itemAt(i)->widget();
     if (widget != nullptr) {
@@ -180,9 +361,16 @@ void DogApp::hideMainMenuButtons() {
   }
 }
 
-void DogApp::chartDogs() {
-  hideMainMenuButtons();
+void DogApp::hideOrShowUserButtons(bool show) {
+  for (int i = 0; i < userButtons->count(); i++) {
+    QWidget* widget = userButtons->itemAt(i)->widget();
+    if (widget != nullptr) {
+      widget->setVisible(show);
+    }
+  }
+}
 
+QWidget* DogApp::chartDogs() {
   std::unordered_map<std::string, int> breedCounts;
   auto dogs = service->getDogs();
 
@@ -206,69 +394,14 @@ void DogApp::chartDogs() {
   chart->setTitle("Dog Breed Distribution");
   chart->setAnimationOptions(QChart::AllAnimations);
 
-  QWidget* dogListWidget = new QWidget();
-  QVBoxLayout* dogListLayout = new QVBoxLayout(dogListWidget);
-
   QChartView* chartView = new QChartView(chart);
   chartView->setRenderHint(QPainter::Antialiasing);
-  dogListLayout->addWidget(chartView);
 
-  QPushButton* backButton = new QPushButton("Back to Menu");
-  dogListLayout->addWidget(backButton);
-  connect(backButton, &QPushButton::clicked, this, &DogApp::showMainMenu);
-
-  currentStack->addWidget(dogListWidget);
-  currentStack->setCurrentWidget(dogListWidget);
+  return chartView;
 }
 
-void DogApp::addDog() {
-  hideMainMenuButtons();
-
-  QWidget* addDogWidget = new QWidget();
-  QVBoxLayout* addDogLayout = new QVBoxLayout(addDogWidget);
-
-  QLabel* breedLabel = new QLabel("Breed:");
-  QLineEdit* breedInput = new QLineEdit();
-  addDogLayout->addWidget(breedLabel);
-  addDogLayout->addWidget(breedInput);
-
-  QLabel* nameLabel = new QLabel("Name:");
-  QLineEdit* nameInput = new QLineEdit();
-  addDogLayout->addWidget(nameLabel);
-  addDogLayout->addWidget(nameInput);
-
-  QLabel* ageLabel = new QLabel("Age:");
-  QLineEdit* ageInput = new QLineEdit();
-  addDogLayout->addWidget(ageLabel);
-  addDogLayout->addWidget(ageInput);
-
-  QLabel* photographLabel = new QLabel("Photograph:");
-  QLineEdit* photographInput = new QLineEdit();
-  addDogLayout->addWidget(photographLabel);
-  addDogLayout->addWidget(photographInput);
-
-  QPushButton* addButton = new QPushButton("Add Dog");
-  addDogLayout->addWidget(addButton);
-
-  QPushButton* backButton = new QPushButton("Back to Menu");
-  addDogLayout->addWidget(backButton);
-
-  connect(addButton, &QPushButton::clicked, this,
-          [this, breedInput, nameInput, ageInput, photographInput]() {
-            validateAndAddDog(breedInput->text(), nameInput->text(),
-                              ageInput->text(), photographInput->text());
-          });
-
-  connect(backButton, &QPushButton::clicked, this, &DogApp::showMainMenu);
-
-  currentStack->addWidget(addDogWidget);
-  currentStack->setCurrentWidget(addDogWidget);
-}
-
-// For adding
 void DogApp::validateAndAddDog(const QString& breed, const QString& name,
                                const QString& age, const QString& photograph) {
-  // Convert to standard types
   std::string breedStr = breed.toStdString();
   std::string nameStr = name.toStdString();
   int ageInt;
@@ -304,66 +437,13 @@ void DogApp::validateAndAddDog(const QString& breed, const QString& name,
   try {
     (*this->service).addDog(breedStr, nameStr, ageInt, photographStr);
     QMessageBox::information(this, "Success", "Dog added successfully!");
+    dogTable->blockSignals(true);
+    populateTable();
+    dogTable->blockSignals(false);
 
-    showMainMenu();
   } catch (std::invalid_argument& e) {
     QMessageBox::warning(this, "Error", e.what());
   }
-}
-
-void DogApp::updateDog() {
-  hideMainMenuButtons();
-
-  QWidget* updateDogWidget = new QWidget();
-  QVBoxLayout* updateDogLayout = new QVBoxLayout(updateDogWidget);
-
-  QLabel* breedLabel = new QLabel("Breed:");
-  QLineEdit* breedInput = new QLineEdit();
-  updateDogLayout->addWidget(breedLabel);
-  updateDogLayout->addWidget(breedInput);
-
-  QLabel* nameLabel = new QLabel("Name:");
-  QLineEdit* nameInput = new QLineEdit();
-  updateDogLayout->addWidget(nameLabel);
-  updateDogLayout->addWidget(nameInput);
-
-  QLabel* ageLabel = new QLabel("Age:");
-  QLineEdit* ageInput = new QLineEdit();
-  updateDogLayout->addWidget(ageLabel);
-  updateDogLayout->addWidget(ageInput);
-
-  QLabel* photographLabel = new QLabel("Photograph:");
-  QLineEdit* photographInput = new QLineEdit();
-  updateDogLayout->addWidget(photographLabel);
-  updateDogLayout->addWidget(photographInput);
-
-  QPushButton* findButton = new QPushButton("Find Dog");
-  updateDogLayout->addWidget(findButton);
-
-  QPushButton* updateButton = new QPushButton("Update Dog");
-  updateDogLayout->addWidget(updateButton);
-
-  QPushButton* backButton = new QPushButton("Back to Menu");
-  updateDogLayout->addWidget(backButton);
-
-  connect(findButton, &QPushButton::clicked, this,
-          [this, breedInput, nameInput, ageInput, photographInput]() {
-            findAndPopulateDog(breedInput->text(), nameInput->text(),
-                               ageInput->text(), photographInput->text(),
-                               breedInput, nameInput, ageInput,
-                               photographInput);
-          });
-
-  connect(updateButton, &QPushButton::clicked, this,
-          [this, breedInput, nameInput, ageInput, photographInput]() {
-            validateAndUpdateDog(breedInput->text(), nameInput->text(),
-                                 ageInput->text(), photographInput->text());
-          });
-
-  connect(backButton, &QPushButton::clicked, this, &DogApp::showMainMenu);
-
-  currentStack->addWidget(updateDogWidget);
-  currentStack->setCurrentWidget(updateDogWidget);
 }
 
 void DogApp::findAndPopulateDog(const QString& breed, const QString& name,
@@ -371,7 +451,6 @@ void DogApp::findAndPopulateDog(const QString& breed, const QString& name,
                                 QLineEdit* breedInput, QLineEdit* nameInput,
                                 QLineEdit* ageInput,
                                 QLineEdit* photographInput) {
-  // Convert inputs to standard types
   std::string breedStr = breed.toStdString();
   std::string nameStr = name.toStdString();
   int ageInt;
@@ -408,99 +487,29 @@ void DogApp::findAndPopulateDog(const QString& breed, const QString& name,
   photographInput->setText(QString::fromStdString(dog.getPhotograph()));
 }
 
-void DogApp::validateAndUpdateDog(const QString& breed, const QString& name,
-                                  const QString& age,
-                                  const QString& photograph) {
-  // Convert to standard types
-  std::string breedStr = breed.toStdString();
-  std::string nameStr = name.toStdString();
-  int ageInt;
-  try {
-    ageInt = std::stoi(age.toStdString());
-  } catch (std::exception& e) {
-    QMessageBox::warning(this, "Error", "Invalid age format!");
-    return;
-  }
-
-  std::string breedToLowercase = "";
-  for (char c : breedStr) {
-    breedToLowercase += std::tolower(c);
-  }
-
-  std::string photographStr = photograph.toStdString();
-  if (!photographStr.empty()) {
-    photographStr = "https://images.dog.ceo/breeds/" + breedToLowercase + "/" +
-                    photographStr;
-  }
-
-  int index = this->service->findDog(breedStr, nameStr, ageInt, photographStr);
-
-  if (index == -1) {
-    QMessageBox::warning(this, "Error", "Dog not found!");
-    return;
-  }
-
-  std::string newBreed = breedStr;
-  std::string newName = nameStr;
-  int newAge = ageInt;
-  std::string newPhotograph = photographStr;
-
-  try {
-    this->service->updateDog(index, newBreed, newName, newAge, newPhotograph);
-    QMessageBox::information(this, "Success", "Dog updated successfully!");
-  } catch (std::invalid_argument& e) {
-    QMessageBox::warning(this, "Error", e.what());
-  }
-}
-
 void DogApp::removeDog() {
-  hideMainMenuButtons();
+  int row = dogTable->currentRow();
 
-  QWidget* removeDogWidget = new QWidget();
-  QVBoxLayout* removeDogLayout = new QVBoxLayout(removeDogWidget);
+  auto breedItem = dogTable->item(row, 1);
+  auto nameItem = dogTable->item(row, 0);
+  auto ageItem = dogTable->item(row, 2);
+  auto photographItem = dogTable->item(row, 3)->toolTip();
 
-  QLabel* breedLabel = new QLabel("Breed:");
-  QLineEdit* breedInput = new QLineEdit();
-  removeDogLayout->addWidget(breedLabel);
-  removeDogLayout->addWidget(breedInput);
+  int index = service->findDog(
+      breedItem->text().toStdString(), nameItem->text().toStdString(),
+      ageItem->text().toInt(), photographItem.toStdString());
 
-  QLabel* nameLabel = new QLabel("Name:");
-  QLineEdit* nameInput = new QLineEdit();
-  removeDogLayout->addWidget(nameLabel);
-  removeDogLayout->addWidget(nameInput);
-
-  QLabel* ageLabel = new QLabel("Age:");
-  QLineEdit* ageInput = new QLineEdit();
-  removeDogLayout->addWidget(ageLabel);
-  removeDogLayout->addWidget(ageInput);
-
-  QLabel* photographLabel = new QLabel("Photograph:");
-  QLineEdit* photographInput = new QLineEdit();
-  removeDogLayout->addWidget(photographLabel);
-  removeDogLayout->addWidget(photographInput);
-
-  QPushButton* removeButton = new QPushButton("Remove Dog");
-  removeDogLayout->addWidget(removeButton);
-
-  QPushButton* backButton = new QPushButton("Back to Menu");
-  removeDogLayout->addWidget(backButton);
-
-  connect(removeButton, &QPushButton::clicked, this,
-          [this, breedInput, nameInput, ageInput, photographInput]() {
-            validateAndRemoveDog(breedInput->text(), nameInput->text(),
-                                 ageInput->text(), photographInput->text());
-          });
-
-  connect(backButton, &QPushButton::clicked, this, &DogApp::showMainMenu);
-
-  currentStack->addWidget(removeDogWidget);
-  currentStack->setCurrentWidget(removeDogWidget);
+  if (row != -1 && index != -1) {
+    service->removeDog(index);
+    dogTable->blockSignals(true);
+    populateTable();
+    dogTable->blockSignals(false);
+  }
 }
 
 void DogApp::validateAndRemoveDog(const QString& breed, const QString& name,
                                   const QString& age,
                                   const QString& photograph) {
-  // Convert to standard types
   std::string breedStr = breed.toStdString();
   std::string nameStr = name.toStdString();
   int ageInt;
@@ -532,68 +541,25 @@ void DogApp::validateAndRemoveDog(const QString& breed, const QString& name,
   }
 }
 
-void DogApp::listDogs() {
-  hideMainMenuButtons();
-
-  // new widget for the list
-  QWidget* dogListWidget = new QWidget();
-  QVBoxLayout* dogListLayout = new QVBoxLayout(dogListWidget);
-
-  QListWidget* dogList = new QListWidget();
-  dogListLayout->addWidget(dogList);
-
-  QPushButton* backButton = new QPushButton("Back to Menu");
-  dogListLayout->addWidget(backButton);
-
-  if (service->getNumberOfDogs() > 0) {
-    for (int i = 0; i < service->getNumberOfDogs(); i++) {
-      Dog dog = service->getDog(i);
-      QString itemText =
-          QString("ID: %1, Name: %2, Breed: %3, Age: %4, Photograph: %5")
-              .arg(i + 1)
-              .arg(QString::fromStdString(dog.getName()))
-              .arg(QString::fromStdString(dog.getBreed()))
-              .arg(dog.getAge())
-              .arg(QString::fromStdString(dog.getPhotograph()));
-      dogList->addItem(itemText);
-    }
-  } else {
-    dogList->addItem("No dogs in the database!");
-  }
-
-  connect(backButton, &QPushButton::clicked, this, &DogApp::showMainMenu);
-
-  currentStack->addWidget(dogListWidget);
-  currentStack->setCurrentWidget(dogListWidget);
-}
-
-void DogApp::showMainMenu() {
-  // show main menu widget
-  currentStack->setCurrentWidget(currentStack->widget(0));
-  // reset the mode
-  switchMode(modeCombo->currentIndex());
-}
-
 void DogApp::adoptDogMenu() {
   hideMainMenuButtons();
-
   auto dogs = service->getDogs();
   currentDogIndex = 0;
 
   if (dogs.empty()) {
     QMessageBox::warning(this, "Info", "No dogs in the database!");
-    showMainMenu();
     return;
   }
 
   QWidget* adoptWidget = new QWidget();
   QVBoxLayout* adoptLayout = new QVBoxLayout(adoptWidget);
 
+  QPushButton* backButton = new QPushButton("Back to Menu");
+
   adoptLayout->addWidget(dogDetails);
 
   QPushButton* adoptButton = new QPushButton("Adopt");
   QPushButton* skipButton = new QPushButton("Skip");
-  QPushButton* backButton = new QPushButton("Back to Menu");
 
   QHBoxLayout* buttonLayout = new QHBoxLayout();
   buttonLayout->addWidget(adoptButton);
@@ -604,15 +570,16 @@ void DogApp::adoptDogMenu() {
 
   connect(adoptButton, &QPushButton::clicked, this, &DogApp::adoptCurrentDog);
   connect(skipButton, &QPushButton::clicked, this, &DogApp::nextDog);
-  connect(backButton, &QPushButton::clicked, this, &DogApp::showMainMenu);
+  connect(backButton, &QPushButton::clicked, [=]() {
+    currentStack->removeWidget(adoptWidget);
+    hideOrShowUserButtons(true);
+  });
 
   displayCurrentDogDetails();
 
   currentStack->addWidget(adoptWidget);
   currentStack->setCurrentWidget(adoptWidget);
 }
-
-void DogApp::adoptDog() {}
 
 void DogApp::adoptCurrentDog() {
   auto dogs = service->getDogs();
@@ -622,13 +589,12 @@ void DogApp::adoptCurrentDog() {
 
   if (index != -1) {
     service->adoptDog(index);
-    dogs.erase(dogs.begin() + currentDogIndex);  // Remove from the local list
+    dogs.erase(dogs.begin() + currentDogIndex);
     QMessageBox::information(this, "Success", "Dog adopted successfully!");
   }
 
   if (dogs.empty()) {
     QMessageBox::warning(this, "Info", "No more dogs available.");
-    showMainMenu();
     return;
   }
 
@@ -638,7 +604,7 @@ void DogApp::adoptCurrentDog() {
 void DogApp::nextDog() {
   auto dogs = service->getDogs();
   if (++currentDogIndex >= dogs.size()) {
-    currentDogIndex = 0;  // Wrap around
+    currentDogIndex = 0;
   }
 
   displayCurrentDogDetails();
@@ -678,8 +644,11 @@ void DogApp::filterDogs() {
   QPushButton* searchButton = new QPushButton("Search");
   filterLayout->addWidget(searchButton);
 
-  QListWidget* filteredDogsList = new QListWidget();
-  filterLayout->addWidget(filteredDogsList);
+  QTableWidget* filteredDogsTable = new QTableWidget();
+  filteredDogsTable->setColumnCount(5);
+  filteredDogsTable->setHorizontalHeaderLabels(
+      QStringList() << "ID" << "Name" << "Breed" << "Age" << "Photograph");
+  filterLayout->addWidget(filteredDogsTable);
 
   QPushButton* backButton = new QPushButton("Back to Menu");
   filterLayout->addWidget(backButton);
@@ -696,26 +665,48 @@ void DogApp::filterDogs() {
 
     auto dogs = service->filterDogs(breed.toStdString(), age);
 
-    filteredDogsList->clear();
+    filteredDogsTable->setRowCount(dogs.size());
 
     if (dogs.empty()) {
-      filteredDogsList->addItem("No dogs found!");
+      filteredDogsTable->setRowCount(1);
+      QTableWidgetItem* noDogsItem = new QTableWidgetItem("No dogs found!");
+      noDogsItem->setFlags(noDogsItem->flags() & ~Qt::ItemIsEditable);
+      filteredDogsTable->setSpan(0, 0, 1, 5);
     } else {
-      for (int i = 0; i < dogs.size(); i++) {
+      for (int i = 0; i < dogs.size(); ++i) {
         Dog dog = dogs[i];
-        QString itemText =
-            QString("ID: %1 | Name: %2 | Breed: %3 | Age: %4 | Photo: %5")
-                .arg(i + 1)
-                .arg(QString::fromStdString(dog.getName()))
-                .arg(QString::fromStdString(dog.getBreed()))
-                .arg(dog.getAge())
-                .arg(QString::fromStdString(dog.getPhotograph()));
-        filteredDogsList->addItem(itemText);
+        filteredDogsTable->setItem(
+            i, 0, new QTableWidgetItem(QString::number(i + 1)));
+        filteredDogsTable->setItem(
+            i, 1, new QTableWidgetItem(QString::fromStdString(dog.getName())));
+        filteredDogsTable->setItem(
+            i, 2, new QTableWidgetItem(QString::fromStdString(dog.getBreed())));
+        filteredDogsTable->setItem(
+            i, 3, new QTableWidgetItem(QString::number(dog.getAge())));
+
+        QTableWidgetItem* linkItem = new QTableWidgetItem("Link");
+        linkItem->setToolTip(QString::fromStdString(dog.getPhotograph()));
+        linkItem->setFlags(linkItem->flags() & ~Qt::ItemIsEditable);
+        filteredDogsTable->setItem(i, 4, linkItem);
       }
     }
   });
 
-  connect(backButton, &QPushButton::clicked, this, &DogApp::showMainMenu);
+  connect(filteredDogsTable, &QTableWidget::cellDoubleClicked, this,
+          [=](int row, int column) {
+            if (column == 4) {
+              QTableWidgetItem* item = filteredDogsTable->item(row, column);
+              QString url = item->toolTip();
+              QProcess::startDetached("open", QStringList() << url);
+            }
+          });
+
+  connect(backButton, &QPushButton::clicked, [=]() {
+    currentStack->removeWidget(filterWidget);
+    hideOrShowUserButtons(true);
+  });
+
+  displayCurrentDogDetails();
 
   currentStack->addWidget(filterWidget);
   currentStack->setCurrentWidget(filterWidget);
@@ -724,40 +715,68 @@ void DogApp::filterDogs() {
 void DogApp::listAdoptedDogs() {
   hideMainMenuButtons();
 
-  // new widget for the list
   QWidget* dogListWidget = new QWidget();
   QVBoxLayout* dogListLayout = new QVBoxLayout(dogListWidget);
 
-  QListWidget* dogList = new QListWidget();
-  dogListLayout->addWidget(dogList);
+  QTableWidget* adoptedDogsTable = new QTableWidget();
+  adoptedDogsTable->setColumnCount(5);
+  adoptedDogsTable->setHorizontalHeaderLabels(
+      QStringList() << "ID" << "Name" << "Breed" << "Age" << "Photograph");
+  dogListLayout->addWidget(adoptedDogsTable);
 
   QPushButton* backButton = new QPushButton("Back to Menu");
   dogListLayout->addWidget(backButton);
 
-  if (service->getAdoptedDogs().size() > 0) {
-    for (auto dog : service->getAdoptedDogs()) {
-      QString itemText =
-          QString("ID: %1, Name: %2, Breed: %3, Age: %4, Photograph: %5")
-              .arg(QString::fromStdString(dog.getName()))
-              .arg(QString::fromStdString(dog.getBreed()))
-              .arg(dog.getAge())
-              .arg(QString::fromStdString(dog.getPhotograph()));
-      dogList->addItem(itemText);
-    }
+  auto adoptedDogs = service->getAdoptedDogs();
+
+  adoptedDogsTable->setRowCount(adoptedDogs.size());
+
+  if (adoptedDogs.empty()) {
+    adoptedDogsTable->setRowCount(1);
+    QTableWidgetItem* noDogsItem = new QTableWidgetItem("No dogs found!");
+    noDogsItem->setFlags(noDogsItem->flags() & ~Qt::ItemIsEditable);
+    adoptedDogsTable->setItem(0, 0, noDogsItem);
+    adoptedDogsTable->setSpan(0, 0, 1, 5);
   } else {
-    dogList->addItem("No dogs in the database!");
+    for (int i = 0; i < adoptedDogs.size(); ++i) {
+      Dog dog = adoptedDogs[i];
+      adoptedDogsTable->setItem(i, 0,
+                                new QTableWidgetItem(QString::number(i + 1)));
+      adoptedDogsTable->setItem(
+          i, 1, new QTableWidgetItem(QString::fromStdString(dog.getName())));
+      adoptedDogsTable->setItem(
+          i, 2, new QTableWidgetItem(QString::fromStdString(dog.getBreed())));
+      adoptedDogsTable->setItem(
+          i, 3, new QTableWidgetItem(QString::number(dog.getAge())));
+
+      QTableWidgetItem* linkItem = new QTableWidgetItem("Link");
+      linkItem->setToolTip(QString::fromStdString(dog.getPhotograph()));
+      linkItem->setFlags(linkItem->flags() & ~Qt::ItemIsEditable);
+      adoptedDogsTable->setItem(i, 4, linkItem);
+    }
   }
 
-  connect(backButton, &QPushButton::clicked, this, &DogApp::showMainMenu);
+  connect(adoptedDogsTable, &QTableWidget::cellDoubleClicked, this,
+          [=](int row, int column) {
+            if (column == 4) {
+              QTableWidgetItem* item = adoptedDogsTable->item(row, column);
+              QString url = item->toolTip();
+              QProcess::startDetached("open", QStringList() << url);
+            }
+          });
+
+  connect(backButton, &QPushButton::clicked, [=]() {
+    currentStack->removeWidget(dogListWidget);
+    hideOrShowUserButtons(true);
+  });
+
+  displayCurrentDogDetails();
 
   currentStack->addWidget(dogListWidget);
   currentStack->setCurrentWidget(dogListWidget);
 }
 
 void DogApp::openAdoptedFile() {
-  // check if the combobox is set to csv or html
-  // call the service method to open the file
-
   std::string filename =
       adoptedDogsRepoCombo->currentText().toStdString() == "CSV"
           ? "../adopted.csv"
