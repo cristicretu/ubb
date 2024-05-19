@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
   QApplication app(argc, argv);
   QCoreApplication::setApplicationName("Dog Adoption");
   DogApp window;
-  window.resize(400, 300);
+  window.resize(600, 800);
   window.show();
 
   return app.exec();
