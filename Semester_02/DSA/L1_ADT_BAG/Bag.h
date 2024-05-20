@@ -6,7 +6,7 @@
 typedef int TElem;
 class BagIterator;
 class Bag {
- private:
+private:
   TElem *frequencies;
 
   int length;
@@ -17,7 +17,7 @@ class Bag {
   // DO NOT CHANGE THIS PART
   friend class BagIterator;
 
- public:
+public:
   // constructor
   Bag();
 
