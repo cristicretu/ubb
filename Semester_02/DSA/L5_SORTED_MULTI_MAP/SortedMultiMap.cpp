@@ -29,6 +29,41 @@ void SortedMultiMap::add(TKey c, TValue v) {
     ++this->length;
     return;
   }
+
+  Node* node = this->root;
+  while (node->key != c) {
+    if (this->r(c, node->key)) {  /// left side
+      if (node->left) {
+        node = node->left;
+        continue;
+      } else {
+        node->left = new Node;
+        createNode(node->left, c, v);
+        ++this->length;
+        return;
+      }
+    } else {  /// right side
+      if (node->right) {
+        node = node->right;
+        continue;
+      } else {
+        node->right = new Node;
+        createNode(node->right, c, v);
+        ++this->length;
+        return;
+      }
+    }
+  }
+
+  /// check if it's full
+  if (node->size == node->capacity) {
+    /// resize
+  }
+
+  node->elems[node->size++] = v;
+  ++this->length;
+
+  return;
 }
 
 vector<TValue> SortedMultiMap::search(TKey c) const {
