@@ -5,7 +5,7 @@
 
 int main() {
   testAll();
-  //   testAllExtended();
+  testAllExtended();
 
   std::cout << "Finished SMM Tests!" << std::endl;
 }
