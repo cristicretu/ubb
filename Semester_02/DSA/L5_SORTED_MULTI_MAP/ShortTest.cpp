@@ -34,8 +34,8 @@ void testAll() {
     TElem e = it.getCurrent();
     it.next();
   }
-  // assert(smm.remove(1, 2) == true);
-  // assert(smm.remove(1, 3) == true);
-  // assert(smm.remove(2, 1) == false);
-  // assert(smm.isEmpty());
+  assert(smm.remove(1, 2) == true);
+  assert(smm.remove(1, 3) == true);
+  assert(smm.remove(2, 1) == false);
+  assert(smm.isEmpty());
 }
