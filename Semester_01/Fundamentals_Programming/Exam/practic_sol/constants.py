@@ -1,0 +1,5 @@
+ASTEROID = 2
+EARTH = 1
+EMPTY = 0
+HIT = 3
+ALIEN = 4
