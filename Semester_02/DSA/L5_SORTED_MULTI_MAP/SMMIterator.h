@@ -1,21 +1,22 @@
 #pragma once
 
+#include <stack>
+
 #include "SortedMultiMap.h"
 
+class SMMIterator {
+  friend class SortedMultiMap;
 
-class SMMIterator{
-	friend class SortedMultiMap;
-private:
-	//DO NOT CHANGE THIS PART
-	const SortedMultiMap& map;
-	SMMIterator(const SortedMultiMap& map);
+ private:
+  // DO NOT CHANGE THIS PART
+  const SortedMultiMap& map;
+  SMMIterator(const SortedMultiMap& map);
 
-	//TODO - Representation
+  // TODO - Representation
 
-public:
-	void first();
-	void next();
-	bool valid() const;
-   	TElem getCurrent() const;
+ public:
+  void first();
+  void next();
+  bool valid() const;
+  TElem getCurrent() const;
 };
-

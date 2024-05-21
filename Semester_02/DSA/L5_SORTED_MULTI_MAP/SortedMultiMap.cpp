@@ -108,8 +108,90 @@ vector<TValue> SortedMultiMap::search(TKey c) const {
 }
 
 bool SortedMultiMap::remove(TKey c, TValue v) {
-  // TODO - Implementation
-  return false;
+  Node* parent = nullptr;
+  Node* node = this->root;
+  while (node != nullptr && node->key != c) {
+    parent = node;
+    if (this->r(c, node->key)) {
+      node = node->left;
+    } else {
+      node = node->right;
+    }
+  }
+
+  if (node == nullptr) {  /// node does not exist
+    return false;
+  }
+
+  int index = -1;
+  for (int i = 0; i < node->size; ++i) {
+    if (node->elems[i] == v) {
+      index = i;
+      break;
+    }
+  }
+
+  if (index == -1) {  /// value does not exist
+    return false;
+  }
+
+  for (int i = index; i < node->size - 1; ++i) {
+    node->elems[i] = node->elems[i + 1];
+  }
+  --node->size;
+  --this->length;
+
+  if (node->size == 0) {
+    if (node->left == nullptr && node->right == nullptr) {  /// no children
+      if (parent == nullptr) {
+        deleteNode(node);
+        this->root = nullptr;
+      } else {  /// unlink node
+        if (parent->left == node) {
+          parent->left = nullptr;
+        } else {
+          parent->right = nullptr;
+        }
+        deleteNode(node);
+      }
+    } else if (node->left == nullptr || node->right == nullptr) {  /// one child
+      Node* child = (node->left != nullptr) ? node->left : node->right;
+      if (parent == nullptr) {
+        this->root = child;
+      } else {
+        if (parent->left == node) {
+          parent->left = child;
+        } else {
+          parent->right = child;
+        }
+      }
+      delete node;
+    } else {  /// two children
+      Node* successorParent = node;
+      Node* successor = node->right;
+      while (successor->left != nullptr) {
+        successorParent = successor;
+        successor = successor->left;
+      }
+
+      node->key = successor->key;
+      delete[] node->elems;
+      node->elems = successor->elems;
+      node->size = successor->size;
+      node->capacity = successor->capacity;
+
+      if (successorParent->left == successor) {
+        successorParent->left = successor->right;
+      } else {
+        successorParent->right = successor->right;
+      }
+
+      successor->elems = nullptr;
+      delete successor;
+    }
+  }
+
+  return true;
 }
 
 int SortedMultiMap::size() const { return this->length; }
