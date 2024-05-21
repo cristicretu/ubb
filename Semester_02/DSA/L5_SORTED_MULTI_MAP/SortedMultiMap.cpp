@@ -7,7 +7,7 @@
 #include "SMMIterator.h"
 using namespace std;
 
-void SortedMultiMap::createNode(Node*& node, TKey key, TValue value) {
+void SortedMultiMap::createNode(Node* node, TKey key, TValue value) {
   node->capacity = 1;
   node->size = 1;
 
@@ -15,6 +15,25 @@ void SortedMultiMap::createNode(Node*& node, TKey key, TValue value) {
   node->elems = new TValue[node->capacity], node->elems[0] = value;
   node->left = nullptr;
   node->right = nullptr;
+}
+
+void SortedMultiMap::resizeNode(Node* node) {
+  node->capacity *= 2;
+  TValue* newElems = new TValue[node->capacity];
+  for (int i = 0; i < node->size; ++i) {
+    newElems[i] = node->elems[i];
+  }
+  delete[] node->elems;
+  node->elems = newElems;
+}
+
+void SortedMultiMap::deleteNode(Node* node) {
+  if (node != nullptr) {
+    deleteNode(node->left);
+    deleteNode(node->right);
+    delete[] node->elems;
+    delete node;
+  }
 }
 
 SortedMultiMap::SortedMultiMap(Relation r) : r(r) {
@@ -57,7 +76,7 @@ void SortedMultiMap::add(TKey c, TValue v) {
 
   /// check if it's full
   if (node->size == node->capacity) {
-    /// resize
+    resizeNode(node);
   }
 
   node->elems[node->size++] = v;
@@ -67,8 +86,25 @@ void SortedMultiMap::add(TKey c, TValue v) {
 }
 
 vector<TValue> SortedMultiMap::search(TKey c) const {
-  // TODO - Implementation
-  return vector<TValue>();
+  vector<TValue> ans;
+
+  Node* node = this->root;
+  while (node != nullptr) {
+    if (node->key == c) {
+      for (int i = 0; i < node->size; ++i) {
+        ans.push_back(node->elems[i]);
+      }
+      return ans;
+    }
+
+    if (this->r(c, node->key)) {
+      node = node->left;
+    } else {
+      node = node->right;
+    }
+  }
+
+  return ans;
 }
 
 bool SortedMultiMap::remove(TKey c, TValue v) {
@@ -82,14 +118,4 @@ bool SortedMultiMap::isEmpty() const { return this->length == 0; }
 
 SMMIterator SortedMultiMap::iterator() const { return SMMIterator(*this); }
 
-SortedMultiMap::~SortedMultiMap() {
-  std::function<void(Node*)> deleteNode = [&](Node* node) {
-    if (node != nullptr) {
-      deleteNode(node->left);
-      deleteNode(node->right);
-      delete node;
-    }
-  };
-
-  deleteNode(this->root);
-}
+SortedMultiMap::~SortedMultiMap() { deleteNode(this->root); }

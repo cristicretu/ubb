@@ -30,7 +30,9 @@ class SortedMultiMap {
   Relation r;
   int length;
 
-  void createNode(Node *&node, TKey key, TValue value);
+  void createNode(Node *node, TKey key, TValue value);
+  void resizeNode(Node *node);
+  void deleteNode(Node *node);
 
  public:
   // constructor
