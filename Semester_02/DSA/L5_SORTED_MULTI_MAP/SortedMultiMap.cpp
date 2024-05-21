@@ -1,43 +1,60 @@
-#include "SMMIterator.h"
 #include "SortedMultiMap.h"
+
+#include <exception>
 #include <iostream>
 #include <vector>
-#include <exception>
+
+#include "SMMIterator.h"
 using namespace std;
 
-SortedMultiMap::SortedMultiMap(Relation r) {
-	//TODO - Implementation
+void SortedMultiMap::createNode(Node*& node, TKey key, TValue value) {
+  node->capacity = 1;
+  node->size = 1;
+
+  node->key = key;
+  node->elems = new TValue[node->capacity], node->elems[0] = value;
+  node->left = nullptr;
+  node->right = nullptr;
+}
+
+SortedMultiMap::SortedMultiMap(Relation r) : r(r) {
+  this->root = nullptr;
+  this->length = 0;
 }
 
 void SortedMultiMap::add(TKey c, TValue v) {
-	//TODO - Implementation
+  if (this->root == nullptr) {
+    this->root = new Node;
+    createNode(this->root, c, v);
+    ++this->length;
+    return;
+  }
 }
 
 vector<TValue> SortedMultiMap::search(TKey c) const {
-	//TODO - Implementation
-	return vector<TValue>();
+  // TODO - Implementation
+  return vector<TValue>();
 }
 
 bool SortedMultiMap::remove(TKey c, TValue v) {
-	//TODO - Implementation
-    return false;
+  // TODO - Implementation
+  return false;
 }
 
+int SortedMultiMap::size() const { return this->length; }
 
-int SortedMultiMap::size() const {
-	//TODO - Implementation
-	return 0;
-}
+bool SortedMultiMap::isEmpty() const { return this->length == 0; }
 
-bool SortedMultiMap::isEmpty() const {
-	//TODO - Implementation
-	return false;
-}
-
-SMMIterator SortedMultiMap::iterator() const {
-	return SMMIterator(*this);
-}
+SMMIterator SortedMultiMap::iterator() const { return SMMIterator(*this); }
 
 SortedMultiMap::~SortedMultiMap() {
-	//TODO - Implementation
+  std::function<void(Node*)> deleteNode = [&](Node* node) {
+    if (node != nullptr) {
+      deleteNode(node->left);
+      deleteNode(node->right);
+      delete node;
+    }
+  };
+
+  deleteNode(this->root);
 }
