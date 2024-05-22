@@ -6,6 +6,7 @@
     "ios": "cpp",
     "__availability": "cpp",
     "charconv": "cpp",
-    "string": "cpp"
+    "string": "cpp",
+    "exception": "cpp"
   }
 }

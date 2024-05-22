@@ -10,21 +10,21 @@ using namespace std;
 void SortedMultiMap::createNode(Node* node, TKey key, TValue value) {
   node->capacity = 1;
   node->size = 1;
-
   node->key = key;
-  node->elems = new TValue[node->capacity], node->elems[0] = value;
+  node->elems = new TValue[node->capacity];
+  node->elems[0] = value;
   node->left = nullptr;
   node->right = nullptr;
 }
 
 void SortedMultiMap::resizeNode(Node* node) {
   node->capacity *= 2;
-  TValue* newElems = new TValue[node->capacity];
+  TValue* oldElems = node->elems;
+  node->elems = new TValue[node->capacity];
   for (int i = 0; i < node->size; ++i) {
-    newElems[i] = node->elems[i];
+    node->elems[i] = oldElems[i];
   }
-  delete[] node->elems;
-  node->elems = newElems;
+  delete[] oldElems;
 }
 
 void SortedMultiMap::deleteNode(Node* node) {
