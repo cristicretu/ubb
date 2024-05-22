@@ -54,9 +54,9 @@ class SMMIterator {
   const SortedMultiMap& map;
   SMMIterator(const SortedMultiMap& map);
 
-  NodeStack stack;
-  Node* current;
+  TElem* stack;
   int currentValueIndex;
+  NodeStack st;
 
   // TODO - Representation
 
