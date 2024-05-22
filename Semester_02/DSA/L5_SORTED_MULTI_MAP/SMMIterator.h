@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stack>
-
 #include "SortedMultiMap.h"
 
 class NodeStack {
@@ -12,7 +10,7 @@ class NodeStack {
   void resize() {
     capacity *= 2;
     Node** newData = new Node*[capacity];
-    for (int i = 0; i < top; ++i) {
+    for (int i = 0; i < top + 1; ++i) {
       newData[i] = data[i];
     }
     delete[] data;
@@ -21,6 +19,7 @@ class NodeStack {
 
  public:
   NodeStack() : top(-1), capacity(10) { data = new Node*[capacity]; }
+
   ~NodeStack() { delete[] data; }
 
   void push(Node* node) {
@@ -44,7 +43,7 @@ class NodeStack {
     return data[top];
   }
 
-  bool empty() { return top == -1; }
+  bool empty() const { return top == -1; }
 };
 
 class SMMIterator {
@@ -57,6 +56,7 @@ class SMMIterator {
 
   NodeStack stack;
   Node* current;
+  int currentValueIndex;
 
   // TODO - Representation
 
@@ -65,4 +65,7 @@ class SMMIterator {
   void next();
   bool valid() const;
   TElem getCurrent() const;
+
+  // destructor
+  ~SMMIterator();
 };
