@@ -1,8 +1,10 @@
 #include "SMMIterator.h"
 
 #include "SortedMultiMap.h"
-
-SMMIterator::SMMIterator(const SortedMultiMap& d) : map(d) { first(); }
+SMMIterator::SMMIterator(const SortedMultiMap& d)
+    : map(d), current(nullptr), currentValueIndex(0) {
+  first();
+}
 
 void SMMIterator::first() {
   while (!stack.empty()) {
@@ -10,6 +12,7 @@ void SMMIterator::first() {
   }
 
   current = map.root;
+
   while (current != nullptr) {
     stack.push(current);
     current = current->left;
@@ -17,6 +20,7 @@ void SMMIterator::first() {
 
   if (!stack.empty()) {
     current = stack.peek();
+    currentValueIndex = 0;
   } else {
     current = nullptr;
   }
@@ -27,26 +31,36 @@ void SMMIterator::next() {
     throw std::exception();
   }
 
-  Node* node = stack.pop();
-
-  if (node->right != nullptr) {
-    node = node->right;
-    while (node != nullptr) {
-      stack.push(node);
-      node = node->left;
-    }
-  }
-
-  if (stack.empty()) {
-    current = nullptr;
+  if (currentValueIndex <
+      current->size - 1) {  /// if we still have elements in the current node
+    currentValueIndex++;
   } else {
-    current = stack.peek();
+    Node* node = stack.pop();  /// move to the next node
+
+    if (node->right !=
+        nullptr) {  /// look for the leftmost node in the right subtree
+      node = node->right;
+      while (node != nullptr) {
+        stack.push(node);
+        node = node->left;
+      }
+    }
+
+    if (!stack.empty()) {
+      current = stack.peek();
+      currentValueIndex = 0;
+    } else {
+      current = nullptr;
+    }
   }
 }
 
 bool SMMIterator::valid() const { return current != nullptr; }
 
 TElem SMMIterator::getCurrent() const {
-  // TODO - Implementation
-  return NULL_TELEM;
+  if (!valid()) {
+    throw std::exception();
+  }
+
+  return std::make_pair(current->key, current->elems[currentValueIndex]);
 }
