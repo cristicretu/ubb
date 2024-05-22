@@ -28,8 +28,11 @@ class Service {
     std::vector<Item> items = repo.getItems();
     std::vector<Item> ans(items.size());
 
-    auto filtered = std::copy_if(items.begin(), items.end(), ans.begin(),
-                                 [](auto &elem) { return true; });
+    auto filtered = std::copy_if(
+        items.begin(), items.end(), ans.begin(), [nameOrCategory](auto &elem) {
+          return elem.getCategory().find(nameOrCategory) != std::string::npos ||
+                 elem.getName().find(nameOrCategory) != std::string::npos;
+        });
 
     ans.resize(std::distance(ans.begin(), filtered));
 
