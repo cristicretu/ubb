@@ -165,6 +165,7 @@ bool SortedMultiMap::remove(TKey c, TValue v) {
           parent->right = child;
         }
       }
+      delete[] node->elems;
       delete node;
     } else {  /// two children
       Node* successorParent = node;

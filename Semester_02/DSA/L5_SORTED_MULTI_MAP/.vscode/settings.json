@@ -7,6 +7,7 @@
     "__availability": "cpp",
     "charconv": "cpp",
     "string": "cpp",
-    "exception": "cpp"
+    "exception": "cpp",
+    "new": "cpp"
   }
 }
