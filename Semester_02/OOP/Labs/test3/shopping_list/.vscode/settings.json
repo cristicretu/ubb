@@ -1,0 +1,9 @@
+{
+  "gcovViewer.buildDirectories": [
+    "/Users/huge/fun/ubb/Semester_02/OOP/Labs/test3/shopping_list/build/CMakeFiles/untitled.dir"
+  ],
+  "files.associations": {
+    "iosfwd": "cpp",
+    "algorithm": "cpp"
+  }
+}

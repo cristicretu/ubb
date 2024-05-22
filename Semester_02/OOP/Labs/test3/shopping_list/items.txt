@@ -1,0 +1,5 @@
+drinks|orange juice|2
+drinks|water|6
+dairy|cheese|4
+dairy|milk|2
+sweet|candy|3
