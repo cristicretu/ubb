@@ -4,6 +4,15 @@
   ],
   "files.associations": {
     "iosfwd": "cpp",
-    "algorithm": "cpp"
+    "algorithm": "cpp",
+    "__hash_table": "cpp",
+    "__split_buffer": "cpp",
+    "__tree": "cpp",
+    "list": "cpp",
+    "map": "cpp",
+    "string": "cpp",
+    "system_error": "cpp",
+    "unordered_map": "cpp",
+    "vector": "cpp"
   }
 }
