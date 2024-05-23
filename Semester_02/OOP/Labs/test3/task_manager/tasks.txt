@@ -1,0 +1,6 @@
+solve|120|1
+respond|45|2
+reply|45|2
+eat|30|3
+visit|240|1
+buy|120|2
