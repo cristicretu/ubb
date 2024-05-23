@@ -16,12 +16,14 @@ class GUI : public QWidget {
   QLineEdit *inputField;
   QPushButton *showTasks;
 
+  int bold = 0;
+
  public:
   GUI(QWidget *parent = Q_NULLPTR);
   ~GUI() override = default;
 
   void populateTasks();
  public slots:
-  void toggleBoldFunc(int bold);
+  void toggleBoldFunc();
   void showTasksByPriority(int priority);
 };
