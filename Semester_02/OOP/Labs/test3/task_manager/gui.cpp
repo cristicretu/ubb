@@ -24,6 +24,9 @@ GUI::GUI(QWidget *parent) : QWidget(parent) {
 
   QObject::connect(toggleBold, &QPushButton::clicked, this,
                    &GUI::toggleBoldFunc);
+  QObject::connect(showTasks, &QPushButton::clicked, this, [this]() {
+    showTasksByPriority(inputField->text().toInt());
+  });
 }
 
 void GUI::populateTasks() {
@@ -46,4 +49,31 @@ void GUI::toggleBoldFunc() {
       item->setFont(font);
     }
   }
+}
+
+void GUI::showTasksByPriority(int priority) {
+  auto [duration, tasks] = service.getDurationAndTaskByPriority(priority);
+
+  QWidget *window = new QWidget();
+
+  QVBoxLayout *layout = new QVBoxLayout();
+
+  QLabel *label = new QLabel(
+      tasks.size() == 0 ? QString("No tasks with this priority")
+                        : QString("Duration: ") + QString::number(duration));
+
+  QListWidget *list = new QListWidget();
+
+  for (auto t : tasks) {
+    list->addItem(QString::fromStdString(t.to_string()));
+  }
+
+  layout->addWidget(label);
+  if (tasks.size() != 0) {
+    layout->addWidget(list);
+  }
+
+  window->setLayout(layout);
+
+  return window->show();
 }
