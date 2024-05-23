@@ -19,6 +19,7 @@ void *messi(void *arg) {
         sum += matrix[i][d->col];
     }
 
+    printf("Sum of column %d is %d\n", d->col, sum);
     int *result = malloc(sizeof(int));
     *result = sum;
     return result;
@@ -62,15 +63,20 @@ int main(int argc, char **argv) {
     struct timeval tv1, tv2;
     gettimeofday(&tv1, NULL);
 
-    int sum = 0;
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            sum += matrix[i][j];
+    int *sum_cols = (int *)malloc(cols * sizeof(int));
+
+    for (int j = 0; j < cols; ++j) {
+        sum_cols[j] = 0;
+        for (int i = 0; i < rows; ++i) {
+            sum_cols[j] += matrix[i][j];
         }
     }
 
+    for (int j = 0; j < cols; ++j) {
+        printf("Sum of column %d is %d\n", j, sum_cols[j]);
+    }
+
     gettimeofday(&tv2, NULL);
-    printf("Sum is %d\n", sum);
     printf("Total time = %f seconds\n", (double)(tv2.tv_usec - tv1.tv_usec)  / 1000000 + (double) (tv2.tv_sec - tv1.tv_sec));
 
     pthread_t *threads = (pthread_t *)malloc(cols * sizeof(pthread_t));
@@ -83,7 +89,7 @@ int main(int argc, char **argv) {
         pthread_create(&threads[j], NULL, messi, &args[j]);
     }
 
-    sum = 0;
+    int sum = 0;
     for (int j = 0; j < cols; ++j) {
         void *result;
         pthread_join(threads[j], &result);
