@@ -21,6 +21,9 @@ GUI::GUI(QWidget *parent) : QWidget(parent) {
 
   setLayout(mainLayout);
   populateTasks();
+
+  QObject::connect(toggleBold, &QPushButton::clicked, this,
+                   &GUI::toggleBoldFunc);
 }
 
 void GUI::populateTasks() {
@@ -29,5 +32,18 @@ void GUI::populateTasks() {
 
   for (auto t : tasks) {
     mainTasks->addItem(QString::fromStdString(t.to_string()));
+  }
+}
+
+void GUI::toggleBoldFunc() {
+  bold = !bold;
+  for (int i = 0; i < mainTasks->count(); i++) {
+    QListWidgetItem *item = mainTasks->item(i);
+    Task task = service.getAllTasks()[i];
+    if (task.getPriority() == 1) {
+      QFont font = item->font();
+      font.setBold(bold);
+      item->setFont(font);
+    }
   }
 }
