@@ -22,4 +22,6 @@ class GUI : public QWidget {
 
   void populateList();
  public slots:
+  void onChangeText();
+  void showBestMatchingFunc();
 };

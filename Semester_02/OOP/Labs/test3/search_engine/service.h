@@ -26,19 +26,19 @@ class Service {
     std::vector<Document> documents = repo.getDocuments();
     std::vector<Document> ans;
 
-    std::copy_if(documents.begin(), documents.end(), ans.begin(),
+    std::copy_if(documents.begin(), documents.end(), std::back_inserter(ans),
                  [nameOrKeyword](const Document &a) {
                    if (a.getName().find(nameOrKeyword) != std::string::npos) {
-                     return 1;
+                     return true;
                    }
 
                    for (auto x : a.getKeywords()) {
                      if (x.find(nameOrKeyword) != std::string::npos) {
-                       return 1;
+                       return true;
                      }
                    }
 
-                   return 0;
+                   return false;
                  });
 
     return ans;
@@ -51,8 +51,8 @@ class Service {
     documents.pop_back();
     auto getScore = [name](const Document &a) {
       return a.getName().find(name) != std::string::npos
-                 ? name.size() / a.getName().size()
-                 : 0;
+                 ? name.size() / static_cast<double>(a.getName().size())
+                 : 0.0;
     };
 
     double bestScore = getScore(ans);
