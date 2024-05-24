@@ -1,0 +1,5 @@
+C++|programming language, object oriented|it is a general purpose language.
+Quadratic equation|square root, discriminant, real roots, imaginary roots|a second degree polynomial equation.
+Java|programming language, object oriented|it is a general purpose language.
+Jack Sparrow|pirate, captain, Caribbean|a fictional character.
+University of Toronto|university, Toronto, Canada|a public research university.
