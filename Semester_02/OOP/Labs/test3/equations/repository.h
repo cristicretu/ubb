@@ -1,5 +1,6 @@
 #pragma once
 #include <fstream>
+#include <iostream>
 #include <sstream>
 #include <string>
 
@@ -14,7 +15,7 @@ class Repository {
   ~Repository(){};
 
   void loadData() {
-    std::ifstream fin("eq.txt");
+    std::ifstream fin("../eq.txt");
 
     std::string line;
     std::string astr, bstr, cstr;
@@ -27,7 +28,7 @@ class Repository {
       std::getline(iss, cstr, ',');
 
       equations.push_back(
-          Equation(std::stod(astr), std::stod(bstr), std::stod(bstr)));
+          Equation(std::stod(astr), std::stod(bstr), std::stod(cstr)));
     }
   }
 

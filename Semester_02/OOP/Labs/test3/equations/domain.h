@@ -15,9 +15,17 @@ class Equation {
 
   double getDiscriminant() const { return b * b - 4 * a * c; }
   std::string toString() const {
-    return (a != 0 ? std::to_string(a) + "x^2" : "") + (b > 0 ? "+" : "") +
-           (b != 0 ? std::to_string(b) + "x" : "") + (c > 0 ? "+" : "") +
-           (c != 0 ? std::to_string(c) : "");
+    std::string result;
+    if (a != 0) {
+      result += std::to_string(a) + "x^2";
+    }
+    if (b != 0) {
+      result += (b > 0 ? "+" : "") + std::to_string(b) + "x";
+    }
+    if (c != 0) {
+      result += (c > 0 ? "+" : "") + std::to_string(c);
+    }
+    return result;
   }
 
   void setA(double a) { this->a = a; }

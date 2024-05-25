@@ -6,6 +6,7 @@
     "/Users/huge/fun/ubb/Semester_02/OOP/Labs/test3/equations/build/CMakeFiles/untitled_autogen.dir/build/untitled_autogen"
   ],
   "files.associations": {
-    "qvboxlayout": "cpp"
+    "qvboxlayout": "cpp",
+    "string": "cpp"
   }
 }
