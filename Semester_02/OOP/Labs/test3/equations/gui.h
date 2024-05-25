@@ -14,6 +14,7 @@ class GUI : public QWidget {
  private:
   Service service;
   QListWidget *mainItems;
+  int selectedIndex;
 
   QLineEdit *a;
   QLineEdit *b;
@@ -25,4 +26,10 @@ class GUI : public QWidget {
  public:
   GUI(QWidget *parent = Q_NULLPTR);
   ~GUI() override = default;
+
+  void populateItems();
+ public slots:
+  void populateFields();
+  void updateEquation();
+  void showSolution();
 };
