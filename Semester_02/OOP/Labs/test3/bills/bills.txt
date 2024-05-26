@@ -3,3 +3,5 @@ e-on;eed23g;122.0;true
 orange;ger34;23.00;true
 vodafone;voda23;444.00;false
 tcomm;t23232riri;100.00;true
+tcomm;dawdawa223;40.00;false
+tcomm;eww233;299.43;false
