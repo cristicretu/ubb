@@ -7,12 +7,14 @@ GUI::GUI(QWidget *parent) : QWidget(parent) {
   showNotPaid = new QCheckBox("Show not paid");
   companyInput = new QLineEdit();
   totalButton = new QPushButton("Total");
+  companyInput = new QLineEdit();
 
   mainLayout->addWidget(mainItems);
   QHBoxLayout *filterLayout = new QHBoxLayout();
   filterLayout->addWidget(showPaid);
   filterLayout->addWidget(showNotPaid);
   mainLayout->addLayout(filterLayout);
+  mainLayout->addWidget(companyInput);
   mainLayout->addWidget(totalButton);
 
   setLayout(mainLayout);
