@@ -19,6 +19,7 @@ class GUI : public QWidget {
   QCheckBox *showPaid;
   QCheckBox *showNotPaid;
   QPushButton *totalButton;
+  QLineEdit *companyInput;
 
  public:
   GUI(QWidget *parent = Q_NULLPTR);
