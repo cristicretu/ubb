@@ -1,0 +1,204 @@
+%% Created by Maple 2024.0, Mac OS X
+%% Source Worksheet: t1
+%% Generated: Mon May 27 10:56:34 EEST 2024
+\documentclass{article}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{mathtools}
+\usepackage{maple}
+\usepackage[utf8]{inputenc}
+\usepackage[svgnames]{xcolor}
+\usepackage{amsmath}
+\usepackage{breqn}
+\usepackage{textcomp}
+\begin{document}
+\lstset{basicstyle=\ttfamily,breaklines=true,columns=flexible}
+\pagestyle{empty}
+\DefineParaStyle{Maple Bullet Item}
+\DefineParaStyle{Maple Heading 1}
+\DefineParaStyle{Maple Warning}
+\DefineParaStyle{Maple Heading 4}
+\DefineParaStyle{Maple Heading 2}
+\DefineParaStyle{Maple Heading 3}
+\DefineParaStyle{Maple Dash Item}
+\DefineParaStyle{Maple Error}
+\DefineParaStyle{Maple Title}
+\DefineParaStyle{Maple Ordered List 1}
+\DefineParaStyle{Maple Text Output}
+\DefineParaStyle{Maple Ordered List 2}
+\DefineParaStyle{Maple Ordered List 3}
+\DefineParaStyle{Maple Normal}
+\DefineParaStyle{Maple Ordered List 4}
+\DefineParaStyle{Maple Ordered List 5}
+\DefineCharStyle{Maple 2D Output}
+\DefineCharStyle{Maple 2D Input}
+\DefineCharStyle{Maple Maple Input}
+\DefineCharStyle{Maple 2D Math}
+\DefineCharStyle{Maple Hyperlink}
+\mapleinput
+{$ \displaystyle \texttt{>\,} \mathit{i1} \coloneqq \mathit{int} (\frac{\sin (x)}{x},\,x =-5..5)\, $}
+
+% \mapleresult
+\begin{dmath}\label{(1)}
+\mathit{i1} \coloneqq 2 \mathrm{Si}\! \left(5\right)
+\end{dmath}
+\mapleinput
+{$ \displaystyle \texttt{>\,} \mathit{evalf} (\mathit{i1} ,3) $}
+
+% \mapleresult
+\begin{dmath}\label{(2)}
+ 3.10
+\end{dmath}
+\mapleinput
+{$ \displaystyle \texttt{>\,} \mathit{with} (\mathit{Student} [\mathit{LinearAlgebra}])\colon \mathit{with} (\mathit{LinearAlgebra})\colon \mathit{with} (\mathit{linalg})\colon  $}
+
+\mapleinput
+{$ \displaystyle \texttt{>\,} A \coloneqq \mathit{Matrix} ([[1,7,3,3],[-2,5,1,1],[1,2,-2,1],[1,-1,3,1]]) $}
+
+% \mapleresult
+\mapleinput
+{$ \displaystyle \texttt{>\,} \mathit{eg} \coloneqq \mathit{Eigenvalues} (A) $}
+
+% \mapleresult
+\mapleinput
+{$ \displaystyle \texttt{>\,} \mathit{evalf} (\mathit{eg} ,3) $}
+
+% \mapleresult
+\mapleinput
+{$ \displaystyle \texttt{>\,} \mathit{eq} \coloneqq \mathit{diff} (u (t),t)=u (t)\cdot (1-u (t)) $}
+
+% \mapleresult
+\begin{dmath}\label{(6)}
+\mathit{eq} \coloneqq \frac{d}{d t}u \! \left(t \right)=u \! \left(t \right) \left(1-u \! \left(t \right)\right)
+\end{dmath}
+\mapleinput
+{$ \displaystyle \texttt{>\,} \mathit{ic} \coloneqq u (0)= 0.1 $}
+
+% \mapleresult
+\begin{dmath}\label{(7)}
+\mathit{ic} \coloneqq u \! \left(0\right)= 0.1
+\end{dmath}
+\mapleinput
+{$ \displaystyle \texttt{>\,} \mathit{du} \coloneqq \mathit{dsolve} (\{\mathit{eq} ,\mathit{ic} \},\,u (t)) $}
+
+% \mapleresult
+\begin{dmath}\label{(8)}
+\mathit{du} \coloneqq u \! \left(t \right)=\frac{1}{1+9 {\mathrm e}^{-t}}
+\end{dmath}
+\mapleinput
+{$ \displaystyle \texttt{>\,} l (t)\coloneqq \mathit{rhs} (\mathit{du}) $}
+
+% \mapleresult
+\begin{dmath}\label{(9)}
+l \coloneqq t \hiderel{\mapsto }\mathit{rhs} \! \left(\mathit{du} \right)
+\end{dmath}
+\mapleinput
+{$ \displaystyle \texttt{>\,} \mathrm{lim}\coloneqq \mathit{limit} (l (t),t =100)\, $}
+
+% \mapleresult
+\begin{dmath}\label{(10)}
+\mathrm{lim}\coloneqq \frac{1}{1+9 {\mathrm e}^{-100}}
+\end{dmath}
+\mapleinput
+{$ \displaystyle \texttt{>\,} \mathit{evalf} (\mathrm{lim}) $}
+
+% \mapleresult
+\begin{dmath}\label{(11)}
+ 1.0
+\end{dmath}
+\mapleinput
+{$ \displaystyle \texttt{>\,} \mathit{eq1} \coloneqq \mathit{diff} (x (t),t)=\,x (t)\cdot (1-x (t)-\frac{1}{2}y (t)) $}
+
+% \mapleresult
+\begin{dmath}\label{(12)}
+\mathit{eq1} \coloneqq \frac{d}{d t}x \! \left(t \right)=x \! \left(t \right) \left(1-x \! \left(t \right)-\frac{y \! \left(t \right)}{2}\right)
+\end{dmath}
+\mapleinput
+{$ \displaystyle \texttt{>\,} \mathit{eq2} \coloneqq \mathit{diff} (y (t),\,t)=\,y (t)\cdot (1-y (t))\, $}
+
+% \mapleresult
+\begin{dmath}\label{(13)}
+\mathit{eq2} \coloneqq \frac{d}{d t}y \! \left(t \right)=y \! \left(t \right) \left(1-y \! \left(t \right)\right)
+\end{dmath}
+\mapleinput
+{$ \displaystyle \texttt{>\,} \mathit{with} (\mathit{plots})\colon  $}
+
+\mapleinput
+{$ \displaystyle \texttt{>\,} \mathit{sol1} \coloneqq \mathit{dsolve} (\{\mathit{eq1} ,\,\mathit{eq2} ,x (0)=\frac{1}{4},\,y (0)=\frac{1}{2}\},\{x (t),y (t)\}) $}
+
+% \mapleresult
+\begin{dmath}\label{(14)}
+\mathit{sol1} \coloneqq \left\{x \! \left(t \right) \hiderel{=} \frac{{\mathrm e}^{-t}}{2 \sqrt{\left(1+{\mathrm e}^{-t}\right) {\mathrm e}^{-t}}\, \sqrt{\left({\mathrm e}^{-t}\right)^{2}+{\mathrm e}^{-t}}},y \! \left(t \right) \hiderel{=} \frac{1}{1+{\mathrm e}^{-t}}\right\}
+\end{dmath}
+\mapleinput
+{$ \displaystyle \texttt{>\,} \mathit{sol2} \coloneqq \mathit{dsolve} (\{\mathit{eq1} ,\mathit{eq2} ,x (0)=1,y (0)=\frac{1}{2}\},\{x (t),y (t)\}) $}
+
+% \mapleresult
+\begin{dmath}\label{(15)}
+\mathit{sol2} \coloneqq \left\{x \! \left(t \right) \hiderel{=} \frac{1}{\sqrt{\left(1+{\mathrm e}^{-t}\right) {\mathrm e}^{-t}}\, \left(\frac{2 \sqrt{\left({\mathrm e}^{-t}\right)^{2}+{\mathrm e}^{-t}}}{{\mathrm e}^{-t}}-\frac{3 \sqrt{2}}{2}\right)},y \! \left(t \right) \hiderel{=} \frac{1}{1+{\mathrm e}^{-t}}\right\}
+\end{dmath}
+\mapleinput
+{$ \displaystyle \texttt{>\,} \textit{x1\_sol} \coloneqq \mathit{rhs} (\mathit{sol1} [1]); $}
+
+% \mapleresult
+\begin{dmath}\label{(16)}
+\textit{x1\_sol} \coloneqq \frac{{\mathrm e}^{-t}}{2 \sqrt{\left(1+{\mathrm e}^{-t}\right) {\mathrm e}^{-t}}\, \sqrt{\left({\mathrm e}^{-t}\right)^{2}+{\mathrm e}^{-t}}}
+\end{dmath}
+\mapleinput
+{$ \displaystyle \texttt{>\,} \textit{y1\_sol} \coloneqq \mathit{rhs} (\mathit{sol1} [2]); $}
+
+% \mapleresult
+\begin{dmath}\label{(17)}
+\textit{y1\_sol} \coloneqq \frac{1}{1+{\mathrm e}^{-t}}
+\end{dmath}
+\mapleinput
+{$ \displaystyle \texttt{>\,} \textit{x2\_sol} \coloneqq \mathit{rhs} (\mathit{sol2} [1]); $}
+
+% \mapleresult
+\begin{dmath}\label{(18)}
+\textit{x2\_sol} \coloneqq \frac{1}{\sqrt{\left(1+{\mathrm e}^{-t}\right) {\mathrm e}^{-t}}\, \left(\frac{2 \sqrt{\left({\mathrm e}^{-t}\right)^{2}+{\mathrm e}^{-t}}}{{\mathrm e}^{-t}}-\frac{3 \sqrt{2}}{2}\right)}
+\end{dmath}
+\mapleinput
+{$ \displaystyle \texttt{>\,} \textit{y2\_sol} \coloneqq \mathit{rhs} (\mathit{sol2} [2]); $}
+
+% \mapleresult
+\begin{dmath}\label{(19)}
+\textit{y2\_sol} \coloneqq \frac{1}{1+{\mathrm e}^{-t}}
+\end{dmath}
+\mapleinput
+{$ \displaystyle \texttt{>\,} \mathit{plot} ([\textit{x1\_sol} ,\textit{y1\_sol} ,t =0..20]) $}
+
+% \mapleresult
+\mapleplot{t1plot2d1.png}
+\mapleinput
+{$ \displaystyle \texttt{>\,} \,\mathit{plot} ([\textit{x2\_sol} ,\textit{y2\_sol} ,t =0..20]) $}
+
+% \mapleresult
+\mapleplot{t1plot2d2.png}
+\mapleinput
+{$ \displaystyle \texttt{>\,} \mathit{eeq1} \coloneqq x \cdot (1-x -\frac{1}{2}\cdot y)=0; $}
+
+% \mapleresult
+\begin{dmath}\label{(20)}
+\mathit{eeq1} \coloneqq x \left(1-x -\frac{y}{2}\right)=0
+\end{dmath}
+\mapleinput
+{$ \displaystyle \texttt{>\,} \mathit{eeq2} \coloneqq y \cdot (1-y)=\,0; $}
+
+% \mapleresult
+\begin{dmath}\label{(21)}
+\mathit{eeq2} \coloneqq y \left(1-y \right)=0
+\end{dmath}
+\mapleinput
+{$ \displaystyle \texttt{>\,} \mathit{equilibira} \coloneqq \mathit{solve} (\{\mathit{eeq1} ,\mathit{eeq2} \},\,\{x ,y \}); $}
+
+% \mapleresult
+\begin{dmath}\label{(22)}
+\mathit{equilibira} \coloneqq \left\{x  \hiderel{=} 0,y  \hiderel{=} 0\right\},\left\{x  \hiderel{=} 1,y  \hiderel{=} 0\right\},\left\{x  \hiderel{=} 0,y  \hiderel{=} 1\right\},\left\{x  \hiderel{=} \frac{1}{2},y  \hiderel{=} 1\right\}
+\end{dmath}
+\mapleinput
+{$ \displaystyle \texttt{>\,}  $}
+
+\end{document}
