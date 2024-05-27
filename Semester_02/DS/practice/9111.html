@@ -1,0 +1,424 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<title>9111.html</title>
+<!-- Created by Maple 2024.0, Mac OS X -->
+</head>
+<a name="MapleAutoBookmark1" />
+
+<body bgcolor="FFFFFF">
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_1.gif" width="436" height="18" alt="eq := `+`(diff(u(x), `$`(x, 2)), `*`(5, `*`(diff(u(x), x))), `-`(`*`(7, `*`(u(x))))) = `+`(`*`(5, `*`(cos(x))), `-`(7)); "_noterminate" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="center"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_2.gif" width="370" height="44" alt="Typesetting:-mprintslash([eq := `+`(diff(u(x), `$`(x, 2)), `*`(5, `*`(diff(u(x), x))), `-`(`*`(7, `*`(u(x))))) = `+`(`*`(5, `*`(cos(x))), `-`(7))], [`+`(diff(diff(u(x), x), x), `*`(5, `*`(diff(u(x), x..." align="center" border="0"></td>
+<td width='5%' align='center'>(1)</td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_3.gif" width="168" height="18" alt="sol := dsolve(eq, u(x)); "_noterminate" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="center"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_4.gif" width="523" height="51" alt="Typesetting:-mprintslash([sol := u(x) = `+`(`*`(exp(`+`(`*`(`/`(1, 2), `*`(`+`(`-`(5), `*`(`^`(53, `/`(1, 2)))), `*`(x))))), `*`(c__2)), `*`(exp(`+`(`-`(`*`(`/`(1, 2), `*`(`+`(5, `*`(`^`(53, `/`(1, 2)..." align="center" border="0"></td>
+<td width='5%' align='center'>(2)</td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_5.gif" width="96" height="18" alt="t := rhs(sol); "_noterminate" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="center"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_6.gif" width="463" height="51" alt="Typesetting:-mprintslash([t := `+`(`*`(exp(`+`(`*`(`/`(1, 2), `*`(`+`(`-`(5), `*`(`^`(53, `/`(1, 2)))), `*`(x))))), `*`(c__2)), `*`(exp(`+`(`-`(`*`(`/`(1, 2), `*`(`+`(5, `*`(`^`(53, `/`(1, 2)))), `*`(..." align="center" border="0"></td>
+<td width='5%' align='center'>(3)</td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_7.gif" width="133" height="18" alt="c1 := 0; -1; c2 := 0; -1" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_8.gif" width="217" height="18" alt="t := subs(c__1 = c1, c__2 = c2, t); "_noterminate" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="center"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_9.gif" width="246" height="39" alt="Typesetting:-mprintslash([t := `+`(`-`(`*`(`/`(40, 89), `*`(cos(x)))), `*`(`/`(25, 89), `*`(sin(x))), 1)], [`+`(`-`(`*`(`/`(40, 89), `*`(cos(x)))), `*`(`/`(25, 89), `*`(sin(x))), 1)])" align="center" border="0"></td>
+<td width='5%' align='center'>(4)</td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_10.gif" width="125" height="18" alt="plot(t, x = -6 .. 6); "_noterminate" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="center"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#000000" size="3" face="Times New Roman"><img src="images/911_11.gif" width="500" height="500" alt="Plot_2d" align="center" border="0"></td>
+<td width='5%' align='center'></td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_12.gif" width="153" height="39" alt="eval(t, x = exp(`/`(1, 2))); "_noterminate" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="center"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_13.gif" width="254" height="56" alt="`+`(`-`(`*`(`/`(40, 89), `*`(cos(exp(`/`(1, 2)))))), `*`(`/`(25, 89), `*`(sin(exp(`/`(1, 2))))), 1)" align="center" border="0"></td>
+<td width='5%' align='center'>(5)</td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_14.gif" width="207" height="39" alt="eval(diff(t, x), x = exp(`/`(1, 2))); "_noterminate" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="center"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_15.gif" width="209" height="56" alt="`+`(`*`(`/`(40, 89), `*`(sin(exp(`/`(1, 2))))), `*`(`/`(25, 89), `*`(cos(exp(`/`(1, 2))))))" align="center" border="0"></td>
+<td width='5%' align='center'>(6)</td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_16.gif" width="451" height="18" alt="with(Student[LinearAlgebra]); -1; with(LinearAlgebra); -1; with(linalg); -1" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_17.gif" width="218" height="18" alt="A := Matrix([[-7, 0], [1, 7]]); "_noterminate" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="center"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_18.gif" width="122" height="56" alt="Typesetting:-mfenced(Typesetting:-mrow(Typesetting:-mtable(Typesetting:-mtr(Typesetting:-mtd(Typesetting:-mrow(Typesetting:-mo("&uminus0;", foreground = "[0,0,0]", readonly = "false", mathvariant = "n..." align="center" border="0"></td>
+<td width='5%' align='center'>(7)</td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_19.gif" width="173" height="18" alt="deter := LinearAlgebra:-Determinant(A); "_noterminate" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="center"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_20.gif" width="101" height="18" alt="Typesetting:-mprintslash([deter := -49], [-49])" align="center" border="0"></td>
+<td width='5%' align='center'>(8)</td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_21.gif" width="157" height="18" alt="eig := LinearAlgebra:-Eigenvalues(A); "_noterminate" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="center"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_22.gif" width="110" height="53" alt="Typesetting:-mfenced(Typesetting:-mrow(Typesetting:-mtable(Typesetting:-mtr(Typesetting:-mtd(Typesetting:-mn("7", foreground = "[0,0,0]", readonly = "false", mathvariant = "normal"), rowalign = "", co..." align="center" border="0"></td>
+<td width='5%' align='center'>(9)</td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_23.gif" width="224" height="18" alt="mexp := LinearAlgebra:-MatrixExponential(`*`(t, `*`(A))); "_noterminate" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="center"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_24.gif" width="768" height="134" alt="Typesetting:-mfenced(Typesetting:-mrow(Typesetting:-mtable(Typesetting:-mtr(Typesetting:-mtd(Typesetting:-msup(Typesetting:-mo("&ExponentialE;", foreground = "[0,0,0]", readonly = "false", mathvariant..." align="center" border="0"></td>
+<td width='5%' align='center'>(10)</td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_25.gif" width="225" height="18" alt="eq1 := diff(x(w), w) = `+`(`-`(`*`(7, `*`(x(w))))); "_noterminate" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="center"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_26.gif" width="203" height="39" alt="Typesetting:-mprintslash([eq1 := diff(x(w), w) = `+`(`-`(`*`(7, `*`(x(w)))))], [diff(x(w), w) = `+`(`-`(`*`(7, `*`(x(w)))))])" align="center" border="0"></td>
+<td width='5%' align='center'>(11)</td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_27.gif" width="266" height="18" alt="eq2 := diff(y(w), w) = `+`(x(w), `*`(7, `*`(y(w)))); "_noterminate" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="center"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_28.gif" width="240" height="39" alt="Typesetting:-mprintslash([eq2 := diff(y(w), w) = `+`(x(w), `*`(7, `*`(y(w))))], [diff(y(w), w) = `+`(x(w), `*`(7, `*`(y(w))))])" align="center" border="0"></td>
+<td width='5%' align='center'>(12)</td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_29.gif" width="368" height="18" alt="dsolve({eq1, eq2, x(0) = 2, y(0) = 0}, {x(w), y(w)}); "_noterminate" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="center"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_30.gif" width="283" height="42" alt="{x(w) = `+`(`*`(2, `*`(exp(`+`(`-`(`*`(7, `*`(w)))))))), y(w) = `+`(`-`(`*`(`/`(1, 7), `*`(exp(`+`(`-`(`*`(7, `*`(w)))))))), `*`(`/`(1, 7), `*`(exp(`+`(`*`(7, `*`(w)))))))}" align="center" border="0"></td>
+<td width='5%' align='center'>(13)</td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_31.gif" width="49" height="18" alt="t := 't'; "_noterminate" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="center"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_32.gif" width="47" height="18" alt="Typesetting:-mprintslash([t := t], [t])" align="center" border="0"></td>
+<td width='5%' align='center'>(14)</td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_33.gif" width="270" height="18" alt="eq1 := diff(x(t), t) = `+`(`-`(x(t)), `*`(x(t), `*`(y(t)))); "_noterminate" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="center"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_34.gif" width="248" height="39" alt="Typesetting:-mprintslash([eq1 := diff(x(t), t) = `+`(`-`(x(t)), `*`(x(t), `*`(y(t))))], [diff(x(t), t) = `+`(`-`(x(t)), `*`(x(t), `*`(y(t))))])" align="center" border="0"></td>
+<td width='5%' align='center'>(15)</td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_35.gif" width="263" height="18" alt="eq2 := diff(y(t), t) = `+`(y(t), `-`(`*`(x(t), `*`(y(t))))); "_noterminate" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="center"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_36.gif" width="233" height="39" alt="Typesetting:-mprintslash([eq2 := diff(y(t), t) = `+`(y(t), `-`(`*`(x(t), `*`(y(t)))))], [diff(y(t), t) = `+`(y(t), `-`(`*`(x(t), `*`(y(t)))))])" align="center" border="0"></td>
+<td width='5%' align='center'>(16)</td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_37.gif" width="143" height="18" alt="eeq1 := `+`(`-`(x), xy) = 0; "_noterminate" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="center"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_38.gif" width="147" height="18" alt="Typesetting:-mprintslash([eeq1 := `+`(`-`(x), xy) = 0], [`+`(`-`(x), xy) = 0])" align="center" border="0"></td>
+<td width='5%' align='center'>(17)</td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_39.gif" width="131" height="18" alt="eeq2 := `+`(y, `-`(xy)) = 0; "_noterminate" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="center"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_40.gif" width="131" height="18" alt="Typesetting:-mprintslash([eeq2 := `+`(y, `-`(xy)) = 0], [`+`(y, `-`(xy)) = 0])" align="center" border="0"></td>
+<td width='5%' align='center'>(18)</td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_41.gif" width="187" height="18" alt="solve({eeq1, eeq2}, {x, y}); "_noterminate" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="center"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_42.gif" width="108" height="18" alt="{x = xy, y = xy}" align="center" border="0"></td>
+<td width='5%' align='center'>(19)</td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_43.gif" width="121" height="18" alt="with(DETools); -1" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_44.gif" width="126" height="18" alt="sys := {eq1, eq2}; "_noterminate" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="center"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_45.gif" width="441" height="39" alt="Typesetting:-mprintslash([sys := {diff(x(t), t) = `+`(`-`(x(t)), `*`(x(t), `*`(y(t)))), diff(y(t), t) = `+`(y(t), `-`(`*`(x(t), `*`(y(t)))))}], [{diff(x(t), t) = `+`(`-`(x(t)), `*`(x(t), `*`(y(t)))), ..." align="center" border="0"></td>
+<td width='5%' align='center'>(20)</td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_46.gif" width="439" height="18" alt="initialcond := [[x(0) = 1, y(0) = .5], [x(0) = -1, y(0) = -.5]]; 1" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="center"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_47.gif" width="439" height="18" alt="Typesetting:-mprintslash([initialcond := [[x(0) = 1, y(0) = .5], [x(0) = -1, y(0) = -.5]]], [[[x(0) = 1, y(0) = .5], [x(0) = -1, y(0) = -.5]]])" align="center" border="0"></td>
+<td width='5%' align='center'>(21)</td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_48.gif" width="572" height="18" alt="DEplot(sys, [x(t), y(t)], t = 0 .. 20, [[x(0) = 1, y(0) = .5], [x(0) = -1, y(0) = -.5]]); "_noterminate" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="left"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Courier New">Warning, plot may be incomplete, the following errors(s) were issued:
+<br> &nbsp;&nbsp;cannot evaluate the solution further right of 9.8639011, maxfun limit exceeded (see ?dsolve,maxfun for details)
+<br></td>
+</tr></font>&nbsp;</p>
+<p align="center"><tr>
+<td valign="top" align="center"><font color="#000000" size="3" face="Times New Roman"><img src="images/911_49.gif" width="500" height="500" alt="Plot_2d" align="center" border="0"></td>
+<td width='5%' align='center'></td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_50.gif" width="131" height="42" alt="f := proc (x) options operator, arrow; `+`(`/`(`*`(`/`(1, 2), `*`(`+`(`*`(`^`(x, 2)), 5))), `*`(x))) end proc; "_noterminate" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="center"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_51.gif" width="121" height="42" alt="Typesetting:-mprintslash([f := proc (x) options operator, arrow; `+`(`/`(`*`(`/`(1, 2), `*`(`+`(`*`(`^`(x, 2)), 5))), `*`(x))) end proc], [proc (x) options operator, arrow; `+`(`/`(`*`(`/`(1, 2), `*`(..." align="center" border="0"></td>
+<td width='5%' align='center'>(22)</td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_52.gif" width="113" height="18" alt="solve(f(x) = x); "_noterminate" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="center"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_53.gif" width="86" height="23" alt="`+`(`-`(`*`(`^`(5, `/`(1, 2))))), `*`(`^`(5, `/`(1, 2)))" align="center" border="0"></td>
+<td width='5%' align='center'>(23)</td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_54.gif" width="168" height="18" alt="plot(f(x), x = -10 .. 10); "_noterminate" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="center"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#000000" size="3" face="Times New Roman"><img src="images/911_55.gif" width="500" height="500" alt="Plot_2d" align="center" border="0"></td>
+<td width='5%' align='center'></td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_56.gif" width="430" height="18" alt="x := 2; -1; for k to 5 do x := f(x); psi(x) := x; print(x) end do; -1" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="center"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_57.gif" width="29" height="39" alt="`/`(9, 4)" align="center" border="0"></td>
+</tr></font>&nbsp;</p>
+<p align="center"><tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_58.gif" width="44" height="39" alt="`/`(161, 72)" align="center" border="0"></td>
+</tr></font>&nbsp;</p>
+<p align="center"><tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_59.gif" width="60" height="39" alt="`/`(51841, 23184)" align="center" border="0"></td>
+</tr></font>&nbsp;</p>
+<p align="center"><tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_60.gif" width="99" height="39" alt="`/`(5374978561, 2403763488)" align="center" border="0"></td>
+</tr></font>&nbsp;</p>
+<p align="center"><tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_61.gif" width="177" height="39" alt="`/`(57780789062419261441, 25840354427429161536)" align="center" border="0"></td>
+<td width='5%' align='center'>(24)</td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_62.gif" width="442" height="18" alt="x := 10; -1; for k to 5 do x := f(x); psi(x) := x; print(x) end do; -1" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="center"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_63.gif" width="36" height="39" alt="`/`(21, 4)" align="center" border="0"></td>
+</tr></font>&nbsp;</p>
+<p align="center"><tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_64.gif" width="44" height="39" alt="`/`(521, 168)" align="center" border="0"></td>
+</tr></font>&nbsp;</p>
+<p align="center"><tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_65.gif" width="68" height="39" alt="`/`(412561, 175056)" align="center" border="0"></td>
+</tr></font>&nbsp;</p>
+<p align="center"><tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_66.gif" width="114" height="39" alt="`/`(323429594401, 144442556832)" align="center" border="0"></td>
+</tr></font>&nbsp;</p>
+<p align="center"><tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_67.gif" width="208" height="39" alt="`/`(208924963655223119929921, 93433995140834302995264)" align="center" border="0"></td>
+<td width='5%' align='center'>(25)</td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_68.gif" width="446" height="18" alt="x := -3; -1; for k to 5 do x := f(x); psi(x) := x; print(x) end do; -1" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+<p align="center"><table width='100%'>
+<tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_69.gif" width="47" height="39" alt="-`/`(7, 3)" align="center" border="0"></td>
+</tr></font>&nbsp;</p>
+<p align="center"><tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_70.gif" width="55" height="39" alt="-`/`(47, 21)" align="center" border="0"></td>
+</tr></font>&nbsp;</p>
+<p align="center"><tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_71.gif" width="70" height="39" alt="-`/`(2207, 987)" align="center" border="0"></td>
+</tr></font>&nbsp;</p>
+<p align="center"><tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_72.gif" width="94" height="39" alt="-`/`(4870847, 2178309)" align="center" border="0"></td>
+</tr></font>&nbsp;</p>
+<p align="center"><tr>
+<td valign="top" align="center"><font color="#0000ff" size="3" face="Times New Roman"><img src="images/911_73.gif" width="148" height="39" alt="-`/`(23725150497407, 10610209857723)" align="center" border="0"></td>
+<td width='5%' align='center'>(26)</td>
+</tr>
+</table></font>&nbsp;</p>
+<p align="left"><table>
+<tr>
+<td valign="top" align="center"><font color="#78000e" size="3" face="Courier New"><strong>&gt; </strong></font></td>
+<td valign="top"><img src="images/911_74.gif" width="17" height="18" alt="" align="center" border="0"></td>
+</tr>
+</table>&nbsp;</p>
+</body>
+</html>
