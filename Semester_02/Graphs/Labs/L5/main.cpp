@@ -810,25 +810,28 @@ class Graph {
       int u = edge.first;
       if (!visited[u]) {
         visited[u] = true;
-        cycle.push_back(u);
-        if (hamiltonian_cycle(u, visited, cycle)) {
+        cycle.push_back(u);  // add it to the cycle
+        if (hamiltonian_cycle(
+                u, visited, cycle)) {  // try to find the cycle from this vertex
           return true;
         }
         visited[u] = false;
-        cycle.pop_back();
+        cycle.pop_back();  // remove the vertex from the cycle
       }
     }
 
-    return false;
+    return false;  // no cycle found from this vertex
   }
 
   /*-------------*/
   void branchAndBound(std::vector<int>& path, std::vector<bool>& visited,
                       int currentCost, int level) {
-    if (level == vertices - 1) {
-      if (isEdge(path[level], 0)) {
+    if (level == vertices - 1) {     /// if all verties are include in the path
+      if (isEdge(path[level], 0)) {  /// check if there is an edge from the last
+                                     /// vertex to the first vertex
         int totalCost = currentCost + getCost(path[level], 0);
-        if (totalCost < minCost) {
+        if (totalCost < minCost) {  /// check if the total cost is less than the
+                                    /// minimum cost found so far
           minCost = totalCost;
           bestPath = path;
           bestPath.push_back(0);
@@ -841,12 +844,13 @@ class Graph {
       int city = edge.first;
       int cost = getCost(path[level], city);
       if (!visited[city] && cost != -1) {
-        int temp = currentCost + cost;
+        int temp = currentCost + cost;  // keep track of the current cost
         if (temp < minCost) {
-          visited[city] = true;
+          visited[city] = true;  /// mark this destination city as visited
           path.push_back(city);
-          branchAndBound(path, visited, temp, level + 1);
-          visited[city] = false;
+          branchAndBound(path, visited, temp,
+                         level + 1);  /// go to the next level
+          visited[city] = false;  /// mark this destination city as not visited
           path.pop_back();
         }
       }
