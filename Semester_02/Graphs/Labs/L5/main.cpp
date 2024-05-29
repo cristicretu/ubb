@@ -770,9 +770,9 @@ class Graph {
   /* L5 */
 
   std::vector<int> findHamiltonianCycle() {
-    std::vector<int> cycle;
-    std::vector<int> path;
-    std::vector<bool> visited(vertices, false);
+    std::vector<int> cycle;  // store the cycle
+    std::vector<bool> visited(vertices,
+                              false);  // keep track of visited vertices
     cycle.push_back(0);
     visited[0] = true;
     auto result = hamiltonian_cycle(0, visited, cycle);
@@ -784,8 +784,9 @@ class Graph {
 
   bool hamiltonian_cycle(int v, std::vector<bool>& visited,
                          std::vector<int>& cycle) {
-    if (cycle.size() == vertices) {
-      if (isEdge(v, 0)) {
+    if (cycle.size() == vertices) {  // if we included all vertices
+      if (isEdge(v, 0)) {            // check if there is an edge from last to
+                                     // first vertex
         cycle.push_back(0);
         return true;
       }
@@ -795,6 +796,7 @@ class Graph {
     // Sort edges based on cost
     std::vector<std::pair<int, int>> sortedEdges;
 
+    // convert the outbound edges to a vector of pairs of vertex and cost
     for (const auto& edge : outbound[v]) {
       sortedEdges.push_back({edge.first, getCost(v, edge.first)});
     }
@@ -804,7 +806,7 @@ class Graph {
                 return a.second < b.second;
               });
 
-    for (const auto& edge : sortedEdges) {
+    for (const auto& edge : sortedEdges) {  // try each edge from vertex v
       int u = edge.first;
       if (!visited[u]) {
         visited[u] = true;
