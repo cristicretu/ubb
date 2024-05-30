@@ -1,0 +1,52 @@
+1. what are the chars that indicate beginning of line / end of a line?
+^ - begin
+& - end
+/< - begin word
+/> end word
+
+2. regex that matches a line of length multiple of 5 + 2
+^(.{5})*..$
+
+
+3. give the operations in shell that check if
+a) a file exists -> -f
+b) a directory exists -> -d
+c) a file is readable -> -r
+d) a string is empty -> -z
+e) argument is a regular file -> -f
+f) is different from a string -> -ne
+
+example:
+
+if [ -f $file ]; then
+    echo "file exists"
+fi
+
+4. what is the difference between $* and $@ in shell?
+-> $* is a single string with all the arguments separated by the first character of IFS
+-> $@ is a list of strings, each string is an argument
+
+4. how would you restore the value of a file descriptor that was overwritten by dup2?
+-> use dup to store the original file descriptor
+-> dup2 returns the new file descriptor, so you can store it in a variable and use it to restore the original file descriptor
+
+5. what is the max number of child proc that are created?
+
+for (int i =0; i<8; ++i) {
+    if (fork() == 0) {
+        sleep(rand()%10);
+        exit(0);
+    }
+    if (i%3==0) {
+        wait(0);
+    }
+}
+
+wait(0)
+wait(0)
+
+-> 5
+
+0,3,6 wait, and only 1,2,4,5,7 are left
+
+
