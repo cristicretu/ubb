@@ -7,6 +7,12 @@
 #include "SMMIterator.h"
 using namespace std;
 
+/*
+BC: Theta(1)
+WC: Theta(1)
+AC: Theta(1)
+
+*/
 void SortedMultiMap::createNode(Node* node, TKey key, TValue value) {
   node->capacity = 1;
   node->size = 1;
@@ -17,6 +23,12 @@ void SortedMultiMap::createNode(Node* node, TKey key, TValue value) {
   node->right = nullptr;
 }
 
+/*
+BC: Theta(1)
+WC: Theta(1)
+AC: Theta(1)
+
+*/
 void SortedMultiMap::resizeNode(Node* node) {
   node->capacity *= 2;
   TValue* oldElems = node->elems;
@@ -27,36 +39,53 @@ void SortedMultiMap::resizeNode(Node* node) {
   delete[] oldElems;
 }
 
+/*
+BC: Theta(1)
+WC: Theta(1)
+AC: Theta(1)
+
+*/
 void SortedMultiMap::deleteNode(Node* node) {
   if (node != nullptr) {
-    deleteNode(node->left);
+    deleteNode(node->left);  /// first, delete his children
     deleteNode(node->right);
     delete[] node->elems;
     delete node;
   }
 }
 
+/*
+BC: Theta(1)
+WC: Theta(1)
+AC: Theta(1)
+
+*/
 SortedMultiMap::SortedMultiMap(Relation r) : r(r) {
   this->root = nullptr;
   this->length = 0;
 }
 
+/*
+BC: Theta(1)
+WC: Theta(n) - when the tree is degenerated
+AC: Theta(number of levels)
+*/
 void SortedMultiMap::add(TKey c, TValue v) {
-  if (this->root == nullptr) {
+  if (this->root == nullptr) {  /// empty tree, create root
     this->root = new Node;
     createNode(this->root, c, v);
     ++this->length;
     return;
   }
 
-  Node* node = this->root;
+  Node* node = this->root;  /// go through the tree, in order to find the key
   while (node->key != c) {
     if (this->r(c, node->key)) {  /// left side
-      if (node->left) {
+      if (node->left) {           /// if left child exists, go through it
         node = node->left;
         continue;
       } else {
-        node->left = new Node;
+        node->left = new Node;  /// we found the place to insert the key
         createNode(node->left, c, v);
         ++this->length;
         return;
@@ -85,16 +114,16 @@ void SortedMultiMap::add(TKey c, TValue v) {
   return;
 }
 
+/*
+BC: Theta(1)
+WC: Theta(n)
+AC: Theta(number of levels)
+*/
 vector<TValue> SortedMultiMap::search(TKey c) const {
-  vector<TValue> ans;
-
   Node* node = this->root;
   while (node != nullptr) {
     if (node->key == c) {
-      for (int i = 0; i < node->size; ++i) {
-        ans.push_back(node->elems[i]);
-      }
-      return ans;
+      return vector<TValue>(node->elems, node->elems + node->size);
     }
 
     if (this->r(c, node->key)) {
@@ -104,9 +133,14 @@ vector<TValue> SortedMultiMap::search(TKey c) const {
     }
   }
 
-  return ans;
+  return vector<TValue>();  /// empty vector
 }
 
+/*
+BC: Theta(1)
+WC: Theta(n)
+AC: Theta(number of levels)
+*/
 bool SortedMultiMap::remove(TKey c, TValue v) {
   Node* parent = nullptr;
   Node* node = this->root;
@@ -168,27 +202,30 @@ bool SortedMultiMap::remove(TKey c, TValue v) {
       delete[] node->elems;
       delete node;
     } else {  /// two children
-      Node* successorParent = node;
-      Node* successor = node->right;
-      while (successor->left != nullptr) {
-        successorParent = successor;
-        successor = successor->left;
+      Node* nextParent =
+          node;  /// we need to find the smallest element in the right subtree
+      Node* next = node->right;
+      while (next->left != nullptr) {
+        nextParent = next;
+        next = next->left;
       }
 
-      node->key = successor->key;
+      /// then we need to replace the current node with the smallest element
+      node->key = next->key;
       delete[] node->elems;
-      node->elems = successor->elems;
-      node->size = successor->size;
-      node->capacity = successor->capacity;
+      node->elems = next->elems;
+      node->size = next->size;
+      node->capacity = next->capacity;
 
-      if (successorParent->left == successor) {
-        successorParent->left = successor->right;
+      /// then we need to unlink that smallest element
+      if (nextParent->left == next) {
+        nextParent->left = next->right;
       } else {
-        successorParent->right = successor->right;
+        nextParent->right = next->right;
       }
 
-      successor->elems = nullptr;
-      delete successor;
+      next->elems = nullptr;
+      delete next;
     }
   }
 

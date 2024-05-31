@@ -1,21 +1,27 @@
 #include "SMMIterator.h"
 
 #include "SortedMultiMap.h"
+
+/*
+BC: Theta(1)
+WC: Theta(n)
+AC: O(n)
+*/
 SMMIterator::SMMIterator(const SortedMultiMap& d)
     : map(d), currentValueIndex(0) {
-  stack = new TElem[map.size()];
+  stack = new TElem[map.size()];  /// number of elements in the bst
 
-  st;
   Node* current = map.root;
   int index = 0;
 
-  while (current != nullptr || !st.empty()) {
-    while (current != nullptr) {
+  while (current != nullptr || !st.empty()) {  /// go through the bst
+    while (current != nullptr) {               /// exhaust the left branch
       st.push(current);
       current = current->left;
     }
 
-    current = st.pop();
+    current = st.pop();  /// get the last node from the stack, populate the arr
+                         /// with its elements
     for (int i = 0; i < current->size; ++i) {
       stack[index++] = std::make_pair(current->key, current->elems[i]);
     }
