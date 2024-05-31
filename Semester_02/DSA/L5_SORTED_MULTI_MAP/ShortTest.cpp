@@ -1,6 +1,7 @@
 #include <assert.h>
 
 #include <exception>
+#include <iostream>
 #include <vector>
 
 #include "SMMIterator.h"
@@ -38,4 +39,35 @@ void testAll() {
   assert(smm.remove(1, 3) == true);
   assert(smm.remove(2, 1) == false);
   assert(smm.isEmpty());
+
+  smm.add(1, 2);
+  smm.add(1, 3);
+  smm.add(1, 4);
+
+  smm.add(2, 5);
+  smm.add(2, 6);
+
+  smm.add(3, 7);
+  smm.add(3, 8);
+  smm.add(3, 9);
+
+  assert(smm.size() == 8);
+
+  smm.add(4, 10);
+  smm.add(4, 11);
+  smm.add(4, 12);
+
+  smm.add(5, 13);
+  smm.add(5, 14);
+  smm.add(5, 15);
+
+  auto searched = smm.search(3);
+  auto elems = smm.removeKey(3);
+
+  assert(smm.search(3).size() == 0);
+
+  assert(elems.size() == 3);
+  assert(smm.size() == 11);
+
+  assert(searched == elems);
 }
