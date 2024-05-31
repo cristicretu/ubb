@@ -8,6 +8,7 @@
     "charconv": "cpp",
     "string": "cpp",
     "exception": "cpp",
-    "new": "cpp"
+    "new": "cpp",
+    "vector": "cpp"
   }
 }

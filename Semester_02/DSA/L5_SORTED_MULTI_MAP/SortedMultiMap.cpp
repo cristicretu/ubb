@@ -232,6 +232,80 @@ bool SortedMultiMap::remove(TKey c, TValue v) {
   return true;
 }
 
+vector<TValue> SortedMultiMap::removeKey(TKey key) {
+  Node* parent = nullptr;
+  Node* node = this->root;
+  while (node != nullptr && node->key != key) {
+    parent = node;
+    if (this->r(key, node->key)) {
+      node = node->left;
+    } else {
+      node = node->right;
+    }
+  }
+
+  if (node == nullptr) {
+    return vector<TValue>();
+  }
+
+  this->length -= node->size;
+
+  vector<TValue> values(node->elems, node->elems + node->size);
+
+  if (node->left == nullptr && node->right == nullptr) {
+    if (parent == nullptr) {
+      this->root = nullptr;
+    } else {
+      if (parent->left == node) {
+        parent->left = nullptr;
+      } else {
+        parent->right = nullptr;
+      }
+    }
+    deleteNode(node);
+  } else if (node->left == nullptr || node->right == nullptr) {
+    Node* child = (node->left != nullptr) ? node->left : node->right;
+    if (parent == nullptr) {
+      this->root = child;
+    } else {
+      if (parent->left == node) {
+        parent->left = child;
+      } else {
+        parent->right = child;
+      }
+    }
+    delete[] node->elems;
+    delete node;
+  } else {
+    Node* nextParent =
+        node;  /// we need to find the smallest element in the right subtree
+    Node* next = node->right;
+    while (next->left != nullptr) {
+      nextParent = next;
+      next = next->left;
+    }
+
+    /// then we need to replace the current node with the smallest element
+    node->key = next->key;
+    delete[] node->elems;
+    node->elems = next->elems;
+    node->size = next->size;
+    node->capacity = next->capacity;
+
+    /// then we need to unlink that smallest element
+    if (nextParent->left == next) {
+      nextParent->left = next->right;
+    } else {
+      nextParent->right = next->right;
+    }
+
+    next->elems = nullptr;
+    delete next;
+  }
+
+  return values;
+}
+
 int SortedMultiMap::size() const { return this->length; }
 
 bool SortedMultiMap::isEmpty() const { return this->length == 0; }

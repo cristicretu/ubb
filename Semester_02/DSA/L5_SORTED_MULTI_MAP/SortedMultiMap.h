@@ -48,6 +48,7 @@ class SortedMultiMap {
   // returns true if the pair was removed (it was part of the multimap), false
   // if nothing is removed
   bool remove(TKey c, TValue v);
+  vector<TValue> removeKey(TKey key);
 
   // returns the number of key-value pairs from the sorted multimap
   int size() const;
