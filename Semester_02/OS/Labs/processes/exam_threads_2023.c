@@ -17,12 +17,30 @@ int sum = 0;
 void *f(void *arg) {
     data d = *(data *)arg;
 
-    int n1 = rand() % 10 + 1, n2 = rand() % 10 + 1, n3 = rand() % 10 + 1;
+    int arr[3];
+    for (int i = 0; i < 3; ++i) {
+        arr[i]= rand() % 10 + 1;
+    }
 
-    printf("Thread %d has generated numbers %4d | %4d | %4d\n", d.id, n1, n2, n3);
+    printf("Thread %d has generated numbers %4d | %4d | %4d\n", d.id, arr[0], arr[1], arr[2]);;
 
     pthread_barrier_wait(&b);
 
+    int add = 0, substract = 0;
+
+    for (int i = 0; i < 3; ++i) {
+        if (arr[i] & 1) {
+            add += arr[i];
+        } else {
+            substract += arr[i];
+        }
+    }
+
+    int total = add - substract;
+
+    pthread_mutex_lock(&mtx);
+    sum += total;
+    pthread_mutex_unlock(&mtx);
     return NULL;
 }
 
@@ -48,6 +66,8 @@ int main(int argc, char **argv) {
     for (int i = 0; i < n; ++i) {
         pthread_join(threads[i], NULL);
     }
+
+    printf("Final sum is %d\n", sum);
 
     free(threads);
     free(args);
