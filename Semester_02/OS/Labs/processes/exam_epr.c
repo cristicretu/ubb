@@ -27,6 +27,7 @@ void *functie(void *args) {
     pthread_barrier_wait(d.b);
 
     char *word = (char *)malloc(128 * sizeof(char));
+    memset(word, 0, 128 * sizeof(char));
     int size = fscanf(d.file, "%s", word);
     int length = strlen(word);
     free(word);
