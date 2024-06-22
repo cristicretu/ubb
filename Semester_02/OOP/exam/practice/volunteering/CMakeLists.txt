@@ -8,7 +8,7 @@ find_package(Qt6 COMPONENTS
         Gui
         Widgets
         REQUIRED)
-add_executable(untitled main.cpp domain.cpp domain.h service.cpp service.h repository.cpp repository.h gui.cpp gui.h)
+add_executable(untitled main.cpp domain.cpp domain.h service.cpp service.h repository.cpp repository.h gui.cpp gui.h window.h window.cpp subject.h subject.cpp observer.h)
 target_link_libraries(untitled
         Qt::Core
         Qt::Gui
