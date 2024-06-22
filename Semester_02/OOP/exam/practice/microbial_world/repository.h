@@ -14,6 +14,11 @@ class Repository {
     load_biologists();
     load_bacteria();
   };
+  ~Repository() {
+    save_biologists();
+    save_bacteria();
+  };
+
   void load_biologists() {
     ifstream fin(
         "/Users/huge/fun/ubb/Semester_02/OOP/exam/practice/microbial_world/"
@@ -73,4 +78,34 @@ class Repository {
       diseases.clear();
     }
   }
+
+  void save_biologists() {
+    ofstream fout(
+        "/Users/huge/fun/ubb/Semester_02/OOP/exam/practice/microbial_world/"
+        "biologists.txt");
+    for (auto &biologist : biologists) {
+      fout << biologist.get_name() << "|";
+      for (auto &species : biologist.get_species()) {
+        fout << species << ",";
+      }
+      fout << endl;
+    }
+  }
+
+  void save_bacteria() {
+    ofstream fout(
+        "/Users/huge/fun/ubb/Semester_02/OOP/exam/practice/microbial_world/"
+        "bacteriums.txt");
+    for (auto &bacterium : bacteria) {
+      fout << bacterium.get_name() << "|" << bacterium.get_spacies() << "|"
+           << bacterium.get_size() << "|";
+      for (auto &disease : bacterium.get_diseases()) {
+        fout << disease << ",";
+      }
+      fout << endl;
+    }
+  }
+
+  vector<Biologist> &get_biologists() { return biologists; }
+  vector<Bacterium> &get_bacteria() { return bacteria; }
 };
