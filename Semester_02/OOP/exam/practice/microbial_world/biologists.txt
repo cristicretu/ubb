@@ -1,6 +1,6 @@
-Marcel|alofae,molafae,bolafae
-Costel|krustacee,molafae,bolafae
-Miron|krustacee
-Gigel|bolafae
-Mirel|miree,curee
-Jijel|miree
+Marcel|alofae,molafae,bolafae,
+Costel|krustacee,molafae,bolafae,
+Miron|krustacee,
+Gigel|bolafae,
+Mirel|miree,curee,
+Jijel|miree,

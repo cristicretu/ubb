@@ -23,7 +23,7 @@ class Window : public QWidget, public Observer {
   QLabel *nameLabel, *speciesLabel, *sizeLabel, *diseasesLabel;
   QLineEdit *nameLineEdit, *speciesLineEdit, *sizeLineEdit, *diseasesLineEdit;
 
-  QPushButton *addButton, *removeButton, *updateButton;
+  QPushButton *addButton;
 
  public:
   Window(Session &session, Biologist &biologist, QWidget *parent = Q_NULLPTR);
