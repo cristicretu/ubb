@@ -8,6 +8,16 @@
   "C_Cpp.intelliSenseEngineFallback": "disabled",
   "files.associations": {
     "vector": "cpp",
-    "ostream": "cpp"
+    "ostream": "cpp",
+    "__hash_table": "cpp",
+    "__split_buffer": "cpp",
+    "__tree": "cpp",
+    "deque": "cpp",
+    "forward_list": "cpp",
+    "ios": "cpp",
+    "list": "cpp",
+    "map": "cpp",
+    "string": "cpp",
+    "unordered_map": "cpp"
   }
 }
