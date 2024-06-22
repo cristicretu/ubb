@@ -1,10 +1,13 @@
 #pragma once
-#include "domain.h"
+#include "repository.h"
 #include "subject.h"
 
 class Session : public Subject {
  private:
+  Repository repo;
+
  public:
-  Session();
-  ~Session();
+  Session(){};
+
+  vector<Biologist> get_biologists() { return repo.get_biologists(); };
 };
