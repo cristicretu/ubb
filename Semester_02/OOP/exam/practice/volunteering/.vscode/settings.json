@@ -4,5 +4,10 @@
     "/Users/huge/fun/ubb/Semester_02/OOP/exam/practice/volunteering/build/CMakeFiles/untitled.dir",
     "/Users/huge/fun/ubb/Semester_02/OOP/exam/practice/volunteering/build/CMakeFiles/untitled_autogen.dir/build/CMakeFiles",
     "/Users/huge/fun/ubb/Semester_02/OOP/exam/practice/volunteering/build/CMakeFiles/untitled_autogen.dir/build/untitled_autogen"
-  ]
+  ],
+  "C_Cpp.intelliSenseEngineFallback": "disabled",
+  "files.associations": {
+    "vector": "cpp",
+    "ostream": "cpp"
+  }
 }

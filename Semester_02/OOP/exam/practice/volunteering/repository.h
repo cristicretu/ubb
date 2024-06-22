@@ -1,5 +1,6 @@
 #pragma once
 #include <fstream>
+#include <iostream>
 #include <sstream>
 
 #include "domain.h"
@@ -16,10 +17,20 @@ class Repository {
   };
   ~Repository(){};
   void loadDepartments() {
-    std::ifstream file("departments.txt");
+    std::ifstream fin(
+        "/Users/huge/fun/ubb/Semester_02/OOP/exam/practice/volunteering/"
+        "departments.txt");
     std::string name, description;
     std::string line;
-    while (std::getline(file, line)) {
+
+    if (!fin.is_open()) {
+      std::cout << "File not found" << std::endl;
+      return;
+    }
+
+    std::cout << "Loading departments" << std::endl;
+    while (std::getline(fin, line)) {
+      std::cout << line << std::endl;
       std::istringstream iss(line);
       std::getline(iss, name, '|');
       std::getline(iss, description);
@@ -28,10 +39,12 @@ class Repository {
   }
 
   void loadVolunteers() {
-    std::ifstream file("volunteers.txt");
+    std::ifstream fin(
+        "/Users/huge/fun/ubb/Semester_02/OOP/exam/practice/volunteering/"
+        "volunteers.txt");
     std::string name, email, departmentName, interests;
     std::string line;
-    while (std::getline(file, line)) {
+    while (std::getline(fin, line)) {
       std::istringstream iss(line);
       std::getline(iss, name, '|');
       std::getline(iss, email, '|');
