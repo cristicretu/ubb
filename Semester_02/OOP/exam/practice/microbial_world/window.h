@@ -30,4 +30,5 @@ class Window : public QWidget, public Observer {
   ~Window() override = default;
   void update() const override;
  public slots:
+  void addBacterium();
 };

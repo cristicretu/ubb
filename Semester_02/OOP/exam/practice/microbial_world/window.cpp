@@ -1,5 +1,8 @@
 #include "window.h"
 
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QStandardItem>
 #include <iostream>
 
 Window::Window(Session &session, Biologist &biologist, QWidget *parent)
@@ -11,6 +14,28 @@ Window::Window(Session &session, Biologist &biologist, QWidget *parent)
   auto *layout = new QVBoxLayout;
 
   bacteriaTable = new QTableView(this);
+  auto *model = new QStandardItemModel(this);
+  model->setColumnCount(4);
+  model->setHeaderData(0, Qt::Horizontal, "Name");
+  model->setHeaderData(1, Qt::Horizontal, "Species");
+  model->setHeaderData(2, Qt::Horizontal, "Size");
+  model->setHeaderData(3, Qt::Horizontal, "Diseases");
+
+  for (const auto &bacterium :
+       session.get_bacteria_by_biologist(biologist.get_name())) {
+    QList<QStandardItem *> row;
+    row << new QStandardItem(QString::fromStdString(bacterium.get_name()));
+    row << new QStandardItem(QString::fromStdString(bacterium.get_spacies()));
+    row << new QStandardItem(QString::number(bacterium.get_size()));
+    std::string diseases;
+    for (const auto &disease : bacterium.get_diseases()) {
+      diseases += disease + " ";
+    }
+    row << new QStandardItem(QString::fromStdString(diseases));
+    model->appendRow(row);
+  }
+
+  bacteriaTable->setModel(model);
 
   speciesComboBox = new QComboBox(this);
 
@@ -47,6 +72,28 @@ Window::Window(Session &session, Biologist &biologist, QWidget *parent)
   setLayout(layout);
 
   update();
+
+  connect(addButton, &QPushButton::clicked, this, &Window::addBacterium);
 }
 
 void Window::update() const {}
+
+void Window::addBacterium() {
+  auto name = nameLineEdit->text().toStdString();
+  auto species = speciesLineEdit->text().toStdString();
+  auto size = sizeLineEdit->text().toDouble();
+  auto diseases = diseasesLineEdit->text().toStdString();
+
+  try {
+    session.add_bacterium(name, species, size, {diseases});
+
+    std::cout << "Bacterium added\n";
+    nameLineEdit->clear();
+    speciesLineEdit->clear();
+    sizeLineEdit->clear();
+    diseasesLineEdit->clear();
+
+  } catch (const std::runtime_error &e) {
+    QMessageBox::warning(this, "Error", e.what());
+  }
+}
