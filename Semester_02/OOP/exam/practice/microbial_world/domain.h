@@ -26,8 +26,8 @@ class Bacterium {
   Bacterium(string name, string spacies, int size, vector<string> diseases)
       : name(name), spacies(spacies), size(size), diseases(diseases){};
 
-  string get_name() { return name; };
-  string get_spacies() { return spacies; };
-  int get_size() { return size; };
-  vector<string> get_diseases() { return diseases; };
+  string get_name() const { return name; };
+  string get_spacies() const { return spacies; };
+  int get_size() const { return size; };
+  vector<string> get_diseases() const { return diseases; };
 };

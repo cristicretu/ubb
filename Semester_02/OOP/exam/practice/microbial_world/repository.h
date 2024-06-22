@@ -1,4 +1,5 @@
 #pragma once
+#include <algorithm>
 #include <fstream>
 #include <sstream>
 
@@ -18,6 +19,46 @@ class Repository {
     save_biologists();
     save_bacteria();
   };
+
+  vector<Bacterium> get_bacteria_by_biologist(string name) {
+    vector<Bacterium> result;
+    vector<string> spacies;
+
+    for (auto &biologist : biologists) {
+      if (biologist.get_name() == name) {
+        spacies = biologist.get_species();
+        break;
+      }
+    }
+
+    for (auto &bacterium : bacteria) {
+      if (find(spacies.begin(), spacies.end(), bacterium.get_spacies()) !=
+          spacies.end()) {
+        result.emplace_back(bacterium);
+      }
+    }
+
+    sort(result.begin(), result.end(), [](Bacterium &a, Bacterium &b) {
+      return a.get_name() < b.get_name();
+    });
+
+    return result;
+  }
+
+  int find_bacterium(string name) {
+    for (int i = 0; i < bacteria.size(); i++) {
+      if (bacteria[i].get_name() == name) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  void add_bacterium(string name, string spacies, int size,
+                     vector<string> diseases) {
+    Bacterium b(name, spacies, size, diseases);
+    bacteria.emplace_back(b);
+  }
 
   void load_biologists() {
     ifstream fin(
