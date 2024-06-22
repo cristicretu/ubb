@@ -1,0 +1,4 @@
+covid|alofae|4|miopie,durere,prostie
+raceala|krustacee|1|durere,prostie,muci
+surd|miree|20|durere,auz
+mut|curee|2|prostie,miopie
