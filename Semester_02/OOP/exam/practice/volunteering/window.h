@@ -17,14 +17,16 @@ class Window : public Observer, public QWidget {
   Department department;
   QLabel *description;
 
-  QLineEdit *name, email, interests;
+  QListWidget *volunteersList, *unassignedVolunteers;
+  QPushButton *addVolunteer, *assignVolunteer, *mostSuitable;
+  QLineEdit *name, *email, *interests;
   QLabel *nameLabel, *emailLabel, *interestsLabel;
 
  public:
   Window(Service &service, Department department, QWidget *parent = nullptr);
   void update() override;
  public slots:
-  void addVolunteer();
-  void assignVolunteer();
+  void addVolunteerFunc();
+  void assignVolunteerFunc();
   void displayMostSuitable();
 };
