@@ -26,9 +26,6 @@ Window::Window(QAbstractItemModel *model, Session &session,
   description = new QLabel("Description:");
   descriptionEdit = new QLineEdit(this);
 
-  creator = new QLabel("Creator:");
-  creatorEdit = new QLineEdit(this);
-
   duration = new QLabel("Duration:");
   durationEdit = new QLineEdit(this);
 
@@ -38,8 +35,6 @@ Window::Window(QAbstractItemModel *model, Session &session,
   horizontalLayout->addWidget(titleEdit);
   horizontalLayout->addWidget(description);
   horizontalLayout->addWidget(descriptionEdit);
-  horizontalLayout->addWidget(creator);
-  horizontalLayout->addWidget(creatorEdit);
   horizontalLayout->addWidget(duration);
   horizontalLayout->addWidget(durationEdit);
 
@@ -49,6 +44,18 @@ Window::Window(QAbstractItemModel *model, Session &session,
   setLayout(layout);
 
   update();
+
+  connect(addButton, &QPushButton::clicked, this,
+          [this, &session, &researcher]() {
+            try {
+              session.addIdea(titleEdit->text().toStdString(),
+                              descriptionEdit->text().toStdString(),
+                              researcher.getName(), 0,
+                              durationEdit->text().toInt());
+            } catch (const std::invalid_argument &e) {
+              QMessageBox::warning(this, "Error", e.what());
+            }
+          });
 }
 
 void Window::update() const {
