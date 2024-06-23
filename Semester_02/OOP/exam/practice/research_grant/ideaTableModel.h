@@ -14,7 +14,7 @@ class IdeaTableModel : public QAbstractTableModel {
     return repo.getIdeas().size();
   }
   int columnCount(const QModelIndex &parent = QModelIndex()) const override {
-    return 6;
+    return 5;
   }
 
   QVariant data(const QModelIndex &index,
@@ -24,16 +24,14 @@ class IdeaTableModel : public QAbstractTableModel {
 
       switch (index.column()) {
         case 0:
-          return index.row();
-        case 1:
           return QString::fromStdString(idea.getTitle());
-        case 2:
+        case 1:
           return QString::fromStdString(idea.getDescription());
-        case 3:
+        case 2:
           return QString::fromStdString(idea.getCreator());
-        case 4:
+        case 3:
           return idea.getStatus();
-        case 5:
+        case 4:
           return idea.getDuration();
         default:
           break;
@@ -49,16 +47,14 @@ class IdeaTableModel : public QAbstractTableModel {
       if (orientation == Qt::Horizontal) {
         switch (section) {
           case 0:
-            return "Index";
-          case 1:
             return "Title";
-          case 2:
+          case 1:
             return "Description";
-          case 3:
+          case 2:
             return "Creator";
-          case 4:
+          case 3:
             return "Status";
-          case 5:
+          case 4:
             return "Duration";
           default:
             break;
