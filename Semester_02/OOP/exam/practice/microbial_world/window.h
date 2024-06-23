@@ -6,6 +6,7 @@
 #include <QListWidget>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QStandardItemModel>
 #include <QTableView>
 #include <QVBoxLayout>
 #include <QWidget>
@@ -20,6 +21,7 @@ class Window : public QWidget, public Observer {
 
   QTableView *bacteriaTable;
   QComboBox *speciesComboBox;
+  QStandardItemModel *model;
 
   QListWidget *bacteriumDiseasesList;
 
@@ -32,6 +34,8 @@ class Window : public QWidget, public Observer {
   Window(Session &session, Biologist &biologist, QWidget *parent = Q_NULLPTR);
   ~Window() override = default;
   void update() const override;
+  void updateSpeciesComboBox() const;
+  void updateBacteriaTable() const;
  public slots:
   void addBacterium();
 };
