@@ -29,6 +29,16 @@ class Repository {
     throw runtime_error("Bacterium not found");
   }
 
+  void add_bacterium_disease(string name, string disease) {
+    for (auto &bacterium : bacteria) {
+      if (bacterium.get_name() == name) {
+        bacterium.add_disease(disease);
+        return;
+      }
+    }
+    throw runtime_error("Bacterium not found");
+  }
+
   vector<Bacterium> get_bacteria_by_biologist(string name) {
     vector<Bacterium> result;
     vector<string> spacies;

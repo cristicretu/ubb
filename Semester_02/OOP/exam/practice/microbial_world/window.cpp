@@ -52,6 +52,15 @@ Window::Window(Session &session, Biologist &biologist, QWidget *parent)
   inputLayout->addWidget(diseasesLabel);
   inputLayout->addWidget(diseasesLineEdit);
 
+  diseaseLabel = new QLabel("Disease:", this);
+  diseaseLineEdit = new QLineEdit(this);
+
+  addDiseaseButton = new QPushButton("Add Disease", this);
+
+  layout->addWidget(diseaseLabel);
+  layout->addWidget(diseaseLineEdit);
+  layout->addWidget(addDiseaseButton);
+
   layout->addLayout(horizontalLayout);
   layout->addWidget(speciesComboBox);
   layout->addLayout(inputLayout);
@@ -73,6 +82,7 @@ Window::Window(Session &session, Biologist &biologist, QWidget *parent)
                     .toString()
                     .toStdString();
             auto bacterium = session.get_bacterium_by_name(name);
+            selectedBacteriumStr = name;
             bacteriumDiseasesList->clear();
             for (const auto &disease : bacterium.get_diseases()) {
               bacteriumDiseasesList->addItem(QString::fromStdString(disease));
@@ -80,6 +90,18 @@ Window::Window(Session &session, Biologist &biologist, QWidget *parent)
           });
   connect(speciesComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
           this, &Window::updateBacteriaTable);
+  connect(addDiseaseButton, &QPushButton::clicked, [this, &session]() {
+    auto disease = diseaseLineEdit->text().toStdString();
+
+    if (disease.empty() || selectedBacteriumStr.empty()) {
+      QMessageBox::warning(this, "Error", "Invalid disease");
+      return;
+    }
+
+    session.add_bacterium_disease(selectedBacteriumStr, disease);
+
+    diseaseLineEdit->clear();
+  });
 }
 
 void Window::updateSpeciesComboBox() const {
@@ -92,8 +114,6 @@ void Window::updateSpeciesComboBox() const {
 }
 
 void Window::updateBacteriaTable() const {
-  std::cout << "biologist name: " << biologist.get_name() << "\n";
-
   model->removeRows(0, model->rowCount());
 
   for (auto bacterium : session.get_bacteria_by_biologist(name)) {
@@ -118,8 +138,6 @@ void Window::updateBacteriaTable() const {
     row << new QStandardItem(QString::fromStdString(diseases));
     model->appendRow(row);
   }
-
-  std::cout << biologist.get_name() << "\n";
 }
 
 void Window::update() const {}

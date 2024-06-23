@@ -43,4 +43,9 @@ class Session : public Subject {
 
     return vector<string>(species.begin(), species.end());
   }
+
+  void add_bacterium_disease(string name, string disease) {
+    repo.add_bacterium_disease(name, disease);
+    // notify();
+  }
 };

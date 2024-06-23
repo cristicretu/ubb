@@ -20,6 +20,8 @@ class Window : public QWidget, public Observer {
   Biologist &biologist;
   string name;
 
+  string selectedBacteriumStr;
+
   QTableView *bacteriaTable;
   QComboBox *speciesComboBox;
   QStandardItemModel *model;
@@ -28,6 +30,11 @@ class Window : public QWidget, public Observer {
 
   QLabel *nameLabel, *speciesLabel, *sizeLabel, *diseasesLabel;
   QLineEdit *nameLineEdit, *speciesLineEdit, *sizeLineEdit, *diseasesLineEdit;
+
+  QLabel *diseaseLabel;
+  QLineEdit *diseaseLineEdit;
+
+  QPushButton *addDiseaseButton;
 
   QPushButton *addButton;
 
