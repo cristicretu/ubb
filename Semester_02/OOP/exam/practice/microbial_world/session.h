@@ -14,6 +14,9 @@ class Session : public Subject {
   vector<Biologist> get_biologists() { return repo.get_biologists(); };
   void add_bacterium(string name, string spacies, int size,
                      vector<string> diseases) {
+    if (name.empty() || spacies.empty() || size <= 0 || diseases.empty()) {
+      throw runtime_error("Invalid bacterium");
+    }
     if (repo.find_bacterium(name) == -1) {
       repo.add_bacterium(name, spacies, size, diseases);
       notify();

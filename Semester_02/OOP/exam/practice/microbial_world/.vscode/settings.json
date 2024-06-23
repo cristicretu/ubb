@@ -6,6 +6,7 @@
     "/Users/huge/fun/ubb/Semester_02/OOP/exam/practice/microbial_world/build/CMakeFiles/untitled_autogen.dir/build/untitled_autogen"
   ],
   "files.associations": {
-    "vector": "cpp"
+    "vector": "cpp",
+    "stdexcept": "cpp"
   }
 }
