@@ -30,4 +30,6 @@ class Bacterium {
   string get_spacies() const { return spacies; };
   int get_size() const { return size; };
   vector<string> get_diseases() const { return diseases; };
+
+  void add_disease(string disease) { diseases.push_back(disease); };
 };

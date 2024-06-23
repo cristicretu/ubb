@@ -1,6 +1,6 @@
 covid|alofae|4|miopie,durere,prostie,
 raceala|krustacee|1|durere,prostie,muci,
-surd|miree|20|durere,auz,
+surd|miree|20|durere,auz,diaree,
 mut|curee|2|prostie,miopie,
 sars|krustacee|4|durere,raceala,
 tampe|miree|20|handsome,
