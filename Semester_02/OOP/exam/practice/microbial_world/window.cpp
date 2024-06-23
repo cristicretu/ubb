@@ -7,7 +7,6 @@
 
 Window::Window(Session &session, Biologist &biologist, QWidget *parent)
     : session(session), biologist(biologist), QWidget(parent) {
-  std::cout << "Window constructor\n";
   session.registerObserver(this);
   setWindowTitle(QString::fromStdString(biologist.get_name()));
 
@@ -15,36 +14,20 @@ Window::Window(Session &session, Biologist &biologist, QWidget *parent)
 
   auto *horizontalLayout = new QHBoxLayout;
 
+  speciesComboBox = new QComboBox(this);
+  updateSpeciesComboBox();
+
   bacteriaTable = new QTableView(this);
-  auto *model = new QStandardItemModel(this);
+  model = new QStandardItemModel(this);
   model->setColumnCount(4);
-  model->setHeaderData(0, Qt::Horizontal, "Name");
-  model->setHeaderData(1, Qt::Horizontal, "Species");
-  model->setHeaderData(2, Qt::Horizontal, "Size");
-  model->setHeaderData(3, Qt::Horizontal, "Diseases");
-
-  for (const auto &bacterium :
-       session.get_bacteria_by_biologist(biologist.get_name())) {
-    QList<QStandardItem *> row;
-    row << new QStandardItem(QString::fromStdString(bacterium.get_name()));
-    row << new QStandardItem(QString::fromStdString(bacterium.get_spacies()));
-    row << new QStandardItem(QString::number(bacterium.get_size()));
-    std::string diseases;
-    for (const auto &disease : bacterium.get_diseases()) {
-      diseases += disease + " ";
-    }
-    row << new QStandardItem(QString::fromStdString(diseases));
-    model->appendRow(row);
-  }
-
+  model->setHorizontalHeaderLabels({"Name", "Species", "Size", "Diseases"});
   bacteriaTable->setModel(model);
+  updateBacteriaTable();
 
   horizontalLayout->addWidget(bacteriaTable);
 
   bacteriumDiseasesList = new QListWidget(parent);
   horizontalLayout->addWidget(bacteriumDiseasesList);
-
-  speciesComboBox = new QComboBox(this);
 
   auto inputLayout = new QHBoxLayout;
 
@@ -94,9 +77,55 @@ Window::Window(Session &session, Biologist &biologist, QWidget *parent)
               bacteriumDiseasesList->addItem(QString::fromStdString(disease));
             }
           });
+  connect(speciesComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
+          this, &Window::updateBacteriaTable);
 }
 
-void Window::update() const {}
+void Window::updateSpeciesComboBox() const {
+  speciesComboBox->clear();
+  speciesComboBox->addItem("All Species");
+  for (const auto &species :
+       session.get_species_by_biologist(biologist.get_name())) {
+    speciesComboBox->addItem(QString::fromStdString(species));
+  }
+}
+
+void Window::updateBacteriaTable() const {
+  model->removeRows(0, model->rowCount());
+
+  for (const auto &bacterium :
+       session.get_bacteria_by_biologist(biologist.get_name())) {
+    bool found = false;
+    if (bacterium.get_spacies().find(
+            speciesComboBox->currentText().toStdString()) !=
+        std::string::npos) {
+      found = true;
+    }
+
+    if (speciesComboBox->currentText() == "All Species") {
+      found = true;
+    }
+
+    if (!found) {
+      continue;
+    }
+    QList<QStandardItem *> row;
+    row << new QStandardItem(QString::fromStdString(bacterium.get_name()));
+    row << new QStandardItem(QString::fromStdString(bacterium.get_spacies()));
+    row << new QStandardItem(QString::number(bacterium.get_size()));
+    std::string diseases;
+    for (const auto &disease : bacterium.get_diseases()) {
+      diseases += disease + " ";
+    }
+    row << new QStandardItem(QString::fromStdString(diseases));
+    model->appendRow(row);
+  }
+}
+
+void Window::update() const {
+  updateSpeciesComboBox();
+  updateBacteriaTable();
+}
 
 void Window::addBacterium() {
   auto name = nameLineEdit->text().toStdString();

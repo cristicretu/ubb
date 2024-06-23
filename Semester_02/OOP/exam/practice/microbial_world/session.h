@@ -27,4 +27,15 @@ class Session : public Subject {
   Bacterium get_bacterium_by_name(string name) {
     return repo.get_bacterium_by_name(name);
   }
+
+  vector<string> get_species_by_biologist(string name) {
+    auto bacteria = repo.get_bacteria_by_biologist(name);
+
+    vector<string> species;
+    for (const auto &bacterium : bacteria) {
+      species.push_back(bacterium.get_spacies());
+    }
+
+    return species;
+  }
 };
