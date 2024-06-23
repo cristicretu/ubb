@@ -1,4 +1,4 @@
-how to win|tutorial on winning|mihai|1|2
+how to win|how to winning|mihai|1|2
 how to lose|tutorial on losing|marcel|0|4
 attention is all you need|transformer|ionel|1|2
 backpropagation|backpropagation|gicuta|1|5
