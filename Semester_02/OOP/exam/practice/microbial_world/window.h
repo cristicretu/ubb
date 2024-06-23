@@ -44,6 +44,7 @@ class Window : public QWidget, public Observer {
   void update() const override;
   void updateSpeciesComboBox() const;
   void updateBacteriaTable() const;
+  void updateBacterium() const;
  public slots:
   void addBacterium();
 };

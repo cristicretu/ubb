@@ -94,7 +94,7 @@ Window::Window(Session &session, Biologist &biologist, QWidget *parent)
     auto disease = diseaseLineEdit->text().toStdString();
 
     if (disease.empty() || selectedBacteriumStr.empty()) {
-      QMessageBox::warning(this, "Error", "Invalid disease");
+      QMessageBox::warning(this, "Error", QString("Invalid disease"));
       return;
     }
 
@@ -102,6 +102,22 @@ Window::Window(Session &session, Biologist &biologist, QWidget *parent)
 
     diseaseLineEdit->clear();
   });
+  connect(model, &QStandardItemModel::dataChanged, this,
+          &Window::updateBacterium);
+}
+
+void Window::updateBacterium() const {
+  int row = bacteriaTable->currentIndex().row();
+  auto name = model->item(row, 0)->text().toStdString();
+  auto species = model->item(row, 1)->text().toStdString();
+  auto size = model->item(row, 2)->text().toDouble();
+  auto diseases = model->item(row, 3)->text().toStdString();
+
+  try {
+    session.update_bacterium(name, species, size, diseases);
+  } catch (const std::runtime_error &e) {
+    return;
+  }
 }
 
 void Window::updateSpeciesComboBox() const {
