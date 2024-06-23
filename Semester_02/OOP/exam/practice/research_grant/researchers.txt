@@ -1,0 +1,7 @@
+mihai|phd
+gigel|senior
+costel|postdoc
+marcel|phd
+gicuta|senior
+ionel|postdoc
+marcela|phd
