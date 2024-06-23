@@ -19,7 +19,8 @@ int main(int argc, char *argv[]) {
     // filterModel->setFilterFixedString(QString::fromStdString(r.getName()));
     // Window *w = new Window(filterModel, session, r);
 
-    Window *w = new Window(new IdeaTableModel(repo), session, r);
+    Window *w = new Window(
+        new IdeaTableModel(repo, r.getPosition() == "senior"), session, r);
     w->show();
   }
   return a.exec();

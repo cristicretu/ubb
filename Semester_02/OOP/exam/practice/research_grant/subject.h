@@ -7,7 +7,7 @@
 
 class Subject {
  private:
-  std::vector<std::unique_ptr<Observer>> observers;
+  std::vector<Observer*> observers;
 
  public:
   Subject() = default;
