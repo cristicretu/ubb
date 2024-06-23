@@ -7,6 +7,9 @@
   ],
   "files.associations": {
     "vector": "cpp",
-    "stdexcept": "cpp"
+    "stdexcept": "cpp",
+    "__hash_table": "cpp",
+    "__tree": "cpp",
+    "deque": "cpp"
   }
 }
