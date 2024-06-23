@@ -7,6 +7,7 @@
 
 Window::Window(Session &session, Biologist &biologist, QWidget *parent)
     : session(session), biologist(biologist), QWidget(parent) {
+  name = biologist.get_name();
   session.registerObserver(this);
   setWindowTitle(QString::fromStdString(biologist.get_name()));
 
@@ -91,18 +92,15 @@ void Window::updateSpeciesComboBox() const {
 }
 
 void Window::updateBacteriaTable() const {
+  std::cout << "biologist name: " << biologist.get_name() << "\n";
+
   model->removeRows(0, model->rowCount());
 
-  for (const auto &bacterium :
-       session.get_bacteria_by_biologist(biologist.get_name())) {
+  for (auto bacterium : session.get_bacteria_by_biologist(name)) {
     bool found = false;
-    if (bacterium.get_spacies().find(
-            speciesComboBox->currentText().toStdString()) !=
-        std::string::npos) {
-      found = true;
-    }
-
-    if (speciesComboBox->currentText() == "All Species") {
+    if (speciesComboBox->currentText() == "All Species" ||
+        bacterium.get_spacies() ==
+            speciesComboBox->currentText().toStdString()) {
       found = true;
     }
 
@@ -120,12 +118,11 @@ void Window::updateBacteriaTable() const {
     row << new QStandardItem(QString::fromStdString(diseases));
     model->appendRow(row);
   }
+
+  std::cout << biologist.get_name() << "\n";
 }
 
-void Window::update() const {
-  updateSpeciesComboBox();
-  updateBacteriaTable();
-}
+void Window::update() const {}
 
 void Window::addBacterium() {
   auto name = nameLineEdit->text().toStdString();
@@ -136,11 +133,12 @@ void Window::addBacterium() {
   try {
     session.add_bacterium(name, species, size, {diseases});
 
-    std::cout << "Bacterium added\n";
     nameLineEdit->clear();
     speciesLineEdit->clear();
     sizeLineEdit->clear();
     diseasesLineEdit->clear();
+
+    updateBacteriaTable();
 
   } catch (const std::runtime_error &e) {
     QMessageBox::warning(this, "Error", e.what());

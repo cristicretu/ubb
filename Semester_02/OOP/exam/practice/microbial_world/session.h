@@ -1,4 +1,6 @@
 #pragma once
+#include <set>
+
 #include "repository.h"
 #include "subject.h"
 
@@ -31,11 +33,11 @@ class Session : public Subject {
   vector<string> get_species_by_biologist(string name) {
     auto bacteria = repo.get_bacteria_by_biologist(name);
 
-    vector<string> species;
+    set<string> species;
     for (const auto &bacterium : bacteria) {
-      species.push_back(bacterium.get_spacies());
+      species.insert(bacterium.get_spacies());
     }
 
-    return species;
+    return vector<string>(species.begin(), species.end());
   }
 };

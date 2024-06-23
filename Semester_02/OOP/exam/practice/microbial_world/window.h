@@ -18,6 +18,7 @@ class Window : public QWidget, public Observer {
  private:
   Session &session;
   Biologist &biologist;
+  string name;
 
   QTableView *bacteriaTable;
   QComboBox *speciesComboBox;
