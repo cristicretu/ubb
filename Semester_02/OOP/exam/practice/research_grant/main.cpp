@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QSortFilterProxyModel>
 
 #include "repository.h"
 #include "session.h"
@@ -12,7 +13,12 @@ int main(int argc, char *argv[]) {
   Session session(repo);
 
   for (auto r : repo.getResearchers()) {
-    Window *w = new Window(new IdeaTableModel(repo), session, r);
+    std::cout << r.getName() << std::endl;
+    QSortFilterProxyModel *filterModel = new QSortFilterProxyModel();
+    filterModel->setSourceModel(new IdeaTableModel(repo));
+    filterModel->setFilterKeyColumn(3);
+    filterModel->setFilterFixedString(QString::fromStdString(r.getName()));
+    Window *w = new Window(filterModel, session, r);
     w->show();
   }
   return a.exec();
