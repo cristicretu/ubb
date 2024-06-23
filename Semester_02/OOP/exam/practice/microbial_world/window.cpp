@@ -13,6 +13,8 @@ Window::Window(Session &session, Biologist &biologist, QWidget *parent)
 
   auto *layout = new QVBoxLayout;
 
+  auto *horizontalLayout = new QHBoxLayout;
+
   bacteriaTable = new QTableView(this);
   auto *model = new QStandardItemModel(this);
   model->setColumnCount(4);
@@ -36,6 +38,11 @@ Window::Window(Session &session, Biologist &biologist, QWidget *parent)
   }
 
   bacteriaTable->setModel(model);
+
+  horizontalLayout->addWidget(bacteriaTable);
+
+  bacteriumDiseasesList = new QListWidget(parent);
+  horizontalLayout->addWidget(bacteriumDiseasesList);
 
   speciesComboBox = new QComboBox(this);
 
@@ -61,7 +68,7 @@ Window::Window(Session &session, Biologist &biologist, QWidget *parent)
   inputLayout->addWidget(diseasesLabel);
   inputLayout->addWidget(diseasesLineEdit);
 
-  layout->addWidget(bacteriaTable);
+  layout->addLayout(horizontalLayout);
   layout->addWidget(speciesComboBox);
   layout->addLayout(inputLayout);
 
@@ -74,6 +81,19 @@ Window::Window(Session &session, Biologist &biologist, QWidget *parent)
   update();
 
   connect(addButton, &QPushButton::clicked, this, &Window::addBacterium);
+  connect(bacteriaTable, &QTableView::clicked,
+          [this, &session](const QModelIndex &index) {
+            auto name =
+                bacteriaTable->model()
+                    ->data(bacteriaTable->model()->index(index.row(), 0))
+                    .toString()
+                    .toStdString();
+            auto bacterium = session.get_bacterium_by_name(name);
+            bacteriumDiseasesList->clear();
+            for (const auto &disease : bacterium.get_diseases()) {
+              bacteriumDiseasesList->addItem(QString::fromStdString(disease));
+            }
+          });
 }
 
 void Window::update() const {}

@@ -3,6 +3,7 @@
 #include <QComboBox>
 #include <QLabel>
 #include <QLineEdit>
+#include <QListWidget>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QTableView>
@@ -19,6 +20,8 @@ class Window : public QWidget, public Observer {
 
   QTableView *bacteriaTable;
   QComboBox *speciesComboBox;
+
+  QListWidget *bacteriumDiseasesList;
 
   QLabel *nameLabel, *speciesLabel, *sizeLabel, *diseasesLabel;
   QLineEdit *nameLineEdit, *speciesLineEdit, *sizeLineEdit, *diseasesLineEdit;
