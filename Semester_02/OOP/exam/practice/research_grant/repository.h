@@ -20,6 +20,19 @@ class Repository {
     saveIdeas();
   }
 
+  vector<Researcher>& getResearchers() { return researchers; }
+  vector<Idea>& getIdeas() { return ideas; }
+
+  void addIdea(const Idea& idea) { ideas.push_back(idea); }
+  int getIdeaIndex(const Idea& idea) {
+    for (int i = 0; i < ideas.size(); i++) {
+      if (ideas[i].getTitle() == idea.getTitle()) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
   void loadResearchers() {
     string name, position, line;
 

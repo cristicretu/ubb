@@ -34,4 +34,10 @@ class Idea {
   string getCreator() const { return creator; }
   bool getStatus() const { return status; }
   int getDuration() const { return duration; }
+
+  void setStatus(bool status) { this->status = status; }
+  void setTitle(string title) { this->title = title; }
+  void setDescription(string description) { this->description = description; }
+  void setCreator(string creator) { this->creator = creator; }
+  void setDuration(int duration) { this->duration = duration; }
 };
