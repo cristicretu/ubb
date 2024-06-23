@@ -1,4 +1,5 @@
 #pragma once
+#include <algorithm>
 #include <fstream>
 #include <sstream>
 #include <vector>
@@ -21,7 +22,13 @@ class Repository {
   }
 
   vector<Researcher>& getResearchers() { return researchers; }
-  vector<Idea>& getIdeas() { return ideas; }
+  vector<Idea>& getIdeas() {
+    sort(ideas.begin(), ideas.end(), [](const Idea& a, const Idea& b) {
+      return a.getDuration() < b.getDuration();
+    });
+
+    return ideas;
+  }
 
   void addIdea(const Idea& idea) { ideas.push_back(idea); }
   int getIdeaIndex(const Idea& idea) {

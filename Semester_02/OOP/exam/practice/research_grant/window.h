@@ -22,6 +22,11 @@ class Window : public QWidget, public Observer {
 
   QTableView *tableView;
 
+  QLabel *title, *description, *creator, *duration;
+  QLineEdit *titleEdit, *descriptionEdit, *creatorEdit, *durationEdit;
+
+  QPushButton *addButton, *acceptButton;
+
  public:
   Window(QAbstractItemModel *model, Session &session, Researcher researcher,
          QWidget *parent = Q_NULLPTR);
