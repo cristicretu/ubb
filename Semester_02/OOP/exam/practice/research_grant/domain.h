@@ -10,6 +10,9 @@ class Researcher {
 
  public:
   Researcher(string name, string position) : name(name), position(position){};
+
+  string getName() const { return name; }
+  string getPosition() const { return position; }
 };
 
 class Idea {
@@ -25,4 +28,10 @@ class Idea {
         creator(creator),
         status(status),
         duration(duration){};
+
+  string getTitle() const { return title; }
+  string getDescription() const { return description; }
+  string getCreator() const { return creator; }
+  bool getStatus() const { return status; }
+  int getDuration() const { return duration; }
 };
