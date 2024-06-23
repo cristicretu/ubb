@@ -19,7 +19,7 @@ class IdeaTableModel : public QAbstractTableModel {
 
   QVariant data(const QModelIndex &index,
                 int role = Qt::DisplayRole) const override {
-    if (role == Qt::DisplayRole) {
+    if (role == Qt::DisplayRole || role == Qt::EditRole) {
       Idea idea = repo.getIdeas()[index.row()];
 
       switch (index.column()) {

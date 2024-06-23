@@ -22,8 +22,8 @@ class Window : public QWidget, public Observer {
 
   QTableView *tableView;
 
-  QLabel *title, *description, *creator, *duration;
-  QLineEdit *titleEdit, *descriptionEdit, *creatorEdit, *durationEdit;
+  QLabel *title, *description, *duration;
+  QLineEdit *titleEdit, *descriptionEdit, *durationEdit;
 
   QPushButton *addButton, *acceptButton;
 
