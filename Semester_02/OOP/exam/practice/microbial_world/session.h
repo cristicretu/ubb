@@ -23,4 +23,8 @@ class Session : public Subject {
   vector<Bacterium> get_bacteria_by_biologist(string name) {
     return repo.get_bacteria_by_biologist(name);
   }
+
+  Bacterium get_bacterium_by_name(string name) {
+    return repo.get_bacterium_by_name(name);
+  }
 };

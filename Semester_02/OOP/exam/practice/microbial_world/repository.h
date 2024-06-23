@@ -20,6 +20,15 @@ class Repository {
     save_bacteria();
   };
 
+  Bacterium get_bacterium_by_name(string name) {
+    for (auto &bacterium : bacteria) {
+      if (bacterium.get_name() == name) {
+        return bacterium;
+      }
+    }
+    throw runtime_error("Bacterium not found");
+  }
+
   vector<Bacterium> get_bacteria_by_biologist(string name) {
     vector<Bacterium> result;
     vector<string> spacies;
