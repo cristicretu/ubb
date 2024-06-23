@@ -1,9 +1,10 @@
 #include "window.h"
 
+#include <QSortFilterProxyModel>
+
 Window::Window(QAbstractItemModel *model, Session &session,
                Researcher researcher, QWidget *parent)
     : model(model), session(session), researcher(researcher), QWidget(parent) {
-  // this->model = dynamic_cast<IdeaTableModel *>(model);
   session.registerObserver(this);
   QVBoxLayout *layout = new QVBoxLayout(this);
 
@@ -41,6 +42,33 @@ Window::Window(QAbstractItemModel *model, Session &session,
   layout->addLayout(horizontalLayout);
   layout->addWidget(addButton);
 
+  bool researcherHasAcceptedIdeas = false;
+
+  for (auto idea : session.getIdeas()) {
+    if (idea.getCreator() == researcher.getName() && idea.getStatus() == 1) {
+      researcherHasAcceptedIdeas = true;
+      break;
+    }
+  }
+
+  if (researcherHasAcceptedIdeas) {
+    developButton = new QPushButton("Develop", this);
+    layout->addWidget(developButton);
+  }
+
+  if (researcher.getPosition() == "senior") {
+    saveButton = new QPushButton("Save", this);
+
+    std::cout << researcher.getName() << std::endl;
+    layout->addWidget(saveButton);
+    /*
+    Senior researchers have a button "Save all", which will save to a file all
+    accepted ideas: the file will contain the accepted ideas (title), their
+    creators (in brackets), duration, description and will be sorted by
+    duration*/
+    connect(saveButton, &QPushButton::clicked, this, &Window::saveIdea);
+  }
+
   setLayout(layout);
 
   update();
@@ -58,7 +86,26 @@ Window::Window(QAbstractItemModel *model, Session &session,
           });
 }
 
-void Window::update() const {
-  // model->beginResetModel();
-  // model->endResetModel();
+void Window::update() const {}
+
+void Window::developIdea() {
+    auto window = new QWidget;
+
+  auto layout = new QVBoxLayout(window);
+}
+
+void Window::saveIdea() {
+  ofstream fout(
+      "/Users/huge/fun/ubb/Semester_02/OOP/exam/practice/research_grant/"
+      "accepted_ideas.txt");
+
+  std::cout << session.getIdeas().size() << std::endl;
+  for (auto idea : session.getIdeas()) {
+    if (idea.getStatus() == 1) {
+      fout << idea.getTitle() << " (" << idea.getCreator() << ") "
+           << idea.getDuration() << " " << idea.getDescription() << "\n";
+    }
+  }
+
+  fout.close();
 }

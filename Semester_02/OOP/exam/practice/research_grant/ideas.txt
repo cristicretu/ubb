@@ -1,7 +1,8 @@
 archeology|archeology|mihai|0|1
-nuke america|title|marcela|0|1
+nuke america|title|marcela|1|1
 attention is all you need|transformer|ionel|1|2
 how to win|how to winning|mihai|1|2
+opt|opt|marcela|0|2
 delete the world|title|marcel|0|3
 how to lose|tutorial on losing|marcel|0|4
 backpropagation|backpropagation|gicuta|1|5

@@ -45,4 +45,7 @@ class Session : public Subject {
     repo.getIdeas()[index].setStatus(1);
     notify();
   }
+
+  vector<Idea> &getIdeas() { return repo.getIdeas(); }
+  vector<Researcher> &getResearchers() { return repo.getResearchers(); }
 };

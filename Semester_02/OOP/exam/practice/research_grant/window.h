@@ -25,11 +25,14 @@ class Window : public QWidget, public Observer {
   QLabel *title, *description, *duration;
   QLineEdit *titleEdit, *descriptionEdit, *durationEdit;
 
-  QPushButton *addButton, *acceptButton;
+  QPushButton *addButton, *developButton, *saveButton;
 
  public:
   Window(QAbstractItemModel *model, Session &session, Researcher researcher,
          QWidget *parent = Q_NULLPTR);
   ~Window() override = default;
   void update() const override;
+ public slots:
+  void developIdea();
+  void saveIdea();
 };

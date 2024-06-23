@@ -6,9 +6,11 @@
 class IdeaTableModel : public QAbstractTableModel {
  private:
   Repository &repo;
+  bool isSenior;
 
  public:
-  IdeaTableModel(Repository &repo) : repo(repo){};
+  IdeaTableModel(Repository &repo, bool isSenior = false)
+      : repo(repo), isSenior(isSenior){};
 
   int rowCount(const QModelIndex &parent = QModelIndex()) const override {
     return repo.getIdeas().size();
@@ -67,38 +69,41 @@ class IdeaTableModel : public QAbstractTableModel {
 
   bool setData(const QModelIndex &index, const QVariant &value,
                int role = Qt::EditRole) override {
-    if (role == Qt::EditRole) {
-      Idea idea = repo.getIdeas()[index.row()];
-
-      switch (index.column()) {
-        case 0:
-          idea.setTitle(value.toString().toStdString());
-          break;
-        case 1:
-          idea.setDescription(value.toString().toStdString());
-          break;
-        case 2:
-          idea.setCreator(value.toString().toStdString());
-          break;
-        case 3:
-          idea.setStatus(value.toInt());
-          break;
-        case 4:
-          idea.setDuration(value.toInt());
-          break;
-        default:
-          break;
-      }
-
-      repo.getIdeas()[index.row()] = idea;
-      emit dataChanged(index, index);
-      return true;
+    if (role != Qt::EditRole) {
+      return false;
     }
 
-    return false;
+    Idea &idea = repo.getIdeas()[index.row()];
+
+    switch (index.column()) {
+      case 0:
+        idea.setTitle(value.toString().toStdString());
+        break;
+      case 1:
+        idea.setDescription(value.toString().toStdString());
+        break;
+      case 2:
+        idea.setCreator(value.toString().toStdString());
+        break;
+      case 3:
+        if (isSenior) {
+          idea.setStatus(value.toInt());
+        }
+        break;
+      case 4:
+        idea.setDuration(value.toInt());
+        break;
+      default:
+        break;
+    }
+    emit dataChanged(index, index);
+    return true;
   }
 
   Qt::ItemFlags flags(const QModelIndex &index) const override {
+    if (index.column() == 3 && !isSenior) {
+      return QAbstractTableModel::flags(index);
+    }
     return Qt::ItemIsEditable | QAbstractTableModel::flags(index);
   }
 };
