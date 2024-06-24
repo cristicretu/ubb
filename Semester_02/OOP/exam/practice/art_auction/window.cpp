@@ -26,6 +26,10 @@ Window::Window(Session& session, int userId, QWidget* parent)
 void Window::update() const {
   itemsList->clear();
   auto items = session.getItems();
+
+  sort(items.begin(), items.end(), [](const Item& a, const Item& b) {
+    return a.getPrice() < b.getPrice();
+  });
   for (const auto& item : items) {
     itemsList->addItem(QString::fromStdString(item.toString()));
   }
