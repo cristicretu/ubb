@@ -57,6 +57,41 @@ Window::Window(Session& session, int userId, QWidget* parent)
     layout->addWidget(addButton);
 
     QObject::connect(addButton, &QPushButton::clicked, this, &Window::addItem);
+  } else {
+    auto offerL = new QLabel("Offer:", this);
+    offerE = new QLineEdit(this);
+    layout->addWidget(offerL);
+    layout->addWidget(offerE);
+
+    auto offerButton = new QPushButton("Offer");
+    layout->addWidget(offerButton);
+
+    QObject::connect(offerButton, &QPushButton::clicked, [this, &session]() {
+      auto row = itemsList->currentRow();
+      if (row < 0) {
+        return;
+      }
+
+      auto items = session.getItems();
+      sort(items.begin(), items.end(), [](const Item& a, const Item& b) {
+        return a.getPrice() < b.getPrice();
+      });
+      auto item = items[row];
+      try {
+        if (offerE->text().isEmpty()) {
+          throw runtime_error("Invalid offer");
+        }
+        int price = offerE->text().toInt();
+        if (price < item.getPrice()) {
+          throw runtime_error("Invalid offer");
+        }
+
+        session.setPrice(row, price);
+        offerE->clear();
+      } catch (runtime_error& e) {
+        QMessageBox::warning(this, "Error", e.what());
+      }
+    });
   }
 
   offersList = new QListWidget(this);
@@ -123,7 +158,6 @@ void Window::selectItem() {
   });
   auto item = items[row];
   offersList->clear();
-  std::cout << item.toString() << std::endl;
   for (const auto& offer : item.getOffers()) {
     offersList->addItem(QString::fromStdString(to_string(get<0>(offer)) +
                                                " | " + get<1>(offer) + " | " +

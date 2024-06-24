@@ -25,6 +25,8 @@ class Window : public QWidget, public Observer {
 
   QLineEdit *nameE, *categoryE, *priceE;
 
+  QLineEdit* offerE;
+
  public:
   Window(Session& session, int userId, QWidget* parent = Q_NULLPTR);
   ~Window() override = default;

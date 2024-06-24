@@ -25,4 +25,9 @@ class Session : public Subject {
 
     notify();
   }
+
+  void setPrice(int index, int price) {
+    repo.setPrice(index, price);
+    notify();
+  }
 };
