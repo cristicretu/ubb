@@ -44,7 +44,7 @@ class Repository {
     string name, position, line;
 
     ifstream fin(
-        "/Users/huge/fun/ubb/Semester_02/OOP/exam/practice/research_grant/"
+        "../"
         "researchers.txt");
 
     while (getline(fin, line)) {
@@ -61,7 +61,7 @@ class Repository {
     string title, description, creator, status, duration, line;
 
     ifstream fin(
-        "/Users/huge/fun/ubb/Semester_02/OOP/exam/practice/research_grant/"
+        "../"
         "ideas.txt");
 
     while (getline(fin, line)) {
@@ -82,7 +82,7 @@ class Repository {
 
   void saveResearchers() {
     ofstream fout(
-        "/Users/huge/fun/ubb/Semester_02/OOP/exam/practice/research_grant/"
+        "../"
         "researchers.txt");
 
     for (const auto& researcher : researchers) {
@@ -92,7 +92,7 @@ class Repository {
 
   void saveIdeas() {
     ofstream fout(
-        "/Users/huge/fun/ubb/Semester_02/OOP/exam/practice/research_grant/"
+        "../"
         "ideas.txt");
 
     for (const auto& idea : ideas) {

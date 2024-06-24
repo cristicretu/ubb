@@ -61,11 +61,6 @@ Window::Window(QAbstractItemModel *model, Session &session,
 
     std::cout << researcher.getName() << std::endl;
     layout->addWidget(saveButton);
-    /*
-    Senior researchers have a button "Save all", which will save to a file all
-    accepted ideas: the file will contain the accepted ideas (title), their
-    creators (in brackets), duration, description and will be sorted by
-    duration*/
     connect(saveButton, &QPushButton::clicked, this, &Window::saveIdea);
   }
 
@@ -89,14 +84,14 @@ Window::Window(QAbstractItemModel *model, Session &session,
 void Window::update() const {}
 
 void Window::developIdea() {
-    auto window = new QWidget;
+  auto window = new QWidget;
 
   auto layout = new QVBoxLayout(window);
 }
 
 void Window::saveIdea() {
   ofstream fout(
-      "/Users/huge/fun/ubb/Semester_02/OOP/exam/practice/research_grant/"
+      "../"
       "accepted_ideas.txt");
 
   std::cout << session.getIdeas().size() << std::endl;
