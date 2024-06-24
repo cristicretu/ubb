@@ -16,9 +16,11 @@ class Window : public QWidget, public Observer {
   Session& session;
   int userId;
 
+  QListWidget* itemsList;
+
  public:
   Window(Session& session, int userId, QWidget* parent = Q_NULLPTR);
   ~Window() override = default;
 
-  void update() override;
+  void update() const override;
 };

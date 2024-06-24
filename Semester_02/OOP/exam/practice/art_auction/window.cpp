@@ -8,14 +8,25 @@ Window::Window(Session& session, int userId, QWidget* parent)
       users.begin(), users.end(),
       [userId](const User& user) { return user.getId() == userId; });
   setWindowTitle(QString::fromStdString(user->getName()));
-  setFixedSize(400, 200);
 
   QVBoxLayout* layout = new QVBoxLayout(this);
 
   QLabel* label = new QLabel("Items", this);
   layout->addWidget(label);
 
+  itemsList = new QListWidget(this);
+
+  layout->addWidget(itemsList);
+
+  update();
+
   setLayout(layout);
 }
 
-void Window::update() {}
+void Window::update() const {
+  itemsList->clear();
+  auto items = session.getItems();
+  for (const auto& item : items) {
+    itemsList->addItem(QString::fromStdString(item.toString()));
+  }
+}

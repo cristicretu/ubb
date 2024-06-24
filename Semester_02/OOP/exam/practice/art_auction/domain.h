@@ -36,4 +36,13 @@ class Item {
   void addOffer(int id, string date, int price) {
     offers.emplace_back(make_tuple(id, date, price));
   }
+
+  string toString() const {
+    string result = name + " | " + category + " | " + to_string(price) + " | ";
+    for (const auto& offer : offers) {
+      result += to_string(get<0>(offer)) + ", " + get<1>(offer) + ", " +
+                to_string(get<2>(offer)) + " | ";
+    }
+    return result;
+  }
 };
