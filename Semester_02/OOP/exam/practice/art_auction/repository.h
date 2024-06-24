@@ -16,8 +16,11 @@ class Repository {
   }
   ~Repository(){};
 
+  vector<User> getUsers() const { return users; }
+  vector<Item> getItems() const { return items; }
+
   void loadUsers() {
-    ifstream file("users.txt");
+    ifstream file("../users.txt");
     string line;
     while (getline(file, line)) {
       istringstream iss(line);
@@ -34,7 +37,7 @@ class Repository {
   }
 
   void loadItems() {
-    ifstream file("items.txt");
+    ifstream file("../items.txt");
     string line;
 
     vector<tuple<int, string, int>> oferte;
