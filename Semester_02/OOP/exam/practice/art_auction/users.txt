@@ -1,0 +1,7 @@
+marcel|1|collector
+ionel|2|admin
+gigel|3|admin
+costel|4|collector
+mihai|5|collector
+maricica|6|collector
+gicuta|7|collector
