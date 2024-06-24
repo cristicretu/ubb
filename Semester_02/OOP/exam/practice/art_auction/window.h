@@ -20,9 +20,15 @@ class Window : public QWidget, public Observer {
   QListWidget* itemsList;
   QComboBox* combobox;
 
+  QPushButton* addButton;
+
+  QLineEdit *nameE, *categoryE, *priceE;
+
  public:
   Window(Session& session, int userId, QWidget* parent = Q_NULLPTR);
   ~Window() override = default;
 
   void update() const override;
+ public slots:
+  void addItem();
 };
