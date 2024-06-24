@@ -21,9 +21,7 @@ Window::Window(Session& session, int userId, QWidget* parent)
   layout->addWidget(itemsList);
 
   combobox = new QComboBox(this);
-  // populated  with the categories
   layout->addWidget(combobox);
-  // populate the combobox with the categories
   auto items = session.getItems();
   set<string> categories;
   for (const auto& item : items) {
@@ -33,6 +31,32 @@ Window::Window(Session& session, int userId, QWidget* parent)
   combobox->addItem("All");
   for (const auto& category : categories) {
     combobox->addItem(QString::fromStdString(category));
+  }
+
+  if (user->getType() == "admin") {
+    auto hlayout = new QHBoxLayout();
+
+    auto nameL = new QLabel("Name:", this);
+    nameE = new QLineEdit(this);
+
+    auto categoryL = new QLabel("Category:", this);
+    categoryE = new QLineEdit(this);
+
+    auto priceL = new QLabel("Price:", this);
+    priceE = new QLineEdit(this);
+
+    hlayout->addWidget(nameL);
+    hlayout->addWidget(nameE);
+    hlayout->addWidget(categoryL);
+    hlayout->addWidget(categoryE);
+    hlayout->addWidget(priceL);
+    hlayout->addWidget(priceE);
+
+    layout->addLayout(hlayout);
+    addButton = new QPushButton("Add");
+    layout->addWidget(addButton);
+
+    QObject::connect(addButton, &QPushButton::clicked, this, &Window::addItem);
   }
 
   update();
@@ -56,5 +80,25 @@ void Window::update() const {
         combobox->currentText().toStdString() == "All") {
       itemsList->addItem(QString::fromStdString(item.toString()));
     }
+  }
+}
+
+void Window::addItem() {
+  auto name = nameE->text().toStdString();
+  auto cateogry = categoryE->text().toStdString();
+  auto price = priceE->text().toStdString();
+
+  try {
+    if (name.empty() || cateogry.empty() || price.empty()) {
+      throw runtime_error("Invalid item");
+    }
+    session.addItem(name, cateogry, stoi(price));
+
+    nameE->clear();
+    categoryE->clear();
+    priceE->clear();
+
+  } catch (runtime_error& e) {
+    QMessageBox::warning(this, "Error", e.what());
   }
 }

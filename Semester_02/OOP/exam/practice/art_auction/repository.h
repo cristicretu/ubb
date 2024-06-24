@@ -14,10 +14,38 @@ class Repository {
     loadUsers();
     loadItems();
   }
-  ~Repository(){};
+  ~Repository() {
+    saveUsers();
+    saveItems();
+  }
 
   vector<User> getUsers() const { return users; }
   vector<Item> getItems() const { return items; }
+
+  void addItem(Item e) { items.emplace_back(e); }
+
+  void saveUsers() {
+    ofstream file("../users.txt");
+    for (const auto& user : users) {
+      file << user.getName() << " | " << user.getId() << " | " << user.getType()
+           << endl;
+    }
+    file.close();
+  }
+
+  void saveItems() {
+    ofstream file("../items.txt");
+    for (const auto& item : items) {
+      file << item.getName() << " | " << item.getCategory() << " | "
+           << item.getPrice() << " | ";
+      for (const auto& offer : item.getOffers()) {
+        file << get<0>(offer) << ", " << get<1>(offer) << ", " << get<2>(offer)
+             << " | ";
+      }
+      file << endl;
+    }
+    file.close();
+  }
 
   void loadUsers() {
     ifstream file("../users.txt");
