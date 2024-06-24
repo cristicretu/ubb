@@ -1,5 +1,7 @@
 #include "window.h"
 
+#include <set>
+
 Window::Window(Session& session, int userId, QWidget* parent)
     : QWidget(parent), session(session), userId(userId) {
   session.registerObserver(this);
@@ -18,9 +20,28 @@ Window::Window(Session& session, int userId, QWidget* parent)
 
   layout->addWidget(itemsList);
 
+  combobox = new QComboBox(this);
+  // populated  with the categories
+  layout->addWidget(combobox);
+  // populate the combobox with the categories
+  auto items = session.getItems();
+  set<string> categories;
+  for (const auto& item : items) {
+    categories.insert(item.getCategory());
+  }
+
+  combobox->addItem("All");
+  for (const auto& category : categories) {
+    combobox->addItem(QString::fromStdString(category));
+  }
+
   update();
 
   setLayout(layout);
+
+  QObject::connect(combobox,
+                   QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+                   &Window::update);
 }
 
 void Window::update() const {
@@ -31,6 +52,9 @@ void Window::update() const {
     return a.getPrice() < b.getPrice();
   });
   for (const auto& item : items) {
-    itemsList->addItem(QString::fromStdString(item.toString()));
+    if (item.getCategory() == combobox->currentText().toStdString() ||
+        combobox->currentText().toStdString() == "All") {
+      itemsList->addItem(QString::fromStdString(item.toString()));
+    }
   }
 }

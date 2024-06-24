@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QComboBox>
 #include <QLabel>
 #include <QLineEdit>
 #include <QListWidget>
@@ -17,6 +18,7 @@ class Window : public QWidget, public Observer {
   int userId;
 
   QListWidget* itemsList;
+  QComboBox* combobox;
 
  public:
   Window(Session& session, int userId, QWidget* parent = Q_NULLPTR);
