@@ -42,6 +42,8 @@ class Item {
     return ofr;
   }
 
+  void setPrice(int price) { this->price = price; }
+
   void addOffer(int id, string date, int price) {
     offers.emplace_back(make_tuple(id, date, price));
   }

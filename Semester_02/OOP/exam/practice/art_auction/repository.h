@@ -24,6 +24,8 @@ class Repository {
 
   void addItem(Item e) { items.emplace_back(e); }
 
+  void setPrice(int index, int price) { items[index].setPrice(price); }
+
   void saveUsers() {
     ofstream file("../users.txt");
     for (const auto& user : users) {
