@@ -59,6 +59,10 @@ Window::Window(Session& session, int userId, QWidget* parent)
     QObject::connect(addButton, &QPushButton::clicked, this, &Window::addItem);
   }
 
+  offersList = new QListWidget(this);
+
+  layout->addWidget(offersList);
+
   update();
 
   setLayout(layout);
@@ -66,6 +70,9 @@ Window::Window(Session& session, int userId, QWidget* parent)
   QObject::connect(combobox,
                    QOverload<int>::of(&QComboBox::currentIndexChanged), this,
                    &Window::update);
+
+  QObject::connect(itemsList, &QListWidget::itemSelectionChanged, this,
+                   &Window::selectItem);
 }
 
 void Window::update() const {
@@ -100,5 +107,26 @@ void Window::addItem() {
 
   } catch (runtime_error& e) {
     QMessageBox::warning(this, "Error", e.what());
+  }
+}
+
+void Window::selectItem() {
+  auto row = itemsList->currentRow();
+  std::cout << row << std::endl;
+  if (row < 0) {
+    return;
+  }
+
+  auto items = session.getItems();
+  sort(items.begin(), items.end(), [](const Item& a, const Item& b) {
+    return a.getPrice() < b.getPrice();
+  });
+  auto item = items[row];
+  offersList->clear();
+  std::cout << item.toString() << std::endl;
+  for (const auto& offer : item.getOffers()) {
+    offersList->addItem(QString::fromStdString(to_string(get<0>(offer)) +
+                                               " | " + get<1>(offer) + " | " +
+                                               to_string(get<2>(offer))));
   }
 }

@@ -18,6 +18,7 @@ class Window : public QWidget, public Observer {
   int userId;
 
   QListWidget* itemsList;
+  QListWidget* offersList;
   QComboBox* combobox;
 
   QPushButton* addButton;
@@ -31,4 +32,6 @@ class Window : public QWidget, public Observer {
   void update() const override;
  public slots:
   void addItem();
+
+  void selectItem();
 };

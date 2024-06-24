@@ -77,7 +77,7 @@ class Repository {
 
       getline(iss, name, '|');
       getline(iss, category, '|');
-      getline(iss, priceStr);
+      getline(iss, priceStr, '|');
 
       string offers;
       getline(iss, offers);
@@ -93,6 +93,10 @@ class Repository {
         getline(messi, priceStr);
 
         oferte.emplace_back(make_tuple(stoi(idStr), date, stoi(priceStr)));
+      }
+      auto it = Item(name, category, stoi(priceStr));
+      for (const auto& offer : oferte) {
+        it.addOffer(get<0>(offer), get<1>(offer), get<2>(offer));
       }
       items.emplace_back(Item(name, category, stoi(priceStr), oferte));
       oferte.clear();

@@ -1,4 +1,5 @@
 #pragma once
+#include <algorithm>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -31,7 +32,15 @@ class Item {
   string getName() const { return name; }
   string getCategory() const { return category; }
   int getPrice() const { return price; }
-  vector<tuple<int, string, int>> getOffers() const { return offers; }
+  vector<tuple<int, string, int>> getOffers() const {
+    auto ofr = offers;
+    sort(
+        ofr.begin(), ofr.end(),
+        [](const tuple<int, string, int>& a, const tuple<int, string, int>& b) {
+          return get<2>(a) < get<2>(b);
+        });
+    return ofr;
+  }
 
   void addOffer(int id, string date, int price) {
     offers.emplace_back(make_tuple(id, date, price));
