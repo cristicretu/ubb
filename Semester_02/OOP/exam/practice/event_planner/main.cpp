@@ -12,8 +12,8 @@ int main(int argc, char *argv[]) {
   Session session(repo);
 
   for (auto x : repo.getPersons()) {
-    cout << x.getName() << " " << x.getLatitude() << " " << x.getLongitude()
-         << " " << x.getStatus() << endl;
+    auto window = new Window(session, x);
+    window->show();
   }
 
   return a.exec();
