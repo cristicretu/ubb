@@ -9,64 +9,53 @@ class starItemModel : public QAbstractTableModel {
   Repository &repo;
 
  public:
-  explicit starItemModel(Repository &repo) : repo(repo) {}
-
+  explicit starItemModel(Repository &repository) : repo(repository) {}
   int rowCount(const QModelIndex &parent = QModelIndex()) const override {
-    return repo.getStars().size();
+    return this->repo.getStars().size();
   }
   int columnCount(const QModelIndex &parent = QModelIndex()) const override {
     return 5;
   }
   QVariant data(const QModelIndex &index,
                 int role = Qt::DisplayRole) const override {
-    if (role == Qt::DisplayRole || role == Qt::EditRole) {
-      auto stars = repo.getStars();
-      auto star = stars[index.row()];
-
-      switch (index.column()) {
+    int row = index.row(), column = index.column();
+    Star star = this->repo.getStars()[row];
+    if (role == Qt::DisplayRole) switch (column) {
         case 0:
           return QString::fromStdString(star.getName());
         case 1:
           return QString::fromStdString(star.getConstellation());
         case 2:
-          return (star.getRa());
+          return QString::fromStdString(std::to_string(star.getRa()));
         case 3:
-          return (star.getDec());
+          return QString::fromStdString(std::to_string(star.getDec()));
         case 4:
-          return (star.getDiameter());
-        default:
-          break;
+          return QString::fromStdString(std::to_string(star.getDiameter()));
       }
-    }
-
     return QVariant();
   }
   QVariant headerData(int section, Qt::Orientation orientation,
-                      int role = Qt::DisplayRole) const override {
-    if (role == Qt::DisplayRole) {
-      if (orientation == Qt::Horizontal) {
-        switch (section) {
-          case 0:
-            return "Name";
-          case 1:
-            return "Constellation";
-          case 2:
-            return "RA";
-          case 3:
-            return "DEC";
-          case 4:
-            return "Diameter";
-          default:
-            break;
-        }
+                      int role) const override {
+    if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
+      switch (section) {
+        case 0:
+          return "Name of Star";
+        case 1:
+          return "Constellation";
+        case 2:
+          return "RA";
+        case 3:
+          return "Dec";
+        case 4:
+          return "Diameter";
       }
     }
     return QVariant();
   }
-
   void updateData() {
     beginResetModel();
     endResetModel();
-    emit dataChanged(index(0, 0), index(rowCount() - 1, columnCount() - 1));
+    emit this->dataChanged(index(0, 0),
+                           index(rowCount() - 1, columnCount() - 1));
   }
 };
