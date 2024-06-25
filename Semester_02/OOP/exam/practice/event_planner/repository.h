@@ -20,6 +20,19 @@ class Repository {
     savePersons();
   }
 
+  void addEvent(Event &ev) { events.emplace_back(ev); }
+
+  int getEvent(Event &ev) {
+    for (int i = 0, n = events.size(); i < n; ++i) {
+      if (events[i].getName() == ev.getName() &&
+          events[i].getLatitude() == ev.getLatitude() &&
+          events[i].getLongitude() == ev.getLongitude()) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
   void loadEvents() {
     string organiser, name, description, date;
     string latitude, longitude;
