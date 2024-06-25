@@ -1,0 +1,4 @@
+mica|ursa|11|10|4
+UBANUS|leo|12|4|100
+miklos|cancer|10|100|44
+zenobia|zeus|-2|2|69
