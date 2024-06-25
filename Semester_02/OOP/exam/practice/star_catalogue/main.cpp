@@ -2,6 +2,7 @@
 
 #include "repository.h"
 #include "session.h"
+#include "starItemModel.h"
 #include "window.h"
 
 int main(int argc, char *argv[]) {
@@ -10,7 +11,8 @@ int main(int argc, char *argv[]) {
   Session session(repo);
 
   for (auto x : repo.getAstronomers()) {
-    std::cout << x.getName() << " " << x.getConstellation() << std::endl;
+    auto window = new Window(session, x, new starItemModel(repo));
+    window->show();
   }
   return a.exec();
 }

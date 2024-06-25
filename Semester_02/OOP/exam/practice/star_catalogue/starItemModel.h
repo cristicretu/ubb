@@ -39,6 +39,8 @@ class starItemModel : public QAbstractTableModel {
           break;
       }
     }
+
+    return QVariant();
   }
   QVariant headerData(int section, Qt::Orientation orientation,
                       int role = Qt::DisplayRole) const override {
@@ -88,10 +90,17 @@ class starItemModel : public QAbstractTableModel {
       default:
         break;
     }
-    emit dataChanged(index, index);
+    emit dataChanged(index, index, {Qt::DisplayRole, Qt::EditRole});
+
     return true;
   }
   Qt::ItemFlags flags(const QModelIndex &index) const override {
+    if (!index.isValid()) return Qt::NoItemFlags;
     return Qt::ItemIsEditable | QAbstractTableModel::flags(index);
+  }
+
+  void refreshModel() {
+    beginResetModel();
+    endResetModel();
   }
 };
