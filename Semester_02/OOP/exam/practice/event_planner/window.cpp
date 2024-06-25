@@ -25,51 +25,86 @@ Window::Window(Session &session, Person person, QWidget *parent)
 
   layout->addWidget(list);
 
-  auto hlayout = new QHBoxLayout;
+  seeNearEvents = new QCheckBox("See near events", this);
+  layout->addWidget(seeNearEvents);
 
-  nameLabel = new QLabel("Name", this);
-  hlayout->addWidget(nameLabel);
+  if (isOrganiser) {
+    auto hlayout = new QHBoxLayout;
 
-  nameEdit = new QLineEdit(this);
-  hlayout->addWidget(nameEdit);
+    nameLabel = new QLabel("Name", this);
+    hlayout->addWidget(nameLabel);
 
-  descriptionLabel = new QLabel("Description", this);
-  hlayout->addWidget(descriptionLabel);
+    nameEdit = new QLineEdit(this);
+    hlayout->addWidget(nameEdit);
 
-  descriptionEdit = new QLineEdit(this);
-  hlayout->addWidget(descriptionEdit);
+    descriptionLabel = new QLabel("Description", this);
+    hlayout->addWidget(descriptionLabel);
 
-  latitudeLabel = new QLabel("Latitude", this);
-  hlayout->addWidget(latitudeLabel);
+    descriptionEdit = new QLineEdit(this);
+    hlayout->addWidget(descriptionEdit);
 
-  latitudeEdit = new QLineEdit(this);
-  hlayout->addWidget(latitudeEdit);
+    latitudeLabel = new QLabel("Latitude", this);
+    hlayout->addWidget(latitudeLabel);
 
-  longitudeLabel = new QLabel("Longitude", this);
-  hlayout->addWidget(longitudeLabel);
+    latitudeEdit = new QLineEdit(this);
+    hlayout->addWidget(latitudeEdit);
 
-  longitudeEdit = new QLineEdit(this);
-  hlayout->addWidget(longitudeEdit);
+    longitudeLabel = new QLabel("Longitude", this);
+    hlayout->addWidget(longitudeLabel);
 
-  dateLabel = new QLabel("Date", this);
-  hlayout->addWidget(dateLabel);
+    longitudeEdit = new QLineEdit(this);
+    hlayout->addWidget(longitudeEdit);
 
-  dateEdit = new QLineEdit(this);
-  hlayout->addWidget(dateEdit);
+    dateLabel = new QLabel("Date", this);
+    hlayout->addWidget(dateLabel);
 
-  layout->addLayout(hlayout);
+    dateEdit = new QLineEdit(this);
+    hlayout->addWidget(dateEdit);
 
-  addButton = new QPushButton("Add", this);
-  connect(addButton, &QPushButton::clicked, this, &Window::addEvent);
+    layout->addLayout(hlayout);
 
-  layout->addWidget(addButton);
+    addButton = new QPushButton("Add", this);
+    connect(addButton, &QPushButton::clicked, this, &Window::addEvent);
+
+    layout->addWidget(addButton);
+  }
 
   setLayout(layout);
 
   update();
+
+  QObject::connect(seeNearEvents, &QCheckBox::stateChanged, this,
+                   &Window::update);
 }
 
-void Window::update() const {}
+void Window::update() const {
+  list->clear();
+
+  auto events = session.getEvents();
+
+  for (const auto &ev : events) {
+    if (seeNearEvents->checkState() == Qt::Checked) {
+      if (abs(ev.getLatitude() - person.getLatitude()) < 10 &&
+          abs(ev.getLongitude() - person.getLongitude()) < 10) {
+        list->addItem(QString::fromStdString(
+            ev.getName() + " " + ev.getDate() + " " + ev.getOrganiser() + " " +
+            to_string(ev.getLatitude()) + " " + to_string(ev.getLongitude())));
+      }
+
+      if (ev.getOrganiser() == person.getName() && person.getStatus() == 1) {
+        list->item(list->count() - 1)->setBackground(Qt::green);
+      }
+    } else {
+      list->addItem(QString::fromStdString(
+          ev.getName() + " " + ev.getDate() + " " + ev.getOrganiser() + " " +
+          to_string(ev.getLatitude()) + " " + to_string(ev.getLongitude())));
+
+      if (ev.getOrganiser() == person.getName() && person.getStatus() == 1) {
+        list->item(list->count() - 1)->setBackground(Qt::green);
+      }
+    }
+  }
+}
 
 void Window::addEvent() {
   try {

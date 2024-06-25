@@ -8,6 +8,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include "QCheckBox"
 #include "session.h"
 
 class Window : public QWidget, public Observer {
@@ -23,6 +24,7 @@ class Window : public QWidget, public Observer {
       *dateEdit;
 
   QPushButton *addButton;
+  QCheckBox *seeNearEvents;
 
   vector<Event> initialEvents;
 
