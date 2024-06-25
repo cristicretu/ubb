@@ -67,11 +67,24 @@ Window::Window(Session &session, Person person, QWidget *parent)
     connect(addButton, &QPushButton::clicked, this, &Window::addEvent);
 
     layout->addWidget(addButton);
+  } else {
+    auto hlayout = new QHBoxLayout;
+
+    description = new QLabel("Description", this);
+    hlayout->addWidget(description);
+
+    goingButton = new QPushButton("Going", this);
+    hlayout->addWidget(goingButton);
+
+    layout->addLayout(hlayout);
+
+    connect(list, &QListWidget::clicked, this, [this, &session]() {
+      auto ev = session.getEvents()[list->currentRow()];
+      description->setText(QString::fromStdString(ev.getDescription()));
+    });
   }
 
   setLayout(layout);
-
-  update();
 
   QObject::connect(seeNearEvents, &QCheckBox::stateChanged, this,
                    &Window::update);
@@ -83,12 +96,14 @@ void Window::update() const {
   auto events = session.getEvents();
 
   for (const auto &ev : events) {
+    string descr = "";
     if (seeNearEvents->checkState() == Qt::Checked) {
       if (abs(ev.getLatitude() - person.getLatitude()) < 10 &&
           abs(ev.getLongitude() - person.getLongitude()) < 10) {
         list->addItem(QString::fromStdString(
             ev.getName() + " " + ev.getDate() + " " + ev.getOrganiser() + " " +
-            to_string(ev.getLatitude()) + " " + to_string(ev.getLongitude())));
+            to_string(ev.getLatitude()) + " " + to_string(ev.getLongitude()) +
+            " " + descr));
       }
 
       if (ev.getOrganiser() == person.getName() && person.getStatus() == 1) {
@@ -97,7 +112,8 @@ void Window::update() const {
     } else {
       list->addItem(QString::fromStdString(
           ev.getName() + " " + ev.getDate() + " " + ev.getOrganiser() + " " +
-          to_string(ev.getLatitude()) + " " + to_string(ev.getLongitude())));
+          to_string(ev.getLatitude()) + " " + to_string(ev.getLongitude()) +
+          " " + descr));
 
       if (ev.getOrganiser() == person.getName() && person.getStatus() == 1) {
         list->item(list->count() - 1)->setBackground(Qt::green);
@@ -121,4 +137,16 @@ void Window::addEvent() {
   } catch (const runtime_error &e) {
     QMessageBox::warning(this, "Error", e.what());
   }
+}
+
+bool Window::wasEventInInitialList(Event ev) const {
+  for (auto x : initialEvents) {
+    if (x.getName() == ev.getName() && x.getDate() == ev.getDate() &&
+        x.getOrganiser() == ev.getOrganiser() &&
+        x.getLatitude() == ev.getLatitude() &&
+        x.getLongitude() == ev.getLongitude()) {
+      return true;
+    }
+  }
+  return false;
 }

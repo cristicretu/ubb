@@ -28,10 +28,14 @@ class Window : public QWidget, public Observer {
 
   vector<Event> initialEvents;
 
+  QLabel *description;
+  QPushButton *goingButton;
+
  public:
   Window(Session &session, Person person, QWidget *parent = Q_NULLPTR);
   ~Window() override = default;
   void update() const override;
+  bool wasEventInInitialList(Event ev) const;
  public slots:
   void addEvent();
 };
