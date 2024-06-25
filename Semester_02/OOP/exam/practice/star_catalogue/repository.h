@@ -35,7 +35,6 @@ class Repository {
   void loadStars() {
     ifstream fin("../stars.txt");
     string name, constellation, ra, dec, diameter, line;
-    string line;
 
     while (getline(fin, line)) {
       istringstream iss(line);
