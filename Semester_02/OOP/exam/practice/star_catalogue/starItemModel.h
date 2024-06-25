@@ -9,8 +9,7 @@ class starItemModel : public QAbstractTableModel {
   Repository &repo;
 
  public:
-  starItemModel(Repository &repo) : repo(repo) {}
-  ~starItemModel() override = default;
+  explicit starItemModel(Repository &repo) : repo(repo) {}
 
   int rowCount(const QModelIndex &parent = QModelIndex()) const override {
     return repo.getStars().size();
@@ -65,42 +64,9 @@ class starItemModel : public QAbstractTableModel {
     return QVariant();
   }
 
-  bool setData(const QModelIndex &index, const QVariant &value,
-               int role = Qt::EditRole) override {
-    if (role != Qt::EditRole) {
-      return false;
-    }
-    Star &star = repo.getStars()[index.row()];
-    switch (index.column()) {
-      case 0:
-        star.setName(value.toString().toStdString());
-        break;
-      case 1:
-        star.setConstellation(value.toString().toStdString());
-        break;
-      case 2:
-        star.setRa(value.toInt());
-        break;
-      case 3:
-        star.setDec(value.toInt());
-        break;
-      case 4:
-        star.setDiameter(value.toDouble());
-        break;
-      default:
-        break;
-    }
-    emit dataChanged(index, index, {Qt::DisplayRole, Qt::EditRole});
-
-    return true;
-  }
-  Qt::ItemFlags flags(const QModelIndex &index) const override {
-    if (!index.isValid()) return Qt::NoItemFlags;
-    return Qt::ItemIsEditable | QAbstractTableModel::flags(index);
-  }
-
-  void refreshModel() {
+  void updateData() {
     beginResetModel();
     endResetModel();
+    emit dataChanged(index(0, 0), index(rowCount() - 1, columnCount() - 1));
   }
 };

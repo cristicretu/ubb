@@ -3,6 +3,7 @@
 #include <QComboBox>
 #include <QLabel>
 #include <QLineEdit>
+#include <QListWidget>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QRegularExpression>
@@ -24,6 +25,12 @@ class Window : public QWidget {
   QTableView *table;
 
   QComboBox *constellations;
+
+  QLineEdit *name, *ra, *dec, *diameter;
+  QPushButton *addStar;
+
+  QLineEdit *starNameFilter;
+  QListWidget *filteredStars;
 
  public:
   Window(Session &session, Astronomer &astronomer, QAbstractItemModel *model,

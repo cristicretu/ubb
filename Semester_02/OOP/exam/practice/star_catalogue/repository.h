@@ -32,6 +32,8 @@ class Repository {
     }
   }
 
+  void addStar(const Star& star) { stars.emplace_back(star); }
+
   void loadStars() {
     ifstream fin("../stars.txt");
     string name, constellation, ra, dec, diameter, line;
