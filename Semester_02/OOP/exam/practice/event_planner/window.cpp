@@ -112,6 +112,12 @@ void Window::addEvent() {
         person.getName(), nameEdit->text().toStdString(),
         descriptionEdit->text().toStdString(), latitudeEdit->text().toInt(),
         longitudeEdit->text().toInt(), dateEdit->text().toStdString());
+
+    nameEdit->clear();
+    descriptionEdit->clear();
+    latitudeEdit->clear();
+    longitudeEdit->clear();
+    dateEdit->clear();
   } catch (const runtime_error &e) {
     QMessageBox::warning(this, "Error", e.what());
   }
