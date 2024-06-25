@@ -69,31 +69,33 @@ Window::Window(Session& session, Astronomer astronomer,
             }
           });
 
-  // connect(addStar, &QPushButton::clicked, this,
-  //         [this, &session, &astronomer, &model]() {
-  //           auto nameStr = name->text().toStdString();
-  //           auto raStr = ra->text().toInt();
-  //           auto decStr = dec->text().toInt();
-  //           auto diameterStr = diameter->text().toDouble();
+  connect(addStar, &QPushButton::clicked, this,
+          [this, &session, &astronomer]() {
+            auto nameStr = name->text().toStdString();
+            auto raStr = ra->text().toInt();
+            auto decStr = dec->text().toInt();
+            auto diameterStr = diameter->text().toDouble();
 
-  //           try {
-  //             if (raStr < 0 || raStr > 24 || decStr < -90 || decStr > 90 ||
-  //                 diameterStr < 0) {
-  //               throw invalid_argument("Invalid star data");
-  //             }
+            try {
+              if (raStr < 0 || raStr > 24 || decStr < -90 || decStr > 90 ||
+                  diameterStr < 0) {
+                throw invalid_argument("Invalid star data");
+              }
 
-  //             session.addStar(nameStr, astronomer.getConstellation(), raStr,
-  //                             decStr, diameterStr);
+              session.addStar(nameStr, astronomer.getConstellation(), raStr,
+                              decStr, diameterStr);
 
-  //             name->clear();
-  //             ra->clear();
-  //             dec->clear();
-  //             diameter->clear();
+              name->clear();
+              ra->clear();
+              dec->clear();
+              diameter->clear();
 
-  //           } catch (const invalid_argument& e) {
-  //             QMessageBox::warning(this, "Error", e.what());
-  //           }
-  //         });
+              stars->updateData();
+
+            } catch (const invalid_argument& e) {
+              QMessageBox::warning(this, "Error", e.what());
+            }
+          });
 
   connect(starNameFilter, &QLineEdit::textChanged, this, [this, &session]() {
     filteredStars->clear();
