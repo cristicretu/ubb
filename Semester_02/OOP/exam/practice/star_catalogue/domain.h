@@ -37,4 +37,10 @@ class Star {
   int getRa() const { return ra; }
   int getDec() const { return dec; }
   double getDiameter() const { return diameter; }
+
+  void setName(string name) { this->name = name; }
+  void setConstellation(string name) { this->constellation = name; }
+  void setRa(int ra) { this->ra = ra; }
+  void setDec(int dec) { this->dec = dec; }
+  void setDiameter(double diameter) { this->diameter = diameter; }
 };
