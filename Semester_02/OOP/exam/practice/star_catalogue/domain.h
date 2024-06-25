@@ -35,6 +35,6 @@ class Star {
   string getName() const { return name; }
   string getConstellation() const { return constellation; }
   int getRa() const { return ra; }
-  int detDec() const { return dec; }
+  int getDec() const { return dec; }
   double getDiameter() const { return diameter; }
 };
