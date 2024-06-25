@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QCheckBox>
 #include <QComboBox>
 #include <QLabel>
 #include <QLineEdit>
@@ -11,20 +12,20 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QWidget>
-#include <set>
 
 #include "session.h"
+#include "starItemModel.h"
 
 class Window : public QWidget {
  private:
   Session &session;
-  Astronomer &astronomer;
-  QAbstractItemModel *model;
-  QSortFilterProxyModel *filterModel;
+  Astronomer astronomer;
+  starItemModel *stars;
+  QSortFilterProxyModel *model;
 
   QTableView *table;
 
-  QComboBox *constellations;
+  QCheckBox *constellations{};
 
   QLineEdit *name, *ra, *dec, *diameter;
   QPushButton *addStar;
@@ -33,7 +34,7 @@ class Window : public QWidget {
   QListWidget *filteredStars;
 
  public:
-  Window(Session &session, Astronomer &astronomer, QAbstractItemModel *model,
+  Window(Session &session, Astronomer astronomer, starItemModel *model,
          QWidget *parent = Q_NULLPTR);
   ~Window() override = default;
 };

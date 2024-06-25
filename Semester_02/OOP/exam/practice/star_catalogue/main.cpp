@@ -10,8 +10,10 @@ int main(int argc, char *argv[]) {
   Repository repo;
   Session session(repo);
 
+  auto *model = new starItemModel(repo);
+
   for (auto x : repo.getAstronomers()) {
-    auto window = new Window(session, x, new starItemModel(repo));
+    auto window = new Window(session, x, model);
     window->show();
   }
   return a.exec();
