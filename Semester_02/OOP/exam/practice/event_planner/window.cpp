@@ -78,10 +78,23 @@ Window::Window(Session &session, Person person, QWidget *parent)
 
     layout->addLayout(hlayout);
 
-    connect(list, &QListWidget::clicked, this, [this, &session]() {
+    connect(list, &QListWidget::clicked, this, [this, &session, &person]() {
+      bool isPersonGoing = session.isPersonGoing(
+          session.getEvents()[list->currentRow()], person);
+
+      if (isPersonGoing) {
+        goingButton->setDisabled(true);
+      } else
+        goingButton->setDisabled(false);
       auto ev = session.getEvents()[list->currentRow()];
       description->setText(QString::fromStdString(ev.getDescription()));
     });
+
+    connect(goingButton, &QPushButton::clicked, this,
+            [this, &session, &person]() {
+              auto ev = session.getEvents()[list->currentRow()];
+              session.markPersonAsGoing(ev, person);
+            });
   }
 
   setLayout(layout);
