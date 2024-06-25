@@ -15,6 +15,9 @@ class Repository {
   };
   ~Repository() { saveStars(); }
 
+  vector<Astronomer>& getAstronomers() { return astronomeers; }
+  vector<Star>& getStars() { return stars; }
+
   void loadAstornomers() {
     ifstream fin("../astronomers.txt");
     string name, constellation, line;
