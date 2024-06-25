@@ -1,0 +1,5 @@
+ciolacu|6|51|1
+basescu|14|43|0
+gigel|1|42|0
+costel|-12|0|0
+gina pistol|1|0|1
