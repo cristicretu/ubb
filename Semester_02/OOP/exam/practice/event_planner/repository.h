@@ -43,7 +43,24 @@ class Repository {
     }
     fin.close();
   };
-  void loadPersons();
+  void loadPersons() {
+    string name, latitude, longitude, status;
+    string line;
+
+    ifstream fin("../persons.txt");
+    while (getline(fin, line)) {
+      istringstream iss(line);
+
+      getline(iss, name, '|');
+      getline(iss, latitude, '|');
+      getline(iss, longitude, '|');
+      getline(iss, status);
+
+      auto p = Person(name, stoi(latitude), stoi(longitude), stoi(status));
+      persons.emplace_back(p);
+    }
+    fin.close();
+  }
   void saveEvents() {
     ofstream fout("../events.txt");
 
@@ -54,8 +71,15 @@ class Repository {
     }
     fout.close();
   }
-  void savePersons();
+  void savePersons() {
+    ofstream fout("../persons.txt");
 
+    for (auto x : persons) {
+      fout << x.getName() << "|" << x.getLatitude() << "|" << x.getLongitude()
+           << "|" << x.getStatus() << '\n';
+    }
+    fout.close();
+  }
   vector<Event> &getEvents() { return events; }
   vector<Person> &getPersons() { return persons; }
 };

@@ -4,5 +4,8 @@
     "/Users/huge/fun/ubb/Semester_02/OOP/exam/practice/event_planner/build/CMakeFiles/untitled.dir",
     "/Users/huge/fun/ubb/Semester_02/OOP/exam/practice/event_planner/build/CMakeFiles/untitled_autogen.dir/build/CMakeFiles",
     "/Users/huge/fun/ubb/Semester_02/OOP/exam/practice/event_planner/build/CMakeFiles/untitled_autogen.dir/build/untitled_autogen"
-  ]
+  ],
+  "files.associations": {
+    "string": "cpp"
+  }
 }
