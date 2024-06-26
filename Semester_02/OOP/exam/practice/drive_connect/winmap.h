@@ -3,9 +3,12 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
+#include <QPaintEvent>
+#include <QPainter>
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <cmath>
 
 #include "QListWidget"
 #include "observer.h"
@@ -17,15 +20,27 @@ class WinMap : public QWidget, public Observer {
 
  public:
   WinMap(Session &session) : session(session) {
-    /*
-    7. A new window will show the "map" of all valid reports. Each reports
-    location and destication will be shown (use circles/rectangles/any geometry
-    figure). This is shown when the application starts. (Hint: method paintEvent
-    of the Widget class and the Painter class). (1p)*/
     session.registerObserver(this);
 
     setWindowTitle("Map");
   }
   ~WinMap() override = default;
-  void update() const override {};
+  void update() override { repaint(); }
+
+ protected:
+  void paintEvent(QPaintEvent *event) override {
+    QPainter painter(this);
+
+    painter.setPen(Qt::red);
+
+    auto reports = session.getReports();
+    for (const auto &report : reports) {
+      if (report.getStatus()) {
+        int x = static_cast<int>((report.getLat() + 180) * (width() / 360.0));
+        int y = static_cast<int>((90 - report.getLg()) * (height() / 180.0));
+
+        painter.drawEllipse(QPoint(x, y), 50, 50);
+      }
+    }
+  }
 };

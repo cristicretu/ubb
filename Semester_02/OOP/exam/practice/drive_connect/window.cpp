@@ -83,7 +83,7 @@ Window::Window(Session &session, Driver &driver, QWidget *parent)
   connect(list, &QListWidget::itemClicked, this, &Window::validateReport);
 };
 
-void Window::update() const {
+void Window::update() {
   list->clear();
 
   for (auto x : session.getInterestReports(driver.getName())) {
