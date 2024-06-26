@@ -13,6 +13,20 @@ class Repository {
   };
   ~Repository() { saveReports(); };
 
+  vector<Driver> &getDrivers() { return drivers; }
+  vector<Report> &getReports() { return reports; }
+  Driver getDriverByName(string name) {
+    for (auto x : drivers) {
+      if (x.getName() == name) {
+        return x;
+      }
+    }
+
+    return Driver("", 0, 0, 0);
+  }
+
+  void addReport(const Report &rep) { reports.emplace_back(rep); }
+
   void loadDrivers() {
     ifstream fin("../drivers.txt");
     string name, lat, lg, score;
