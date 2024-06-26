@@ -16,11 +16,16 @@ class Window : public QWidget, public Observer {
   Session &session;
   Driver driver;
 
-  QListWidget *list;
+  QListWidget *list, *messages;
   QLabel *location, *score;
+
+  QLineEdit *message;
+  QPushButton *send;
 
  public:
   Window(Session &session, Driver driver, QWidget *parent = Q_NULLPTR);
   ~Window() override = default;
   void update() const override;
+ public slots:
+  void sendMessage();
 };
