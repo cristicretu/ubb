@@ -6,12 +6,27 @@
 class Session : public Subject {
  private:
   Repository &repo;
+  vector<string> messages;
 
  public:
   Session(Repository &repo) : repo(repo){};
 
   vector<Driver> getDrivers() { return repo.getDrivers(); }
   vector<Report> getReports() { return repo.getReports(); }
+  vector<string> getMessages() { return messages; }
+
+  void addMessage(string name, string msg) {
+    Driver drv = repo.getDriverByName(name);
+    if (drv.getName() == "") {
+      throw runtime_error("Driver does not exist");
+    }
+    if (msg.empty()) {
+      throw runtime_error("Invalid message");
+    }
+    messages.emplace_back("[" + name + "]" + ": " + msg);
+
+    notify();
+  }
 
   void addReport(string description, string name, int lat, int lg, bool score) {
     Driver drv = repo.getDriverByName(name);
