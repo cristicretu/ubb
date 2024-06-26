@@ -30,7 +30,7 @@ class Window : public QWidget, public Observer {
  public:
   Window(Session &session, Driver &driver, QWidget *parent = Q_NULLPTR);
   ~Window() override = default;
-  void update() const override;
+  void update() override;
  public slots:
   void sendMessage();
   void sendReport();
