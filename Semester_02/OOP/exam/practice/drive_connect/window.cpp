@@ -41,9 +41,36 @@ Window::Window(Session &session, Driver driver, QWidget *parent)
   msgLayout->addLayout(msgInputLayout);
 
   //
+
+  auto llbl = new QLabel("Reports:");
+  auto reportLayout = new QHBoxLayout();
+  description = new QLabel("Description:");
+  lat = new QLabel("Lat:");
+  lg = new QLabel("Lg:");
+
+  descriptionInput = new QLineEdit();
+  latInput = new QLineEdit();
+  lgInput = new QLineEdit();
+
+  auto reportBtn = new QPushButton("Report");
+
+  reportLayout->addWidget(description);
+  reportLayout->addWidget(descriptionInput);
+
+  reportLayout->addWidget(lat);
+  reportLayout->addWidget(latInput);
+
+  reportLayout->addWidget(lg);
+  reportLayout->addWidget(lgInput);
+
+  reportLayout->addWidget(reportBtn);
+
+  //
   layout->addLayout(topLayout);
   layout->addLayout(listLayout);
   layout->addLayout(msgLayout);
+  layout->addWidget(llbl);
+  layout->addLayout(reportLayout);
   //
 
   setLayout(layout);
@@ -52,6 +79,7 @@ Window::Window(Session &session, Driver driver, QWidget *parent)
 
   //
   connect(send, &QPushButton::clicked, this, &Window::sendMessage);
+  connect(reportBtn, &QPushButton::clicked, this, &Window::sendReport);
 };
 
 void Window::update() const {
@@ -85,6 +113,18 @@ void Window::update() const {
 void Window::sendMessage() {
   try {
     session.addMessage(driver.getName(), message->text().toStdString());
+  } catch (const runtime_error &e) {
+    QMessageBox::warning(this, "Error", e.what());
+  }
+}
+
+void Window::sendReport() {
+  try {
+    auto description = descriptionInput->text().toStdString();
+    auto lat = latInput->text().toInt();
+    auto lg = lgInput->text().toInt();
+
+    session.addReport(description, driver.getName(), lat, lg, false);
   } catch (const runtime_error &e) {
     QMessageBox::warning(this, "Error", e.what());
   }
