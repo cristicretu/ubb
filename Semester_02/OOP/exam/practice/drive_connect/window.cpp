@@ -1,6 +1,6 @@
 #include "window.h"
 
-Window::Window(Session &session, Driver driver, QWidget *parent)
+Window::Window(Session &session, Driver &driver, QWidget *parent)
     : session(session), driver(driver), QWidget(parent) {
   session.registerObserver(this);
   setWindowTitle(QString::fromStdString(driver.getName()));
@@ -80,6 +80,7 @@ Window::Window(Session &session, Driver driver, QWidget *parent)
   //
   connect(send, &QPushButton::clicked, this, &Window::sendMessage);
   connect(reportBtn, &QPushButton::clicked, this, &Window::sendReport);
+  connect(list, &QListWidget::itemClicked, this, &Window::validateReport);
 };
 
 void Window::update() const {
@@ -108,6 +109,14 @@ void Window::update() const {
           ->setFont(QFont("Arial", -1, QFont::Bold));
     }
   }
+
+  score->clear();
+
+  if (driver.getName() == "Craig")
+    std::cout << driver.getName() << driver.getScore() << std::endl;
+
+  score->setText(
+      QString::fromStdString(to_string(driver.getScore()) + " Stars"));
 }
 
 void Window::sendMessage() {
@@ -125,6 +134,16 @@ void Window::sendReport() {
     auto lg = lgInput->text().toInt();
 
     session.addReport(description, driver.getName(), lat, lg, false);
+  } catch (const runtime_error &e) {
+    QMessageBox::warning(this, "Error", e.what());
+  }
+}
+
+void Window::validateReport() {
+  try {
+    auto selected = list->selectedItems().at(0)->text().toStdString();
+    auto description = selected.substr(0, selected.find(" / "));
+    session.addValidation(description, driver.getName());
   } catch (const runtime_error &e) {
     QMessageBox::warning(this, "Error", e.what());
   }

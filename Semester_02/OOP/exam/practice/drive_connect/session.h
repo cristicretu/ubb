@@ -1,5 +1,7 @@
 #pragma once
 
+#include <set>
+
 #include "repository.h"
 #include "subject.h"
 
@@ -7,6 +9,8 @@ class Session : public Subject {
  private:
   Repository &repo;
   vector<string> messages;
+
+  set<pair<string, string>> validations;
 
  public:
   Session(Repository &repo) : repo(repo){};
@@ -55,5 +59,29 @@ class Session : public Subject {
     }
 
     return ans;
+  }
+
+  void addValidation(string descr, string validator) {
+    auto rep = repo.getReportByDescription(descr);
+    if (rep.getReporter() == validator) {
+      throw runtime_error("Cannot validate own report");
+    }
+
+    validations.insert({descr, validator});
+
+    int numberOfValidations = 0;
+
+    for (auto x : validations) {
+      if (x.first == descr) {
+        numberOfValidations++;
+      }
+    }
+
+    if (numberOfValidations >= 2) {
+      repo.setReportStatus(descr, true);
+      repo.increaseDriverScore(rep.getReporter());
+    }
+
+    notify();
   }
 };

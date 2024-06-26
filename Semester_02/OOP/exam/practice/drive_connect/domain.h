@@ -20,6 +20,8 @@ class Driver {
   int getLat() const { return lat; }
   int getLg() const { return lg; }
   int getScore() const { return score; }
+
+  void increaseScore() { score++; }
 };
 
 class Report {
@@ -41,4 +43,6 @@ class Report {
   string getDescription() const { return description; }
   string getReporter() const { return reporter; }
   bool getStatus() const { return status; }
+
+  void setStatus(bool newStatus) { status = newStatus; }
 };
