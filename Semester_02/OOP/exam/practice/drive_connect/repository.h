@@ -15,14 +15,32 @@ class Repository {
 
   vector<Driver> &getDrivers() { return drivers; }
   vector<Report> &getReports() { return reports; }
-  Driver getDriverByName(string name) {
-    for (auto x : drivers) {
+  Driver &getDriverByName(string name) {
+    for (auto &x : drivers) {
       if (x.getName() == name) {
         return x;
       }
     }
 
-    return Driver("", 0, 0, 0);
+    throw runtime_error("Driver not found");
+  }
+
+  Report &getReportByDescription(string description) {
+    for (auto &x : reports) {
+      if (x.getDescription() == description) {
+        return x;
+      }
+    }
+
+    throw runtime_error("Report not found");
+  }
+
+  void setReportStatus(string description, bool status) {
+    getReportByDescription(description).setStatus(status);
+  }
+
+  void increaseDriverScore(string name) {
+    getDriverByName(name).increaseScore();
   }
 
   void addReport(const Report &rep) { reports.emplace_back(rep); }

@@ -6,6 +6,7 @@
     "/Users/huge/fun/ubb/Semester_02/OOP/exam/practice/drive_connect/build/CMakeFiles/untitled_autogen.dir/build/untitled_autogen"
   ],
   "files.associations": {
-    "stdexcept": "cpp"
+    "stdexcept": "cpp",
+    "vector": "cpp"
   }
 }

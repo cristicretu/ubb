@@ -14,7 +14,7 @@
 class Window : public QWidget, public Observer {
  private:
   Session &session;
-  Driver driver;
+  Driver &driver;
 
   QListWidget *list, *messages;
   QLabel *location, *score;
@@ -25,11 +25,14 @@ class Window : public QWidget, public Observer {
   QLabel *description, *lat, *lg;
   QLineEdit *descriptionInput, *latInput, *lgInput;
 
+  QPushButton *validateBtn;
+
  public:
-  Window(Session &session, Driver driver, QWidget *parent = Q_NULLPTR);
+  Window(Session &session, Driver &driver, QWidget *parent = Q_NULLPTR);
   ~Window() override = default;
   void update() const override;
  public slots:
   void sendMessage();
   void sendReport();
+  void validateReport();
 };
