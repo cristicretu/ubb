@@ -22,10 +22,14 @@ class Window : public QWidget, public Observer {
   QLineEdit *message;
   QPushButton *send;
 
+  QLabel *description, *lat, *lg;
+  QLineEdit *descriptionInput, *latInput, *lgInput;
+
  public:
   Window(Session &session, Driver driver, QWidget *parent = Q_NULLPTR);
   ~Window() override = default;
   void update() const override;
  public slots:
   void sendMessage();
+  void sendReport();
 };
