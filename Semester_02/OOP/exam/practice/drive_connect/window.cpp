@@ -65,12 +65,15 @@ Window::Window(Session &session, Driver &driver, QWidget *parent)
 
   reportLayout->addWidget(reportBtn);
 
+  viewBtn = new QPushButton("Open Drawing Window");
+
   //
   layout->addLayout(topLayout);
   layout->addLayout(listLayout);
   layout->addLayout(msgLayout);
   layout->addWidget(llbl);
   layout->addLayout(reportLayout);
+  layout->addWidget(viewBtn);
   //
 
   setLayout(layout);
@@ -117,6 +120,8 @@ void Window::update() {
 
   score->setText(
       QString::fromStdString(to_string(driver.getScore()) + " Stars"));
+
+  repaint();
 }
 
 void Window::sendMessage() {
@@ -147,4 +152,9 @@ void Window::validateReport() {
   } catch (const runtime_error &e) {
     QMessageBox::warning(this, "Error", e.what());
   }
+}
+
+void Window::openWinMap() {
+  auto winMap = new WindowMap(session, driver);
+  winMap->show();
 }
