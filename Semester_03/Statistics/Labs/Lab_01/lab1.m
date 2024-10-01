@@ -11,4 +11,5 @@ x=0:.01:3;
 y1=x.^5 / 10;
 y2=x.*sin(x)
 plot(x, y1, '--r', x, y2, ':m')
-
+legend('x^5/10', 'x*sin(x)')
+title("Lab 1 Plot")
