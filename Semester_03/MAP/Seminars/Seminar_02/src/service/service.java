@@ -2,6 +2,7 @@ package service;
 
 import model.Vehicle;
 import repository.repository;
+import repository.capacityExceededException;
 
 public class service {
   private repository repository;
@@ -10,7 +11,7 @@ public class service {
     this.repository = repository;
   }
 
-  public void add(Vehicle vehicle) {
+  public void add(Vehicle vehicle) throws capacityExceededException {
     this.repository.add(vehicle);
   }
 
@@ -26,4 +27,15 @@ public class service {
     return this.repository.getAll();
   }
 
+  public Vehicle[] getByColor(String color) {
+    Vehicle[] vehicles = this.repository.getAll();
+    Vehicle[] filteredVehicles = new Vehicle[vehicles.length];
+    int index = 0;
+    for (Vehicle vehicle : vehicles) {
+      if (vehicle != null && vehicle.getColor().equals(color)) {
+        filteredVehicles[index++] = vehicle;
+      }
+    }
+    return filteredVehicles;
+  }
 }

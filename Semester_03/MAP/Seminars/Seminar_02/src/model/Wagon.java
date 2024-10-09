@@ -1,10 +1,10 @@
 package model;
 
-public class Car implements Vehicle {
+public class Wagon implements Vehicle {
   String color;
   String registrationNumber;
 
-  public Car(String color, String registrationNumber) {
+  public Wagon(String color, String registrationNumber) {
     this.color = color;
     this.registrationNumber = registrationNumber;
   }
@@ -21,7 +21,7 @@ public class Car implements Vehicle {
 
   @Override
   public String toString() {
-    return "Car [color=" + color + ", registrationNumber=" + registrationNumber + "]";
+    return "Wagon [color=" + color + ", registrationNumber=" + registrationNumber + "]";
   }
 
 }
