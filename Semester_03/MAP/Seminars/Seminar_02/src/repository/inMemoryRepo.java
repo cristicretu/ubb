@@ -20,13 +20,9 @@ public class inMemoryRepo implements repository {
   }
 
   @Override
-  public void add(Vehicle vehicle) {
+  public void add(Vehicle vehicle) throws capacityExceededException {
     if (this.size == this.capacity) {
-      Vehicle[] newVehicles = new Vehicle[this.capacity * 2];
-      for (int i = 0; i < this.size; i++) {
-        newVehicles[i] = this.vehicles[i];
-      }
-      this.vehicles = newVehicles;
+      throw new capacityExceededException();
     }
     this.vehicles[this.size] = vehicle;
     this.size++;
@@ -55,7 +51,14 @@ public class inMemoryRepo implements repository {
 
   @Override
   public Vehicle[] getAll() {
-    return this.vehicles;
+    Vehicle[] filteredVehicles = new Vehicle[this.size];
+    int index = 0;
+    for (int i = 0; i < this.size; i++) {
+      if (this.vehicles[i] != null) {
+        filteredVehicles[index++] = this.vehicles[i];
+      }
+    }
+    return filteredVehicles;
   }
 
 }
