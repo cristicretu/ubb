@@ -32,7 +32,10 @@ public class inMemoryRepo implements repository {
   public void remove(Vehicle vehicle) {
     for (int i = 0; i < this.size; i++) {
       if (this.vehicles[i] == vehicle) {
-        this.vehicles[i] = null;
+        for (int j = i; j < this.size - 1; j++) {
+          this.vehicles[j] = this.vehicles[j + 1];
+        }
+        this.vehicles[this.size - 1] = null;
         this.size--;
         break;
       }
