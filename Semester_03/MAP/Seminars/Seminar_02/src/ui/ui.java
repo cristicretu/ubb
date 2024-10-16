@@ -1,6 +1,8 @@
 package ui;
 
 import service.service;
+import service.vehicleNotFoundException;
+
 import java.util.Scanner;
 
 import model.Bike;
@@ -20,7 +22,8 @@ public class ui {
     System.out.println("1. Add vehicle");
     System.out.println("2. Get all vehicles");
     System.out.println("3. Get all red vehicles");
-    System.out.println("4. Exit");
+    System.err.println("4. Remove vehicle");
+    System.out.println("5. Exit");
   }
 
   public void addVehicle(Scanner scanner) {
@@ -51,6 +54,18 @@ public class ui {
       service.add(vehicle);
     } catch (capacityExceededException e) {
       System.out.println("Capacity exceeded");
+    }
+  }
+
+  public void removeVehicle(Scanner scanner) {
+    System.out.println("Enter vehicle registration number:");
+    String registrationNumber = scanner.nextLine();
+    try {
+      Vehicle vehicle = service.findVehicleByRegistrationNumber(registrationNumber);
+      service.remove(vehicle);
+      System.out.println("Vehicle removed");
+    } catch (vehicleNotFoundException e) {
+      System.out.println("Vehicle not found");
     }
   }
 
@@ -102,8 +117,11 @@ public class ui {
         case 3:
           getAllRedVehicles();
           break;
+        case 4:
+          removeVehicle(scanner);
+          break;
       }
-    } while (option != 4);
+    } while (option != 5);
 
   }
 }

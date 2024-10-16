@@ -27,6 +27,16 @@ public class service {
     return this.repository.getAll();
   }
 
+  public Vehicle findVehicleByRegistrationNumber(String registrationNumber) throws vehicleNotFoundException {
+    Vehicle[] vehicles = this.repository.getAll();
+    for (Vehicle vehicle : vehicles) {
+      if (vehicle != null && vehicle.getRegistrationNumber().equals(registrationNumber)) {
+        return vehicle;
+      }
+    }
+    throw new vehicleNotFoundException("Vehicle not found");
+  }
+
   public Vehicle[] getByColor(String color) {
     Vehicle[] vehicles = this.repository.getAll();
     Vehicle[] filteredVehicles = new Vehicle[vehicles.length];
