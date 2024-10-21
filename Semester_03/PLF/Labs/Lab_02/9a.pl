@@ -1,12 +1,9 @@
-% base case: if K is out of bounds, return the list
-insert(List, K, _, List) :-
-      length(List, N),
-      (K > N ; K < 0).
+% flow -> (i, i, i, o)
 
-% base case k = 0, or empty list
-insert(List, 0, E, [E|List]).
+insert([], _, _, _).
 
-% recursive case
+insert(List, 1, E, [E|List]).
+
 insert([H|T], K, E, [H|Result]) :-
       K > 0,
       K1 is K - 1,
