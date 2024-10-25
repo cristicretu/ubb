@@ -1,0 +1,401 @@
+-- # Schema
+--
+-- -- Teams
+-- -- Drivers
+-- -- Races
+-- -- Circuits
+-- -- Results
+-- -- Penalties
+-- -- Sponsors
+-- -- Engines
+-- -- TeamSponsors
+-- -- TeamEngines
+--
+-- ## Teams
+--
+-- _teamId_ int primary key
+-- _teamName_ text not null
+-- _country_ text not null
+-- _foundedYear_ int not null
+-- _constructorCode_ text not null unique
+--
+-- ## Drivers
+--
+-- _driverId_ int primary key
+-- _driverNumber_ int not null unique
+-- _firstName_ text not null
+-- _lastName_ text not null
+-- _country_ text not null
+-- **teamId** int not null
+--
+-- ## Circuits
+--
+-- _circuitId_ int primary key
+-- _name_ text not null unique
+-- _location_ text not null
+-- _country_ text not null
+-- _length_ int not null
+-- _capacity_ int not null
+--
+-- ## Races
+--
+-- _raceId_ int primary key
+-- _name_ text not null
+-- _date_ date not null
+-- _round_ int not null
+-- _season_ int not null
+-- **circuitId** int not null
+
+-- CREATE TABLE Races (
+--     raceId INTEGER PRIMARY KEY,
+--     name varchar(100) NOT NULL,
+--     date DATE NOT NULL,
+--     round INTEGER NOT NULL,
+--     season INTEGER NOT NULL,
+--     circuitId INTEGER NOT NULL,
+--     FOREIGN KEY (circuitId) REFERENCES Circuits(circuitId)
+-- );
+
+-- ## Results
+--
+-- _resultId_ int primary key
+-- _position_ int not null
+-- _laps_ int not null
+-- _time_ int not null
+-- _points_ not null
+-- _finishStatus_ text not null
+-- **raceId** int not null
+-- **driverId** int not null
+-- **teamId** int not null
+
+-- CREATE TABLE Results (
+--     resultId INTEGER PRIMARY KEY,
+--     position INTEGER NOT NULL,
+--     laps INTEGER NOT NULL,
+--     time INTEGER NOT NULL,
+--     points INTEGER NOT NULL,
+--     finishStatus varchar(50) NOT NULL,
+--     raceId INTEGER NOT NULL,
+--     driverId INTEGER NOT NULL,
+--     teamId INTEGER NOT NULL,
+--     FOREIGN KEY (raceId) REFERENCES Races(raceId),
+--     FOREIGN KEY (driverId) REFERENCES Drivers(driverId),
+--     FOREIGN KEY (teamId) REFERENCES Teams(teamId)
+-- );
+
+--
+-- ## Sponsors
+--
+-- _sponsorId_ int primary key
+-- _sponsorName_ text not null
+--
+
+-- CREATE TABLE Sponsors (
+--     sponsorId INTEGER PRIMARY KEY,
+--     sponsorName varchar(100) NOT NULL
+-- );
+
+
+-- ## Engines
+--
+-- _engineId_ int primary key
+-- _engineName_ text not null
+-- _manufacturer_ text not null
+-- _horsepower_ int not null
+
+-- CREATE TABLE Engines (
+--     engineId INTEGER PRIMARY KEY,
+--     engineName varchar(100) NOT NULL,
+--     manufacturer varchar(100) NOT NULL,
+--     horsepower INTEGER NOT NULL
+-- );
+--
+-- ## TeamSponsors
+--
+-- _teamId_ int not null
+-- _sponsorId_ int not null
+-- _contractStart_ date not null
+-- _contractEnd_ date not null
+--
+
+-- CREATE TABLE TeamSponsors (
+--     teamId INTEGER NOT NULL,
+--     sponsorId INTEGER NOT NULL,
+--     contractStart DATE NOT NULL,
+--     contractEnd DATE NOT NULL,
+--     PRIMARY KEY (teamId, sponsorId),
+--     FOREIGN KEY (teamId) REFERENCES Teams(teamId),
+--     FOREIGN KEY (sponsorId) REFERENCES Sponsors(sponsorId)
+-- )
+
+
+
+-- ## TeamEngines
+--
+-- _teamId_ int not null
+-- _engineId_ int not null
+
+-- CREATE TABLE TeamEngines (
+--     teamId INTEGER NOT NULL,
+--     engineId INTEGER NOT NULL,
+--     PRIMARY KEY (teamId, engineId),
+--     FOREIGN KEY (teamId) REFERENCES Teams(teamId),
+--     FOREIGN KEY (engineId) REFERENCES Engines(engineId)
+-- );
+
+--
+-- ## Penalties
+--
+-- _penaltyId_ int primary key
+-- _penaltyType_ text not null
+-- _penaltyDescription_ text not null
+-- _penaltyDroppedPositions_ int not null
+-- **driverId** int not null
+-- **raceId** int not null
+--
+-- CREATE TABLE Penalties (
+--     penaltyId INTEGER PRIMARY KEY,
+--     penaltyType varchar(100) NOT NULL,
+--     penaltyDescription varchar(100) NOT NULL,
+--     penaltyDroppedPositions INTEGER NOT NULL,
+--     driverId INTEGER NOT NULL,
+--     raceId INTEGER NOT NULL,
+--     FOREIGN KEY (driverId) REFERENCES Drivers(driverId),
+--     FOREIGN KEY (raceId) REFERENCES Races(raceId),
+-- );
+
+insert into Teams values (1, 'Mercedes', 'Germany', 2010, 'MER'),
+                        (2, 'Ferrari', 'Italy', 1950, 'FER'),
+                        (3, 'Red Bull Racing', 'Austria', 2005, 'RBR'),
+                        (4, 'McLaren', 'United Kingdom', 1966, 'MCL'),
+                        (5, 'Aston Martin', 'United Kingdom', 2021, 'AMR'),
+                        (6, 'Alpine', 'France', 1977, 'ALP'),
+                        (7, 'AlphaTauri', 'Italy', 2006, 'ATR'),
+                        (8, 'Alfa Romeo Racing', 'Switzerland', 1993, 'ARR'),
+                        (9, 'Haas', 'United States', 2016, 'HAS'),
+                        (10, 'Williams', 'United Kingdom', 1977, 'WIL');
+
+insert into Teams values (1, 'Kick', 'Italy', 2024, 'KCK');
+
+select * from Teams;
+
+
+insert into Drivers (driverId, driverNumber, firstName, lastName, country, teamId) values (1, 44, 'Lewis', 'Hamilton', 'United Kingdom', 1),
+                                                                                (2, 16, 'Charles', 'Leclerc', 'Monaco', 2),
+                                                                                (3, 33, 'Max', 'Verstappen', 'Netherlands', 3),
+                                                                                (4, 77, 'Valtteri', 'Bottas', 'Finland', 4),
+                                                                                (5, 5, 'Sebastian', 'Vettel', 'Germany', 5),
+                                                                                (6, 3, 'Daniel', 'Ricciardo', 'Australia', 6),
+                                                                                (7, 10, 'Pierre', 'Gasly', 'France', 7),
+                                                                                (8, 99, 'Antonio', 'Giovinazzi', 'Italy', 8),
+                                                                                (9, 47, 'Mick', 'Schumacher', 'Germany', 9),
+                                                                                (10, 6, 'Nicholas', 'Latifi', 'Canada', 10);
+
+select * from Drivers;
+
+
+insert into Circuits (circuitId, circuitName, country, city, circuitLength) values (1, 'Silverstone Circuit', 'United Kingdom', 'Silverstone', 5891),
+                                                                                (2, 'Albert Park', 'Melbourne', 'Australia', 5303),
+                            (3, 'Bahrain International Circuit', 'Sakhir', 'Bahrain', 5412),
+                            (4, 'Shanghai International Circuit', 'Shanghai', 'China', 5451),
+                            (5, 'Circuit de Monaco', 'Monte Carlo', 'Monaco', 3337);
+
+select * from Circuits;
+
+insert into Races (raceId, name, date, round, season, circuitId) values (1, 'British Grand Prix', '2024-07-18', 10, 2024, 1),
+                                                                        (2, 'Australian Grand Prix', '2024-11-21', 21, 2024, 2),
+                                                                        (3, 'Bahrain Grand Prix', '2024-03-28', 1, 2024, 3),
+                                                                        (4, 'Chinese Grand Prix', '2024-04-11', 3, 2024, 4),
+                                                                        (5, 'Monaco Grand Prix', '2024-05-23', 5, 2024, 5);
+
+select * from Races;
+
+-- RACE 1
+insert into Results (resultId, position, laps, time, points, finishStatus, raceId, driverId, teamId) values
+(1, 1, 52, 5320, 25, 'Finished', 1, 1, 1),
+(2, 2, 52, 5399, 18, 'Finished', 1, 2, 2),
+(3, 3, 52, 5401, 15, 'Finished', 1, 3, 3),
+(4, 4, 52, 5500, 12, 'Finished', 1, 4, 4),
+(5, 5, 52, 5802, 10, 'Finished', 1, 5, 5),
+(6, 6, 52, 6100, 8, 'Finished', 1, 6, 6),
+(7, 7, 52, 6421, 6, 'Finished', 1, 7, 7),
+(8, 8, 52, 6999, 4, 'Finished', 1, 8, 8),
+(9, 9, 52, 7001, 2, 'Finished', 1, 9, 9),
+(10, 10, 43, 7001, 1, 'DNF', 1, 10, 10);
+
+-- Race 2
+insert into Results (resultId, position, laps, time, points, finishStatus, raceId, driverId, teamId) values
+(11, 1, 58, 6320, 25, 'Finished', 2, 2, 2),
+(12, 2, 58, 7399, 18, 'Finished', 2, 1, 1),
+(13, 3, 58, 8401, 15, 'Finished', 2, 4, 4),
+(14, 4, 58, 9500, 12, 'Finished', 2, 9, 9),
+(15, 5, 58, 9802, 10, 'Finished', 2, 8, 8),
+(16, 6, 58, 10100, 8, 'Finished', 2, 3, 3),
+(17, 7, 58, 10421, 6, 'Finished', 2, 5, 5),
+(18, 8, 58, 10999, 4, 'Finished', 2, 6, 6),
+(19, 9, 58, 11001, 2, 'Finished', 2, 7, 7),
+(20, 10, 43, 11001, 1, 'DNF', 2, 10, 10);
+
+
+
+select * from Results;
+
+insert into Sponsors (sponsorId, sponsorName) values
+  (1, 'Aramco'),
+  (2, 'AWS'),
+    (3, 'Pirelli'),
+    (4, 'Rolex'),
+    (5, 'DHL'),
+    (6, 'Heineken'),
+    (7, 'Emirates'),
+    (8, 'DHL'),
+    (9, 'Puma'),
+    (10, 'UPS');
+
+select * from Sponsors;
+
+insert into TeamSponsors (teamId, sponsorId, contractStart, contractEnd) values
+    (1, 1, '2024-01-01', '2028-12-31'),
+    (1, 2, '2020-01-01', '2024-12-31'),
+    (2, 3, '2018-01-01', '2024-12-31'),
+    (2, 4, '2011-01-01', '2030-12-31'),
+    (3, 5, '2024-01-01', '2028-12-31'),
+    (3, 6, '2024-01-01', '2034-12-31'),
+    (4, 7, '2024-01-01', '2025-12-31'),
+    (4, 8, '2024-01-01', '2024-12-31'),
+    (5, 9, '2024-01-01', '2040-12-31'),
+    (5, 10, '2024-01-01', '2100-12-31');
+
+select * from TeamSponsors;
+
+insert into Engines (engineId, manufacturer, model, power) values
+(1, 'Mercedes', 'M12', 1000),
+(2, 'Ferrari', 'F12', 900),
+(3, 'Renault', 'R12', 800),
+(4, 'Honda', 'H12', 700),
+(5, 'Mercedes', 'M12Pro', 1100),
+(6, 'Ferrari', 'F13', 1215),
+(7, 'Renault', 'R13h', 900),
+(8, 'Honda', 'H13.11', 1300),
+(9, 'Mercedes', 'M14', 1200),
+(10, 'Ferrari', 'F14', 1500);
+
+select * from Engines;
+
+insert into TeamEngines (teamId, engineId) values
+(1, 9),
+(2, 10),
+(3, 8),
+(4, 8),
+(5, 5),
+(6, 3),
+(7, 6),
+(8, 2),
+(9, 1),
+(10, 7);
+
+select * from TeamEngines;
+
+insert into Penalties (penaltyId, penaltyType, penaltyDescription, penaltyDroppedPositions, driverId, raceId) values
+(1, 'Drive Through', 'speeding in the pit lane', 2, 3, 1),
+(2, 'Time Penalty', 'Unsafe release', 5, 2, 2),
+(3, 'Grid Penalty', 'Gearbox change', 2, 3, 2),
+(4, 'Drive Through', 'speeding in the pit lane', 5, 4, 2),
+(5, 'Time Penalty', 'Unsafe release', 5, 5, 2),
+(6, 'Grid Penalty', 'Gearbox change', 2, 6, 1),
+(7, 'Drive Through', 'speeding in the pit lane', 5, 8, 2),
+(8, 'Time Penalty', 'Unsafe release', 5, 8, 1),
+(9, 'Grid Penalty', 'Gearbox change', 2, 9, 1),
+(10, 'Drive Through', 'speeding in the pit lane', 2, 10, 1);
+
+select * from Penalties;
+
+select * from Results;
+
+update Drivers set teamId = 2 where firstName = 'Lewis' and lastName = 'Hamilton';
+update Teams set teamName = 'Scuderia Ferrari' where country = 'Italy' and foundedYear < 2008 and not constructorCode = 'ATR';
+update Teams set foundedYear = foundedYear - 10 where foundedYear between 1950 and 1980 and not country = 'Switzerland';
+update Circuits set circuitLength = circuitLength + 100 where country = 'Monaco';
+update Results set time = time + 100 where position = 1 and raceId = 2 and not finishStatus = 'DNF';
+update Engines set power = power * 1.5 where manufacturer = 'Renault' and power < 1000;
+
+update Circuits set city = country, country = city where circuitId > 1 and circuitId < 5;
+
+
+delete from Penalties where penaltyType = 'Drive Through'and penaltyDroppedPositions > 2;
+delete from Engines where manufacturer = 'Honda' and power < 800;
+delete from TeamSponsors where DATEDIFF(year, contractStart, contractEnd) > 10;
+
+select driverId, firstName, lastName from Drivers where country = 'Germany'
+union all
+select driverId, firstName, lastName from Drivers where country = 'Italy'
+order by lastName;
+
+select circuitId, circuitName from Circuits where circuitLength > 5500
+union
+select circuitId, circuitName from Circuits where city = 'Sakhir' or city = 'Shanghai'
+order by circuitName;
+
+select driverId
+from Results
+where position <= 3 and raceId = 1
+intersect
+select driverId
+from Results
+where position <= 3 and raceId = 2;
+
+select *
+from Drivers d
+where d.driverId in (
+select driverId
+from Results
+where position <= 3 and raceId = 1
+intersect
+select driverId
+from Results
+where position <= 3 and raceId = 2
+);
+
+
+select teamId, teamName
+from Teams
+where foundedYear < 2000
+and teamId in (
+    select teamId
+    from Teams
+    where country in ('United Kingdom', 'Italy')
+);
+
+
+select *
+from Drivers d
+where d.teamId in (select teamId from Teams where country = 'United Kingdom')
+except
+select * from Drivers
+where driverId in (
+    select driverId
+    from Results
+    where position = 1
+);
+
+select * from Results r
+where r.driverId not in (
+    select driverId
+    from Drivers
+    where teamId in (
+        select teamId
+        from Teams
+        where country = 'United Kingdom'
+    )
+) and r.raceId = 1;
+
+
+
+
+
+
+
+
+
+
+
