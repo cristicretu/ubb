@@ -1,6 +1,9 @@
 package utils;
 
 import java.util.Stack;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class MyStack<T> implements IStack<T> {
   private Stack<T> stack;
@@ -37,5 +40,12 @@ public class MyStack<T> implements IStack<T> {
   @Override
   public String toString() {
     return stack.toString();
+  }
+
+  @Override
+  public List<T> getList() {
+    List<T> list = new ArrayList<>(stack);
+    Collections.reverse(list);
+    return list;
   }
 }

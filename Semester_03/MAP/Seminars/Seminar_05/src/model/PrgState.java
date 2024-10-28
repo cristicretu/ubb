@@ -38,7 +38,7 @@ public class PrgState {
 
   @Override
   public String toString() {
-    return "PrgState{\n" + "exeStack=" + exeStack + ",\n symTable=" + symTable + ",\n output=" + output
+    return "PrgState{\n" + "exeStack=" + exeStack.getList() + ",\n symTable=" + symTable + ",\n output=" + output
         + ",\n originalProgram="
         + originalProgram + "\n}";
   }

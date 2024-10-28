@@ -1,5 +1,7 @@
 package utils;
 
+import java.util.List;
+
 public interface IStack<T> {
   void push(T item);
 
@@ -10,4 +12,6 @@ public interface IStack<T> {
   boolean isEmpty();
 
   int size();
+
+  List<T> getList();
 }
