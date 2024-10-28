@@ -1,7 +1,7 @@
 package model.exp;
 
 import controller.MyException;
-import model.Value;
+import model.value.Value;
 import utils.IDict;
 
 public class ValueExp implements IExp {

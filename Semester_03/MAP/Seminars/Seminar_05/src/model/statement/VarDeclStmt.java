@@ -3,8 +3,9 @@ package model.statement;
 import controller.MyException;
 import model.PrgState;
 import model.type.IType;
+import model.value.IntValue;
+import model.value.Value;
 import utils.IDict;
-import model.Value;
 
 public class VarDeclStmt implements IStmt {
   private String id;
@@ -21,11 +22,9 @@ public class VarDeclStmt implements IStmt {
     if (symTable.isDefined(id)) {
       throw new MyException("Variable " + id + " already declared");
     }
-    // Initialize variable with default value based on its type
-    // if (type.toString().equals("Int")) {
-    // symTable.put(id, new IntValue(0));
-    // }
-    // Add more type initializations as needed
+    if (type.toString().equals("Int")) {
+      symTable.put(id, new IntValue(0));
+    }
 
     return prg;
   }
