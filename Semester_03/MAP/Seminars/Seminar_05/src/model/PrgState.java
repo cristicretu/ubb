@@ -3,8 +3,8 @@ package model;
 import utils.IStack;
 import utils.IDict;
 import utils.IList;
-import model.Value;
 import model.statement.IStmt;
+import model.value.Value;
 
 public class PrgState {
   private IStack<IStmt> exeStack;

@@ -2,8 +2,8 @@ package model.statement;
 
 import controller.MyException;
 import model.PrgState;
-import model.Value;
 import model.exp.IExp;
+import model.value.Value;
 import utils.IDict;
 
 public class AssignStmt implements IStmt {
@@ -29,6 +29,11 @@ public class AssignStmt implements IStmt {
       throw new MyException("The used variable " + id + " was not declared before");
     }
     return prg;
+  }
+
+  @Override
+  public String toString() {
+    return id + " = " + exp.toString();
   }
 
 }

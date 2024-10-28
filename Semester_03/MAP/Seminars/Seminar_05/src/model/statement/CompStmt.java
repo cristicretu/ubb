@@ -22,4 +22,9 @@ public class CompStmt implements IStmt {
 
     return prg;
   }
+
+  @Override
+  public String toString() {
+    return "(" + first.toString() + ";" + second.toString() + ")";
+  }
 }
