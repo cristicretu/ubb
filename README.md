@@ -31,7 +31,7 @@
   - [Seminars](https://github.com/cristicretu/ubb/tree/main/Semester_03/MAP/Seminars)
   - [Labs](https://github.com/cristicretu/ubb/tree/main/Semester_03/MAP/Lab)
 - [🗃️ Databases](https://github.com/cristicretu/ubb/tree/main/Semester_03/DB)
-  - [Labs](https://github.com/cristicretu/ubb/tree/main/Semester_03/DB/Lab)
+  - [Labs](https://github.com/cristicretu/ubb/tree/main/Semester_03/DB/Labs)
 - [🌐 Computer Networks](https://github.com/cristicretu/ubb/tree/main/Semester_03/Retele)
   - [Labs](https://github.com/cristicretu/ubb/tree/main/Semester_03/Retele/Lab)
 - [🧮 Probability & Statistics](https://github.com/cristicretu/ubb/tree/main/Semester_03/Statistics)
