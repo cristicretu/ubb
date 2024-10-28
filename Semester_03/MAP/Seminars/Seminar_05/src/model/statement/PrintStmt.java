@@ -3,19 +3,18 @@ package model.statement;
 import controller.MyException;
 import model.PrgState;
 import model.exp.IExp;
-import model.exp.ValueExp;
-import model.value.Value;
+import model.value.IValue;
 
 public class PrintStmt implements IStmt {
   private IExp exp;
 
-  public PrintStmt(ValueExp valueExp) {
-    this.exp = valueExp;
+  public PrintStmt(IExp exp) { // Changed from ValueExp to IExp
+    this.exp = exp;
   }
 
   @Override
   public PrgState execute(PrgState prg) throws MyException {
-    Value val = this.exp.eval(prg.getSymTable());
+    IValue val = this.exp.eval(prg.getSymTable());
     prg.getOutput().add(val);
     return prg;
   }
@@ -23,5 +22,10 @@ public class PrintStmt implements IStmt {
   @Override
   public String toString() {
     return "print(" + this.exp.toString() + ")";
+  }
+
+  @Override
+  public IStmt deepCopy() {
+    return new PrintStmt(this.exp.deepCopy());
   }
 }

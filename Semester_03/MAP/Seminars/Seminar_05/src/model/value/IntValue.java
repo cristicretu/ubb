@@ -3,7 +3,7 @@ package model.value;
 import model.type.IType;
 import model.type.IntType;
 
-public class IntValue implements Value {
+public class IntValue implements IValue {
   private int val;
 
   public IntValue(int val) {
@@ -18,5 +18,10 @@ public class IntValue implements Value {
   @Override
   public String toString() {
     return String.valueOf(val);
+  }
+
+  @Override
+  public IValue deepCopy() {
+    return new IntValue(this.val);
   }
 }

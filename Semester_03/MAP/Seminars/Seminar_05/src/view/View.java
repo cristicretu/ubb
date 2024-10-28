@@ -9,7 +9,7 @@ import model.statement.IStmt;
 import model.statement.PrintStmt;
 import model.statement.VarDeclStmt;
 import model.type.IntType;
-import model.value.Value;
+import model.value.IValue;
 import repository.IRepository;
 import repository.Repository;
 import utils.IDict;
@@ -26,8 +26,8 @@ public class View {
         new PrintStmt(new ValueExp("v")));
 
     IStack<IStmt> stk = new MyStack<>();
-    IDict<String, Value> symTable = new MyDict<>();
-    IList<Value> output = new MyList<>();
+    IDict<String, IValue> symTable = new MyDict<>();
+    IList<IValue> output = new MyList<>();
 
     PrgState prg = new PrgState(stk, symTable, output, ex1);
 
