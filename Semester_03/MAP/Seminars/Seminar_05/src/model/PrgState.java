@@ -4,7 +4,7 @@ import utils.IStack;
 import utils.IDict;
 import utils.IList;
 import model.statement.IStmt;
-import model.value.Value;
+import model.value.IValue;
 
 public class PrgState {
   private IStack<IStmt> exeStack;
@@ -13,25 +13,25 @@ public class PrgState {
     return exeStack;
   }
 
-  private IDict<String, Value> symTable;
+  private IDict<String, IValue> symTable;
 
-  public IDict<String, Value> getSymTable() {
+  public IDict<String, IValue> getSymTable() {
     return symTable;
   }
 
-  private IList<Value> output;
+  private IList<IValue> output;
 
-  public IList<Value> getOutput() {
+  public IList<IValue> getOutput() {
     return output;
   }
 
   private IStmt originalProgram;
 
-  public PrgState(IStack<IStmt> exeStack, IDict<String, Value> symTable, IList<Value> output, IStmt originalProgram) {
+  public PrgState(IStack<IStmt> exeStack, IDict<String, IValue> symTable, IList<IValue> output, IStmt originalProgram) {
     this.exeStack = exeStack;
     this.symTable = symTable;
     this.output = output;
-    this.originalProgram = originalProgram;
+    this.originalProgram = originalProgram.deepCopy();
 
     exeStack.push(originalProgram);
   }
