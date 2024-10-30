@@ -1,5 +1,8 @@
 package model.type;
 
+import model.value.BoolValue;
+import model.value.IValue;
+
 public class BoolType implements IType {
   private String type = "bool";
 
@@ -16,5 +19,10 @@ public class BoolType implements IType {
   @Override
   public String toString() {
     return this.type;
+  }
+
+  @Override
+  public IValue defaultValue() {
+    return new BoolValue(false);
   }
 }

@@ -20,4 +20,9 @@ public class ConstantValue implements IExp {
   public IExp deepCopy() {
     return new ConstantValue(this.value.deepCopy());
   }
+
+  @Override
+  public String toString() {
+    return this.value.toString();
+  }
 }

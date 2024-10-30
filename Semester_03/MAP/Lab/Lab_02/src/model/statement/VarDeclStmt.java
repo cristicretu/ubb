@@ -3,8 +3,6 @@ package model.statement;
 import controller.MyException;
 import model.PrgState;
 import model.type.IType;
-import model.type.IntType;
-import model.value.IntValue;
 import model.value.IValue;
 import utils.IDict;
 
@@ -23,9 +21,7 @@ public class VarDeclStmt implements IStmt {
     if (symTable.isDefined(id)) {
       throw new MyException("Variable " + id + " already declared");
     }
-    if (type.toString().equals("Int")) {
-      symTable.put(id, new IntValue(0));
-    }
+    symTable.put(id, type.defaultValue());
 
     return prg;
   }
@@ -37,6 +33,6 @@ public class VarDeclStmt implements IStmt {
 
   @Override
   public IStmt deepCopy() {
-    return new VarDeclStmt(id, new IntType());
+    return new VarDeclStmt(id, type.deepCopy());
   }
 }
