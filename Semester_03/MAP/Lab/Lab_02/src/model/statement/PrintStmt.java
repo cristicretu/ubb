@@ -8,7 +8,7 @@ import model.value.IValue;
 public class PrintStmt implements IStmt {
   private IExp exp;
 
-  public PrintStmt(IExp exp) { // Changed from ValueExp to IExp
+  public PrintStmt(IExp exp) {
     this.exp = exp;
   }
 
