@@ -25,6 +25,10 @@ public class BoolValue implements IValue {
     return new BoolValue(this.val);
   }
 
+  public boolean getVal() {
+    return this.val;
+  }
+
   @Override
   public boolean equals(IValue other) {
     return other instanceof BoolValue && ((BoolValue) other).val == this.val;

@@ -3,6 +3,8 @@ package model.statement;
 import controller.MyException;
 import model.PrgState;
 import model.exp.IExp;
+import model.type.BoolType;
+import model.value.BoolValue;
 import model.value.IValue;
 
 public class IfStmt implements IStmt {
@@ -20,12 +22,15 @@ public class IfStmt implements IStmt {
   public PrgState execute(PrgState prg) throws MyException {
     IValue val = this.exp.eval(prg.getSymTable());
     if (val.getType().equals(new BoolType())) {
-      if (val.getVal().equals(true)) {
+      if (((BoolValue) val).getVal()) {
         prg.getExeStack().push(this.thenStmt);
       } else {
         prg.getExeStack().push(this.elseStmt);
       }
+    } else {
+      throw new MyException("The condition in the if statement is not a boolean");
     }
+    return prg;
   }
 
   @Override
