@@ -1,6 +1,7 @@
 package model.exp;
 
-import controller.MyException;
+import exceptions.ExpressionException;
+import exceptions.MyException;
 import model.type.BoolType;
 import model.value.BoolValue;
 import model.value.IValue;
@@ -20,9 +21,21 @@ public class LogicExp implements IExp {
   @Override
   public IValue eval(IDict<String, IValue> symTable) throws MyException {
     IValue v1, v2;
-    v1 = exp1.eval(symTable);
+    try {
+      v1 = exp1.eval(symTable);
+    } catch (ExpressionException e) {
+      throw new MyException(e.getMessage());
+    } catch (MyException e) {
+      throw new MyException(e.getMessage());
+    }
     if (v1.getType().equals(new BoolType())) {
-      v2 = exp2.eval(symTable);
+      try {
+        v2 = exp2.eval(symTable);
+      } catch (ExpressionException e) {
+        throw new MyException(e.getMessage());
+      } catch (MyException e) {
+        throw new MyException(e.getMessage());
+      }
       if (v2.getType().equals(new BoolType())) {
         BoolValue b1 = (BoolValue) v1;
         BoolValue b2 = (BoolValue) v2;

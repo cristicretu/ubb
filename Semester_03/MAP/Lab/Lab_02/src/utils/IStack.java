@@ -2,12 +2,14 @@ package utils;
 
 import java.util.List;
 
+import exceptions.StackException;
+
 public interface IStack<T> {
   void push(T item);
 
-  T pop();
+  T pop() throws StackException;
 
-  T top();
+  T top() throws StackException;
 
   boolean isEmpty();
 

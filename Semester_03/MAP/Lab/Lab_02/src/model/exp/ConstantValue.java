@@ -1,6 +1,6 @@
 package model.exp;
 
-import controller.MyException;
+import exceptions.MyException;
 import model.value.IValue;
 import utils.IDict;
 

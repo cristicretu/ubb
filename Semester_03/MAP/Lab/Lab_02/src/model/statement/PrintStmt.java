@@ -1,6 +1,7 @@
 package model.statement;
 
-import controller.MyException;
+import exceptions.ExpressionException;
+import exceptions.MyException;
 import model.PrgState;
 import model.exp.IExp;
 import model.value.IValue;
@@ -14,7 +15,12 @@ public class PrintStmt implements IStmt {
 
   @Override
   public PrgState execute(PrgState prg) throws MyException {
-    IValue val = this.exp.eval(prg.getSymTable());
+    IValue val;
+    try {
+      val = this.exp.eval(prg.getSymTable());
+    } catch (ExpressionException | MyException e) {
+      throw new MyException(e.getMessage());
+    }
     prg.getOutput().add(val);
     return prg;
   }

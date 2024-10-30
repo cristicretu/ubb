@@ -1,6 +1,9 @@
 package utils;
 
 import java.util.Map;
+
+import exceptions.DictionaryException;
+
 import java.util.HashMap;
 
 public class MyDict<K, V> implements IDict<K, V> {
@@ -16,7 +19,10 @@ public class MyDict<K, V> implements IDict<K, V> {
   }
 
   @Override
-  public V get(K key) {
+  public V get(K key) throws DictionaryException {
+    if (!isDefined(key)) {
+      throw new DictionaryException("Key not found in dictionary: " + key);
+    }
     return dict.get(key);
   }
 
@@ -31,7 +37,10 @@ public class MyDict<K, V> implements IDict<K, V> {
   }
 
   @Override
-  public void update(K key, V value) {
+  public void update(K key, V value) throws DictionaryException {
+    if (!isDefined(key)) {
+      throw new DictionaryException("Key not found in dictionary: " + key);
+    }
     dict.put(key, value);
   }
 

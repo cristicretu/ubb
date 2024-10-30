@@ -1,6 +1,9 @@
 package utils;
 
 import java.util.Stack;
+
+import exceptions.StackException;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,12 +21,18 @@ public class MyStack<T> implements IStack<T> {
   }
 
   @Override
-  public T pop() {
+  public T pop() throws StackException {
+    if (isEmpty()) {
+      throw new StackException("Stack is empty!");
+    }
     return stack.pop();
   }
 
   @Override
-  public T top() {
+  public T top() throws StackException {
+    if (isEmpty()) {
+      throw new StackException("Stack is empty!");
+    }
     return stack.peek();
   }
 

@@ -1,6 +1,6 @@
 package model.statement;
 
-import controller.MyException;
+import exceptions.MyException;
 import model.PrgState;
 
 public interface IStmt {

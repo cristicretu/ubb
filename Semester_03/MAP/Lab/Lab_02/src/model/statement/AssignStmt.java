@@ -1,6 +1,8 @@
 package model.statement;
 
-import controller.MyException;
+import exceptions.DictionaryException;
+import exceptions.ExpressionException;
+import exceptions.MyException;
 import model.PrgState;
 import model.exp.IExp;
 import model.value.IValue;
@@ -19,11 +21,21 @@ public class AssignStmt implements IStmt {
   public PrgState execute(PrgState prg) throws MyException {
     IDict<String, IValue> symTable = prg.getSymTable();
     if (symTable.isDefined(id)) {
-      IValue val = this.exp.eval(symTable);
-      if (val.getType().equals(symTable.get(id).getType())) {
-        symTable.put(id, val);
-      } else {
-        throw new MyException("Declared type of variable " + id + " and type of the assigned expression do not match");
+      IValue val;
+      try {
+        val = this.exp.eval(symTable);
+      } catch (ExpressionException | MyException e) {
+        throw new MyException(e.getMessage());
+      }
+      try {
+        if (val.getType().equals(symTable.get(id).getType())) {
+          symTable.put(id, val);
+        } else {
+          throw new MyException(
+              "Declared type of variable " + id + " and type of the assigned expression do not match");
+        }
+      } catch (DictionaryException | MyException e) {
+        throw new MyException(e.getMessage());
       }
     } else {
       throw new MyException("The used variable " + id + " was not declared before");
