@@ -7,4 +7,5 @@ public interface IValue {
 
   IValue deepCopy();
 
+  boolean equals(IValue other);
 }
