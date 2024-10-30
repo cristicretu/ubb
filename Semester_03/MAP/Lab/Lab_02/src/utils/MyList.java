@@ -1,6 +1,9 @@
 package utils;
 
 import java.util.List;
+
+import exceptions.ListException;
+
 import java.util.ArrayList;
 
 public class MyList<T> implements IList<T> {
@@ -16,8 +19,15 @@ public class MyList<T> implements IList<T> {
   }
 
   @Override
-  public T get(int index) {
+  public T get(int index) throws ListException {
+    if (index < 0 || index >= size()) {
+      throw new ListException("Index out of bounds: " + index);
+    }
     return list.get(index);
+  }
+
+  private int size() {
+    return list.size();
   }
 
   @Override

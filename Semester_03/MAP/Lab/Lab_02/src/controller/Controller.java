@@ -2,6 +2,8 @@ package controller;
 
 import repository.IRepository;
 import utils.IStack;
+import exceptions.MyException;
+import exceptions.StackException;
 import model.PrgState;
 import model.statement.IStmt;
 
@@ -18,7 +20,12 @@ public class Controller {
       throw new MyException("Empty execution stack");
     }
 
-    IStmt currentStmt = stk.pop();
+    IStmt currentStmt;
+    try {
+      currentStmt = stk.pop();
+    } catch (StackException e) {
+      throw new MyException(e.getMessage());
+    }
     return currentStmt.execute(prg);
   }
 

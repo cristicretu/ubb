@@ -1,6 +1,7 @@
 package model.exp;
 
-import controller.MyException;
+import exceptions.DictionaryException;
+import exceptions.MyException;
 import model.value.IValue;
 import utils.IDict;
 
@@ -14,7 +15,11 @@ public class VariableExp implements IExp {
   @Override
   public IValue eval(IDict<String, IValue> symTable) throws MyException {
     if (symTable.isDefined(this.id)) {
-      return symTable.get(this.id);
+      try {
+        return symTable.get(this.id);
+      } catch (DictionaryException e) {
+        throw new MyException(e.getMessage());
+      }
     } else {
       throw new MyException("The used variable " + this.id + " was not declared before");
     }

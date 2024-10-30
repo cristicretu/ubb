@@ -1,7 +1,7 @@
 package view;
 
 import controller.Controller;
-import controller.MyException;
+import exceptions.MyException;
 import model.PrgState;
 import model.exp.ArithExp;
 import model.exp.ConstantValue;

@@ -1,6 +1,7 @@
 package model.statement;
 
-import controller.MyException;
+import exceptions.ExpressionException;
+import exceptions.MyException;
 import model.PrgState;
 import model.exp.IExp;
 import model.type.BoolType;
@@ -20,7 +21,12 @@ public class IfStmt implements IStmt {
 
   @Override
   public PrgState execute(PrgState prg) throws MyException {
-    IValue val = this.exp.eval(prg.getSymTable());
+    IValue val;
+    try {
+      val = this.exp.eval(prg.getSymTable());
+    } catch (ExpressionException | MyException e) {
+      throw new MyException(e.getMessage());
+    }
     if (val.getType().equals(new BoolType())) {
       if (((BoolValue) val).getVal()) {
         prg.getExeStack().push(this.thenStmt);
