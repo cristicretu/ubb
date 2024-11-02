@@ -78,6 +78,7 @@ int main() {
       close(client_socket);
       continue;  // continue listening for incoming connections
     }
+    printf("Received message: %s\n", buffer);
     buffer[bytes_received] = '\0';  // null-terminate the string
 
     // Receive character from client
@@ -87,6 +88,7 @@ int main() {
       close(client_socket);
       continue;  // continue listening for incoming connections
     }
+    printf("Received character: %c\n", c);
 
     int indexes[BUFFER_SIZE];
     int idx = 0;
@@ -103,7 +105,8 @@ int main() {
       close(client_socket);
       continue;  // continue listening for incoming connections
     }
-    if (send(client_socket, indexes, idx * sizeof(int), 0) == -1) {
+    printf("Sent number of indexes: %d\n", idx);
+    if (idx > 0 && send(client_socket, indexes, idx * sizeof(int), 0) == -1) {
       perror("Error sending indexes to client\n");
       close(client_socket);
       continue;  // continue listening for incoming connections
