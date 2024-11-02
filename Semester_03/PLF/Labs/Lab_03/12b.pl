@@ -20,7 +20,7 @@ singleList([H|T], Res) :-
 processHeteroList([], []).
 processHeteroList([[H|T]|TailList], [Res|ResList]) :-
     singleList([H|T], Res),
-    processHeteroList(TailList, ResList).
+    processHeteroList(TailList, ResList), !.
 processHeteroList([H|TailList], [H|ResList]) :-  
     processHeteroList(TailList, ResList).
 
