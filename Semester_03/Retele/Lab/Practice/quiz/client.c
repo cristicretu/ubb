@@ -4,124 +4,155 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
-#include <sys/types.h>
 #include <time.h>
 #include <unistd.h>
 
 #define PORT 7777
 #define TCP_PORT 1234
-#define BUFFER 1024
+#define BUFFER_SIZE 1024
 
-int evalueaza(char* str) {
-  int first, second;
-  char sep[] = {'+', '-', '*', '/'};
-  char* tk = strtok(str, sep);
-
-  first = atoi(tk);
-  tk = strtok(NULL, sep);
-
-  second = atoi(tk);
-
-  int op_index = strcspn(str, sep);
-  char op = str[op_index];
+int evaluate_expression(const char* expr) {
+  int a, b;
+  char op;
+  if (sscanf(expr, "%d%c%d", &a, &op, &b) != 3) {
+    return 0;
+  }
 
   switch (op) {
     case '+':
-      return first + second;
+      return a + b;
     case '-':
-      return first - second;
+      return a - b;
     case '*':
-      return first * second;
+      return a * b;
     case '/':
-      return first / second;
+      return b != 0 ? a / b : 0;
     default:
-      return -1;
+      return 0;
   }
 }
 
 int main() {
   srand(time(NULL));
-  // create the udp socket
+
+  // Create UDP socket for receiving broadcast
   int udp_sock = socket(AF_INET, SOCK_DGRAM, 0);
-  if (-1 == udp_sock) {
-    perror("error in udp broadcast");
+  if (udp_sock < 0) {
+    perror("UDP socket creation failed");
     exit(1);
   }
 
-  int brodcast_enable = 1;
-  setsockopt(udp_sock, SOL_SOCKET, SO_BROADCAST, &brodcast_enable,
-             sizeof(brodcast_enable));
+  // Enable broadcast and address reuse
+  int broadcast_enable = 1;
+  int reuse = 1;
+  if (setsockopt(udp_sock, SOL_SOCKET, SO_BROADCAST, &broadcast_enable,
+                 sizeof(broadcast_enable)) < 0) {
+    perror("Error setting broadcast option");
+    close(udp_sock);
+    exit(1);
+  }
+  if (setsockopt(udp_sock, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) <
+      0) {
+    perror("Error setting reuse option");
+    close(udp_sock);
+    exit(1);
+  }
 
+  // Setup UDP address for receiving broadcasts
   struct sockaddr_in udp_addr;
   memset(&udp_addr, 0, sizeof(udp_addr));
   udp_addr.sin_family = AF_INET;
   udp_addr.sin_port = htons(PORT);
   udp_addr.sin_addr.s_addr = INADDR_ANY;
 
+  // Bind is necessary for receiving broadcasts
+  if (bind(udp_sock, (struct sockaddr*)&udp_addr, sizeof(udp_addr)) < 0) {
+    perror("UDP bind failed");
+    close(udp_sock);
+    exit(1);
+  }
+
   printf("Waiting for questions...\n");
 
-  char buffer[BUFFER];
-  size_t recv_len = recv(udp_sock, buffer, BUFFER - 1, 0);
-  if (-1 == recv_len) {
+  // Receive broadcast message
+  char buffer[BUFFER_SIZE];
+  struct sockaddr_in server_addr;
+  socklen_t server_len = sizeof(server_addr);
+
+  ssize_t recv_len = recvfrom(udp_sock, buffer, BUFFER_SIZE - 1, 0,
+                              (struct sockaddr*)&server_addr, &server_len);
+  if (recv_len < 0) {
     perror("UDP receive failed");
     close(udp_sock);
     exit(1);
   }
 
-  buffer[BUFFER] = '\0';
+  buffer[recv_len] = '\0';
   printf("Received questions: %s\n", buffer);
+  close(udp_sock);
+
+  // Parse expressions and calculate answers
+  char* expressions[3];
+  int answers[3];
+  int num_questions = 0;
 
   char* token = strtok(buffer, ";");
-
-  int answers[3];
-  int idx = 0;
-  while (token != NULL) {
-    int loss = rand() % 2 - 1;
-    answers[idx++] = evalueaza(token) + loss;
+  while (token != NULL && num_questions < 3) {
+    expressions[num_questions] = strdup(token);
+    answers[num_questions] = evaluate_expression(token);
+    printf("Question %d: %s = %d\n", num_questions, token,
+           answers[num_questions]);
+    num_questions++;
     token = strtok(NULL, ";");
   }
 
-  close(udp_sock);
-
+  // Create TCP socket for submitting answers
   int tcp_sock = socket(AF_INET, SOCK_STREAM, 0);
-  if (-1 == tcp_sock) {
-    perror("error in tcp socket");
+  if (tcp_sock < 0) {
+    perror("TCP socket creation failed");
     exit(1);
   }
 
+  // Setup TCP address
   struct sockaddr_in tcp_addr;
   memset(&tcp_addr, 0, sizeof(tcp_addr));
   tcp_addr.sin_family = AF_INET;
   tcp_addr.sin_port = htons(TCP_PORT);
-  tcp_addr.sin_addr.s_addr = inet_addr("192.168.1.102");
+  tcp_addr.sin_addr.s_addr = inet_addr("127.0.0.1");  // Connect to localhost
 
-  if (-1 == connect(tcp_sock, (struct sockaddr*)&tcp_addr, sizeof(tcp_addr))) {
-    perror("error in tcp connect");
+  // Connect to server
+  if (connect(tcp_sock, (struct sockaddr*)&tcp_addr, sizeof(tcp_addr)) < 0) {
+    perror("TCP connection failed");
     close(tcp_sock);
     exit(1);
   }
 
-  char response[BUFFER];
-  memset(response, 0, BUFFER);
-
-  for (int i = 0; i < 3; i++) {
-    sprintf(response, "%d.%d", i, answers[i]);
-    if (-1 == send(tcp_sock, response, strlen(response), 0)) {
-      perror("error in tcp send");
+  // Send answers
+  char answer_buffer[32];
+  for (int i = 0; i < num_questions; i++) {
+    snprintf(answer_buffer, sizeof(answer_buffer), "%d.%d", i, answers[i]);
+    if (send(tcp_sock, answer_buffer, strlen(answer_buffer), 0) < 0) {
+      perror("Failed to send answer");
       close(tcp_sock);
       exit(1);
     }
-    memset(response, 0, BUFFER);
+    // Small delay between sends to prevent message coalescence
+    usleep(100000);
   }
 
-  memset(response, 0, BUFFER);
-  if (-1 == recv(tcp_sock, response, BUFFER - 1, 0)) {
-    perror("error in tcp receive");
-    close(tcp_sock);
-    exit(1);
+  // Receive score
+  memset(buffer, 0, BUFFER_SIZE);
+  recv_len = recv(tcp_sock, buffer, BUFFER_SIZE - 1, 0);
+  if (recv_len > 0) {
+    buffer[recv_len] = '\0';
+    printf("Score received: %s\n", buffer);
   }
 
-  printf("Received: %s\n", response);
+  // Cleanup
+  close(tcp_sock);
+  for (int i = 0; i < num_questions; i++) {
+    free(expressions[i]);
+  }
 
   return 0;
 }
