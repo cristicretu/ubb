@@ -16,7 +16,7 @@
 int running = 1;
 
 int main() {
-  srand48(time(NULL));
+  srand(time(NULL));
 
   int udp_sock = socket(AF_INET, SOCK_DGRAM, 0);
   if (-1 == udp_sock) {
@@ -56,7 +56,7 @@ int main() {
       perror("error on send to udp");
       close(udp_sock);
       close(tcp_sock);
-      exit(1);
+      break;
     }
     printf("Sent %d and %d\n", numb1, numb2);
 
@@ -66,9 +66,10 @@ int main() {
     int bytes_received = recv(tcp_sock, &pi_approx, sizeof(float), 0);
     if (bytes_received > 0) {
       printf("[SERVER]: I have PI approximation at %.6f\n", pi_approx);
-    }
+    } else {
+        }
 
-    sleep(1);
+    usleep(9000);
   }
 
   close(udp_sock);
