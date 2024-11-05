@@ -1,11 +1,15 @@
 import socket
+import threading
+import time
+import struct
 
 host = 'localhost'
 port_udp = 1234
 port_tcp = 7777
 running = True
+e = 0.0001
 
-approx = 0
+approx = 0.0
 points = []
 
 def get_pi_approx(inside, outside):
@@ -16,6 +20,7 @@ def get_inside_points(points):
 
 def setup_udp_server():
   udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+  udp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
   udp_sock.bind((host, port_udp))
 
@@ -24,8 +29,10 @@ def setup_udp_server():
 
 def setup_tcp_sock():
   tcp_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+  tcp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) 
 
   tcp_sock.bind((host, port_tcp))
+  tcp_sock.listen(7)
 
   print(f"TCP server listening on {host}:{port_tcp}")
   return tcp_sock
@@ -33,9 +40,37 @@ def setup_tcp_sock():
 def convert_numb(numb):
   return (numb - 50) / 50
 
+def handle_client(client_sock, addr):
+    global running
+    print(f"New client connected: {addr}")
+    while running:
+        try:
+            # Convert float to bytes properly
+            approx_bytes = bytearray(struct.pack("f", approx))
+            client_sock.sendall(approx_bytes)
+            time.sleep(1)
+        except Exception as e:
+            print(f"Client {addr} disconnected: {e}")
+            break
+    client_sock.close()
+
+def accept_clients(tcp_sock):
+    global running, clients
+    while running:
+        try:
+            client_sock, addr = tcp_sock.accept()
+            clients.append(client_sock)
+            threading.Thread(target=handle_client, args=(client_sock, addr)).start()
+        except:
+            break
+
 if __name__ == "__main__":
   udp_sock = setup_udp_server()
   tcp_sock = setup_tcp_sock()
+
+  tcp_thread = threading.Thread(target=accept_clients, args=(tcp_sock,))
+  tcp_thread.start()
+
 
   while running:
     # receive from UDP two numbers from 0 and 100
@@ -49,12 +84,22 @@ if __name__ == "__main__":
 
     points.append((numb1, numb2))
     inside = get_inside_points(points)
+    oldapprox = approx
     approx = get_pi_approx(inside, len(points))
 
-    print(approx)
-    # numb = int.from_bytes(buff, byteorder='little')
-    # numb = convert_numb(numb)
-    # print(numb)
+    print(f"Current approximation: {approx}")
 
+    if abs(oldapprox - approx) < e and approx < 4:
+      # print("Approximation is stable, closing server")
+      running = False
+
+
+ 
+  print("Closing sockets")
   udp_sock.close()
   tcp_sock.close()
+
+
+# numb = int.from_bytes(buff, byteorder='little')
+# numb = convert_numb(numb)
+# print(numb)
