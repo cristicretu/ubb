@@ -45,6 +45,15 @@ int main() {
   }
 
   while (running) {
+    float pi_approx;
+    int bytes_received = recv(tcp_sock, &pi_approx, sizeof(float), 0);
+    if (bytes_received <= 0) {
+      printf("Server disconnected. Shutting down...\n");
+      running = 0;
+      break;
+    }
+    printf("[SERVER]: I have PI approximation at %.6f\n", pi_approx);
+
     int numb1 = rand() % 100;
     int numb2 = rand() % 100;
 
@@ -54,24 +63,15 @@ int main() {
     if (-1 == sendto(udp_sock, buff, sizeof(buff), 0,
                      (struct sockaddr*)&udp_addr, sizeof(udp_addr))) {
       perror("error on send to udp");
-      close(udp_sock);
-      close(tcp_sock);
+      running = 0;
       break;
     }
     printf("Sent %d and %d\n", numb1, numb2);
 
-    // receive from tcp
-
-    float pi_approx;
-    int bytes_received = recv(tcp_sock, &pi_approx, sizeof(float), 0);
-    if (bytes_received > 0) {
-      printf("[SERVER]: I have PI approximation at %.6f\n", pi_approx);
-    } else {
-        }
-
     usleep(9000);
   }
 
+  printf("Client shutting down...\n");
   close(udp_sock);
   close(tcp_sock);
 
