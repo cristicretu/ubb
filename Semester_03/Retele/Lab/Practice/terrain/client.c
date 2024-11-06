@@ -33,9 +33,16 @@ int main() {
 
   udp_addr.sin_port = htons(port_udp);
   udp_addr.sin_family = AF_INET;
-  udp_addr.sin_addr.s_addr = inet_addr(host);
+  udp_addr.sin_addr.s_addr = INADDR_ANY;
 
-    tcp_addr.sin_port = htons(port_tcp);
+  if (-1 == bind(udp_sock, (struct sockaddr*)&udp_addr, sizeof(udp_addr))) {
+    perror("can't bind to udp");
+    close(udp_sock);
+    close(tcp_sock);
+    exit(1);
+  }
+
+  tcp_addr.sin_port = htons(port_tcp);
   tcp_addr.sin_family = AF_INET;
   tcp_addr.sin_addr.s_addr = INADDR_ANY;
 
