@@ -31,15 +31,14 @@ def setup_udp():
   udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
   udp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
   udp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-
-  # udp_sock.bind((host, port_udp))
+  
   print(f"UDP Running on {host}:{port_udp}")
   return udp_sock
 
 def brodcast_arr(udp_sock):
   arr_str = ''.join(arr)
-  print("Brodcasting the arr...")
-  udp_sock.sendto(arr_str.encode('utf-8'), (host, port_udp))
+  print("Broadcasting the arr...")
+  udp_sock.sendto(arr_str.encode('utf-8'), ('<broadcast>', port_udp))
 
 def handle_clients(client_sock, addr):
     print(f"New connection from {addr}")
