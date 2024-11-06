@@ -125,7 +125,21 @@ int main() {
     buff[recv_len] = '\0';
 
     printf("Received from broadcast: %s\n", buff);
-    usleep(10000);  // Sleep for 10ms
+
+    int has_unexplored = 0;
+    for (int i = 0; i < N; i++) {
+      if (buff[i] == 'u') {
+        has_unexplored = 1;
+        break;
+      }
+    }
+
+    if (!has_unexplored) {
+      printf("Array fully explored, shutting down...\n");
+      break;
+    }
+
+    usleep(1000);  // Sleep for 10ms
   }
 
   close(udp_sock);
