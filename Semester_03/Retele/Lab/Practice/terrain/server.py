@@ -5,9 +5,11 @@ import time
 port_udp = 7777
 port_tcp = 1234
 host = 'localhost'
-N = 5
+N = 30
 
 arr = ["u"] * N
+arr_lock = threading.Lock() 
+
 
 def is_explored(arr):
   return not 'u' in arr
@@ -40,9 +42,32 @@ def brodcast_arr(udp_sock):
   udp_sock.sendto(arr_str.encode('utf-8'), (host, port_udp))
 
 def handle_clients(client_sock, addr):
-  print(f"New connection from {addr}")
+    print(f"New connection from {addr}")
+    while True:
+        with arr_lock:
+           if is_explored(arr):
+              break
 
-  client_sock.close()
+        try:
+            buff = client_sock.recv(3)
+            if not buff or len(buff) != 3: 
+                break
+                
+            index = (buff[0] << 8) | buff[1]
+            char = chr(buff[2])
+            
+            print(f"Received from {addr} - Index: {index}, Char: {char}")
+            
+            if 0 <= index < N:
+                with arr_lock:  # Thread-safe array update
+                    arr[index] = char
+        except Exception as e:
+            print(f"Error handling client {addr}: {e}")
+            break
+    
+    print(f"Client {addr} disconnected")
+    client_sock.close()
+
 
 def accept_clients(tcp_sock):
   while not is_explored(arr):
@@ -62,7 +87,7 @@ if __name__ == "__main__":
 
   while not is_explored(arr):
     brodcast_arr(udp_sock)
-    time.sleep(2)
+    time.sleep(1)
 
   udp_sock.close()
   tcp_sock.close()
