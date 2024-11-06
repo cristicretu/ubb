@@ -59,7 +59,7 @@ def handle_clients(client_sock, addr):
             print(f"Received from {addr} - Index: {index}, Char: {char}")
             
             if 0 <= index < N:
-                with arr_lock:  # Thread-safe array update
+                with arr_lock:  
                     arr[index] = char
         except Exception as e:
             print(f"Error handling client {addr}: {e}")
@@ -70,24 +70,35 @@ def handle_clients(client_sock, addr):
 
 
 def accept_clients(tcp_sock):
-  while not is_explored(arr):
-    try:
-      client_sock, addr = tcp_sock.accept()
-      threading.Thread(target=handle_clients, args=(client_sock, addr)).start()
-    except:
-      break
+    while True:
+        try:
+            with arr_lock: 
+                if is_explored(arr):
+                    break
+            client_sock, addr = tcp_sock.accept()
+            threading.Thread(target=handle_clients, args=(client_sock, addr)).start()
+        except socket.error:  
+            break
 
 
 if __name__ == "__main__":
-  udp_sock = setup_udp()
-  tcp_sock = setup_tcp()
+    udp_sock = setup_udp()
+    tcp_sock = setup_tcp()
 
-  thrd = threading.Thread(target=accept_clients, args=(tcp_sock,))
-  thrd.start()
+    thrd = threading.Thread(target=accept_clients, args=(tcp_sock,))
+    thrd.start()
 
-  while not is_explored(arr):
-    brodcast_arr(udp_sock)
-    time.sleep(1)
+    try:
+        while not is_explored(arr):
+            brodcast_arr(udp_sock)
+            time.sleep(0.5)
 
-  udp_sock.close()
-  tcp_sock.close()
+        brodcast_arr(udp_sock) 
+        tcp_sock.close()  
+        thrd.join(timeout=1) 
+    except KeyboardInterrupt:
+        tcp_sock.close()
+        thrd.join(timeout=1)
+    finally:
+        print("Array fully explored, shutting down...")
+        udp_sock.close()
