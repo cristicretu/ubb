@@ -20,7 +20,7 @@ price_lock = threading.Lock()
 last_update = 0
 
 def get_running_condition():
-    return True
+    return last_update == 0  or time.time() - last_update < 1
 
 def setup_tcp():
     tcp_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -49,7 +49,17 @@ def broadcast_price(udp_sock):
 
 
 def handle_client(client_sock, addr):
+    global current_price
     print(f"New connection from {addr}")
+    while get_running_condition():
+        buff = client_sock.recv(4).strip(b'\x00').decode('utf-8')
+        buff_int = int(buff)
+
+        with price_lock:
+            if buff_int > current_price:
+                current_price = buff_int
+                last_update = time.time()
+
 
 def clients_pool(tcp_sock):
     while get_running_condition(): 
@@ -63,6 +73,7 @@ def clients_pool(tcp_sock):
 if __name__ == "__main__":
      udp_sock = setup_udp()
      tcp_sock = setup_tcp()
+
 
      thrd = threading.Thread(target=clients_pool, args=(tcp_sock,))
      thrd.start()
