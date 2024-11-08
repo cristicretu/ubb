@@ -42,9 +42,9 @@ public class LogicExp implements IExp {
         boolean n1, n2;
         n1 = Boolean.parseBoolean(b1.toString());
         n2 = Boolean.parseBoolean(b2.toString());
-        if (operation.equals("and")) {
+        if (operation.equals("&&")) {
           return new BoolValue(n1 && n2);
-        } else if (operation.equals("or")) {
+        } else if (operation.equals("||")) {
           return new BoolValue(n1 || n2);
         } else {
           throw new MyException("Invalid logical operator");
