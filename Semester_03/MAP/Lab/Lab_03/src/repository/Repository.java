@@ -21,6 +21,12 @@ public class Repository implements IRepository {
     prgList.add(prg);
   }
 
+  public Repository(PrgState prg, String logFilePath) {
+    this.prgList = new ArrayList<>();
+    this.prgList.add(prg);
+    this.logFilePath = logFilePath;
+  }
+
   public void setLogFilePath() {
     Scanner scanner = new Scanner(System.in);
     System.out.println("Enter the log file path: ");
