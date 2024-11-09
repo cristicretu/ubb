@@ -15,6 +15,10 @@ public class StringValue implements IValue {
     return new StringType();
   }
 
+  public String getValue() {
+    return value;
+  }
+
   @Override
   public IValue deepCopy() {
     return new StringValue(value);
@@ -23,5 +27,10 @@ public class StringValue implements IValue {
   @Override
   public boolean equals(IValue other) {
     return other instanceof StringValue && ((StringValue) other).value.equals(value);
+  }
+
+  @Override
+  public String toString() {
+    return value;
   }
 }
