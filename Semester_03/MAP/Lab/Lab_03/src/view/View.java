@@ -7,13 +7,17 @@ import model.exp.ArithExp;
 import model.exp.ConstantValue;
 import model.exp.VariableExp;
 import model.statement.AssignStmt;
+import model.statement.CloseRFile;
 import model.statement.CompStmt;
 import model.statement.IStmt;
 import model.statement.IfStmt;
+import model.statement.OpenRFile;
 import model.statement.PrintStmt;
+import model.statement.ReadFile;
 import model.statement.VarDeclStmt;
 import model.type.BoolType;
 import model.type.IntType;
+import model.type.StringType;
 import model.value.BoolValue;
 import model.value.IValue;
 import model.value.IntValue;
@@ -70,6 +74,21 @@ public class View {
                     new PrintStmt(new VariableExp("v"))))));
   }
 
+  private static IStmt createExample4() {
+    // string varf; varf = "test.in"; openRFile(varf); int varc; readFile(varf,
+    // varc); Print(varc); readFile(varf, varc); Print(varc); closeRFile(varf);
+    return new CompStmt(
+        new VarDeclStmt("varf", new StringType()),
+        new CompStmt(new AssignStmt("varf", new ConstantValue(new StringValue("test.in"))),
+            new CompStmt(new OpenRFile(new VariableExp("varf")),
+                new CompStmt(new VarDeclStmt("varc", new IntType()),
+                    new CompStmt(new ReadFile(new VariableExp("varf"), "varc"),
+                        new CompStmt(new PrintStmt(new VariableExp("varc")),
+                            new CompStmt(new ReadFile(new VariableExp("varf"), "varc"),
+                                new CompStmt(new PrintStmt(new VariableExp("varc")),
+                                    new CloseRFile(new VariableExp("varf"))))))))));
+  }
+
   public static void main(String[] args) {
     Scanner scanner = new Scanner(System.in);
     IStmt selectedProgram = null;
@@ -78,7 +97,9 @@ public class View {
       System.out.println("1. int v; v=2; Print(v)");
       System.out.println("2. int a; int b; a=2+3*5; b=a+1; Print(b)");
       System.out.println("3. bool a; int v; a=true; (If a Then v=2 Else v=3); Print(v)");
-      System.out.println("\nSelect the program to execute: (1-3)");
+      System.out.println(
+          "4. string varf; varf = \"test.in\"; openRFile(varf); int varc; readFile(varf, varc); Print(varc); readFile(varf, varc); Print(varc); closeRFile(varf);");
+      System.out.println("\nSelect the program to execute: (1-4)");
 
       try {
         int choice = scanner.nextInt();
@@ -91,6 +112,9 @@ public class View {
             break;
           case 3:
             selectedProgram = createExample3();
+            break;
+          case 4:
+            selectedProgram = createExample4();
             break;
           default:
             System.out.println("Invalid choice!");

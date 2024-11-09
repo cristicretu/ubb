@@ -18,4 +18,9 @@ public class StringType implements IType {
   public IValue defaultValue() {
     return new StringValue("");
   }
+
+  @Override
+  public String toString() {
+    return "String";
+  }
 }
