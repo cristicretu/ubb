@@ -1,7 +1,7 @@
 package view;
 
-import controller.Controller;
-import exceptions.MyException;
+import view.command.ExitCommand;
+import view.command.RunExample;
 import model.PrgState;
 import model.exp.ArithExp;
 import model.exp.ConstantValue;
@@ -19,7 +19,6 @@ import model.type.BoolType;
 import model.type.IntType;
 import model.type.StringType;
 import model.value.BoolValue;
-import model.value.IValue;
 import model.value.IntValue;
 import model.value.StringValue;
 import repository.IRepository;
@@ -30,10 +29,10 @@ import utils.IStack;
 import utils.MyDict;
 import utils.MyList;
 import utils.MyStack;
-
+import model.value.IValue;
 import java.io.BufferedReader;
-import java.util.InputMismatchException;
-import java.util.Scanner;
+
+import controller.Controller;
 
 public class View {
   private static IStmt createExample1() {
@@ -89,57 +88,30 @@ public class View {
                                     new CloseRFile(new VariableExp("varf"))))))))));
   }
 
-  public static void main(String[] args) {
-    Scanner scanner = new Scanner(System.in);
-    IStmt selectedProgram = null;
-
-    while (selectedProgram == null) {
-      System.out.println("1. int v; v=2; Print(v)");
-      System.out.println("2. int a; int b; a=2+3*5; b=a+1; Print(b)");
-      System.out.println("3. bool a; int v; a=true; (If a Then v=2 Else v=3); Print(v)");
-      System.out.println(
-          "4. string varf; varf = \"test.in\"; openRFile(varf); int varc; readFile(varf, varc); Print(varc); readFile(varf, varc); Print(varc); closeRFile(varf);");
-      System.out.println("\nSelect the program to execute: (1-4)");
-
-      try {
-        int choice = scanner.nextInt();
-        switch (choice) {
-          case 1:
-            selectedProgram = createExample1();
-            break;
-          case 2:
-            selectedProgram = createExample2();
-            break;
-          case 3:
-            selectedProgram = createExample3();
-            break;
-          case 4:
-            selectedProgram = createExample4();
-            break;
-          default:
-            System.out.println("Invalid choice!");
-        }
-      } catch (InputMismatchException e) {
-        System.out.println("Please enter a valid number!");
-        scanner.nextLine();
-      }
-    }
-
-    IStack<IStmt> stk = new MyStack<>();
+  private static PrgState createPrgState(IStmt originalProgram) {
+    IStack<IStmt> exeStack = new MyStack<>();
     IDict<String, IValue> symTable = new MyDict<>();
     IList<IValue> output = new MyList<>();
     IDict<StringValue, BufferedReader> fileTable = new MyDict<>();
 
-    PrgState prg = new PrgState(stk, symTable, output, selectedProgram, fileTable);
-    IRepository repo = new Repository(prg);
-    Controller ctrl = new Controller(repo);
+    return new PrgState(exeStack, symTable, output, originalProgram, fileTable);
+  }
 
-    try {
-      ctrl.allSteps();
-    } catch (MyException e) {
-      System.out.println(e.getMessage());
-    }
+  private static Controller createController(IStmt stmt, String logFilePath) {
+    PrgState prgState = createPrgState(stmt);
+    IRepository repo = new Repository(prgState, logFilePath);
+    return new Controller(repo);
+  }
 
-    scanner.close();
+  public static void main(String[] args) {
+    TextMenu menu = new TextMenu();
+
+    menu.addCommand(new RunExample("1", createExample1(), createController(createExample1(), "log1.txt")));
+    menu.addCommand(new RunExample("2", createExample2(), createController(createExample2(), "log2.txt")));
+    menu.addCommand(new RunExample("3", createExample3(), createController(createExample3(), "log3.txt")));
+    menu.addCommand(new RunExample("4", createExample4(), createController(createExample4(), "log4.txt")));
+    menu.addCommand(new ExitCommand("0", "Exit"));
+
+    menu.show();
   }
 }
