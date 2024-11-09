@@ -5,6 +5,9 @@ import utils.IDict;
 import utils.IList;
 import model.statement.IStmt;
 import model.value.IValue;
+import model.value.StringValue;
+
+import java.io.BufferedReader;
 
 public class PrgState {
   private IStack<IStmt> exeStack;
@@ -27,15 +30,14 @@ public class PrgState {
 
   private IStmt originalProgram;
 
-  // file table
-  private IDict<Integer, String> fileTable;
+  private IDict<StringValue, BufferedReader> fileTable;
 
-  public IDict<Integer, String> getFileTable() {
+  public IDict<StringValue, BufferedReader> getFileTable() {
     return fileTable;
   }
 
   public PrgState(IStack<IStmt> exeStack, IDict<String, IValue> symTable, IList<IValue> output, IStmt originalProgram,
-      IDict<Integer, String> fileTable) {
+      IDict<StringValue, BufferedReader> fileTable) {
     this.exeStack = exeStack;
     this.symTable = symTable;
     this.output = output;
