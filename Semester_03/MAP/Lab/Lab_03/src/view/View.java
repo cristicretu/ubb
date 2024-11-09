@@ -17,6 +17,7 @@ import model.type.IntType;
 import model.value.BoolValue;
 import model.value.IValue;
 import model.value.IntValue;
+import model.value.StringValue;
 import repository.IRepository;
 import repository.Repository;
 import utils.IDict;
@@ -25,6 +26,8 @@ import utils.IStack;
 import utils.MyDict;
 import utils.MyList;
 import utils.MyStack;
+
+import java.io.BufferedReader;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -101,7 +104,7 @@ public class View {
     IStack<IStmt> stk = new MyStack<>();
     IDict<String, IValue> symTable = new MyDict<>();
     IList<IValue> output = new MyList<>();
-    IDict<Integer, String> fileTable = new MyDict<>();
+    IDict<StringValue, BufferedReader> fileTable = new MyDict<>();
 
     PrgState prg = new PrgState(stk, symTable, output, selectedProgram, fileTable);
     IRepository repo = new Repository(prg);
