@@ -3,9 +3,9 @@ import threading
 import time
 import struct
 
-host = 'localhost'
+host = '172.20.10.14'
 port_udp = 1234
-port_tcp = 7777
+port_tcp = 1234
 running = True
 e = 0.009
 
