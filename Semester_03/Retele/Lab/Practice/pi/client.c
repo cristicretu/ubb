@@ -9,9 +9,9 @@
 #include <time.h>
 #include <unistd.h>
 
-#define host "127.0.0.1"
+#define host "172.20.10.7"
 #define port_udp 1234
-#define port_tcp 7777
+#define port_tcp 1234
 
 int running = 1;
 
