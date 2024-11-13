@@ -4,7 +4,7 @@ import time
 
 port_udp = 7777
 port_tcp = 1234
-host = '192.168.1.138'
+host = '172.20.10.14'
 N = 30
 
 arr = ["u"] * N
@@ -38,7 +38,7 @@ def setup_udp():
 def brodcast_arr(udp_sock):
   arr_str = ''.join(arr)
   print("Broadcasting the arr...")
-  udp_sock.sendto(arr_str.encode('utf-8'), ('192.168.1.255', port_udp))
+  udp_sock.sendto(arr_str.encode('utf-8'), ('172.20.10.15', port_udp))
 
 def handle_clients(client_sock, addr):
     print(f"New connection from {addr}")

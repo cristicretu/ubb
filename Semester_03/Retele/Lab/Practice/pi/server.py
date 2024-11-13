@@ -3,7 +3,7 @@ import threading
 import time
 import struct
 
-host = '172.20.10.7'
+host = '172.20.10.14'
 port_udp = 1234
 port_tcp = 1234
 running = True
@@ -84,7 +84,7 @@ if __name__ == "__main__":
         oldapprox = approx
         approx = get_pi_approx(inside, len(points))
 
-        if abs(oldapprox - approx) < e and approx > 0:
+        if abs(oldapprox - approx) < e and approx > 0 and approx < 4:
             running = False
             print(f"Apprx is stable at {approx}")
 

@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 import view.command.Command;
+import view.command.RunExample;
 
 public class TextMenu {
   private Map<String, Command> commands;
@@ -19,7 +20,11 @@ public class TextMenu {
 
   public void printMenu() {
     for (Command c : commands.values()) {
-      String line = String.format("%4s : %s", c.getKey(), c.getDescription());
+      String status = "";
+      if (c instanceof RunExample) {
+        status = ((RunExample) c).hasBeenExecuted() ? " (executed)" : " (not executed)";
+      }
+      String line = String.format("%4s : %s%s", c.getKey(), c.getDescription(), status);
       System.out.println(line);
     }
   }
