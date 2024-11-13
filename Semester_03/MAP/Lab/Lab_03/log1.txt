@@ -40,10 +40,3 @@ exeStack=[],
  originalProgram=(Int v;(v = 2;print(v))),
  fileTable={}
 }
-PrgState{
-exeStack=[],
- symTable={v=2},
- output=[2],
- originalProgram=(Int v;(v = 2;print(v))),
- fileTable={}
-}

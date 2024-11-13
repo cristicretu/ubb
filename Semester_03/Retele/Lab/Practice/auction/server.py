@@ -13,7 +13,7 @@ import time
 
 port_udp = 7777
 port_tcp = 1234
-host = '0.0.0.0'
+host = 'localhost'
 
 current_price =  random.randint(50, 100)
 price_lock = threading.Lock()

@@ -1,0 +1,70 @@
+PrgState{
+exeStack=[(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b)))))],
+ symTable={},
+ output=[],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={}
+}
+PrgState{
+exeStack=[Int a, (Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))],
+ symTable={},
+ output=[],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={}
+}
+PrgState{
+exeStack=[(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))],
+ symTable={a=0},
+ output=[],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={}
+}
+PrgState{
+exeStack=[Int b, (a = 2 + 3 * 5;(b = a + 1;print(b)))],
+ symTable={a=0},
+ output=[],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={}
+}
+PrgState{
+exeStack=[(a = 2 + 3 * 5;(b = a + 1;print(b)))],
+ symTable={a=0, b=0},
+ output=[],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={}
+}
+PrgState{
+exeStack=[a = 2 + 3 * 5, (b = a + 1;print(b))],
+ symTable={a=0, b=0},
+ output=[],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={}
+}
+PrgState{
+exeStack=[(b = a + 1;print(b))],
+ symTable={a=17, b=0},
+ output=[],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={}
+}
+PrgState{
+exeStack=[b = a + 1, print(b)],
+ symTable={a=17, b=0},
+ output=[],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={}
+}
+PrgState{
+exeStack=[print(b)],
+ symTable={a=17, b=18},
+ output=[],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={}
+}
+PrgState{
+exeStack=[],
+ symTable={a=17, b=18},
+ output=[18],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={}
+}
