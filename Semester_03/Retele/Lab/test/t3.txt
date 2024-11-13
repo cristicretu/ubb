@@ -1,0 +1,4 @@
+===The Confused Calculator===
+Description: Clients send simple math problems (e.g., "5 + 3","9 / 2", "2 * 18", etc), and the server responds with the answer.
+Twist: The server occasionally "messes up" the calculation on purpose, responding with a ridiculous answer like "5 + 3 = banana" or "5 + 3 = 15 (trust me, I did the math)."
+Challenge: Clients have to figure out when the server is giving the correct answer or trolling them.
