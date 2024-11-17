@@ -1,0 +1,5 @@
+s(l1...ln, S) = {
+  [], n = 0, or S = 0
+  l1 U s(l2...ln), if sum(l1l2...ln % n) = 0
+  s(l2...ln) otherwise
+}
