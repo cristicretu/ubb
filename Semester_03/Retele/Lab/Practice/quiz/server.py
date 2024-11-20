@@ -6,6 +6,7 @@ import random
 
 PORT = 7777
 TCP_PORT = 1234
+host = 'localhost'
 
 def make_expression():
     return f"{random.randint(1, 10)}{random.choice(['+', '-', '*', '/'])}{random.randint(1, 10)}"
@@ -19,7 +20,7 @@ def handle_student(conn, addr, expressions, answers):
             # Use select to check if data is available
             ready_to_read, _, _ = select.select([conn], [], [], 5)  # 5-second timeout
             if ready_to_read:
-                data = conn.recv(1024).decode('utf-8').strip()
+                data = conn.recv(4).decode('utf-8').strip()
                 if not data:
                     break
                 
@@ -51,7 +52,7 @@ def main():
     # Create TCP socket for student connections
     tcp_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     tcp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    tcp_sock.bind(('0.0.0.0', TCP_PORT))
+    tcp_sock.bind((host, TCP_PORT))
     tcp_sock.listen(5)
     tcp_sock.setblocking(False)
 
