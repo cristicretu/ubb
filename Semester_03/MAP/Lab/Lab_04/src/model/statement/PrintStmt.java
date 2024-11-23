@@ -17,7 +17,7 @@ public class PrintStmt implements IStmt {
   public PrgState execute(PrgState prg) throws MyException {
     IValue val;
     try {
-      val = this.exp.eval(prg.getSymTable());
+      val = this.exp.eval(prg.getSymTable(), prg.getHeap());
     } catch (ExpressionException | MyException e) {
       throw new MyException(e.getMessage());
     }

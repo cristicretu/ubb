@@ -41,7 +41,7 @@ public class ReadFile implements IStmt {
 
     IValue fileNameValue;
     try {
-      fileNameValue = exp.eval(prg.getSymTable());
+      fileNameValue = exp.eval(prg.getSymTable(), prg.getHeap());
     } catch (ExpressionException | MyException e) {
       throw new MyException(e.getMessage());
     }

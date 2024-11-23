@@ -13,7 +13,8 @@ public class VariableExp implements IExp {
   }
 
   @Override
-  public IValue eval(IDict<String, IValue> symTable) throws MyException {
+  public IValue eval(IDict<String, IValue> symTable, IDict<Integer, IValue> heap)
+      throws MyException {
     if (symTable.isDefined(this.id)) {
       try {
         return symTable.get(this.id);
