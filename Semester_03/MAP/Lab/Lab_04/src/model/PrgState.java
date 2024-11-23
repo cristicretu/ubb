@@ -2,6 +2,7 @@ package model;
 
 import utils.IStack;
 import utils.IDict;
+import utils.IHeap;
 import utils.IList;
 import model.statement.IStmt;
 import model.value.IValue;
@@ -36,14 +37,14 @@ public class PrgState {
     return fileTable;
   }
 
-  private IDict<Integer, IValue> heap;
+  private IHeap<Integer, IValue> heap;
 
-  public IDict<Integer, IValue> getHeap() {
+  public IHeap<Integer, IValue> getHeap() {
     return heap;
   }
 
   public PrgState(IStack<IStmt> exeStack, IDict<String, IValue> symTable, IList<IValue> output, IStmt originalProgram,
-      IDict<StringValue, BufferedReader> fileTable, IDict<Integer, IValue> heap) {
+      IDict<StringValue, BufferedReader> fileTable, IHeap<Integer, IValue> heap) {
     this.exeStack = exeStack;
     this.symTable = symTable;
     this.output = output;

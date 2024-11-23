@@ -6,6 +6,7 @@ import model.type.BoolType;
 import model.value.BoolValue;
 import model.value.IValue;
 import utils.IDict;
+import utils.IHeap;
 
 public class LogicExp implements IExp {
   private IExp exp1;
@@ -19,7 +20,7 @@ public class LogicExp implements IExp {
   }
 
   @Override
-  public IValue eval(IDict<String, IValue> symTable, IDict<Integer, IValue> heap)
+  public IValue eval(IDict<String, IValue> symTable, IHeap<Integer, IValue> heap)
       throws MyException {
     IValue v1, v2;
     try {

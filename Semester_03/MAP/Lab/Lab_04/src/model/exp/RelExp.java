@@ -7,6 +7,7 @@ import model.value.BoolValue;
 import model.value.IValue;
 import model.value.IntValue;
 import utils.IDict;
+import utils.IHeap;
 
 public class RelExp implements IExp {
   private IExp exp1;
@@ -20,7 +21,7 @@ public class RelExp implements IExp {
   }
 
   @Override
-  public IValue eval(IDict<String, IValue> symTable, IDict<Integer, IValue> heap)
+  public IValue eval(IDict<String, IValue> symTable, IHeap<Integer, IValue> heap)
       throws MyException, ExpressionException {
     IValue v1, v2;
     v1 = exp1.eval(symTable, heap);

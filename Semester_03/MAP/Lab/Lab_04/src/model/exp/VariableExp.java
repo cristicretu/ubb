@@ -4,6 +4,7 @@ import exceptions.DictionaryException;
 import exceptions.MyException;
 import model.value.IValue;
 import utils.IDict;
+import utils.IHeap;
 
 public class VariableExp implements IExp {
   private String id;
@@ -13,7 +14,7 @@ public class VariableExp implements IExp {
   }
 
   @Override
-  public IValue eval(IDict<String, IValue> symTable, IDict<Integer, IValue> heap)
+  public IValue eval(IDict<String, IValue> symTable, IHeap<Integer, IValue> heap)
       throws MyException {
     if (symTable.isDefined(this.id)) {
       try {
