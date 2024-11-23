@@ -6,6 +6,7 @@ import model.type.IntType;
 import model.value.IValue;
 import model.value.IntValue;
 import utils.IDict;
+import utils.IHeap;
 
 public class ArithExp implements IExp {
   private IExp exp1;
@@ -19,7 +20,7 @@ public class ArithExp implements IExp {
   }
 
   @Override
-  public IValue eval(IDict<String, IValue> symTable, IDict<Integer, IValue> heap)
+  public IValue eval(IDict<String, IValue> symTable, IHeap<Integer, IValue> heap)
       throws MyException, ExpressionException {
     IValue v1, v2;
     v1 = exp1.eval(symTable, heap);
