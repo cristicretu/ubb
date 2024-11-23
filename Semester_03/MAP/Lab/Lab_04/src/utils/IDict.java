@@ -1,5 +1,7 @@
 package utils;
 
+import java.util.List;
+
 import exceptions.DictionaryException;
 
 public interface IDict<K, V> {
@@ -11,4 +13,5 @@ public interface IDict<K, V> {
 
   void update(K key, V value) throws DictionaryException;
 
+  List<V> getValues();
 }

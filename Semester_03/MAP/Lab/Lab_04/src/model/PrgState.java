@@ -6,9 +6,12 @@ import utils.IHeap;
 import utils.IList;
 import model.statement.IStmt;
 import model.value.IValue;
+import model.value.RefValue;
 import model.value.StringValue;
 
 import java.io.BufferedReader;
+import java.util.HashSet;
+import java.util.Set;
 
 public class PrgState {
   private IStack<IStmt> exeStack;
@@ -60,5 +63,22 @@ public class PrgState {
     return "PrgState{\n" + "exeStack=" + exeStack.getList() + ",\n symTable=" + symTable + ",\n output=" + output
         + ",\n originalProgram="
         + originalProgram + ",\n fileTable=" + fileTable + ",\n heap=" + heap + "\n}";
+  }
+
+  public Set<Integer> getUsedAddresses() {
+    Set<Integer> usedAddresses = new HashSet<>();
+    for (IValue value : this.symTable.getValues()) {
+      if (value instanceof RefValue) {
+        usedAddresses.add(((RefValue) value).getAddress());
+      }
+    }
+
+    for (IValue value : this.heap.getValues()) {
+      if (value instanceof RefValue) {
+        usedAddresses.add(((RefValue) value).getAddress());
+      }
+    }
+
+    return usedAddresses;
   }
 }
