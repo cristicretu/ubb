@@ -36,14 +36,20 @@ public class PrgState {
     return fileTable;
   }
 
+  private IDict<Integer, IValue> heap;
+
+  public IDict<Integer, IValue> getHeap() {
+    return heap;
+  }
+
   public PrgState(IStack<IStmt> exeStack, IDict<String, IValue> symTable, IList<IValue> output, IStmt originalProgram,
-      IDict<StringValue, BufferedReader> fileTable) {
+      IDict<StringValue, BufferedReader> fileTable, IDict<Integer, IValue> heap) {
     this.exeStack = exeStack;
     this.symTable = symTable;
     this.output = output;
     this.originalProgram = originalProgram.deepCopy();
     this.fileTable = fileTable;
-
+    this.heap = heap;
     exeStack.push(originalProgram);
   }
 
@@ -51,6 +57,6 @@ public class PrgState {
   public String toString() {
     return "PrgState{\n" + "exeStack=" + exeStack.getList() + ",\n symTable=" + symTable + ",\n output=" + output
         + ",\n originalProgram="
-        + originalProgram + ",\n fileTable=" + fileTable + "\n}";
+        + originalProgram + ",\n fileTable=" + fileTable + ",\n heap=" + heap + "\n}";
   }
 }
