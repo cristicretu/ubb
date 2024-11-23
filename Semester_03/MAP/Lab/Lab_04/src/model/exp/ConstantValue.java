@@ -12,7 +12,8 @@ public class ConstantValue implements IExp {
   }
 
   @Override
-  public IValue eval(IDict<String, IValue> symTable) throws MyException {
+  public IValue eval(IDict<String, IValue> symTable, IDict<Integer, IValue> heap)
+      throws MyException {
     return this.value;
   }
 

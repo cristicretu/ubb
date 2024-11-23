@@ -19,11 +19,12 @@ public class ArithExp implements IExp {
   }
 
   @Override
-  public IValue eval(IDict<String, IValue> symTable) throws MyException, ExpressionException {
+  public IValue eval(IDict<String, IValue> symTable, IDict<Integer, IValue> heap)
+      throws MyException, ExpressionException {
     IValue v1, v2;
-    v1 = exp1.eval(symTable);
+    v1 = exp1.eval(symTable, heap);
     if (v1.getType().equals(new IntType())) {
-      v2 = exp2.eval(symTable);
+      v2 = exp2.eval(symTable, heap);
       if (v2.getType().equals(new IntType())) {
         IntValue i1 = (IntValue) v1;
         IntValue i2 = (IntValue) v2;

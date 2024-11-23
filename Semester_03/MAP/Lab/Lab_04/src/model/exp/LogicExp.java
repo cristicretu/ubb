@@ -19,10 +19,11 @@ public class LogicExp implements IExp {
   }
 
   @Override
-  public IValue eval(IDict<String, IValue> symTable) throws MyException {
+  public IValue eval(IDict<String, IValue> symTable, IDict<Integer, IValue> heap)
+      throws MyException {
     IValue v1, v2;
     try {
-      v1 = exp1.eval(symTable);
+      v1 = exp1.eval(symTable, heap);
     } catch (ExpressionException e) {
       throw new MyException(e.getMessage());
     } catch (MyException e) {
@@ -30,7 +31,7 @@ public class LogicExp implements IExp {
     }
     if (v1.getType().equals(new BoolType())) {
       try {
-        v2 = exp2.eval(symTable);
+        v2 = exp2.eval(symTable, heap);
       } catch (ExpressionException e) {
         throw new MyException(e.getMessage());
       } catch (MyException e) {

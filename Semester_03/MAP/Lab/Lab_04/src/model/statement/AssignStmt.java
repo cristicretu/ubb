@@ -23,7 +23,7 @@ public class AssignStmt implements IStmt {
     if (symTable.isDefined(id)) {
       IValue val;
       try {
-        val = this.exp.eval(symTable);
+        val = this.exp.eval(symTable, prg.getHeap());
       } catch (ExpressionException | MyException e) {
         throw new MyException(e.getMessage());
       }

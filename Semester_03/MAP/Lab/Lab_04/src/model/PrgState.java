@@ -50,6 +50,7 @@ public class PrgState {
     this.originalProgram = originalProgram.deepCopy();
     this.fileTable = fileTable;
     this.heap = heap;
+
     exeStack.push(originalProgram);
   }
 

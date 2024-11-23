@@ -1,0 +1,50 @@
+package model.statement;
+
+import exceptions.MyException;
+import model.PrgState;
+import model.exp.IExp;
+import model.type.IType;
+import model.type.RefType;
+import model.value.IValue;
+import model.value.RefValue;
+
+public class NewStmt implements IStmt {
+  private String varName;
+  private IExp expression;
+
+  public NewStmt(String varName, IExp expression) {
+    this.varName = varName;
+    this.expression = expression;
+  }
+
+  @Override
+  public PrgState execute(PrgState prg) throws MyException {
+    if (!prg.getSymTable().isDefined(varName)) {
+      throw new MyException("Variable " + varName + " not declared");
+    }
+    IType type = prg.getSymTable().get(varName).getType();
+    if (!(type instanceof RefType)) {
+      throw new MyException("Variable " + varName + " is not of type RefType");
+    }
+
+    IValue value = expression.eval(prg.getSymTable(), prg.getHeap());
+    // compare the type of the value to the location type
+    if (!value.getType().equals(((RefType) type).getInner())) {
+      throw new MyException("Type mismatch");
+    }
+    Integer newAddress = prg.getHeap().getFreeValue();
+    prg.getHeap().put(newAddress, value);
+    prg.getSymTable().put(varName, new RefValue(newAddress, value.getType()));
+    return null;
+  }
+
+  @Override
+  public IStmt deepCopy() {
+    return new NewStmt(varName, expression.deepCopy());
+  }
+
+  @Override
+  public String toString() {
+    return "NewStmt(" + varName + ", " + expression + ")";
+  }
+}

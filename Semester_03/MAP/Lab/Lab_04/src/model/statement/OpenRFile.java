@@ -23,7 +23,7 @@ public class OpenRFile implements IStmt {
   public PrgState execute(PrgState prg) throws MyException {
     IValue value;
     try {
-      value = exp.eval(prg.getSymTable());
+      value = exp.eval(prg.getSymTable(), prg.getHeap());
     } catch (ExpressionException | MyException e) {
       throw new MyException(e.getMessage());
     }
