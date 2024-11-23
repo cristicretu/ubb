@@ -1,11 +1,14 @@
 package controller;
 
 import repository.IRepository;
+import utils.IHeap;
 import utils.IStack;
+import utils.MyHeap;
 import exceptions.MyException;
 import exceptions.StackException;
 import model.PrgState;
 import model.statement.IStmt;
+import model.value.IValue;
 
 public class Controller {
   private IRepository repo;
@@ -35,6 +38,9 @@ public class Controller {
     while (!currentPrg.getExeStack().isEmpty()) {
       oneStep(currentPrg);
       repo.logPrgStateExec(currentPrg);
+
+      IHeap<Integer, IValue> heap = currentPrg.getHeap();
+      heap.setHeap(heap.safeGarbageCollector(currentPrg.getUsedAddresses(), heap.getHeap()));
     }
   }
 }

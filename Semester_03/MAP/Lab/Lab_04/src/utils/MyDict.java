@@ -5,6 +5,8 @@ import java.util.Map;
 import exceptions.DictionaryException;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MyDict<K, V> implements IDict<K, V> {
   private Map<K, V> dict;
@@ -42,6 +44,11 @@ public class MyDict<K, V> implements IDict<K, V> {
       throw new DictionaryException("Key not found in dictionary: " + key);
     }
     dict.put(key, value);
+  }
+
+  @Override
+  public List<V> getValues() {
+    return new LinkedList<V>(dict.values());
   }
 
 }
