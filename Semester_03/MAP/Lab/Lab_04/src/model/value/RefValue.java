@@ -30,4 +30,9 @@ public class RefValue implements IValue {
   public boolean equals(IValue other) {
     return other instanceof RefValue && address == ((RefValue) other).address;
   }
+
+  @Override
+  public String toString() {
+    return "RefValue(" + address + ", " + locationType.toString() + ")";
+  }
 }
