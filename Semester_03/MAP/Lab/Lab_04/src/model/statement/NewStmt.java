@@ -40,8 +40,11 @@ public class NewStmt implements IStmt {
     } catch (ExpressionException | MyException e) {
       throw new MyException(e.getMessage());
     }
+    System.out.println("Value type: " + value.getType());
+    System.out.println("Expected type: " + ((RefType) type).getInner());
     if (!value.getType().equals(((RefType) type).getInner())) {
-      throw new MyException("Type mismatch");
+      throw new MyException("Type mismatch: expected " + ((RefType) type).getInner() +
+          " but got " + value.getType());
     }
     Integer newAddress = prg.getHeap().allocate();
     prg.getHeap().put(newAddress, value);

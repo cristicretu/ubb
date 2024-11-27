@@ -24,7 +24,17 @@ public class RefType implements IType {
     return new RefValue(0, inner);
   }
 
-  public boolean equals(IType other) {
-    return other instanceof RefType && inner.equals(((RefType) other).inner);
+  @Override
+  public boolean equals(Object other) {
+    if (!(other instanceof RefType)) {
+      return false;
+    }
+    RefType otherRef = (RefType) other;
+    return inner.equals(otherRef.getInner());
+  }
+
+  @Override
+  public String toString() {
+    return "Ref(" + inner.toString() + ")";
   }
 }
