@@ -5,6 +5,7 @@ import exceptions.ExpressionException;
 import exceptions.MyException;
 import model.PrgState;
 import model.exp.IExp;
+import model.type.RefType;
 import model.value.IValue;
 import model.value.RefValue;
 
@@ -46,7 +47,7 @@ public class WriteHeapStmt implements IStmt {
     } catch (ExpressionException | MyException e) {
       throw new MyException(e.getMessage());
     }
-    if (!value.getType().equals(refValue.getType())) {
+    if (!value.getType().equals(((RefType) refValue.getType()).getInner())) {
       throw new MyException("Type of expression and type of variable do not match");
     }
 
