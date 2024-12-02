@@ -47,7 +47,7 @@
       (convert_to_set (cdr lista))
       (cons (car lista) (convert_to_set (cdr lista))))))
 
-(print (n_th_element '(1 2 3 4 5) 43))
+(print (n_th_element '(1 2 3 4 5) 3))
 (print (membru 2 '(1 2 3 4 5)))
 (print (sublists '(1 2 (3 (4 5) (6 7)) 8 (9 10))))
 (print (convert_to_set '(1 2 2 2 2 2 2 3 3 3 3 4 4 4 4 4 5 5 5 5 5  6 6 6 6)))
