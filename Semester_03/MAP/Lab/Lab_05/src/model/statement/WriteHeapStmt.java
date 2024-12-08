@@ -52,7 +52,7 @@ public class WriteHeapStmt implements IStmt {
     }
 
     prg.getHeap().put(address, value);
-    return prg;
+    return null;
   }
 
   @Override

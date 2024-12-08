@@ -14,4 +14,6 @@ public interface IDict<K, V> {
   void update(K key, V value) throws DictionaryException;
 
   List<V> getValues();
+
+  IDict<K, V> deepCopy();
 }

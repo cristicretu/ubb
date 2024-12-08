@@ -51,4 +51,10 @@ public class MyDict<K, V> implements IDict<K, V> {
     return new LinkedList<V>(dict.values());
   }
 
+  @Override
+  public IDict<K, V> deepCopy() {
+    MyDict<K, V> copy = new MyDict<>();
+    copy.dict = new HashMap<>(dict);
+    return copy;
+  }
 }

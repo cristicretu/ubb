@@ -36,7 +36,7 @@ public class IfStmt implements IStmt {
     } else {
       throw new MyException("The condition in the if statement is not a boolean");
     }
-    return prg;
+    return null;
   }
 
   @Override
