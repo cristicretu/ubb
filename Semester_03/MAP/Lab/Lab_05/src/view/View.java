@@ -11,6 +11,7 @@ import model.exp.VariableExp;
 import model.statement.AssignStmt;
 import model.statement.CloseRFile;
 import model.statement.CompStmt;
+import model.statement.ForkStmt;
 import model.statement.IStmt;
 import model.statement.IfStmt;
 import model.statement.NewStmt;
@@ -220,6 +221,35 @@ public class View {
                                 new PrintStmt(new VariableExp("v")))));
     }
 
+    private static IStmt createExample10() {
+        // int v; Ref int a; v=10; new(a,22);
+        // fork(wH(a,30);v=32;print(v);print(rH(a)));
+        // print(v);print(rH(a))
+        return new CompStmt(
+                new VarDeclStmt("v", new IntType()),
+                new CompStmt(
+                        new VarDeclStmt("a", new RefType(new IntType())),
+                        new CompStmt(
+                                new AssignStmt("v", new ConstantValue(new IntValue(10))),
+                                new CompStmt(
+                                        new NewStmt("a", new ConstantValue(new IntValue(22))),
+                                        new CompStmt(
+                                                new ForkStmt(
+                                                        new CompStmt(
+                                                                new WriteHeapStmt("a",
+                                                                        new ConstantValue(new IntValue(30))),
+                                                                new CompStmt(
+                                                                        new AssignStmt("v",
+                                                                                new ConstantValue(new IntValue(32))),
+                                                                        new CompStmt(
+                                                                                new PrintStmt(new VariableExp("v")),
+                                                                                new PrintStmt(new RefExp(
+                                                                                        new VariableExp("a"))))))),
+                                                new CompStmt(
+                                                        new PrintStmt(new VariableExp("v")),
+                                                        new PrintStmt(new RefExp(new VariableExp("a")))))))));
+    }
+
     private static PrgState createPrgState(IStmt originalProgram) {
         IStack<IStmt> exeStack = new MyStack<>();
         IDict<String, IValue> symTable = new MyDict<>();
@@ -248,6 +278,7 @@ public class View {
         menu.addCommand(new RunExample("7", createExample7(), createController(createExample7(), "log7.txt")));
         menu.addCommand(new RunExample("8", createExample8(), createController(createExample8(), "log8.txt")));
         menu.addCommand(new RunExample("9", createExample9(), createController(createExample9(), "log9.txt")));
+        menu.addCommand(new RunExample("10", createExample10(), createController(createExample10(), "log10.txt")));
         menu.addCommand(new ExitCommand("0", "Exit"));
 
         menu.show();
