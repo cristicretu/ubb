@@ -20,7 +20,7 @@ public class CompStmt implements IStmt {
     stk.push(second);
     stk.push(first);
 
-    return prg;
+    return null;
   }
 
   @Override

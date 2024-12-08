@@ -50,7 +50,7 @@ public class CloseRFile implements IStmt {
 
     prg.getFileTable().put(stringValue, null);
 
-    return prg;
+    return null;
   }
 
   @Override
