@@ -4,6 +4,7 @@ import repository.IRepository;
 import utils.IHeap;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -24,9 +25,12 @@ public class Controller {
   }
 
   public List<PrgState> removeCompletedPrg(List<PrgState> inPrgList) {
-    return inPrgList.stream()
-        .filter(p -> p.isNotCompleted())
-        .collect(Collectors.toList());
+    if (inPrgList.size() > 1) {
+      return inPrgList.stream()
+          .filter(p -> p.isNotCompleted())
+          .collect(Collectors.toList());
+    }
+    return inPrgList;
   }
 
   void oneStepForAllPrg(List<PrgState> prgList) throws InterruptedException {
@@ -80,12 +84,13 @@ public class Controller {
     List<PrgState> prgList = removeCompletedPrg(repo.getPrgList());
 
     while (prgList.size() > 0) {
-      prgList.forEach(prg -> {
-        IHeap<Integer, IValue> heap = prg.getHeap();
-        heap.setHeap(heap.safeGarbageCollector(
-            prg.getUsedAddresses(),
-            heap.getHeap()));
-      });
+      IHeap<Integer, IValue> heap = prgList.get(0).getHeap();
+
+      Set<Integer> usedAddresses = prgList.stream()
+          .flatMap(p -> p.getUsedAddresses().stream())
+          .collect(Collectors.toSet());
+
+      heap.setHeap(heap.safeGarbageCollector(usedAddresses, heap.getHeap()));
 
       try {
         oneStepForAllPrg(prgList);
