@@ -4,6 +4,9 @@ import repository.IRepository;
 import utils.IHeap;
 import utils.IStack;
 import utils.MyHeap;
+
+import java.util.List;
+
 import exceptions.MyException;
 import exceptions.StackException;
 import model.PrgState;
@@ -33,14 +36,16 @@ public class Controller {
   }
 
   public void allSteps() throws MyException {
-    PrgState currentPrg = repo.getCurrentPrg();
-    repo.logPrgStateExec(currentPrg);
-    while (!currentPrg.getExeStack().isEmpty()) {
-      oneStep(currentPrg);
-      repo.logPrgStateExec(currentPrg);
+    List<PrgState> prgList = repo.getPrgList();
+    for (PrgState prg : prgList) {
+      repo.logPrgStateExec(prg);
+      while (!prg.getExeStack().isEmpty()) {
+        oneStep(prg);
+        repo.logPrgStateExec(prg);
 
-      IHeap<Integer, IValue> heap = currentPrg.getHeap();
-      heap.setHeap(heap.safeGarbageCollector(currentPrg.getUsedAddresses(), heap.getHeap()));
+        IHeap<Integer, IValue> heap = prg.getHeap();
+        heap.setHeap(heap.safeGarbageCollector(prg.getUsedAddresses(), heap.getHeap()));
+      }
     }
   }
 }
