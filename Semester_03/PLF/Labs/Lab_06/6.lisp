@@ -6,17 +6,14 @@
      (cond 
        ((null aux)
         (cons (car tree) (getInOrder (cddr tree) aux)))
-       
        ((= (cadr aux) 1)
         (cons (car tree) 
               (getInOrder (cons (car aux) (cons 0 (cddr tree)))
                          (cddr aux))))
-       
        (T
         (cons (car tree)
               (cons (car aux) 
                     (getInOrder (cddr tree) (cddr aux)))))))
-    
     (T
      (getInOrder (cddr tree) 
                  (cons (car tree) (cons (cadr tree) aux))))))
