@@ -21,6 +21,10 @@ public class PrgState {
   private final int id;
   private boolean isNotCompleted;
 
+  public boolean isNotCompleted() {
+    return isNotCompleted;
+  }
+
   private IStack<IStmt> exeStack;
 
   public IStack<IStmt> getExeStack() {
