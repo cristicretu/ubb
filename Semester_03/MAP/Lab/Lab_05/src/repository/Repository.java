@@ -40,11 +40,6 @@ public class Repository implements IRepository {
   }
 
   @Override
-  public PrgState getCurrentPrg() {
-    return prgList.get(0);
-  }
-
-  @Override
   public void logPrgStateExec(PrgState prg) throws MyException {
     if (logFilePath == null) {
       setLogFilePath();
@@ -57,5 +52,15 @@ public class Repository implements IRepository {
     }
     logFile.println(prg.toString());
     logFile.close();
+  }
+
+  @Override
+  public List<PrgState> getPrgList() {
+    return prgList;
+  }
+
+  @Override
+  public void setPrgList(List<PrgState> prgList) {
+    this.prgList = prgList;
   }
 }

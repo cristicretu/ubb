@@ -13,7 +13,14 @@ import java.io.BufferedReader;
 import java.util.HashSet;
 import java.util.Set;
 
+import exceptions.MyException;
+import exceptions.StackException;
+
 public class PrgState {
+  private static int nextId = 0;
+  private final int id;
+  private boolean isNotCompleted;
+
   private IStack<IStmt> exeStack;
 
   public IStack<IStmt> getExeStack() {
@@ -46,21 +53,27 @@ public class PrgState {
     return heap;
   }
 
+  private static synchronized int getNextId() {
+    return nextId++;
+  }
+
   public PrgState(IStack<IStmt> exeStack, IDict<String, IValue> symTable, IList<IValue> output, IStmt originalProgram,
       IDict<StringValue, BufferedReader> fileTable, IHeap<Integer, IValue> heap) {
+    this.id = getNextId();
     this.exeStack = exeStack;
     this.symTable = symTable;
     this.output = output;
     this.originalProgram = originalProgram.deepCopy();
     this.fileTable = fileTable;
     this.heap = heap;
-
+    this.isNotCompleted = true;
     exeStack.push(originalProgram);
   }
 
   @Override
   public String toString() {
-    return "PrgState{\n" + "exeStack=" + exeStack.getList() + ",\n symTable=" + symTable + ",\n output=" + output
+    return "PrgState{\n" + "id=" + id + ",\n exeStack=" + exeStack.getList() + ",\n symTable=" + symTable
+        + ",\n output=" + output
         + ",\n originalProgram="
         + originalProgram + ",\n fileTable=" + fileTable + ",\n heap=" + heap + "\n}";
   }
@@ -80,5 +93,23 @@ public class PrgState {
     }
 
     return usedAddresses;
+  }
+
+  public PrgState oneStep() throws MyException {
+    if (exeStack.isEmpty()) {
+      throw new MyException("prgstate stack is empty");
+    }
+
+    IStmt crtStmt;
+    try {
+      crtStmt = exeStack.pop();
+    } catch (StackException e) {
+      throw new MyException("prgstate stack is empty");
+    }
+    return crtStmt.execute(this);
+  }
+
+  public int getId() {
+    return id;
   }
 }
