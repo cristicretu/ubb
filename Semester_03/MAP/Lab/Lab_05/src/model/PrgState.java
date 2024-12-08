@@ -25,6 +25,10 @@ public class PrgState {
     return isNotCompleted;
   }
 
+  public void setNotCompleted(boolean isNotCompleted) {
+    this.isNotCompleted = isNotCompleted;
+  }
+
   private IStack<IStmt> exeStack;
 
   public IStack<IStmt> getExeStack() {
@@ -101,14 +105,15 @@ public class PrgState {
 
   public PrgState oneStep() throws MyException {
     if (exeStack.isEmpty()) {
-      throw new MyException("prgstate stack is empty");
+      this.isNotCompleted = false;
+      return null;
     }
 
     IStmt crtStmt;
     try {
       crtStmt = exeStack.pop();
     } catch (StackException e) {
-      throw new MyException("prgstate stack is empty");
+      throw new MyException("prgstate stack is empty2");
     }
     return crtStmt.execute(this);
   }

@@ -43,6 +43,7 @@ public class Controller {
           try {
             return p.oneStep();
           } catch (MyException e) {
+            p.setNotCompleted(false);
             System.out.println(e.getMessage());
             return null;
           }
@@ -58,7 +59,7 @@ public class Controller {
             return null;
           }
         })
-        .filter(p -> p != null)
+        .filter(p -> p != null && p.isNotCompleted())
         .collect(Collectors.toList());
 
     prgList.addAll(newPrgList);
@@ -75,12 +76,15 @@ public class Controller {
   }
 
   public void allSteps() throws MyException {
+    executor = Executors.newFixedThreadPool(2);
     List<PrgState> prgList = removeCompletedPrg(repo.getPrgList());
 
-    while (!prgList.isEmpty()) {
+    while (prgList.size() > 0) {
       prgList.forEach(prg -> {
         IHeap<Integer, IValue> heap = prg.getHeap();
-        heap.setHeap(heap.safeGarbageCollector(prg.getUsedAddresses(), heap.getHeap()));
+        heap.setHeap(heap.safeGarbageCollector(
+            prg.getUsedAddresses(),
+            heap.getHeap()));
       });
 
       try {
