@@ -25,15 +25,12 @@ public class Controller {
   }
 
   public List<PrgState> removeCompletedPrg(List<PrgState> inPrgList) {
-    if (inPrgList.size() > 1) {
-      return inPrgList.stream()
-          .filter(p -> p.isNotCompleted())
-          .collect(Collectors.toList());
-    }
-    return inPrgList;
+    return inPrgList.stream()
+        .filter(p -> p.isNotCompleted() && !p.getExeStack().isEmpty())
+        .collect(Collectors.toList());
   }
 
-  void oneStepForAllPrg(List<PrgState> prgList) throws InterruptedException {
+  private void oneStepForAllPrg(List<PrgState> prgList) throws InterruptedException {
     prgList.forEach(prg -> {
       try {
         repo.logPrgStateExec(prg);
@@ -43,40 +40,30 @@ public class Controller {
     });
 
     List<Callable<PrgState>> callList = prgList.stream()
+        .filter(p -> !p.getExeStack().isEmpty())
         .map((PrgState p) -> (Callable<PrgState>) (() -> {
-          try {
-            return p.oneStep();
-          } catch (MyException e) {
-            p.setNotCompleted(false);
-            System.out.println(e.getMessage());
-            return null;
-          }
+          return p.oneStep();
         }))
         .collect(Collectors.toList());
+
+    if (callList.isEmpty()) {
+      prgList.forEach(p -> p.setNotCompleted(false));
+      return;
+    }
 
     List<PrgState> newPrgList = executor.invokeAll(callList).stream()
         .map(future -> {
           try {
             return future.get();
-          } catch (InterruptedException | ExecutionException e) {
+          } catch (Exception e) {
             System.out.println(e.getMessage());
             return null;
           }
         })
-        .filter(p -> p != null && p.isNotCompleted())
+        .filter(p -> p != null)
         .collect(Collectors.toList());
 
     prgList.addAll(newPrgList);
-
-    prgList.forEach(prg -> {
-      try {
-        repo.logPrgStateExec(prg);
-      } catch (MyException e) {
-        System.out.println(e.getMessage());
-      }
-    });
-
-    repo.setPrgList(prgList);
   }
 
   public void allSteps() throws MyException {
