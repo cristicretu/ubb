@@ -44,16 +44,14 @@ public class Repository implements IRepository {
     if (logFilePath == null) {
       setLogFilePath();
     }
-    if (!prg.getExeStack().isEmpty()) {
-      PrintWriter logFile;
-      try {
-        logFile = new PrintWriter(new BufferedWriter(new FileWriter(logFilePath, true)));
-        logFile.println(prg.toString());
-        logFile.close();
-      } catch (IOException e) {
-        throw new MyException("Error opening log file");
-      }
+    PrintWriter logFile;
+    try {
+      logFile = new PrintWriter(new BufferedWriter(new FileWriter(logFilePath, true)));
+    } catch (IOException e) {
+      throw new MyException("Error opening log file");
     }
+    logFile.println(prg.toString());
+    logFile.close();
   }
 
   @Override
