@@ -26,11 +26,11 @@ public class Controller {
 
   public List<PrgState> removeCompletedPrg(List<PrgState> inPrgList) {
     return inPrgList.stream()
-        .filter(p -> p.isNotCompleted() && !p.getExeStack().isEmpty())
+        .filter(p -> p.isNotCompleted())
         .collect(Collectors.toList());
   }
 
-  private void oneStepForAllPrg(List<PrgState> prgList) throws InterruptedException {
+  void oneStepForAllPrg(List<PrgState> prgList) throws InterruptedException {
     prgList.forEach(prg -> {
       try {
         repo.logPrgStateExec(prg);
@@ -40,30 +40,40 @@ public class Controller {
     });
 
     List<Callable<PrgState>> callList = prgList.stream()
-        .filter(p -> !p.getExeStack().isEmpty())
         .map((PrgState p) -> (Callable<PrgState>) (() -> {
-          return p.oneStep();
+          try {
+            return p.oneStep();
+          } catch (MyException e) {
+            p.setNotCompleted(false);
+            System.out.println(e.getMessage());
+            return null;
+          }
         }))
         .collect(Collectors.toList());
-
-    if (callList.isEmpty()) {
-      prgList.forEach(p -> p.setNotCompleted(false));
-      return;
-    }
 
     List<PrgState> newPrgList = executor.invokeAll(callList).stream()
         .map(future -> {
           try {
             return future.get();
-          } catch (Exception e) {
+          } catch (InterruptedException | ExecutionException e) {
             System.out.println(e.getMessage());
             return null;
           }
         })
-        .filter(p -> p != null)
+        .filter(p -> p != null && p.isNotCompleted())
         .collect(Collectors.toList());
 
     prgList.addAll(newPrgList);
+
+    prgList.forEach(prg -> {
+      try {
+        repo.logPrgStateExec(prg);
+      } catch (MyException e) {
+        System.out.println(e.getMessage());
+      }
+    });
+
+    repo.setPrgList(prgList);
   }
 
   public void allSteps() throws MyException {
