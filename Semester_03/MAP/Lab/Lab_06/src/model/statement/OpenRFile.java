@@ -8,9 +8,11 @@ import exceptions.ExpressionException;
 import exceptions.MyException;
 import model.PrgState;
 import model.exp.IExp;
+import model.type.IType;
 import model.type.StringType;
 import model.value.IValue;
 import model.value.StringValue;
+import utils.IDict;
 
 public class OpenRFile implements IStmt {
   private IExp exp;
@@ -51,5 +53,19 @@ public class OpenRFile implements IStmt {
   @Override
   public String toString() {
     return "openRFile(" + exp.toString() + ")";
+  }
+
+  @Override
+  public IDict<String, IType> typecheck(IDict<String, IType> typeEnv) throws MyException {
+    IType type;
+    try {
+      type = exp.typecheck(typeEnv);
+    } catch (ExpressionException e) {
+      throw new MyException(e.getMessage());
+    }
+    if (!type.equals(new StringType())) {
+      throw new MyException("Expression is not a string");
+    }
+    return typeEnv;
   }
 }

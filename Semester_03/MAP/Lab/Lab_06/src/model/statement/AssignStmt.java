@@ -5,6 +5,7 @@ import exceptions.ExpressionException;
 import exceptions.MyException;
 import model.PrgState;
 import model.exp.IExp;
+import model.type.IType;
 import model.value.IValue;
 import utils.IDict;
 
@@ -53,4 +54,23 @@ public class AssignStmt implements IStmt {
     return new AssignStmt(this.id, this.exp.deepCopy());
   }
 
+  @Override
+  public IDict<String, IType> typecheck(IDict<String, IType> typeEnv) throws MyException {
+    try {
+      IType typevar = typeEnv.get(id);
+      IType typexp;
+      try {
+        typexp = exp.typecheck(typeEnv);
+      } catch (ExpressionException e) {
+        throw new MyException(e.getMessage());
+      }
+      if (typevar.equals(typexp)) {
+        return typeEnv;
+      } else {
+        throw new MyException("Assignment: right hand side and left hand side have different types");
+      }
+    } catch (DictionaryException e) {
+      throw new MyException("Variable " + id + " is not defined in type environment");
+    }
+  }
 }

@@ -42,6 +42,8 @@ import model.value.IValue;
 import java.io.BufferedReader;
 
 import controller.Controller;
+import model.type.IType;
+import exceptions.MyException;
 
 public class View {
     private static IStmt createExample1() {
@@ -230,27 +232,39 @@ public class View {
                 new CompStmt(
                         new VarDeclStmt("a", new RefType(new IntType())),
                         new CompStmt(
-                                new AssignStmt("v", new ConstantValue(new IntValue(10))),
+                                new AssignStmt("v",
+                                        new ConstantValue(new IntValue(10))),
                                 new CompStmt(
-                                        new NewStmt("a", new ConstantValue(new IntValue(22))),
+                                        new NewStmt("a", new ConstantValue(
+                                                new IntValue(22))),
                                         new CompStmt(
                                                 new ForkStmt(
                                                         new CompStmt(
-                                                                new WriteHeapStmt("a",
-                                                                        new ConstantValue(new IntValue(30))),
+                                                                new WriteHeapStmt(
+                                                                        "a",
+                                                                        new ConstantValue(
+                                                                                new IntValue(30))),
                                                                 new CompStmt(
                                                                         new AssignStmt("v",
-                                                                                new ConstantValue(new IntValue(32))),
+                                                                                new ConstantValue(
+                                                                                        new IntValue(32))),
                                                                         new CompStmt(
-                                                                                new PrintStmt(new VariableExp("v")),
+                                                                                new PrintStmt(new VariableExp(
+                                                                                        "v")),
                                                                                 new PrintStmt(new RefExp(
                                                                                         new VariableExp("a"))))))),
                                                 new CompStmt(
-                                                        new PrintStmt(new VariableExp("v")),
-                                                        new PrintStmt(new RefExp(new VariableExp("a")))))))));
+                                                        new PrintStmt(new VariableExp(
+                                                                "v")),
+                                                        new PrintStmt(new RefExp(
+                                                                new VariableExp("a")))))))));
     }
 
-    private static PrgState createPrgState(IStmt originalProgram) {
+    private static PrgState createPrgState(IStmt originalProgram) throws MyException {
+        IDict<String, IType> typeEnv = new MyDict<>();
+
+        originalProgram.typecheck(typeEnv);
+
         IStack<IStmt> exeStack = new MyStack<>();
         IDict<String, IValue> symTable = new MyDict<>();
         IList<IValue> output = new MyList<>();
@@ -260,7 +274,7 @@ public class View {
         return new PrgState(exeStack, symTable, output, originalProgram, fileTable, heap);
     }
 
-    private static Controller createController(IStmt stmt, String logFilePath) {
+    private static Controller createController(IStmt stmt, String logFilePath) throws MyException {
         PrgState prgState = createPrgState(stmt);
         IRepository repo = new Repository(prgState, logFilePath);
         return new Controller(repo);
@@ -269,18 +283,24 @@ public class View {
     public static void main(String[] args) {
         TextMenu menu = new TextMenu();
 
-        menu.addCommand(new RunExample("1", createExample1(), createController(createExample1(), "log1.txt")));
-        menu.addCommand(new RunExample("2", createExample2(), createController(createExample2(), "log2.txt")));
-        menu.addCommand(new RunExample("3", createExample3(), createController(createExample3(), "log3.txt")));
-        menu.addCommand(new RunExample("4", createExample4(), createController(createExample4(), "log4.txt")));
-        menu.addCommand(new RunExample("5", createExample5(), createController(createExample5(), "log5.txt")));
-        menu.addCommand(new RunExample("6", createExample6(), createController(createExample6(), "log6.txt")));
-        menu.addCommand(new RunExample("7", createExample7(), createController(createExample7(), "log7.txt")));
-        menu.addCommand(new RunExample("8", createExample8(), createController(createExample8(), "log8.txt")));
-        menu.addCommand(new RunExample("9", createExample9(), createController(createExample9(), "log9.txt")));
-        menu.addCommand(new RunExample("10", createExample10(), createController(createExample10(), "log10.txt")));
-        menu.addCommand(new ExitCommand("0", "Exit"));
+        try {
+            menu.addCommand(new RunExample("1", createExample1(), createController(createExample1(), "log1.txt")));
+            menu.addCommand(new RunExample("2", createExample2(), createController(createExample2(), "log2.txt")));
+            menu.addCommand(new RunExample("3", createExample3(), createController(createExample3(), "log3.txt")));
+            menu.addCommand(new RunExample("4", createExample4(), createController(createExample4(), "log4.txt")));
+            menu.addCommand(new RunExample("5", createExample5(), createController(createExample5(), "log5.txt")));
+            menu.addCommand(new RunExample("6", createExample6(), createController(createExample6(), "log6.txt")));
+            menu.addCommand(new RunExample("7", createExample7(), createController(createExample7(), "log7.txt")));
+            menu.addCommand(new RunExample("8", createExample8(), createController(createExample8(), "log8.txt")));
+            menu.addCommand(new RunExample("9", createExample9(), createController(createExample9(), "log9.txt")));
+            menu.addCommand(new RunExample("10", createExample10(),
+                    createController(createExample10(), "log10.txt")));
+        } catch (MyException e) {
+            System.out.println("Error during program initialization: " + e.getMessage());
+            System.exit(1);
+        }
 
+        menu.addCommand(new ExitCommand("0", "Exit"));
         menu.show();
     }
 }

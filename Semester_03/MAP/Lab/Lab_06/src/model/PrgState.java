@@ -49,6 +49,10 @@ public class PrgState {
 
   private IStmt originalProgram;
 
+  public IStmt getOriginalProgram() {
+    return originalProgram;
+  }
+
   private IDict<StringValue, BufferedReader> fileTable;
 
   public IDict<StringValue, BufferedReader> getFileTable() {

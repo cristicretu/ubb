@@ -9,6 +9,7 @@ import model.type.IType;
 import model.type.RefType;
 import model.value.IValue;
 import model.value.RefValue;
+import utils.IDict;
 
 public class NewStmt implements IStmt {
   private String varName;
@@ -58,5 +59,22 @@ public class NewStmt implements IStmt {
   @Override
   public String toString() {
     return "NewStmt(" + varName + ", " + expression + ")";
+  }
+
+  @Override
+  public IDict<String, IType> typecheck(IDict<String, IType> typeEnv) throws MyException {
+    try {
+      IType typevar = typeEnv.get(varName);
+      IType typexp = expression.typecheck(typeEnv);
+      if (typevar.equals(new RefType(typexp))) {
+        return typeEnv;
+      } else {
+        throw new MyException("NEW stmt: right hand side and left hand side have different types");
+      }
+    } catch (DictionaryException e) {
+      throw new MyException("Variable " + varName + " is not defined in type environment");
+    } catch (ExpressionException e) {
+      throw new MyException(e.getMessage());
+    }
   }
 }
