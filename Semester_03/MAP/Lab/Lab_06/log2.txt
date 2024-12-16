@@ -1,0 +1,200 @@
+PrgState{
+id=1,
+ exeStack=[(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b)))))],
+ symTable={},
+ output=[],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=1,
+ exeStack=[Int a, (Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))],
+ symTable={},
+ output=[],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=1,
+ exeStack=[Int a, (Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))],
+ symTable={},
+ output=[],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=1,
+ exeStack=[(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))],
+ symTable={a=0},
+ output=[],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=1,
+ exeStack=[(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))],
+ symTable={a=0},
+ output=[],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=1,
+ exeStack=[Int b, (a = 2 + 3 * 5;(b = a + 1;print(b)))],
+ symTable={a=0},
+ output=[],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=1,
+ exeStack=[Int b, (a = 2 + 3 * 5;(b = a + 1;print(b)))],
+ symTable={a=0},
+ output=[],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=1,
+ exeStack=[(a = 2 + 3 * 5;(b = a + 1;print(b)))],
+ symTable={a=0, b=0},
+ output=[],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=1,
+ exeStack=[(a = 2 + 3 * 5;(b = a + 1;print(b)))],
+ symTable={a=0, b=0},
+ output=[],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=1,
+ exeStack=[a = 2 + 3 * 5, (b = a + 1;print(b))],
+ symTable={a=0, b=0},
+ output=[],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=1,
+ exeStack=[a = 2 + 3 * 5, (b = a + 1;print(b))],
+ symTable={a=0, b=0},
+ output=[],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=1,
+ exeStack=[(b = a + 1;print(b))],
+ symTable={a=17, b=0},
+ output=[],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=1,
+ exeStack=[(b = a + 1;print(b))],
+ symTable={a=17, b=0},
+ output=[],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=1,
+ exeStack=[b = a + 1, print(b)],
+ symTable={a=17, b=0},
+ output=[],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=1,
+ exeStack=[b = a + 1, print(b)],
+ symTable={a=17, b=0},
+ output=[],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=1,
+ exeStack=[print(b)],
+ symTable={a=17, b=18},
+ output=[],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=1,
+ exeStack=[print(b)],
+ symTable={a=17, b=18},
+ output=[],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=1,
+ exeStack=[],
+ symTable={a=17, b=18},
+ output=[18],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=1,
+ exeStack=[],
+ symTable={a=17, b=18},
+ output=[18],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=1,
+ exeStack=[],
+ symTable={a=17, b=18},
+ output=[18],
+ originalProgram=(Int a;(Int b;(a = 2 + 3 * 5;(b = a + 1;print(b))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}

@@ -5,8 +5,10 @@ import exceptions.MyException;
 import model.PrgState;
 import model.exp.IExp;
 import model.type.BoolType;
+import model.type.IType;
 import model.value.BoolValue;
 import model.value.IValue;
+import utils.IDict;
 
 public class WhileStmt implements IStmt {
   private IExp expression;
@@ -43,6 +45,21 @@ public class WhileStmt implements IStmt {
 
   @Override
   public String toString() {
-    return "WhileStmt(" + expression + ", " + statement + ")";
+    return "while(" + expression.toString() + ") { " + statement.toString() + " }";
+  }
+
+  @Override
+  public IDict<String, IType> typecheck(IDict<String, IType> typeEnv) throws MyException {
+    try {
+      IType typexp = expression.typecheck(typeEnv);
+      if (typexp.equals(new BoolType())) {
+        statement.typecheck(typeEnv.deepCopy());
+        return typeEnv;
+      } else {
+        throw new MyException("The condition of WHILE has not the type bool");
+      }
+    } catch (ExpressionException e) {
+      throw new MyException(e.getMessage());
+    }
   }
 }

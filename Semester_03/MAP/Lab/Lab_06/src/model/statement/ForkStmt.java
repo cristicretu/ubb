@@ -2,6 +2,8 @@ package model.statement;
 
 import exceptions.MyException;
 import model.PrgState;
+import model.type.IType;
+import utils.IDict;
 import utils.MyStack;
 
 public class ForkStmt implements IStmt {
@@ -30,5 +32,11 @@ public class ForkStmt implements IStmt {
   @Override
   public String toString() {
     return "fork(" + statement.toString() + ")";
+  }
+
+  @Override
+  public IDict<String, IType> typecheck(IDict<String, IType> typeEnv) throws MyException {
+    statement.typecheck(typeEnv.deepCopy());
+    return typeEnv;
   }
 }

@@ -5,9 +5,11 @@ import exceptions.ExpressionException;
 import exceptions.MyException;
 import model.PrgState;
 import model.exp.IExp;
+import model.type.IType;
 import model.type.RefType;
 import model.value.IValue;
 import model.value.RefValue;
+import utils.IDict;
 
 public class WriteHeapStmt implements IStmt {
   private String varName;
@@ -63,5 +65,27 @@ public class WriteHeapStmt implements IStmt {
   @Override
   public String toString() {
     return "WriteHeapStmt(" + varName + ", " + expression + ")";
+  }
+
+  @Override
+  public IDict<String, IType> typecheck(IDict<String, IType> typeEnv) throws MyException {
+    try {
+      IType typevar = typeEnv.get(varName);
+      IType typexp = expression.typecheck(typeEnv);
+      if (typevar instanceof RefType) {
+        RefType reft = (RefType) typevar;
+        if (typexp.equals(reft.getInner())) {
+          return typeEnv;
+        } else {
+          throw new MyException("WriteHeapStmt: right hand side and left hand side have different types");
+        }
+      } else {
+        throw new MyException("WriteHeapStmt: " + varName + " is not of RefType");
+      }
+    } catch (DictionaryException e) {
+      throw new MyException("Variable " + varName + " is not defined in type environment");
+    } catch (ExpressionException e) {
+      throw new MyException(e.getMessage());
+    }
   }
 }

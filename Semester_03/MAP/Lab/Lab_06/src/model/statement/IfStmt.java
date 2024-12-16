@@ -5,8 +5,10 @@ import exceptions.MyException;
 import model.PrgState;
 import model.exp.IExp;
 import model.type.BoolType;
+import model.type.IType;
 import model.value.BoolValue;
 import model.value.IValue;
+import utils.IDict;
 
 public class IfStmt implements IStmt {
   private IExp exp;
@@ -47,6 +49,22 @@ public class IfStmt implements IStmt {
 
   @Override
   public IStmt deepCopy() {
-    return new IfStmt(this.exp.deepCopy(), this.thenStmt.deepCopy(), this.elseStmt.deepCopy());
+    return new IfStmt(exp.deepCopy(), thenStmt.deepCopy(), elseStmt.deepCopy());
+  }
+
+  @Override
+  public IDict<String, IType> typecheck(IDict<String, IType> typeEnv) throws MyException {
+    try {
+      IType typexp = exp.typecheck(typeEnv);
+      if (typexp.equals(new BoolType())) {
+        thenStmt.typecheck(typeEnv.deepCopy());
+        elseStmt.typecheck(typeEnv.deepCopy());
+        return typeEnv;
+      } else {
+        throw new MyException("The condition of IF has not the type bool");
+      }
+    } catch (ExpressionException e) {
+      throw new MyException(e.getMessage());
+    }
   }
 }

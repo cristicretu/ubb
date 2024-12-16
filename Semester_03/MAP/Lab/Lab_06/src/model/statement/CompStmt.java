@@ -2,6 +2,8 @@ package model.statement;
 
 import exceptions.MyException;
 import model.PrgState;
+import model.type.IType;
+import utils.IDict;
 import utils.IStack;
 
 public class CompStmt implements IStmt {
@@ -31,5 +33,10 @@ public class CompStmt implements IStmt {
   @Override
   public IStmt deepCopy() {
     return new CompStmt(this.first.deepCopy(), this.second.deepCopy());
+  }
+
+  @Override
+  public IDict<String, IType> typecheck(IDict<String, IType> typeEnv) throws MyException {
+    return second.typecheck(first.typecheck(typeEnv));
   }
 }

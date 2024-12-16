@@ -4,7 +4,9 @@ import exceptions.ExpressionException;
 import exceptions.MyException;
 import model.PrgState;
 import model.exp.IExp;
+import model.type.IType;
 import model.value.IValue;
+import utils.IDict;
 
 public class PrintStmt implements IStmt {
   private IExp exp;
@@ -33,5 +35,15 @@ public class PrintStmt implements IStmt {
   @Override
   public IStmt deepCopy() {
     return new PrintStmt(this.exp.deepCopy());
+  }
+
+  @Override
+  public IDict<String, IType> typecheck(IDict<String, IType> typeEnv) throws MyException {
+    try {
+      exp.typecheck(typeEnv);
+      return typeEnv;
+    } catch (ExpressionException e) {
+      throw new MyException(e.getMessage());
+    }
   }
 }

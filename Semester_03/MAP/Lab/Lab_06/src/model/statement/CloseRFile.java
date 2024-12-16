@@ -5,9 +5,11 @@ import exceptions.ExpressionException;
 import exceptions.MyException;
 import model.PrgState;
 import model.exp.IExp;
+import model.type.IType;
 import model.type.StringType;
 import model.value.IValue;
 import model.value.StringValue;
+import utils.IDict;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -61,5 +63,19 @@ public class CloseRFile implements IStmt {
   @Override
   public String toString() {
     return "closeRFile(" + exp.toString() + ")";
+  }
+
+  @Override
+  public IDict<String, IType> typecheck(IDict<String, IType> typeEnv) throws MyException {
+    IType typexp;
+    try {
+      typexp = exp.typecheck(typeEnv);
+    } catch (ExpressionException e) {
+      throw new MyException(e.getMessage());
+    }
+    if (!typexp.equals(new StringType())) {
+      throw new MyException("Expression is not a string");
+    }
+    return typeEnv;
   }
 }

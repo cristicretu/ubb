@@ -1,0 +1,360 @@
+PrgState{
+id=3,
+ exeStack=[(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf)))))))))],
+ symTable={},
+ output=[],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[String varf, (varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))],
+ symTable={},
+ output=[],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[String varf, (varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))],
+ symTable={},
+ output=[],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))],
+ symTable={varf=},
+ output=[],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))],
+ symTable={varf=},
+ output=[],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[varf = test.in, (openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf)))))))],
+ symTable={varf=},
+ output=[],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[varf = test.in, (openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf)))))))],
+ symTable={varf=},
+ output=[],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf)))))))],
+ symTable={varf=test.in},
+ output=[],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf)))))))],
+ symTable={varf=test.in},
+ output=[],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[openRFile(varf), (Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))],
+ symTable={varf=test.in},
+ output=[],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[openRFile(varf), (Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))],
+ symTable={varf=test.in},
+ output=[],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))],
+ symTable={varf=test.in},
+ output=[],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={test.in=java.io.BufferedReader@4cf777e8},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))],
+ symTable={varf=test.in},
+ output=[],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={test.in=java.io.BufferedReader@4cf777e8},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[Int varc, (readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf)))))],
+ symTable={varf=test.in},
+ output=[],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={test.in=java.io.BufferedReader@4cf777e8},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[Int varc, (readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf)))))],
+ symTable={varf=test.in},
+ output=[],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={test.in=java.io.BufferedReader@4cf777e8},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf)))))],
+ symTable={varf=test.in, varc=0},
+ output=[],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={test.in=java.io.BufferedReader@4cf777e8},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf)))))],
+ symTable={varf=test.in, varc=0},
+ output=[],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={test.in=java.io.BufferedReader@4cf777e8},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[readFile(varf, varc), (print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))],
+ symTable={varf=test.in, varc=0},
+ output=[],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={test.in=java.io.BufferedReader@4cf777e8},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[readFile(varf, varc), (print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))],
+ symTable={varf=test.in, varc=0},
+ output=[],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={test.in=java.io.BufferedReader@4cf777e8},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))],
+ symTable={varf=test.in, varc=0},
+ output=[],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={test.in=java.io.BufferedReader@4cf777e8},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))],
+ symTable={varf=test.in, varc=0},
+ output=[],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={test.in=java.io.BufferedReader@4cf777e8},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[print(varc), (readFile(varf, varc);(print(varc);closeRFile(varf)))],
+ symTable={varf=test.in, varc=0},
+ output=[],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={test.in=java.io.BufferedReader@4cf777e8},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[print(varc), (readFile(varf, varc);(print(varc);closeRFile(varf)))],
+ symTable={varf=test.in, varc=0},
+ output=[],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={test.in=java.io.BufferedReader@4cf777e8},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[(readFile(varf, varc);(print(varc);closeRFile(varf)))],
+ symTable={varf=test.in, varc=0},
+ output=[0],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={test.in=java.io.BufferedReader@4cf777e8},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[(readFile(varf, varc);(print(varc);closeRFile(varf)))],
+ symTable={varf=test.in, varc=0},
+ output=[0],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={test.in=java.io.BufferedReader@4cf777e8},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[readFile(varf, varc), (print(varc);closeRFile(varf))],
+ symTable={varf=test.in, varc=0},
+ output=[0],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={test.in=java.io.BufferedReader@4cf777e8},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[readFile(varf, varc), (print(varc);closeRFile(varf))],
+ symTable={varf=test.in, varc=0},
+ output=[0],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={test.in=java.io.BufferedReader@4cf777e8},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[(print(varc);closeRFile(varf))],
+ symTable={varf=test.in, varc=0},
+ output=[0],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={test.in=java.io.BufferedReader@4cf777e8},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[(print(varc);closeRFile(varf))],
+ symTable={varf=test.in, varc=0},
+ output=[0],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={test.in=java.io.BufferedReader@4cf777e8},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[print(varc), closeRFile(varf)],
+ symTable={varf=test.in, varc=0},
+ output=[0],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={test.in=java.io.BufferedReader@4cf777e8},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[print(varc), closeRFile(varf)],
+ symTable={varf=test.in, varc=0},
+ output=[0],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={test.in=java.io.BufferedReader@4cf777e8},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[closeRFile(varf)],
+ symTable={varf=test.in, varc=0},
+ output=[0, 0],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={test.in=java.io.BufferedReader@4cf777e8},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[closeRFile(varf)],
+ symTable={varf=test.in, varc=0},
+ output=[0, 0],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={test.in=java.io.BufferedReader@4cf777e8},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[],
+ symTable={varf=test.in, varc=0},
+ output=[0, 0],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={test.in=null},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[],
+ symTable={varf=test.in, varc=0},
+ output=[0, 0],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={test.in=null},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=3,
+ exeStack=[],
+ symTable={varf=test.in, varc=0},
+ output=[0, 0],
+ originalProgram=(String varf;(varf = test.in;(openRFile(varf);(Int varc;(readFile(varf, varc);(print(varc);(readFile(varf, varc);(print(varc);closeRFile(varf))))))))),
+ fileTable={test.in=null},
+ heap=(the heap is empty)
+
+}

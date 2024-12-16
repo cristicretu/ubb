@@ -50,8 +50,9 @@ public class RefExp implements IExp {
   @Override
   public IType typecheck(IDict<String, IType> typeEnv) throws ExpressionException {
     IType type = expression.typecheck(typeEnv);
-    if (type.equals(new RefType(type))) {
-      return new RefType(type);
+    if (type instanceof RefType) {
+      RefType refType = (RefType) type;
+      return refType.getInner();
     } else {
       throw new ExpressionException("RefExp: expression is not a RefType");
     }

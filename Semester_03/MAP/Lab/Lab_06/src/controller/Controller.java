@@ -1,7 +1,9 @@
 package controller;
 
 import repository.IRepository;
+import utils.IDict;
 import utils.IHeap;
+import utils.MyDict;
 
 import java.util.List;
 import java.util.Set;
@@ -13,15 +15,18 @@ import java.util.stream.Collectors;
 
 import exceptions.MyException;
 import model.PrgState;
+import model.type.IType;
 import model.value.IValue;
 
 public class Controller {
   private IRepository repo;
   private ExecutorService executor;
+  private boolean typeChecked;
 
   public Controller(IRepository repo) {
     this.repo = repo;
     this.executor = Executors.newFixedThreadPool(2);
+    this.typeChecked = false;
   }
 
   public List<PrgState> removeCompletedPrg(List<PrgState> inPrgList) {
@@ -76,7 +81,18 @@ public class Controller {
     repo.setPrgList(prgList);
   }
 
+  private void typecheck() throws MyException {
+    PrgState prg = repo.getPrgList().get(0);
+    IDict<String, IType> typeEnv = new MyDict<>();
+    prg.getOriginalProgram().typecheck(typeEnv);
+    typeChecked = true;
+  }
+
   public void allSteps() throws MyException {
+    if (!typeChecked) {
+      typecheck();
+    }
+
     executor = Executors.newFixedThreadPool(2);
     List<PrgState> prgList = removeCompletedPrg(repo.getPrgList());
 
