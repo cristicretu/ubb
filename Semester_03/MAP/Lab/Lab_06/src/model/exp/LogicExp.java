@@ -3,6 +3,7 @@ package model.exp;
 import exceptions.ExpressionException;
 import exceptions.MyException;
 import model.type.BoolType;
+import model.type.IType;
 import model.value.BoolValue;
 import model.value.IValue;
 import utils.IDict;
@@ -67,5 +68,17 @@ public class LogicExp implements IExp {
   @Override
   public String toString() {
     return exp1.toString() + " " + operation + " " + exp2.toString();
+  }
+
+  @Override
+  public IType typecheck(IDict<String, IType> typeEnv) throws ExpressionException {
+    IType type1, type2;
+    type1 = exp1.typecheck(typeEnv);
+    type2 = exp2.typecheck(typeEnv);
+    if (type1.equals(new BoolType()) && type2.equals(new BoolType())) {
+      return new BoolType();
+    } else {
+      throw new ExpressionException("Logical expression: operands are not booleans");
+    }
   }
 }

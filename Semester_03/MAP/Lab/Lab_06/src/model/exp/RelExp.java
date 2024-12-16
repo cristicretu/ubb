@@ -2,6 +2,8 @@ package model.exp;
 
 import exceptions.ExpressionException;
 import exceptions.MyException;
+import model.type.BoolType;
+import model.type.IType;
 import model.type.IntType;
 import model.value.BoolValue;
 import model.value.IValue;
@@ -57,6 +59,18 @@ public class RelExp implements IExp {
   @Override
   public IExp deepCopy() {
     return new RelExp(exp1.deepCopy(), exp2.deepCopy(), operation);
+  }
+
+  @Override
+  public IType typecheck(IDict<String, IType> typeEnv) throws ExpressionException {
+    IType type1, type2;
+    type1 = exp1.typecheck(typeEnv);
+    type2 = exp2.typecheck(typeEnv);
+    if (type1.equals(new IntType()) && type2.equals(new IntType())) {
+      return new BoolType();
+    } else {
+      throw new ExpressionException("RelExp: operands are not integers");
+    }
   }
 
 }

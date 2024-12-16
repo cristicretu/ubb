@@ -1,6 +1,8 @@
 package model.exp;
 
+import exceptions.ExpressionException;
 import exceptions.MyException;
+import model.type.IType;
 import model.value.IValue;
 import utils.IDict;
 import utils.IHeap;
@@ -26,5 +28,10 @@ public class ConstantValue implements IExp {
   @Override
   public String toString() {
     return this.value.toString();
+  }
+
+  @Override
+  public IType typecheck(IDict<String, IType> typeEnv) throws ExpressionException {
+    return this.value.getType();
   }
 }
