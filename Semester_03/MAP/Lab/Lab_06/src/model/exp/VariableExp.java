@@ -1,7 +1,9 @@
 package model.exp;
 
 import exceptions.DictionaryException;
+import exceptions.ExpressionException;
 import exceptions.MyException;
+import model.type.IType;
 import model.value.IValue;
 import utils.IDict;
 import utils.IHeap;
@@ -35,5 +37,18 @@ public class VariableExp implements IExp {
   @Override
   public IExp deepCopy() {
     return new VariableExp(this.id);
+  }
+
+  @Override
+  public IType typecheck(IDict<String, IType> typeEnv) throws ExpressionException {
+    if (typeEnv.isDefined(this.id)) {
+      try {
+        return typeEnv.get(this.id);
+      } catch (DictionaryException e) {
+        throw new ExpressionException("Variable " + this.id + " is not defined in type environment");
+      }
+    } else {
+      throw new ExpressionException("Variable " + this.id + " is not defined in type environment");
+    }
   }
 }

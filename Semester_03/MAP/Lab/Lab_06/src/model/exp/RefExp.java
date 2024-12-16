@@ -3,6 +3,8 @@ package model.exp;
 import exceptions.ExpressionException;
 import exceptions.HeapException;
 import exceptions.MyException;
+import model.type.IType;
+import model.type.RefType;
 import model.value.IValue;
 import model.value.RefValue;
 import utils.IDict;
@@ -43,6 +45,16 @@ public class RefExp implements IExp {
   @Override
   public String toString() {
     return "RefExp(" + expression + ")";
+  }
+
+  @Override
+  public IType typecheck(IDict<String, IType> typeEnv) throws ExpressionException {
+    IType type = expression.typecheck(typeEnv);
+    if (type.equals(new RefType(type))) {
+      return new RefType(type);
+    } else {
+      throw new ExpressionException("RefExp: expression is not a RefType");
+    }
   }
 
 }

@@ -2,6 +2,7 @@ package model.exp;
 
 import exceptions.ExpressionException;
 import exceptions.MyException;
+import model.type.IType;
 import model.type.IntType;
 import model.value.IValue;
 import model.value.IntValue;
@@ -60,5 +61,21 @@ public class ArithExp implements IExp {
   @Override
   public String toString() {
     return exp1.toString() + " " + operation + " " + exp2.toString();
+  }
+
+  @Override
+  public IType typecheck(IDict<String, IType> typeEnv) throws ExpressionException {
+    IType type1, type2;
+    type1 = exp1.typecheck(typeEnv);
+    type2 = exp2.typecheck(typeEnv);
+    if (type1.equals(new IntType())) {
+      if (type2.equals(new IntType())) {
+        return new IntType();
+      } else {
+        throw new ExpressionException("Arithmetic expression: operand2 is not an integer");
+      }
+    } else {
+      throw new ExpressionException("Arithmetic expression: operand1 is not an integer");
+    }
   }
 }
