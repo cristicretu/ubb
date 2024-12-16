@@ -20,9 +20,9 @@
 
 (defun tests()
   (assert (equal (getInOrder '(A 2 B 0 C 2 D 0 E 0) nil) '(B A D C E)))
-  (format t "~%Test 1 passed!")
+  (format t "~%test 1 merge")
   (assert (equal (getInOrder '(A 2 B 1 C 0 D 2 E 0 F 0) nil) '(C B A E D F)))
-  (format t "~%Test 2 passed!")
+  (format t "~%t2 merge!")
 )
 
 (tests)
