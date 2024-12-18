@@ -260,6 +260,18 @@ public class View {
                                                                 new VariableExp("a")))))))));
     }
 
+    private static IStmt createExampleWithTypeError() {
+        // bool a; int b; b = a + 5;
+        return new CompStmt(
+                new VarDeclStmt("a", new BoolType()),
+                new CompStmt(
+                        new VarDeclStmt("b", new IntType()),
+                        new AssignStmt("b",
+                                new ArithExp('+',
+                                        new VariableExp("a"),
+                                        new ConstantValue(new IntValue(5))))));
+    }
+
     private static PrgState createPrgState(IStmt originalProgram) throws MyException {
         IDict<String, IType> typeEnv = new MyDict<>();
 
@@ -284,17 +296,28 @@ public class View {
         TextMenu menu = new TextMenu();
 
         try {
-            menu.addCommand(new RunExample("1", createExample1(), createController(createExample1(), "log1.txt")));
-            menu.addCommand(new RunExample("2", createExample2(), createController(createExample2(), "log2.txt")));
-            menu.addCommand(new RunExample("3", createExample3(), createController(createExample3(), "log3.txt")));
-            menu.addCommand(new RunExample("4", createExample4(), createController(createExample4(), "log4.txt")));
-            menu.addCommand(new RunExample("5", createExample5(), createController(createExample5(), "log5.txt")));
-            menu.addCommand(new RunExample("6", createExample6(), createController(createExample6(), "log6.txt")));
-            menu.addCommand(new RunExample("7", createExample7(), createController(createExample7(), "log7.txt")));
-            menu.addCommand(new RunExample("8", createExample8(), createController(createExample8(), "log8.txt")));
-            menu.addCommand(new RunExample("9", createExample9(), createController(createExample9(), "log9.txt")));
+            menu.addCommand(new RunExample("1", createExample1(),
+                    createController(createExample1(), "log1.txt")));
+            menu.addCommand(new RunExample("2", createExample2(),
+                    createController(createExample2(), "log2.txt")));
+            menu.addCommand(new RunExample("3", createExample3(),
+                    createController(createExample3(), "log3.txt")));
+            menu.addCommand(new RunExample("4", createExample4(),
+                    createController(createExample4(), "log4.txt")));
+            menu.addCommand(new RunExample("5", createExample5(),
+                    createController(createExample5(), "log5.txt")));
+            menu.addCommand(new RunExample("6", createExample6(),
+                    createController(createExample6(), "log6.txt")));
+            menu.addCommand(new RunExample("7", createExample7(),
+                    createController(createExample7(), "log7.txt")));
+            menu.addCommand(new RunExample("8", createExample8(),
+                    createController(createExample8(), "log8.txt")));
+            menu.addCommand(new RunExample("9", createExample9(),
+                    createController(createExample9(), "log9.txt")));
             menu.addCommand(new RunExample("10", createExample10(),
                     createController(createExample10(), "log10.txt")));
+            // menu.addCommand(new RunExample("11", createExampleWithTypeError(),
+            // createController(createExampleWithTypeError(), "log11.txt")));
         } catch (MyException e) {
             System.out.println("Error during program initialization: " + e.getMessage());
             System.exit(1);
