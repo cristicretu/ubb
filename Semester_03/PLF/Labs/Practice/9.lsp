@@ -40,3 +40,61 @@
 )
 
 (print (maisam '(1230) '(1230)))
+
+(defun compute (lst)
+  (compute-helper lst nil))
+
+(defun compute-helper (expr stack)
+  (print (list 'expr expr 'stack stack))  ; Debug print
+  (cond 
+    ((null expr) 
+     (if (and (>= (length stack) 3)
+              (numberp (car stack))
+              (numberp (caddr stack))
+              (or (equal (cadr stack) '+) 
+                  (equal (cadr stack) '*) 
+                  (equal (cadr stack) '-) 
+                  (equal (cadr stack) '/')))
+         (let ((num2 (car stack))
+               (op (cadr stack))
+               (num1 (caddr stack)))
+           (compute-helper 
+             nil
+             (cons (cond ((equal op '+) (+ num1 num2))
+                        ((equal op '*) (* num1 num2))
+                        ((equal op '-) (- num1 num2))
+                        ((equal op '/) (/ num1 num2)))
+                  (cdddr stack))))
+         (car stack)))
+    
+    ((or (equal (car expr) '+) 
+         (equal (car expr) '*) 
+         (equal (car expr) '-) 
+         (equal (car expr) '/))
+     (compute-helper (cdr expr) (cons (car expr) stack)))
+    
+    ((and (numberp (car expr)) 
+          (>= (length stack) 2)
+          (numberp (car stack))
+          (or (equal (cadr stack) '+) 
+              (equal (cadr stack) '*) 
+              (equal (cadr stack) '-) 
+              (equal (cadr stack) '/)))
+     (let ((num2 (car expr))
+           (num1 (car stack))
+           (op (cadr stack)))
+       (print (list 'computing op num1 num2))  ; Debug print
+       (compute-helper 
+         (cdr expr)
+         (cons (cond ((equal op '+) (+ num1 num2))
+                     ((equal op '*) (* num1 num2))
+                     ((equal op '-) (- num1 num2))
+                     ((equal op '/) (/ num1 num2)))
+               (cddr stack)))))
+    
+    (T (compute-helper (cdr expr) (cons (car expr) stack)))))
+
+; Test cases
+(print (compute '(+ 1 3)))          ; ==> 4
+(print (compute '(+ * 2 4 3)))      ; ==> 11
+(print (compute '(+ * 2 4 - 5 * 2 2))) ; ==> 9
