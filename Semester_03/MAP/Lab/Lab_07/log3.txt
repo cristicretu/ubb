@@ -1,0 +1,220 @@
+PrgState{
+id=2,
+ exeStack=[(bool a;(Int v;(a = true;(if (a) then (v = 2) else (v = 3);print(v)))))],
+ symTable={},
+ output=[],
+ originalProgram=(bool a;(Int v;(a = true;(if (a) then (v = 2) else (v = 3);print(v))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=2,
+ exeStack=[bool a, (Int v;(a = true;(if (a) then (v = 2) else (v = 3);print(v))))],
+ symTable={},
+ output=[],
+ originalProgram=(bool a;(Int v;(a = true;(if (a) then (v = 2) else (v = 3);print(v))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=2,
+ exeStack=[bool a, (Int v;(a = true;(if (a) then (v = 2) else (v = 3);print(v))))],
+ symTable={},
+ output=[],
+ originalProgram=(bool a;(Int v;(a = true;(if (a) then (v = 2) else (v = 3);print(v))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=2,
+ exeStack=[(Int v;(a = true;(if (a) then (v = 2) else (v = 3);print(v))))],
+ symTable={a=false},
+ output=[],
+ originalProgram=(bool a;(Int v;(a = true;(if (a) then (v = 2) else (v = 3);print(v))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=2,
+ exeStack=[(Int v;(a = true;(if (a) then (v = 2) else (v = 3);print(v))))],
+ symTable={a=false},
+ output=[],
+ originalProgram=(bool a;(Int v;(a = true;(if (a) then (v = 2) else (v = 3);print(v))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=2,
+ exeStack=[Int v, (a = true;(if (a) then (v = 2) else (v = 3);print(v)))],
+ symTable={a=false},
+ output=[],
+ originalProgram=(bool a;(Int v;(a = true;(if (a) then (v = 2) else (v = 3);print(v))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=2,
+ exeStack=[Int v, (a = true;(if (a) then (v = 2) else (v = 3);print(v)))],
+ symTable={a=false},
+ output=[],
+ originalProgram=(bool a;(Int v;(a = true;(if (a) then (v = 2) else (v = 3);print(v))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=2,
+ exeStack=[(a = true;(if (a) then (v = 2) else (v = 3);print(v)))],
+ symTable={a=false, v=0},
+ output=[],
+ originalProgram=(bool a;(Int v;(a = true;(if (a) then (v = 2) else (v = 3);print(v))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=2,
+ exeStack=[(a = true;(if (a) then (v = 2) else (v = 3);print(v)))],
+ symTable={a=false, v=0},
+ output=[],
+ originalProgram=(bool a;(Int v;(a = true;(if (a) then (v = 2) else (v = 3);print(v))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=2,
+ exeStack=[a = true, (if (a) then (v = 2) else (v = 3);print(v))],
+ symTable={a=false, v=0},
+ output=[],
+ originalProgram=(bool a;(Int v;(a = true;(if (a) then (v = 2) else (v = 3);print(v))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=2,
+ exeStack=[a = true, (if (a) then (v = 2) else (v = 3);print(v))],
+ symTable={a=false, v=0},
+ output=[],
+ originalProgram=(bool a;(Int v;(a = true;(if (a) then (v = 2) else (v = 3);print(v))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=2,
+ exeStack=[(if (a) then (v = 2) else (v = 3);print(v))],
+ symTable={a=true, v=0},
+ output=[],
+ originalProgram=(bool a;(Int v;(a = true;(if (a) then (v = 2) else (v = 3);print(v))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=2,
+ exeStack=[(if (a) then (v = 2) else (v = 3);print(v))],
+ symTable={a=true, v=0},
+ output=[],
+ originalProgram=(bool a;(Int v;(a = true;(if (a) then (v = 2) else (v = 3);print(v))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=2,
+ exeStack=[if (a) then (v = 2) else (v = 3), print(v)],
+ symTable={a=true, v=0},
+ output=[],
+ originalProgram=(bool a;(Int v;(a = true;(if (a) then (v = 2) else (v = 3);print(v))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=2,
+ exeStack=[if (a) then (v = 2) else (v = 3), print(v)],
+ symTable={a=true, v=0},
+ output=[],
+ originalProgram=(bool a;(Int v;(a = true;(if (a) then (v = 2) else (v = 3);print(v))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=2,
+ exeStack=[v = 2, print(v)],
+ symTable={a=true, v=0},
+ output=[],
+ originalProgram=(bool a;(Int v;(a = true;(if (a) then (v = 2) else (v = 3);print(v))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=2,
+ exeStack=[v = 2, print(v)],
+ symTable={a=true, v=0},
+ output=[],
+ originalProgram=(bool a;(Int v;(a = true;(if (a) then (v = 2) else (v = 3);print(v))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=2,
+ exeStack=[print(v)],
+ symTable={a=true, v=2},
+ output=[],
+ originalProgram=(bool a;(Int v;(a = true;(if (a) then (v = 2) else (v = 3);print(v))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=2,
+ exeStack=[print(v)],
+ symTable={a=true, v=2},
+ output=[],
+ originalProgram=(bool a;(Int v;(a = true;(if (a) then (v = 2) else (v = 3);print(v))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=2,
+ exeStack=[],
+ symTable={a=true, v=2},
+ output=[2],
+ originalProgram=(bool a;(Int v;(a = true;(if (a) then (v = 2) else (v = 3);print(v))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=2,
+ exeStack=[],
+ symTable={a=true, v=2},
+ output=[2],
+ originalProgram=(bool a;(Int v;(a = true;(if (a) then (v = 2) else (v = 3);print(v))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=2,
+ exeStack=[],
+ symTable={a=true, v=2},
+ output=[2],
+ originalProgram=(bool a;(Int v;(a = true;(if (a) then (v = 2) else (v = 3);print(v))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
