@@ -1,0 +1,249 @@
+PrgState{
+id=5,
+ exeStack=[(Ref(Int) v;(NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5))))))],
+ symTable={},
+ output=[],
+ originalProgram=(Ref(Int) v;(NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=5,
+ exeStack=[Ref(Int) v, (NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))))],
+ symTable={},
+ output=[],
+ originalProgram=(Ref(Int) v;(NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=5,
+ exeStack=[Ref(Int) v, (NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))))],
+ symTable={},
+ output=[],
+ originalProgram=(Ref(Int) v;(NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=5,
+ exeStack=[(NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))))],
+ symTable={v=RefValue(0, Int)},
+ output=[],
+ originalProgram=(Ref(Int) v;(NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=5,
+ exeStack=[(NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))))],
+ symTable={v=RefValue(0, Int)},
+ output=[],
+ originalProgram=(Ref(Int) v;(NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=5,
+ exeStack=[NewStmt(v, 20), (Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5))))],
+ symTable={v=RefValue(0, Int)},
+ output=[],
+ originalProgram=(Ref(Int) v;(NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=5,
+ exeStack=[NewStmt(v, 20), (Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5))))],
+ symTable={v=RefValue(0, Int)},
+ output=[],
+ originalProgram=(Ref(Int) v;(NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))))),
+ fileTable={},
+ heap=(the heap is empty)
+
+}
+PrgState{
+id=5,
+ exeStack=[(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5))))],
+ symTable={v=RefValue(1, Int)},
+ output=[],
+ originalProgram=(Ref(Int) v;(NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))))),
+ fileTable={},
+ heap=1 -> 20
+
+}
+PrgState{
+id=5,
+ exeStack=[(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5))))],
+ symTable={v=RefValue(1, Int)},
+ output=[],
+ originalProgram=(Ref(Int) v;(NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))))),
+ fileTable={},
+ heap=1 -> 20
+
+}
+PrgState{
+id=5,
+ exeStack=[Ref(Ref(Int)) a, (NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))],
+ symTable={v=RefValue(1, Int)},
+ output=[],
+ originalProgram=(Ref(Int) v;(NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))))),
+ fileTable={},
+ heap=1 -> 20
+
+}
+PrgState{
+id=5,
+ exeStack=[Ref(Ref(Int)) a, (NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))],
+ symTable={v=RefValue(1, Int)},
+ output=[],
+ originalProgram=(Ref(Int) v;(NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))))),
+ fileTable={},
+ heap=1 -> 20
+
+}
+PrgState{
+id=5,
+ exeStack=[(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))],
+ symTable={a=RefValue(0, Ref(Int)), v=RefValue(1, Int)},
+ output=[],
+ originalProgram=(Ref(Int) v;(NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))))),
+ fileTable={},
+ heap=1 -> 20
+
+}
+PrgState{
+id=5,
+ exeStack=[(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))],
+ symTable={a=RefValue(0, Ref(Int)), v=RefValue(1, Int)},
+ output=[],
+ originalProgram=(Ref(Int) v;(NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))))),
+ fileTable={},
+ heap=1 -> 20
+
+}
+PrgState{
+id=5,
+ exeStack=[NewStmt(a, v), (print(RefExp(v));print(RefExp(RefExp(a)) + 5))],
+ symTable={a=RefValue(0, Ref(Int)), v=RefValue(1, Int)},
+ output=[],
+ originalProgram=(Ref(Int) v;(NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))))),
+ fileTable={},
+ heap=1 -> 20
+
+}
+PrgState{
+id=5,
+ exeStack=[NewStmt(a, v), (print(RefExp(v));print(RefExp(RefExp(a)) + 5))],
+ symTable={a=RefValue(0, Ref(Int)), v=RefValue(1, Int)},
+ output=[],
+ originalProgram=(Ref(Int) v;(NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))))),
+ fileTable={},
+ heap=1 -> 20
+
+}
+PrgState{
+id=5,
+ exeStack=[(print(RefExp(v));print(RefExp(RefExp(a)) + 5))],
+ symTable={a=RefValue(2, Ref(Int)), v=RefValue(1, Int)},
+ output=[],
+ originalProgram=(Ref(Int) v;(NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))))),
+ fileTable={},
+ heap=1 -> 20
+2 -> RefValue(1, Int)
+
+}
+PrgState{
+id=5,
+ exeStack=[(print(RefExp(v));print(RefExp(RefExp(a)) + 5))],
+ symTable={a=RefValue(2, Ref(Int)), v=RefValue(1, Int)},
+ output=[],
+ originalProgram=(Ref(Int) v;(NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))))),
+ fileTable={},
+ heap=1 -> 20
+2 -> RefValue(1, Int)
+
+}
+PrgState{
+id=5,
+ exeStack=[print(RefExp(v)), print(RefExp(RefExp(a)) + 5)],
+ symTable={a=RefValue(2, Ref(Int)), v=RefValue(1, Int)},
+ output=[],
+ originalProgram=(Ref(Int) v;(NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))))),
+ fileTable={},
+ heap=1 -> 20
+2 -> RefValue(1, Int)
+
+}
+PrgState{
+id=5,
+ exeStack=[print(RefExp(v)), print(RefExp(RefExp(a)) + 5)],
+ symTable={a=RefValue(2, Ref(Int)), v=RefValue(1, Int)},
+ output=[],
+ originalProgram=(Ref(Int) v;(NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))))),
+ fileTable={},
+ heap=1 -> 20
+2 -> RefValue(1, Int)
+
+}
+PrgState{
+id=5,
+ exeStack=[print(RefExp(RefExp(a)) + 5)],
+ symTable={a=RefValue(2, Ref(Int)), v=RefValue(1, Int)},
+ output=[20],
+ originalProgram=(Ref(Int) v;(NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))))),
+ fileTable={},
+ heap=1 -> 20
+2 -> RefValue(1, Int)
+
+}
+PrgState{
+id=5,
+ exeStack=[print(RefExp(RefExp(a)) + 5)],
+ symTable={a=RefValue(2, Ref(Int)), v=RefValue(1, Int)},
+ output=[20],
+ originalProgram=(Ref(Int) v;(NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))))),
+ fileTable={},
+ heap=1 -> 20
+2 -> RefValue(1, Int)
+
+}
+PrgState{
+id=5,
+ exeStack=[],
+ symTable={a=RefValue(2, Ref(Int)), v=RefValue(1, Int)},
+ output=[20, 25],
+ originalProgram=(Ref(Int) v;(NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))))),
+ fileTable={},
+ heap=1 -> 20
+2 -> RefValue(1, Int)
+
+}
+PrgState{
+id=5,
+ exeStack=[],
+ symTable={a=RefValue(2, Ref(Int)), v=RefValue(1, Int)},
+ output=[20, 25],
+ originalProgram=(Ref(Int) v;(NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))))),
+ fileTable={},
+ heap=1 -> 20
+2 -> RefValue(1, Int)
+
+}
+PrgState{
+id=5,
+ exeStack=[],
+ symTable={a=RefValue(2, Ref(Int)), v=RefValue(1, Int)},
+ output=[20, 25],
+ originalProgram=(Ref(Int) v;(NewStmt(v, 20);(Ref(Ref(Int)) a;(NewStmt(a, v);(print(RefExp(v));print(RefExp(RefExp(a)) + 5)))))),
+ fileTable={},
+ heap=1 -> 20
+2 -> RefValue(1, Int)
+
+}
