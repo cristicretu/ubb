@@ -30,6 +30,7 @@
 - [🔍 Advanced Programming Methods](https://github.com/cristicretu/ubb/tree/main/Semester_03/MAP)
   - [Seminars](https://github.com/cristicretu/ubb/tree/main/Semester_03/MAP/Seminars)
   - [Labs](https://github.com/cristicretu/ubb/tree/main/Semester_03/MAP/Lab)
+  - > Configure `Java FX` following [this](https://gist.github.com/cristicretu/b9853999dc825f83d65442d6264ecf78)
 - [🗃️ Databases](https://github.com/cristicretu/ubb/tree/main/Semester_03/DB)
   - [Labs](https://github.com/cristicretu/ubb/tree/main/Semester_03/DB/Labs)
 - [🌐 Computer Networks](https://github.com/cristicretu/ubb/tree/main/Semester_03/Retele)
