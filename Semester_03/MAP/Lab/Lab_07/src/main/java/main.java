@@ -1,4 +1,3 @@
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,8 +10,8 @@ public class Main extends Application {
     FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ProgramList.fxml"));
     Parent root = loader.load();
 
-    primaryStage.setTitle("Toy Language Interpreter");
-    primaryStage.setScene(new Scene(root, 600, 400));
+    primaryStage.setTitle("Select Program");
+    primaryStage.setScene(new Scene(root, 400, 500));
     primaryStage.show();
   }
 

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="10" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="view.gui.MainWindowController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Number of PrgStates -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Number of Program States:"/>
+        <TextField fx:id="numberOfPrgStatesTextField" editable="false"/>
+    </HBox>
+
+    <HBox spacing="10" VBox.vgrow="ALWAYS">
+        <!-- Left side -->
+        <VBox spacing="10" HBox.hgrow="ALWAYS">
+            <Label text="HeapTable"/>
+            <TableView fx:id="heapTableView" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="heapAddressColumn" text="Address"/>
+                    <TableColumn fx:id="heapValueColumn" text="Value"/>
+                </columns>
+            </TableView>
+
+            <Label text="Output"/>
+            <ListView fx:id="outputListView" VBox.vgrow="ALWAYS"/>
+
+            <Label text="FileTable"/>
+            <ListView fx:id="fileTableListView" VBox.vgrow="ALWAYS"/>
+        </VBox>
+
+        <!-- Right side -->
+        <VBox spacing="10" HBox.hgrow="ALWAYS">
+            <Label text="PrgState Identifiers"/>
+            <ListView fx:id="prgStateIdentifiersListView" VBox.vgrow="ALWAYS"/>
+
+            <Label text="SymTable"/>
+            <TableView fx:id="symTableView" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="symTableVarNameColumn" text="Variable Name"/>
+                    <TableColumn fx:id="symTableValueColumn" text="Value"/>
+                </columns>
+            </TableView>
+
+            <Label text="ExeStack"/>
+            <ListView fx:id="exeStackListView" VBox.vgrow="ALWAYS"/>
+
+            <Button fx:id="runOneStepButton" text="Run one step" onAction="#runOneStep" 
+                    maxWidth="Infinity"/>
+        </VBox>
+    </HBox>
+</VBox> 
