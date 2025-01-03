@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Debug JavaFX Application",
+            "request": "launch",
+            "mainClass": "Main",
+            "projectName": "Lab_07",
+            "cwd": "${workspaceFolder}",
+            "vmArgs": "--module-path target/dependency --add-modules javafx.controls,javafx.fxml"
+        }
+    ]
+} 
