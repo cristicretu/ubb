@@ -29,13 +29,17 @@ public class Controller {
     this.typeChecked = false;
   }
 
+  public IRepository getRepo() {
+    return repo;
+  }
+
   public List<PrgState> removeCompletedPrg(List<PrgState> inPrgList) {
     return inPrgList.stream()
         .filter(p -> p.isNotCompleted())
         .collect(Collectors.toList());
   }
 
-  void oneStepForAllPrg(List<PrgState> prgList) throws InterruptedException {
+  public void oneStepForAllPrg(List<PrgState> prgList) throws InterruptedException {
     prgList.forEach(prg -> {
       try {
         repo.logPrgStateExec(prg);
