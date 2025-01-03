@@ -1,0 +1,9 @@
+{
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar"
+    ],
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.maven.downloadSources": true,
+    "java.debug.settings.onBuildFailureProceed": true
+} 

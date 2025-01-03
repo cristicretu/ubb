@@ -316,8 +316,6 @@ public class View {
                     createController(createExample9(), "log9.txt")));
             menu.addCommand(new RunExample("10", createExample10(),
                     createController(createExample10(), "log10.txt")));
-            menu.addCommand(new RunExample("11", createExampleWithTypeError(),
-                    createController(createExampleWithTypeError(), "log11.txt")));
         } catch (MyException e) {
             System.out.println("Error during program initialization: " + e.getMessage());
             System.exit(1);
