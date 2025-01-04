@@ -1,6 +1,7 @@
 create function ShoesTShops
 (
     @T int
+
 ) returns table
 as return
     select S.id
