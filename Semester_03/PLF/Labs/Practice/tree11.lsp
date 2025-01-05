@@ -1,0 +1,33 @@
+(defun nodes-at-level (tree level current)
+  (cond
+    ((null tree) nil)
+    ((= level current) (list (car tree)))
+    (T (append (nodes-at-level (cadr tree) level (+ current 1))
+               (nodes-at-level (caddr tree) level (+ current 1))))
+  )
+)
+
+(defun max-level-helper (tree max-level)
+  (if (null tree)
+      (- max-level 1)
+      (max (max-level-helper (cadr tree) (+ max-level 1))
+           (max-level-helper (caddr tree) (+ max-level 1)))
+  )
+)
+
+(defun find-max-nodes-level (tree)
+  (let* ((max-depth (max-level-helper tree 0))
+         (max-count 0)
+         (max-level 0)
+         (result-nodes nil))
+    (dotimes (level (+ max-depth 1))
+      (let ((nodes (nodes-at-level tree level 0)))
+        (when (> (length nodes) max-count)
+          (setq max-count (length nodes))
+          (setq max-level level)
+          (setq result-nodes nodes))))
+    (list max-level result-nodes))
+)
+
+; Test the function
+(print (find-max-nodes-level '(a (b) (c (d) (e)))))
