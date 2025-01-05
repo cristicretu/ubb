@@ -10,14 +10,12 @@
         <Insets top="20" right="20" bottom="20" left="20"/>
     </padding>
 
-    <!-- Number of PrgStates -->
     <HBox spacing="10" alignment="CENTER_LEFT">
         <Label text="Number of Program States:"/>
         <TextField fx:id="numberOfPrgStatesTextField" editable="false"/>
     </HBox>
 
     <HBox spacing="10" VBox.vgrow="ALWAYS">
-        <!-- Left side -->
         <VBox spacing="10" HBox.hgrow="ALWAYS">
             <Label text="HeapTable"/>
             <TableView fx:id="heapTableView" VBox.vgrow="ALWAYS">
@@ -34,7 +32,6 @@
             <ListView fx:id="fileTableListView" VBox.vgrow="ALWAYS"/>
         </VBox>
 
-        <!-- Right side -->
         <VBox spacing="10" HBox.hgrow="ALWAYS">
             <Label text="PrgState Identifiers"/>
             <ListView fx:id="prgStateIdentifiersListView" VBox.vgrow="ALWAYS"/>
