@@ -2,7 +2,6 @@ package view.gui;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.beans.property.SimpleStringProperty;
@@ -10,14 +9,10 @@ import model.PrgState;
 import model.value.IValue;
 import model.statement.IStmt;
 import controller.Controller;
-import exceptions.MyException;
 import exceptions.StackException;
-import repository.IRepository;
-import repository.Repository;
 import utils.IHeap;
 import utils.IStack;
 import utils.MyDict;
-import utils.MyHeap;
 import utils.MyList;
 import utils.MyStack;
 import java.util.ArrayList;
@@ -148,7 +143,8 @@ public class MainWindowController {
       MyDict<StringValue, BufferedReader> fileTable = (MyDict<StringValue, BufferedReader>) controller.getRepo()
           .getPrgList().get(0).getFileTable();
       files.addAll(fileTable.getValues().stream()
-          .map(Object::toString)
+          .filter(br -> br != null)
+          .map(br -> br.toString())
           .collect(Collectors.toList()));
     }
     fileTableListView.setItems(files);
@@ -170,14 +166,12 @@ public class MainWindowController {
       IStack<IStmt> tempStack = new MyStack<>();
 
       try {
-        // Copy elements to temporary stack and collect their string representations
         while (!stack.isEmpty()) {
           IStmt stmt = stack.pop();
           stackElements.add(0, stmt.toString());
           tempStack.push(stmt);
         }
 
-        // Restore the original stack
         while (!tempStack.isEmpty()) {
           stack.push(tempStack.pop());
         }
