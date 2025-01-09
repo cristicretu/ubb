@@ -7,12 +7,9 @@
 )
 
 (defun my_reverse (l)
-  (reverse-helper l nil))
-
-(defun reverse-helper (l acc)
   (cond
-    ((null l) acc)
-    (T (reverse-helper (cdr l) (cons (car l) acc)))
+    ((null l) nil)
+    (T (append (my_reverse (cdr l)) (list (car l))))
   )
 )
 
