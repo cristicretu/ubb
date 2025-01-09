@@ -1,13 +1,15 @@
-(defun myco (l)
+(defun invert-simple (lst)
   (cond
-    ((null l) nil)
-    ((atom (car l))
-      (cond
-        ((and (not (null (cdr l))) (atom (cadr l))) 
-         (cons (cadr l) (cons (car l) (myco (cddr l)))))
-        (T (cons (car l) (myco (cdr l))))
-      ))
-    (T (cons (myco (car l)) (myco (cdr l))))
-  ))
+    ((null lst) nil)
+    ((atom (car lst))
+     (append (reverse (collect-atoms lst))
+             (invert-simple (nthcdr (length (collect-atoms lst)) lst))))
+    (T (cons (invert-simple (car lst))
+            (invert-simple (cdr lst))))))
 
-(print (myco '(a b c (d (e f) g h i))))
+(defun collect-atoms (lst)
+  (cond
+    ((or (null lst) (not (atom (car lst)))) nil)
+    (T (cons (car lst) (collect-atoms (cdr lst))))))
+
+(print (invert-simple '(a b c (d (e f) g h i))))
