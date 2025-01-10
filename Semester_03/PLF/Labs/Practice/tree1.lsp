@@ -22,7 +22,7 @@
      (maidfs1 (cddr lst) (cons (car lst) acc) el))
   ))
 
-(print (maidfs1 '(a 2 b 0 c 2 d 0 e 0) nil 'E))
+(print (maidfs1 '(a 2 b 0 bc 2 d 0 e 0) nil 'E))
 
 
 
