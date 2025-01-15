@@ -11,3 +11,5 @@
 
 ; (print (funcall #'+ 1 2 3))
 ; (print (apply #'+ '(1 2 3)))
+
+
