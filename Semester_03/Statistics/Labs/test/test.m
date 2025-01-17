@@ -66,6 +66,3 @@ fprintf("(Q6) the rejection region is (%f, +inf)\n", q1)
 fprintf('(Q7) P-value is %1.4f\n', p);
 fprintf("(Q8) Observed value is %f\n", stats.tstat)
 fprintf("(Q9) The rejection region tells us to reject the null hypothesis if the P value lies within the insides of the interval. \n If the P-value was very small and close to 0, then we reject the null hypothesis.  \nIf P-value was bigger then significance (0.05) then we would have not rejected H0. But since P-value is %f, which is smaller than our significance, then we reject H0\n", p)
-
-
-
