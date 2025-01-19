@@ -56,6 +56,7 @@ else
     fprintf("(Q4) Steel pipes DO lose on average more heat than glass pipes. (for the 5 percent significance level)\n")
 end
 
+
 fprintf("(Q5) Using a T (student) test\n");
 
 % since we has a right tailed test, the interval of rejection will be
