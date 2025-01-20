@@ -61,6 +61,7 @@ _finishStatus_ text not null
 ## Sponsors
 
 _sponsorId_ int primary key
+
 _sponsorName_ text not null
 
 ## Engines
