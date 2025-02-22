@@ -38,6 +38,7 @@
 - [🌐 Computer Networks](https://github.com/cristicretu/ubb/tree/main/Semester_03/Retele)
   - [Labs](https://github.com/cristicretu/ubb/tree/main/Semester_03/Retele/Lab)
   - > Get Packet Tracer [here](https://www.netacad.com/resources/lab-downloads?courseLang=en-US)
+  - > Practice for the Final Exam with all the questions [here](https://cn-exam-sand.vercel.app)
 - [🧮 Probability & Statistics](https://github.com/cristicretu/ubb/tree/main/Semester_03/Statistics)
   - [Labs](https://github.com/cristicretu/ubb/tree/main/Semester_03/Statistics/Labs)
 - [🔐 Logic & Functional Programming](https://github.com/cristicretu/ubb/tree/main/Semester_03/PLF)
