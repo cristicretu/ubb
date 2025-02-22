@@ -1,5 +1,7 @@
 ### Babeș-Bolyai University - Computer Science
 
+#### Add your timetable / schedule into Google Calendar / Notion Calendar using [ubb-google-cal](https://github.com/cristicretu/ubb-google-cal)
+
 ## [📕 Semester 1](https://github.com/cristicretu/ubb/tree/main/Semester_01)
 - [⟦⟧ Algebra](https://github.com/cristicretu/ubb/tree/main/Semester_01/Algebra)
 - [👾 Computer Systems Architecture](https://github.com/cristicretu/ubb/tree/main/Semester_01/Computer_System_Architecture)
