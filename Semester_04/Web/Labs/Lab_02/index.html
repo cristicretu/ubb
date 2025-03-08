@@ -12,28 +12,68 @@
       <main style="margin-top: 20px">
         <div style="display: flex; flex-direction: column; gap: 20px">
           <div style="width: 100%; display: flex; flex-direction: row; gap: 20px">
-            <div style="width: 20px; height: 700px; background-color: #000000; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-              <span style="transform: rotate(-90deg); color: white; white-space: nowrap;">OY axis</span>
+            <div style="width: 20px; height: 700px; background-color: #000000; display: flex; flex-direction: column; justify-content: center; align-items: center; ">
+              <span style="transform: rotate(-90deg); color: white; white-space: nowrap; font-weight: bold;">Percentage<span>
             </div>
-            <div style="width: 100%; height: 700px; display: flex; flex-direction: row; gap: 20px; align-items: end;">
-
-              <div style="width: 100%; height: 20%; background-color: #440154"></div>
-              <div style="width: 100%; height: 30%; background-color: #472c7a"></div>
-              <div style="width: 100%; height: 40%; background-color: #3b518b"></div>
-              <div style="width: 100%; height: 80%; background-color: #2c718e"></div>
-              <div style="width: 100%; height: 85%; background-color: #27ad81"></div>
-              <div style="width: 100%; height: 100%; background-color: #fde725"></div>
-              <div style="width: 100%; height: 90%; background-color: #aadc32"></div>
-              <div style="width: 100%; height: 70%; background-color: #21908d"></div>
-              <div style="width: 100%; height: 60%; background-color: #5cc863"></div>
-
+            <div style="width: 100%; height: 700px; display: flex; flex-direction: row; align-items: end; justify-content: space-between; position: relative; background: repeating-linear-gradient(to top, #eee 0%, #eee 1px, transparent 1px, transparent 10%);">
+              <div style="flex: 1; height: 20%; background-color: #440154; margin: 0 2px; transition: all 0.3s ease; position: relative; cursor: pointer;" data-value="20%">
+                <div class="tooltip">20%</div>
+              </div>
+              <div style="flex: 1; height: 30%; background-color: #472c7a; margin: 0 2px; transition: all 0.3s ease; position: relative; cursor: pointer;" data-value="30%">
+                <div class="tooltip">30%</div>
+              </div>
+              <div style="flex: 1; height: 40%; background-color: #3b518b; margin: 0 2px; transition: all 0.3s ease; position: relative; cursor: pointer;" data-value="40%">
+                <div class="tooltip">40%</div>
+              </div>
+              <div style="flex: 1; height: 80%; background-color: #2c718e; margin: 0 2px; transition: all 0.3s ease; position: relative; cursor: pointer;" data-value="80%">
+                <div class="tooltip">80%</div>
+              </div>
+              <div style="flex: 1; height: 85%; background-color: #27ad81; margin: 0 2px; transition: all 0.3s ease; position: relative; cursor: pointer;" data-value="85%">
+                <div class="tooltip">85%</div>
+              </div>
+              <div style="flex: 1; height: 100%; background-color: #fde725; margin: 0 2px; transition: all 0.3s ease; position: relative; cursor: pointer;" data-value="100%">
+                <div class="tooltip">100%</div>
+              </div>
+              <div style="flex: 1; height: 90%; background-color: #aadc32; margin: 0 2px; transition: all 0.3s ease; position: relative; cursor: pointer;" data-value="90%">
+                <div class="tooltip">90%</div>
+              </div>
+              <div style="flex: 1; height: 70%; background-color: #21908d; margin: 0 2px; transition: all 0.3s ease; position: relative; cursor: pointer;" data-value="70%">
+                <div class="tooltip">70%</div>
+              </div>
+              <div style="flex: 1; height: 60%; background-color: #5cc863; margin: 0 2px; transition: all 0.3s ease; position: relative; cursor: pointer;" data-value="60%">
+                <div class="tooltip">60%</div>
+              </div>
             </div>
           </div>
-          <div style="width: 100%; height: 20px; background-color: #000000; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-            <span style="color: white; white-space: nowrap;">OX axis</span>
+          <div style="width: 100%; height: 20px; background-color: #000000; display: flex; justify-content: space-between; padding: 0 10px;">
+            <span style="color: white;">Q1</span>
+            <span style="color: white;">Q2</span>
+            <span style="color: white;">Q3</span>
+            <span style="color: white;">Q4</span>
           </div>
+        </div>
       </main>
-
     </div>
+    <style>
+      .tooltip {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.8);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+      }
+
+      div[data-value]:hover .tooltip {
+        opacity: 1;
+      }
+
+      div[data-value]:hover {
+        transform: scaleY(1.05);
+      }
+    </style>
   </body>
 </html>
