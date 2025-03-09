@@ -116,7 +116,6 @@
     </div>
     <style>
       .menu {
-        perspective: 1000px;
         position: relative;
         margin-top: 64px;
         margin-left: 64px;
@@ -129,7 +128,6 @@
         position: relative;
         width: 180px;
         height: 180px;
-        transform-style: preserve-3d;
       }
 
       .menu-item {
@@ -138,11 +136,9 @@
         left: 0;
         width: 80px;
         height: 80px;
-        display: flex;
         justify-content: center;
         align-items: center;
         transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        transform-style: preserve-3d;
       }
 
       .menu-item:nth-child(1) {
@@ -183,9 +179,6 @@
         transform: translateX(65px) translateY(-113px) scale(1.1);
       }
 
-      .menu-item:hover {
-        z-index: 10;
-      }
 
       .menu-item a {
         display: block;
@@ -213,7 +206,6 @@
         font-size: 1.4rem;
         background-color: #5D8BF4;
         box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-        transform: translateZ(20px);
       }
 
       .menu-content {
@@ -227,7 +219,7 @@
         box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         z-index: 1;
         transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        transform: scale(0.8) translateZ(-10px);
+        transform: scale(0.8);
         transform-style: preserve-3d;
       }
 
@@ -264,26 +256,21 @@
       .menu-item:hover .menu-content {
         opacity: 1;
         visibility: visible;
-        transform: scale(1) translateZ(0);
+        transform: scale(1) ;
       }
 
-      .menu-content-inner {
-        width: 100%;
-        transform-style: preserve-3d;
-      }
+      
 
       .menu-content h3 {
         margin: 0 0 8px 0;
         color: #495C83;
         font-size: 1.2rem;
-        transform: translateZ(5px);
       }
 
       .menu-content p {
         margin: 0;
         color: #666;
         font-size: 0.9rem;
-        transform: translateZ(5px);
       }
     </style>
     <style>
