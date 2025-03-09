@@ -52,25 +52,61 @@
             <span style="color: white;">Q4</span>
           </div>
 
-          <nav class="menu" style="position: relative; margin-top: 64px; margin-left: 64px;">
+          <nav class="menu">
             <ul>
               <li class="menu-item">
                   <a href="#">M</a>
+                  <div class="menu-content">
+                    <div class="menu-content-inner">
+                      <h3>Models</h3>
+                      <p>Explore our iconic car models</p>
+                    </div>
+                  </div>
               </li>
               <li class="menu-item">
                   <a href="#">P</a>
+                  <div class="menu-content">
+                    <div class="menu-content-inner">
+                      <h3>Performance</h3>
+                      <p>Discover engineering excellence</p>
+                    </div>
+                  </div>
               </li>
               <li class="menu-item">
                   <a href="#">N</a>
+                  <div class="menu-content">
+                    <div class="menu-content-inner">
+                      <h3>News</h3>
+                      <p>Latest updates and events</p>
+                    </div>
+                  </div>
               </li>
               <li class="menu-item">
                   <a href="#">M</a>
+                  <div class="menu-content">
+                    <div class="menu-content-inner">
+                      <h3>Motorsport</h3>
+                      <p>Racing heritage and victories</p>
+                    </div>
+                  </div>
               </li>
               <li class="menu-item">
                   <a href="#">S</a>
+                  <div class="menu-content">
+                    <div class="menu-content-inner">
+                      <h3>Services</h3>
+                      <p>Maintenance and support</p>
+                    </div>
+                  </div>
               </li>
               <li class="menu-item">
                   <a href="#">H</a>
+                  <div class="menu-content">
+                    <div class="menu-content-inner">
+                      <h3>History</h3>
+                      <p>Our legendary journey</p>
+                    </div>
+                  </div>
               </li>
           </ul>
           </nav>
@@ -79,43 +115,22 @@
 
     </div>
     <style>
-      .menu .menu-item:nth-child(1) {
-        transform: rotate(0deg) translateX(-90px);
-      }
-      .menu .menu-item:nth-child(2) {
-        transform: rotate(60deg) translateX(-90px);
-      }
-      .menu .menu-item:nth-child(3) {
-        transform: rotate(120deg) translateX(-90px);
-      }
-      .menu .menu-item:nth-child(4) {
-        transform: rotate(180deg) translateX(-90px);
-      }
-      .menu .menu-item:nth-child(5) {
-        transform: rotate(240deg) translateX(-90px);
-      }
-      .menu .menu-item:nth-child(6) {
-        transform: rotate(300deg) translateX(-90px);
+      .menu {
+        perspective: 1000px;
+        position: relative;
+        margin-top: 64px;
+        margin-left: 64px;
       }
 
-      .menu-item:nth-child(1) a {
-        transform: rotate(0deg);
+      .menu ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        position: relative;
+        width: 180px;
+        height: 180px;
+        transform-style: preserve-3d;
       }
-      .menu-item:nth-child(2) a {
-        transform: rotate(-60deg);
-      }
-      .menu-item:nth-child(3) a {
-        transform: rotate(-120deg);
-      }
-      .menu-item:nth-child(4) a {
-        transform: rotate(-180deg);
-      }
-      .menu-item:nth-child(5) a {
-        transform: rotate(-240deg);
-      } 
-      .menu-item:nth-child(6) a {
-        transform: rotate(-300deg);
-      }  
 
       .menu-item {
         position: absolute;
@@ -125,24 +140,151 @@
         height: 80px;
         display: flex;
         justify-content: center;
+        align-items: center;
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transform-style: preserve-3d;
       }
 
-.menu-item a {
-    display: block;
-    width: 60px;
-    height: 60px;
-    line-height: 60px;
-    color: azure;
-    background-color: #495C83;
-    border-radius: 50%;
-    text-align: center;
-    text-decoration: none;
-    pointer-events: auto;
-    transition: 2s;
-    font-size: 1.2rem;
-}
-      
-      
+      .menu-item:nth-child(1) {
+        transform: translateX(90px);
+      }
+      .menu-item:nth-child(2) {
+        transform: translateX(45px) translateY(78px);
+      }
+      .menu-item:nth-child(3) {
+        transform: translateX(-45px) translateY(78px);
+      }
+      .menu-item:nth-child(4) {
+        transform: translateX(-90px);
+      }
+      .menu-item:nth-child(5) {
+        transform: translateX(-45px) translateY(-78px);
+      }
+      .menu-item:nth-child(6) {
+        transform: translateX(45px) translateY(-78px);
+      }
+
+      .menu-item:nth-child(1):hover {
+        transform: translateX(130px) scale(1.1);
+      }
+      .menu-item:nth-child(2):hover {
+        transform: translateX(65px) translateY(113px) scale(1.1);
+      }
+      .menu-item:nth-child(3):hover {
+        transform: translateX(-65px) translateY(113px) scale(1.1);
+      }
+      .menu-item:nth-child(4):hover {
+        transform: translateX(-130px) scale(1.1);
+      }
+      .menu-item:nth-child(5):hover {
+        transform: translateX(-65px) translateY(-113px) scale(1.1);
+      }
+      .menu-item:nth-child(6):hover {
+        transform: translateX(65px) translateY(-113px) scale(1.1);
+      }
+
+      .menu-item:hover {
+        z-index: 10;
+      }
+
+      .menu-item a {
+        display: block;
+        width: 60px;
+        height: 60px;
+        line-height: 60px;
+        color: azure;
+        background-color: #495C83;
+        border-radius: 50%;
+        text-align: center;
+        text-decoration: none;
+        pointer-events: auto;
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        font-size: 1.2rem;
+        position: relative;
+        z-index: 2;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transform-style: preserve-3d;
+      }
+
+      .menu-item:hover a {
+        width: 70px;
+        height: 70px;
+        line-height: 70px;
+        font-size: 1.4rem;
+        background-color: #5D8BF4;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        transform: translateZ(20px);
+      }
+
+      .menu-content {
+        position: absolute;
+        background-color: white;
+        border-radius: 12px;
+        padding: 15px;
+        width: 180px;
+        opacity: 0;
+        visibility: hidden;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        z-index: 1;
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transform: scale(0.8) translateZ(-10px);
+        transform-style: preserve-3d;
+      }
+
+      .menu-item:nth-child(1) .menu-content {
+        left: 70px;
+        top: -20px;
+      }
+
+      .menu-item:nth-child(2) .menu-content {
+        left: 60px;
+        top: 40px;
+      }
+
+      .menu-item:nth-child(3) .menu-content {
+        left: 0;
+        top: 80px;
+      }
+
+      .menu-item:nth-child(4) .menu-content {
+        right: 70px;
+        top: -20px;
+      }
+
+      .menu-item:nth-child(5) .menu-content {
+        right: 60px;
+        top: 40px;
+      }
+
+      .menu-item:nth-child(6) .menu-content {
+        right: 0;
+        top: 80px;
+      }
+
+      .menu-item:hover .menu-content {
+        opacity: 1;
+        visibility: visible;
+        transform: scale(1) translateZ(0);
+      }
+
+      .menu-content-inner {
+        width: 100%;
+        transform-style: preserve-3d;
+      }
+
+      .menu-content h3 {
+        margin: 0 0 8px 0;
+        color: #495C83;
+        font-size: 1.2rem;
+        transform: translateZ(5px);
+      }
+
+      .menu-content p {
+        margin: 0;
+        color: #666;
+        font-size: 0.9rem;
+        transform: translateZ(5px);
+      }
     </style>
     <style>
       .tooltip {
