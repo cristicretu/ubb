@@ -51,9 +51,99 @@
             <span style="color: white;">Q3</span>
             <span style="color: white;">Q4</span>
           </div>
+
+          <nav class="menu">
+            <ul>
+              <li class="menu-item">
+                  <a href="#">M</a>
+              </li>
+              <li class="menu-item">
+                  <a href="#">P</a>
+              </li>
+              <li class="menu-item">
+                  <a href="#">N</a>
+              </li>
+              <li class="menu-item">
+                  <a href="#">M</a>
+              </li>
+              <li class="menu-item">
+                  <a href="#">S</a>
+              </li>
+              <li class="menu-item">
+                  <a href="#">H</a>
+              </li>
+          </ul>
+          </nav>
         </div>
       </main>
+
     </div>
+    <style>
+      .menu .menu-item:nth-child(1) {
+        transform: rotate(0deg) translateX(-110px);
+      }
+      .menu .menu-item:nth-child(2) {
+        transform: rotate(60deg) translateX(-110px);
+      }
+      .menu .menu-item:nth-child(3) {
+        transform: rotate(120deg) translateX(-110px);
+      }
+      .menu .menu-item:nth-child(4) {
+        transform: rotate(180deg) translateX(-110px);
+      }
+      .menu .menu-item:nth-child(5) {
+        transform: rotate(240deg) translateX(-110px);
+      }
+      .menu .menu-item:nth-child(6) {
+        transform: rotate(300deg) translateX(-110px);
+      }
+
+      .menu-item:nth-child(1) a {
+        transform: rotate(0deg);
+      }
+      .menu-item:nth-child(2) a {
+        transform: rotate(-60deg);
+      }
+      .menu-item:nth-child(3) a {
+        transform: rotate(-120deg);
+      }
+      .menu-item:nth-child(4) a {
+        transform: rotate(-180deg);
+      }
+      .menu-item:nth-child(5) a {
+        transform: rotate(-240deg);
+      } 
+      .menu-item:nth-child(6) a {
+        transform: rotate(-300deg);
+      }  
+
+      .menu-item {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 80px;
+        height: 80px;
+        display: flex;
+        justify-content: center;
+      }
+
+.menu-item a {
+    display: block;
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    color: azure;
+    background-color: #495C83;
+    border-radius: 50%;
+    text-align: center;
+    text-decoration: none;
+    pointer-events: auto;
+    transition: 2s;
+    font-size: 1.2rem;
+}
+      
+      
+    </style>
     <style>
       .tooltip {
         position: absolute;
