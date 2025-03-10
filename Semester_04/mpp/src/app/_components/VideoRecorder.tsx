@@ -3,7 +3,7 @@
 import { useRef, useState, useEffect } from "react";
 
 interface VideoRecorderProps {
-  stream: MediaStream | null;
+  stream: MediaStream;
   isRecording: boolean;
   onRecordingComplete: (blob: Blob) => void;
 }
@@ -15,131 +15,116 @@ export default function VideoRecorder({
 }: VideoRecorderProps) {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]);
-  const [isBrowser, setIsBrowser] = useState(false);
-  const [recorderReady, setRecorderReady] = useState(false);
 
-  // Check if we're in the browser
+  // Set up the media recorder when the stream changes
   useEffect(() => {
-    setIsBrowser(true);
-  }, []);
-
-  // Set up media recorder when stream changes
-  useEffect(() => {
-    // Only run this effect in the browser
-    if (!isBrowser || !stream) return;
-
-    console.log("VideoRecorder: Setting up media recorder with stream");
-
-    // Reset state
-    setRecorderReady(false);
-    setRecordedChunks([]);
-
-    // Check if stream has video tracks
-    if (stream.getVideoTracks().length === 0) {
-      console.error("VideoRecorder: Stream has no video tracks");
+    if (!stream || stream.getVideoTracks().length === 0) {
+      console.error("VideoRecorder: No video tracks in stream");
       return;
     }
 
-    // Set up media recorder
-    try {
-      let options;
+    // Clean up any existing recorder
+    if (
+      mediaRecorderRef.current &&
+      mediaRecorderRef.current.state !== "inactive"
+    ) {
       try {
-        options = { mimeType: "video/webm;codecs=vp9,opus" };
-        mediaRecorderRef.current = new MediaRecorder(stream, options);
-        console.log("VideoRecorder: Using video/webm;codecs=vp9,opus");
+        mediaRecorderRef.current.stop();
       } catch (e) {
-        try {
-          // Fallback for browsers that don't support the above options
-          options = { mimeType: "video/webm" };
-          mediaRecorderRef.current = new MediaRecorder(stream, options);
-          console.log("VideoRecorder: Using video/webm");
-        } catch (e) {
-          // Final fallback
-          mediaRecorderRef.current = new MediaRecorder(stream);
-          console.log("VideoRecorder: Using default MIME type");
+        console.error("Error stopping existing recorder:", e);
+      }
+    }
+
+    try {
+      // Try to create a media recorder with a supported format
+      let recorder: MediaRecorder;
+
+      // Try different MIME types
+      const mimeTypes = [
+        "video/webm;codecs=vp9,opus",
+        "video/webm;codecs=vp8,opus",
+        "video/webm",
+        "video/mp4",
+      ];
+
+      // Find the first supported MIME type
+      let supportedType: string | undefined;
+      for (const type of mimeTypes) {
+        if (MediaRecorder.isTypeSupported(type)) {
+          supportedType = type;
+          break;
         }
+      }
+
+      // Create the recorder with the supported type or default
+      if (supportedType) {
+        console.log(`VideoRecorder: Using MIME type ${supportedType}`);
+        recorder = new MediaRecorder(stream, { mimeType: supportedType });
+      } else {
+        console.log("VideoRecorder: Using default MIME type");
+        recorder = new MediaRecorder(stream);
       }
 
       // Set up event handlers
-      if (mediaRecorderRef.current) {
-        mediaRecorderRef.current.ondataavailable = handleDataAvailable;
-        mediaRecorderRef.current.onstop = handleStop;
-        mediaRecorderRef.current.onerror = (event) => {
-          console.error("MediaRecorder error:", event);
-        };
+      recorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) {
+          setRecordedChunks((prev) => [...prev, event.data]);
+        }
+      };
 
-        setRecorderReady(true);
-        console.log("VideoRecorder: Media recorder ready");
-      }
-    } catch (e) {
-      console.error(
-        "VideoRecorder: MediaRecorder is not supported by this browser.",
-        e,
-      );
-      return;
+      recorder.onstop = () => {
+        if (recordedChunks.length > 0) {
+          const blob = new Blob(recordedChunks, {
+            type: recordedChunks[0]?.type || "video/webm",
+          });
+          onRecordingComplete(blob);
+          setRecordedChunks([]);
+        }
+      };
+
+      // Store the recorder reference
+      mediaRecorderRef.current = recorder;
+    } catch (err) {
+      console.error("VideoRecorder: Error creating MediaRecorder:", err);
     }
 
+    // Clean up when stream changes or component unmounts
     return () => {
-      if (mediaRecorderRef.current) {
-        if (mediaRecorderRef.current.state !== "inactive") {
-          console.log("VideoRecorder: Stopping recorder on cleanup");
-          try {
-            mediaRecorderRef.current.stop();
-          } catch (e) {
-            console.error("Error stopping media recorder:", e);
-          }
+      if (
+        mediaRecorderRef.current &&
+        mediaRecorderRef.current.state !== "inactive"
+      ) {
+        try {
+          mediaRecorderRef.current.stop();
+        } catch (e) {
+          console.error("Error stopping recorder during cleanup:", e);
         }
       }
     };
-  }, [isBrowser, stream]);
+  }, [stream]);
 
-  // Start or stop recording based on isRecording prop
+  // Control recording state
   useEffect(() => {
-    if (!isBrowser || !mediaRecorderRef.current || !stream || !recorderReady)
-      return;
+    if (!mediaRecorderRef.current) return;
 
     try {
       if (isRecording) {
-        console.log("VideoRecorder: Starting recording");
-        setRecordedChunks([]);
-        mediaRecorderRef.current.start(100); // Collect data every 100ms
-      } else if (mediaRecorderRef.current.state !== "inactive") {
-        console.log("VideoRecorder: Stopping recording");
-        mediaRecorderRef.current.stop();
+        if (mediaRecorderRef.current.state === "inactive") {
+          console.log("VideoRecorder: Starting recording");
+          setRecordedChunks([]);
+          mediaRecorderRef.current.start(100); // Collect data every 100ms
+        }
+      } else {
+        if (mediaRecorderRef.current.state === "recording") {
+          console.log("VideoRecorder: Stopping recording");
+          mediaRecorderRef.current.stop();
+        }
       }
     } catch (err) {
-      console.error("VideoRecorder: Error controlling media recorder:", err);
+      console.error("VideoRecorder: Error controlling recording:", err);
     }
-  }, [isRecording, stream, isBrowser, recorderReady]);
+  }, [isRecording]);
 
-  const handleDataAvailable = (event: BlobEvent) => {
-    if (event.data && event.data.size > 0) {
-      console.log("VideoRecorder: Data available, size:", event.data.size);
-      setRecordedChunks((prev) => [...prev, event.data]);
-    }
-  };
-
-  const handleStop = () => {
-    console.log(
-      "VideoRecorder: Recording stopped, chunks:",
-      recordedChunks.length,
-    );
-
-    if (recordedChunks.length > 0) {
-      try {
-        const blob = new Blob(recordedChunks, {
-          type: recordedChunks[0]?.type || "video/webm",
-        });
-        console.log("VideoRecorder: Created blob, size:", blob.size);
-        onRecordingComplete(blob);
-      } catch (err) {
-        console.error(
-          "VideoRecorder: Error creating blob from recorded chunks:",
-          err,
-        );
-      }
-    }
-  };
-
-  return null; // This is a logic component, no UI
+  // No UI needed
+  return null;
 }

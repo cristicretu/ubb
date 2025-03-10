@@ -6,15 +6,16 @@ import { Camera, Image, Settings } from "lucide-react";
 
 const tabs = [
   {
-    name: "Camera",
-    href: "/",
-    icon: Camera,
-  },
-  {
     name: "Gallery",
     href: "/gallery",
     icon: Image,
   },
+  {
+    name: "Camera",
+    href: "/",
+    icon: Camera,
+  },
+
   {
     name: "Settings",
     href: "/settings",
