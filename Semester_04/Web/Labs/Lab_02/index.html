@@ -53,60 +53,75 @@
           </div>
 
           <nav class="menu">
-            <ul>
-              <li class="menu-item">
+            <div class="menu-toggle">
+              <span>+</span>
+            </div>
+            <ul class="primary-menu">
+              <li class="menu-item primary-item">
                   <a href="#">M</a>
-                  <div class="menu-content">
-                    <div class="menu-content-inner">
-                      <h3>Models</h3>
-                      <p>Explore our iconic car models</p>
-                    </div>
-                  </div>
+                  <ul class="secondary-menu">
+                    <li class="menu-item secondary-item"><a href="#">911</a></li>
+                    <li class="menu-item secondary-item"><a href="#">Cayenne</a></li>
+                    <li class="menu-item secondary-item"><a href="#">Taycan</a></li>
+                    <li class="menu-item secondary-item"><a href="#">Panamera</a></li>
+                    <li class="menu-item secondary-item"><a href="#">Macan</a></li>
+                    <li class="menu-item secondary-item"><a href="#">Boxster</a></li>
+                  </ul>
               </li>
-              <li class="menu-item">
+              <li class="menu-item primary-item">
                   <a href="#">P</a>
-                  <div class="menu-content">
-                    <div class="menu-content-inner">
-                      <h3>Performance</h3>
-                      <p>Discover engineering excellence</p>
-                    </div>
-                  </div>
+                  <ul class="secondary-menu">
+                    <li class="menu-item secondary-item"><a href="#">Engine</a></li>
+                    <li class="menu-item secondary-item"><a href="#">Handling</a></li>
+                    <li class="menu-item secondary-item"><a href="#">Speed</a></li>
+                    <li class="menu-item secondary-item"><a href="#">Efficiency</a></li>
+                    <li class="menu-item secondary-item"><a href="#">Technology</a></li>
+                    <li class="menu-item secondary-item"><a href="#">Testing</a></li>
+                  </ul>
               </li>
-              <li class="menu-item">
+              <li class="menu-item primary-item">
                   <a href="#">N</a>
-                  <div class="menu-content">
-                    <div class="menu-content-inner">
-                      <h3>News</h3>
-                      <p>Latest updates and events</p>
-                    </div>
-                  </div>
+                  <ul class="secondary-menu">
+                    <li class="menu-item secondary-item"><a href="#">Releases</a></li>
+                    <li class="menu-item secondary-item"><a href="#">Events</a></li>
+                    <li class="menu-item secondary-item"><a href="#">Awards</a></li>
+                    <li class="menu-item secondary-item"><a href="#">Innovation</a></li>
+                    <li class="menu-item secondary-item"><a href="#">Media</a></li>
+                    <li class="menu-item secondary-item"><a href="#">Press</a></li>
+                  </ul>
               </li>
-              <li class="menu-item">
+              <li class="menu-item primary-item">
                   <a href="#">M</a>
-                  <div class="menu-content">
-                    <div class="menu-content-inner">
-                      <h3>Motorsport</h3>
-                      <p>Racing heritage and victories</p>
-                    </div>
-                  </div>
+                  <ul class="secondary-menu">
+                    <li class="menu-item secondary-item"><a href="#">Racing</a></li>
+                    <li class="menu-item secondary-item"><a href="#">Formula E</a></li>
+                    <li class="menu-item secondary-item"><a href="#">Le Mans</a></li>
+                    <li class="menu-item secondary-item"><a href="#">GT3</a></li>
+                    <li class="menu-item secondary-item"><a href="#">History</a></li>
+                    <li class="menu-item secondary-item"><a href="#">Drivers</a></li>
+                  </ul>
               </li>
-              <li class="menu-item">
+              <li class="menu-item primary-item">
                   <a href="#">S</a>
-                  <div class="menu-content">
-                    <div class="menu-content-inner">
-                      <h3>Services</h3>
-                      <p>Maintenance and support</p>
-                    </div>
-                  </div>
+                  <ul class="secondary-menu">
+                    <li class="menu-item secondary-item"><a href="#">Warranty</a></li>
+                    <li class="menu-item secondary-item"><a href="#">Maintenance</a></li>
+                    <li class="menu-item secondary-item"><a href="#">Parts</a></li>
+                    <li class="menu-item secondary-item"><a href="#">Recalls</a></li>
+                    <li class="menu-item secondary-item"><a href="#">Support</a></li>
+                    <li class="menu-item secondary-item"><a href="#">Dealers</a></li>
+                  </ul>
               </li>
-              <li class="menu-item">
+              <li class="menu-item primary-item">
                   <a href="#">H</a>
-                  <div class="menu-content">
-                    <div class="menu-content-inner">
-                      <h3>History</h3>
-                      <p>Our legendary journey</p>
-                    </div>
-                  </div>
+                  <ul class="secondary-menu">
+                    <li class="menu-item secondary-item"><a href="#">Timeline</a></li>
+                    <li class="menu-item secondary-item"><a href="#">Founder</a></li>
+                    <li class="menu-item secondary-item"><a href="#">Heritage</a></li>
+                    <li class="menu-item secondary-item"><a href="#">Museums</a></li>
+                    <li class="menu-item secondary-item"><a href="#">Milestones</a></li>
+                    <li class="menu-item secondary-item"><a href="#">Archives</a></li>
+                  </ul>
               </li>
           </ul>
           </nav>
@@ -122,11 +137,46 @@
         z-index: 1;
       }
 
-      .menu ul {
+      .menu-toggle {
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+
+      .menu-toggle span {
+        display: block;
+        width: 60px;
+        height: 60px;
+        line-height: 58px;
+        color: white;
+        background-color: #495C83;
+        border-radius: 50%;
+        text-align: center;
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+
+      .primary-menu {
         list-style: none;
         position: relative;
         width: 180px;
         height: 180px;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transform: scale(0.8);
+        padding: 0;
+      }
+
+      .menu-toggle:hover + .primary-menu,
+      .primary-menu:hover {
+        opacity: 1;
+        visibility: visible;
+        transform: scale(1);
       }
 
       .menu-item {
@@ -137,41 +187,41 @@
         z-index: 1;
       }
 
-      .menu-item:nth-child(1) {
+      .primary-item:nth-child(1) {
         transform: translateX(90px);
       }
-      .menu-item:nth-child(2) {
+      .primary-item:nth-child(2) {
         transform: translateX(45px) translateY(78px);
       }
-      .menu-item:nth-child(3) {
+      .primary-item:nth-child(3) {
         transform: translateX(-45px) translateY(78px);
       }
-      .menu-item:nth-child(4) {
+      .primary-item:nth-child(4) {
         transform: translateX(-90px);
       }
-      .menu-item:nth-child(5) {
+      .primary-item:nth-child(5) {
         transform: translateX(-45px) translateY(-78px);
       }
-      .menu-item:nth-child(6) {
+      .primary-item:nth-child(6) {
         transform: translateX(45px) translateY(-78px);
       }
 
-      .menu-item:nth-child(1):hover {
+      .primary-item:nth-child(1):hover {
         transform: translateX(130px) scale(1.1);
       }
-      .menu-item:nth-child(2):hover {
+      .primary-item:nth-child(2):hover {
         transform: translateX(65px) translateY(113px) scale(1.1);
       }
-      .menu-item:nth-child(3):hover {
+      .primary-item:nth-child(3):hover {
         transform: translateX(-65px) translateY(113px) scale(1.1);
       }
-      .menu-item:nth-child(4):hover {
+      .primary-item:nth-child(4):hover {
         transform: translateX(-130px) scale(1.1);
       }
-      .menu-item:nth-child(5):hover {
+      .primary-item:nth-child(5):hover {
         transform: translateX(-65px) translateY(-113px) scale(1.1);
       }
-      .menu-item:nth-child(6):hover {
+      .primary-item:nth-child(6):hover {
         transform: translateX(65px) translateY(-113px) scale(1.1);
       }
 
@@ -182,12 +232,10 @@
         line-height: 60px;
         color: white;
         background-color: #495C83;
-        border-radius: 99999px;
+        border-radius: 50%;
         text-align: center;
         text-decoration: none;
         transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        position: relative;
-        z-index: 10;
       }
 
       .menu-item:hover a {
@@ -197,42 +245,48 @@
         background-color: #5D8BF4;
       }
 
-      .menu-item:hover .menu-content {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(-50%) scale(1);
-      }
-
-      .menu-content {
-        position: absolute;
-        background-color: white;
-        border-radius: 12px;
-        padding: 15px;
-        width: 180px;
-        opacity: 0;
-        visibility: hidden;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        left: 70px;
-        transform: translateY(-50%) scale(0.8);
-        z-index: 20;
-        pointer-events: none;
-      }
-
-      .menu-content h3 {
-        margin: 0 0 8px 0;
-        color: #495C83;
-        font-size: 1.2rem;
-      }
-
-      .menu-content p {
-        margin: 0;
-        color: #666;
-        font-size: 0.9rem;
-      }
-
       .menu-item:hover {
         z-index: 100;
+      }
+
+      .secondary-menu {
+        position: absolute;
+        list-style: none;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transform: scale(0.8);
+        left: 120px;
+        top: -20px;
+      }
+
+      .primary-item:hover .secondary-menu {
+        opacity: 1;
+        visibility: visible;
+        transform: scale(1);
+      }
+
+      .secondary-item:nth-child(1) {
+        transform: translateX(90px);
+      }
+      .secondary-item:nth-child(2) {
+        transform: translateX(45px) translateY(78px);
+      }
+      .secondary-item:nth-child(3) {
+        transform: translateX(-45px) translateY(78px);
+      }
+      .secondary-item:nth-child(4) {
+        transform: translateX(-90px);
+      }
+      .secondary-item:nth-child(5) {
+        transform: translateX(-45px) translateY(-78px);
+      }
+      .secondary-item:nth-child(6) {
+        transform: translateX(45px) translateY(-78px);
+      }
+
+      .secondary-item:hover a {
+        background-color: #9AB3F5;
       }
     </style>
     <style>
