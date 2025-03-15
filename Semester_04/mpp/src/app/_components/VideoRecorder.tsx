@@ -16,14 +16,12 @@ export default function VideoRecorder({
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]);
 
-  // Set up the media recorder when the stream changes
   useEffect(() => {
     if (!stream || stream.getVideoTracks().length === 0) {
       console.error("VideoRecorder: No video tracks in stream");
       return;
     }
 
-    // Clean up any existing recorder
     if (
       mediaRecorderRef.current &&
       mediaRecorderRef.current.state !== "inactive"
@@ -36,10 +34,8 @@ export default function VideoRecorder({
     }
 
     try {
-      // Try to create a media recorder with a supported format
       let recorder: MediaRecorder;
 
-      // Try different MIME types
       const mimeTypes = [
         "video/webm;codecs=vp9,opus",
         "video/webm;codecs=vp8,opus",
@@ -47,7 +43,6 @@ export default function VideoRecorder({
         "video/mp4",
       ];
 
-      // Find the first supported MIME type
       let supportedType: string | undefined;
       for (const type of mimeTypes) {
         if (MediaRecorder.isTypeSupported(type)) {
@@ -56,7 +51,6 @@ export default function VideoRecorder({
         }
       }
 
-      // Create the recorder with the supported type or default
       if (supportedType) {
         console.log(`VideoRecorder: Using MIME type ${supportedType}`);
         recorder = new MediaRecorder(stream, { mimeType: supportedType });
@@ -65,7 +59,6 @@ export default function VideoRecorder({
         recorder = new MediaRecorder(stream);
       }
 
-      // Set up event handlers
       recorder.ondataavailable = (event) => {
         if (event.data && event.data.size > 0) {
           setRecordedChunks((prev) => [...prev, event.data]);
@@ -82,13 +75,11 @@ export default function VideoRecorder({
         }
       };
 
-      // Store the recorder reference
       mediaRecorderRef.current = recorder;
     } catch (err) {
       console.error("VideoRecorder: Error creating MediaRecorder:", err);
     }
 
-    // Clean up when stream changes or component unmounts
     return () => {
       if (
         mediaRecorderRef.current &&
@@ -103,7 +94,6 @@ export default function VideoRecorder({
     };
   }, [stream]);
 
-  // Control recording state
   useEffect(() => {
     if (!mediaRecorderRef.current) return;
 
@@ -112,7 +102,7 @@ export default function VideoRecorder({
         if (mediaRecorderRef.current.state === "inactive") {
           console.log("VideoRecorder: Starting recording");
           setRecordedChunks([]);
-          mediaRecorderRef.current.start(100); // Collect data every 100ms
+          mediaRecorderRef.current.start(100);
         }
       } else {
         if (mediaRecorderRef.current.state === "recording") {
@@ -125,6 +115,5 @@ export default function VideoRecorder({
     }
   }, [isRecording]);
 
-  // No UI needed
   return null;
 }

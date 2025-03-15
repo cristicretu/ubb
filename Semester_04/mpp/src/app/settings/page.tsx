@@ -8,7 +8,6 @@ export default function Settings() {
   const { settings, updateSettings } = useCameraContext();
   const [localSettings, setLocalSettings] = useState(settings);
 
-  // Update local settings when context settings change
   useEffect(() => {
     setLocalSettings(settings);
   }, [settings]);

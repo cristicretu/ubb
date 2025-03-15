@@ -11,11 +11,11 @@
     <div style="max-width: 48rem; margin: 0 auto; padding: 20px">
       <main style="margin-top: 20px">
         <div style="display: flex; flex-direction: column; gap: 40px">
-          <div style="width: 100%; display: flex; flex-direction: row; gap: 20px">
-            <div style="width: 20px; height: 700px; background-color: #000000; display: flex; flex-direction: column; justify-content: center; align-items: center; ">
+          <div style="width: 100%; display: flex; flex-direction: row; gap: 20px; height: 700px;">
+            <div style="width: 20px; height: 100%; background-color: #000000; display: flex; flex-direction: column; justify-content: center; align-items: center; ">
               <span style="transform: rotate(-90deg); color: white; white-space: nowrap; font-weight: bold;">Percentage<span>
             </div>
-            <div style="width: 100%; height: 700px; display: flex; flex-direction: row; align-items: end; justify-content: space-between; position: relative; background: repeating-linear-gradient(to top, #eee 0%, #eee 1px, transparent 1px, transparent 10%);">
+            <div style="width: 100%; height: 100%; display: flex; flex-direction: row; align-items: end; justify-content: space-between; position: relative; background: repeating-linear-gradient(to top, #eee 0%, #eee 2px, transparent 1px, transparent 10%);">
               <div style="flex: 1; height: 20%; background-color: #440154; margin: 0 2px; transition: all 0.3s ease; position: relative; cursor: pointer;" data-value="20%">
                 <div class="tooltip">20%</div>
               </div>
@@ -180,9 +180,9 @@
         width: 60px;
         height: 60px;
         line-height: 60px;
-        color: azure;
+        color: white;
         background-color: #495C83;
-        border-radius: 50%;
+        border-radius: 99999px;
         text-align: center;
         text-decoration: none;
         transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -195,7 +195,6 @@
         height: 70px;
         line-height: 70px;
         background-color: #5D8BF4;
-        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
       }
 
       .menu-item:hover .menu-content {
@@ -215,7 +214,6 @@
         box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         left: 70px;
-        top: 50%;
         transform: translateY(-50%) scale(0.8);
         z-index: 20;
         pointer-events: none;
@@ -240,12 +238,8 @@
     <style>
       .tooltip {
         position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(0,0,0,0.8);
         color: white;
         padding: 5px 10px;
-        border-radius: 4px;
         opacity: 0;
         transition: opacity 0.2s ease;
       }
