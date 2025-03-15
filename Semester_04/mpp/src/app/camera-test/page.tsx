@@ -33,7 +33,6 @@ export default function CameraTest() {
     setupCamera();
 
     return () => {
-      // Cleanup
       if (videoRef.current?.srcObject) {
         const stream = videoRef.current.srcObject as MediaStream;
         stream.getTracks().forEach((track) => track.stop());

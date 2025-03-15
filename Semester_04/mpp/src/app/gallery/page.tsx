@@ -15,7 +15,6 @@ export default function Gallery() {
   const [recordings, setRecordings] = useState<RecordingEntry[]>([]);
 
   useEffect(() => {
-    // Load recordings from localStorage
     const storedRecordings = localStorage.getItem("recordings");
     if (storedRecordings) {
       try {

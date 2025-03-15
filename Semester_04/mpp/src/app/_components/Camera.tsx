@@ -16,7 +16,7 @@ import Link from "next/link";
 
 interface RecordingEntry {
   date: string;
-  duration: number; // in seconds
+  duration: number;
 }
 
 export default function CameraTest() {
@@ -55,7 +55,6 @@ export default function CameraTest() {
     setupCamera();
 
     return () => {
-      // Cleanup
       if (videoRef.current?.srcObject) {
         const stream = videoRef.current.srcObject as MediaStream;
         stream.getTracks().forEach((track) => track.stop());
@@ -68,44 +67,36 @@ export default function CameraTest() {
 
   const toggleRecording = () => {
     if (isRecording) {
-      // Stop recording
       setIsRecording(false);
       if (recordingStartTime) {
         const duration = Math.round((Date.now() - recordingStartTime) / 1000);
 
-        // Save to localStorage
         const recordingEntry: RecordingEntry = {
           date: new Date().toISOString(),
           duration: duration,
         };
 
-        // Get existing recordings from localStorage
         const existingRecordings = JSON.parse(
           localStorage.getItem("recordings") || "[]",
         );
 
-        // Add new recording
         localStorage.setItem(
           "recordings",
           JSON.stringify([recordingEntry, ...existingRecordings]),
         );
 
-        // Reset state
         setRecordingStartTime(null);
         setRecordingDuration(0);
 
-        // Clear timer
         if (timerRef.current) {
           clearInterval(timerRef.current);
           timerRef.current = null;
         }
       }
     } else {
-      // Start recording
       setIsRecording(true);
       setRecordingStartTime(Date.now());
 
-      // Start timer to update recording duration
       timerRef.current = setInterval(() => {
         if (recordingStartTime) {
           const elapsed = Math.round((Date.now() - recordingStartTime) / 1000);
