@@ -32,6 +32,124 @@
       </div>
     </section>
 
+    <section class="main-content">
+      <div class="breadcrumbs">
+        <div class="black-header">
+          <div class="black-header-content">
+            <p>Java <span class="separator">/</span></p>
+            <p>Java Technical Details</p>
+          </div>
+        </div>
+      </div>
+      <div class="cloud-container">
+        <div class="cloud-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+            <path fill="#B8E6F1" d="M25,60 Q5,60 5,40 Q5,20 25,20 Q25,5 45,5 Q65,5 65,20 Q85,15 95,30 Q105,45 85,60 Q85,75 65,75 Q55,85 45,75 Q25,85 25,60"></path>
+          </svg>
+        </div>
+        <div class="java-content">
+          <h1>Java Is the Language of Possibilities</h1>
+          <p>Java is powering the innovation behind our digital world. Harness this potential with Java resources for student coders, hobbyists, developers, and IT leaders.</p>
+          <button class="learn-button">Learn how Java powers innovation</button>
+        </div>
+      </div>
+    </section>
+
+    <style>
+      .main-content {
+        background-color: #333;
+        color: white;
+        padding: 0;
+        min-height: 300px;
+      }
+
+      .breadcrumbs {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .black-header {
+        background-color: #000;
+        color: white;
+        width: 100%;
+        padding: 32px
+      }
+
+      .black-header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .separator {
+        color: #666;
+        margin: 0 5px;
+      }
+
+      .breadcrumb-links {
+        background-color: #333;
+        padding: 10px 20px;
+        display: flex;
+        gap: 15px;
+      }
+
+      .breadcrumb-links a {
+        color: white;
+        text-decoration: none;
+        font-size: 0.9rem;
+      }
+
+      .breadcrumb-links a:not(:last-child)::after {
+        content: ">";
+        margin-left: 15px;
+        color: #666;
+      }
+
+      .cloud-container {
+        display: flex;
+        padding: 50px 20px;
+        gap: 30px;
+      }
+
+      .cloud-icon {
+        flex-shrink: 0;
+        width: 150px;
+      }
+
+      .cloud-icon svg {
+        width: 100%;
+        height: auto;
+      }
+
+      .java-content {
+        flex-grow: 1;
+      }
+
+      .java-content h1 {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+      }
+
+      .java-content p {
+        font-size: 1rem;
+        margin-bottom: 20px;
+        max-width: 700px;
+      }
+
+      .learn-button {
+        background-color: white;
+        color: #333;
+        border: none;
+        padding: 10px 20px;
+        font-size: 1rem;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+    </style>
+
 
     <style>
       * {
@@ -96,7 +214,7 @@
       }
 
       .topbar {
-        background-color: #000;
+        background-color: #121212;
         color: #fff;
         padding-left: 20px;
         padding-right: 20px;
@@ -106,6 +224,8 @@
         flex-direction: column;
         gap: 14px;
       }
-    </style>
+      </style>
+
+      
   </body>
 </html>
