@@ -55,6 +55,28 @@
       </div>
     </section>
 
+    <section class="tabs-section">
+      <div class="tabs-container">
+        <a href="#" class="tab">Overview</a>
+        <a href="#" class="tab active">Technical Details</a>
+        <div class="active-tab-indicator"></div>
+      </div>
+    </section>
+
+    <section class="downloads-section">
+      <div class="downloads-container">
+        <h2>Newest Downloads</h2>
+        <ul class="downloads-list">
+          <li><a href="#">Java SE 23</a></li>
+          <li><a href="#">Java SE 21 (LTS)</a></li>
+          <li><a href="#">Java SE 17 (LTS)</a></li>
+          <li><a href="#">Java SE 11(LTS)</a></li>
+          <li><a href="#">Java SE 8</a></li>
+          <li><a href="#">Java Card</a></li>
+        </ul>
+      </div>
+    </section>
+
     <style>
       .main-content {
         background-color: #333;
@@ -89,24 +111,6 @@
         margin: 0 5px;
       }
 
-      .breadcrumb-links {
-        background-color: #333;
-        padding: 10px 20px;
-        display: flex;
-        gap: 15px;
-      }
-
-      .breadcrumb-links a {
-        color: white;
-        text-decoration: none;
-        font-size: 0.9rem;
-      }
-
-      .breadcrumb-links a:not(:last-child)::after {
-        content: ">";
-        margin-left: 15px;
-        color: #666;
-      }
 
       .cloud-container {
         display: flex;
@@ -150,6 +154,75 @@
       }
     </style>
 
+    <style>
+      .tabs-section {
+        background-color: #f5f5f5;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .tabs-container {
+        position: relative;
+        display: flex;
+      }
+
+      .tab {
+        padding: 15px 20px;
+        text-decoration: none;
+        color: #333;
+        font-weight: 500;
+        position: relative;
+      }
+
+      .tab.active {
+        font-weight: 600;
+        color: #000;
+      }
+
+      .active-tab-indicator {
+        position: absolute;
+        bottom: 0;
+        left: 150px;
+        width: 110px;
+        height: 4px;
+        background-color: #4c8c2b;
+      }
+
+      .downloads-section {
+        background-color: #f5f5f5;
+        padding: 40px 0;
+      }
+
+      .downloads-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      .downloads-container h2 {
+        font-size: 1.5rem;
+        color: #333;
+        margin-bottom: 20px;
+        font-weight: 500;
+      }
+
+      .downloads-list {
+        list-style: none;
+      }
+
+      .downloads-list li {
+        margin-bottom: 10px;
+      }
+
+      .downloads-list a {
+        color: #0066cc;
+        text-decoration: none;
+        font-size: 1rem;
+      }
+
+      .downloads-list a:hover {
+        text-decoration: underline;
+      }
+    </style>
 
     <style>
       * {
@@ -224,7 +297,7 @@
         flex-direction: column;
         gap: 14px;
       }
-      </style>
+    </style>
 
       
   </body>
