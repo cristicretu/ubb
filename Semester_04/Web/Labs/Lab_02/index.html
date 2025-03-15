@@ -133,7 +133,10 @@
       .menu {
         position: relative;
         margin-top: 64px;
-        margin-left: 92px;
+        margin-left: auto;
+        margin-right: auto;
+        width: 300px; 
+        height: 300px;
         z-index: 1;
       }
 
@@ -162,9 +165,9 @@
 
       .primary-menu {
         list-style: none;
-        position: relative;
-        width: 180px;
-        height: 180px;
+        position: absolute;
+        width: 300px;
+        height: 300px;
         opacity: 0;
         visibility: hidden;
         transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -252,6 +255,8 @@
       .secondary-menu {
         position: absolute;
         list-style: none;
+        width: 300px;
+        height: 300px;
         opacity: 0;
         visibility: hidden;
         transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -264,6 +269,12 @@
         opacity: 1;
         visibility: visible;
         transform: scale(1);
+      }
+
+      .secondary-item {
+        position: absolute;
+        width: 70px;
+        height: 70px;
       }
 
       .secondary-item:nth-child(1) {
