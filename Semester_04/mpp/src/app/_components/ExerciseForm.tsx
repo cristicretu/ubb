@@ -20,12 +20,40 @@ export default function ExerciseForm({
 }: ExerciseFormProps) {
   const { addExercise, updateExercise, exercises } = useCameraContext();
   const [name, setName] = useState(initialData?.name || "");
+  const [nameError, setNameError] = useState("");
   const [form, setForm] = useState<"bad" | "medium" | "good">(
     initialData?.form || "medium",
   );
 
+  const validateName = (value: string) => {
+    if (!value.trim()) {
+      setNameError("Exercise name cannot be empty");
+      return false;
+    }
+
+    if (/\d/.test(value)) {
+      setNameError("Exercise name cannot contain numbers");
+      return false;
+    }
+
+    setNameError("");
+    return true;
+  };
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+    if (nameError) setNameError("");
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSave();
+    }
+  };
+
   const handleSave = () => {
-    if (!name) return;
+    if (!validateName(name)) return;
 
     console.log("Saving exercise with name:", name);
 
@@ -67,10 +95,13 @@ export default function ExerciseForm({
         <input
           type="text"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={handleNameChange}
+          onKeyDown={handleKeyDown}
+          onBlur={() => validateName(name)}
           className="w-full rounded-md border border-gray-300 p-2 text-black"
           placeholder="Enter exercise name"
         />
+        {nameError && <p className="mt-1 text-sm text-red-500">{nameError}</p>}
       </div>
 
       <div className="mb-4">
