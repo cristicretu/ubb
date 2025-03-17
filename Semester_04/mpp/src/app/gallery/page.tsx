@@ -5,6 +5,7 @@ import PageLayout from "../_components/PageLayout";
 import { useCameraContext, Exercise } from "../_components/CameraContext";
 import ExerciseForm from "../_components/ExerciseForm";
 import Link from "next/link";
+import { Search, Filter, Calendar, ArrowUpDown, ArrowLeft } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +13,24 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "~/components/ui/card";
+import { Badge } from "~/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
 
 type SortOption = "date-newest" | "date-oldest" | "name-asc" | "name-desc";
 
@@ -71,75 +90,72 @@ export default function Gallery() {
     }
   });
 
-  const getFormBadgeClass = (form: "bad" | "medium" | "good") => {
-    switch (form) {
-      case "bad":
-        return "bg-red-600";
-      case "medium":
-        return "bg-yellow-500";
-      case "good":
-        return "bg-green-600";
-      default:
-        return "bg-gray-500";
-    }
-  };
-
   return (
     <PageLayout>
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-3xl font-bold">Exercise Gallery</h1>
+      <div className="container mx-auto max-w-7xl px-4 py-8">
+        <div className="mb-8 flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <Button variant="ghost" size="icon" asChild>
+              <Link href="/">
+                <ArrowLeft className="h-5 w-5" />
+              </Link>
+            </Button>
+            <h1 className="text-3xl font-bold tracking-tight">Exercises</h1>
+          </div>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-zinc-400">
-              {exercises.length} exercises
-            </span>
-            <Link
-              href="/"
-              className="rounded-md bg-zinc-800 px-4 py-2 text-sm text-white hover:bg-zinc-700"
-            >
-              Back to Camera
-            </Link>
+            <Badge variant="secondary" className="text-sm">
+              {exercises.length} exercise{exercises.length !== 1 ? "s" : ""}
+            </Badge>
+            <Button asChild>
+              <Link href="/">Record New</Link>
+            </Button>
           </div>
         </div>
 
-        <div className="mb-6 rounded-lg bg-zinc-800 p-4">
-          <h2 className="mb-3 font-semibold">Filter & Sort</h2>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <div>
-              <label className="mb-1 block text-sm">Search</label>
-              <input
-                type="text"
+        <div className="mb-8 space-y-4">
+          <div className="flex flex-col gap-4 sm:flex-row">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+              <Input
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search by name..."
-                className="w-full rounded-md border border-zinc-600 bg-zinc-700 px-3 py-2 text-sm"
+                placeholder="Search exercises..."
+                className="pl-9"
               />
             </div>
-            <div>
-              <label className="mb-1 block text-sm">Form Quality</label>
-              <select
-                value={formFilter}
-                onChange={(e) => setFormFilter(e.target.value as any)}
-                className="w-full rounded-md border border-zinc-600 bg-zinc-700 px-3 py-2 text-sm"
-              >
-                <option value="all">All Forms</option>
-                <option value="bad">Bad</option>
-                <option value="medium">Medium</option>
-                <option value="good">Good</option>
-              </select>
-            </div>
-            <div>
-              <label className="mb-1 block text-sm">Sort By</label>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as SortOption)}
-                className="w-full rounded-md border border-zinc-600 bg-zinc-700 px-3 py-2 text-sm"
-              >
-                <option value="date-newest">Date (Newest First)</option>
-                <option value="date-oldest">Date (Oldest First)</option>
-                <option value="name-asc">Name (A-Z)</option>
-                <option value="name-desc">Name (Z-A)</option>
-              </select>
+            <div className="flex flex-col gap-4 sm:flex-row">
+              <div className="w-full sm:w-48">
+                <Select
+                  value={formFilter}
+                  onValueChange={(value) => setFormFilter(value as any)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Form Quality" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Forms</SelectItem>
+                    <SelectItem value="bad">Bad</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="good">Good</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="w-full sm:w-48">
+                <Select
+                  value={sortBy}
+                  onValueChange={(value) => setSortBy(value as SortOption)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="date-newest">Newest First</SelectItem>
+                    <SelectItem value="date-oldest">Oldest First</SelectItem>
+                    <SelectItem value="name-asc">Name (A-Z)</SelectItem>
+                    <SelectItem value="name-desc">Name (Z-A)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
         </div>
@@ -179,70 +195,71 @@ export default function Gallery() {
         {sortedExercises.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {sortedExercises.map((exercise) => (
-              <div
-                key={exercise.id}
-                className="overflow-hidden rounded-lg bg-zinc-900"
-              >
-                <video
-                  src={exercise.videoUrl}
-                  controls
-                  className="w-full rounded-t-lg"
-                  playsInline
-                />
-                <div className="p-4">
-                  <div className="mb-2 flex items-center justify-between">
-                    <h3 className="font-semibold">{exercise.name}</h3>
-                    <span
-                      className={`rounded-full ${getFormBadgeClass(exercise.form)} px-2 py-1 text-xs text-white`}
-                    >
+              <Card key={exercise.id} className="flex flex-col overflow-hidden">
+                <div className="aspect-video overflow-hidden">
+                  <video
+                    src={exercise.videoUrl}
+                    controls
+                    className="h-full w-full object-cover"
+                    playsInline
+                  />
+                </div>
+                <CardHeader className="pb-2">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-xl">{exercise.name}</CardTitle>
+                    <Badge variant={exercise.form as any}>
                       {exercise.form.charAt(0).toUpperCase() +
                         exercise.form.slice(1)}
-                    </span>
+                    </Badge>
                   </div>
-                  <p className="mb-1 text-sm text-zinc-400">
+                  <CardDescription className="flex items-center gap-2">
+                    <Calendar className="h-3.5 w-3.5" />
                     {formatDate(exercise.date)}
-                  </p>
-                  <p className="mb-3 text-sm text-zinc-400">
+                  </CardDescription>
+                  <CardDescription>
                     Duration: {formatDuration(exercise.duration)}
-                  </p>
-                  <div className="flex gap-2">
-                    <button
+                  </CardDescription>
+                </CardHeader>
+                <CardFooter className="mt-auto pt-0">
+                  <div className="flex w-full gap-2">
+                    <Button
+                      variant="outline"
                       onClick={() => {
                         setEditingExercise(exercise);
                         setDialogOpen(true);
                       }}
-                      className="flex-1 rounded-md bg-blue-600 px-4 py-2 text-xs font-medium text-white hover:bg-blue-700"
+                      className="flex-1"
                     >
                       Edit
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      variant="destructive"
                       onClick={() => deleteExercise(exercise.id)}
-                      className="flex-1 rounded-md bg-red-600 px-4 py-2 text-xs font-medium text-white hover:bg-red-700"
+                      className="flex-1"
                     >
                       Delete
-                    </button>
+                    </Button>
                   </div>
-                </div>
-              </div>
+                </CardFooter>
+              </Card>
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-20">
-            <div className="max-w-md rounded-lg bg-zinc-900 p-8 text-center">
-              <h2 className="mb-2 text-xl font-semibold">No exercises found</h2>
-              <p className="mb-4 text-zinc-400">
+          <Card className="mx-auto w-full max-w-md">
+            <CardHeader>
+              <CardTitle className="text-center">No exercises found</CardTitle>
+              <CardDescription className="text-center">
                 {exercises.length > 0
                   ? "Try adjusting your filters to see more exercises."
-                  : "Your recorded exercises will appear here. Go to the Camera page to start recording."}
-              </p>
-              <Link
-                href="/"
-                className="inline-block rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-              >
-                Go to Camera
-              </Link>
-            </div>
-          </div>
+                  : "Your recorded exercises will appear here."}
+              </CardDescription>
+            </CardHeader>
+            <CardFooter className="flex justify-center pb-6">
+              <Button asChild>
+                <Link href="/">Record Your First Exercise</Link>
+              </Button>
+            </CardFooter>
+          </Card>
         )}
       </div>
     </PageLayout>

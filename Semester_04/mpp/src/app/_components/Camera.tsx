@@ -121,32 +121,20 @@ export default function CameraTest() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4">
-      <div className="flex w-full max-w-3xl flex-col">
-        <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Camera Test Page</h1>
-          <div className="flex gap-2">
-            <Link
-              href="/gallery"
-              className="rounded-md bg-zinc-800 px-4 py-2 text-sm text-white hover:bg-zinc-700"
-            >
-              View Gallery ({exercises.length})
-            </Link>
-          </div>
-        </div>
-
+      <div className="flex w-full max-w-5xl flex-col">
         {error && (
           <div className="mb-4 rounded bg-red-100 p-4 text-red-700">
             <p>{error}</p>
           </div>
         )}
 
-        <div className="relative mb-6 overflow-hidden rounded-lg border border-gray-300">
+        <div className="relative mb-6 overflow-hidden rounded-lg">
           <video
             ref={videoRef}
             autoPlay
             playsInline
             muted
-            className="h-[60vh] w-full object-cover"
+            className="h-full w-full object-cover"
           />
 
           {isStreaming && (
@@ -161,30 +149,20 @@ export default function CameraTest() {
                   Recording {formatDuration(recordingDuration)}
                 </div>
               )}
+
+              <button
+                onClick={toggleRecording}
+                disabled={!isStreaming}
+                className="absolute bottom-2 left-1/2 flex -translate-x-1/2 items-center justify-center gap-2"
+              >
+                <div
+                  className={`h-12 w-12 rounded-full ${
+                    isRecording ? "animate-pulse bg-red-500" : "bg-white"
+                  }`}
+                />
+              </button>
             </>
           )}
-        </div>
-
-        <div className="flex justify-center gap-4">
-          <button
-            onClick={toggleRecording}
-            disabled={!isStreaming}
-            className={`flex items-center gap-2 rounded-md px-4 py-2 font-medium text-white ${
-              isRecording
-                ? "bg-red-600 hover:bg-red-700"
-                : "bg-blue-600 hover:bg-blue-700"
-            } ${!isStreaming && "cursor-not-allowed opacity-50"}`}
-          >
-            {isRecording ? (
-              <>
-                <Square size={18} /> Stop Recording
-              </>
-            ) : (
-              <>
-                <Video size={18} /> Start Recording
-              </>
-            )}
-          </button>
         </div>
 
         <Dialog open={showExerciseForm} onOpenChange={setShowExerciseForm}>
