@@ -5,6 +5,13 @@ import PageLayout from "../_components/PageLayout";
 import { useCameraContext, Exercise } from "../_components/CameraContext";
 import ExerciseForm from "../_components/ExerciseForm";
 import Link from "next/link";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
 
 type SortOption = "date-newest" | "date-oldest" | "name-asc" | "name-desc";
 
@@ -16,6 +23,7 @@ export default function Gallery() {
   const [sortBy, setSortBy] = useState<SortOption>("date-newest");
   const [searchTerm, setSearchTerm] = useState("");
   const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   // Debug output
   useEffect(() => {
@@ -136,17 +144,37 @@ export default function Gallery() {
           </div>
         </div>
 
-        {editingExercise && (
-          <div className="mb-6">
-            <ExerciseForm
-              videoUrl={editingExercise.videoUrl}
-              duration={editingExercise.duration}
-              initialData={editingExercise}
-              onCancel={() => setEditingExercise(null)}
-              onSave={() => setEditingExercise(null)}
-            />
-          </div>
-        )}
+        <Dialog
+          open={dialogOpen && editingExercise !== null}
+          onOpenChange={(open) => {
+            setDialogOpen(open);
+            if (!open) setEditingExercise(null);
+          }}
+        >
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Edit Exercise</DialogTitle>
+              <DialogDescription>
+                Make changes to your exercise recording.
+              </DialogDescription>
+            </DialogHeader>
+            {editingExercise && (
+              <ExerciseForm
+                videoUrl={editingExercise.videoUrl}
+                duration={editingExercise.duration}
+                initialData={editingExercise}
+                onCancel={() => {
+                  setDialogOpen(false);
+                  setEditingExercise(null);
+                }}
+                onSave={() => {
+                  setDialogOpen(false);
+                  setEditingExercise(null);
+                }}
+              />
+            )}
+          </DialogContent>
+        </Dialog>
 
         {sortedExercises.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -179,7 +207,10 @@ export default function Gallery() {
                   </p>
                   <div className="flex gap-2">
                     <button
-                      onClick={() => setEditingExercise(exercise)}
+                      onClick={() => {
+                        setEditingExercise(exercise);
+                        setDialogOpen(true);
+                      }}
                       className="flex-1 rounded-md bg-blue-600 px-4 py-2 text-xs font-medium text-white hover:bg-blue-700"
                     >
                       Edit

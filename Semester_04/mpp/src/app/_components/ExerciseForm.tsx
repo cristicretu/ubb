@@ -50,11 +50,7 @@ export default function ExerciseForm({
   };
 
   return (
-    <div className="rounded-lg border border-gray-300 p-4">
-      <h2 className="mb-4 text-xl font-bold">
-        {initialData?.id ? "Edit Exercise" : "Save Exercise"}
-      </h2>
-
+    <div className="space-y-4">
       {videoUrl && (
         <div className="mb-4">
           <video
