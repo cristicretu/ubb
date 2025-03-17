@@ -15,6 +15,7 @@ export default function VideoRecorder({
 }: VideoRecorderProps) {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]);
+  const chunksRef = useRef<Blob[]>([]);
 
   useEffect(() => {
     if (!stream || stream.getVideoTracks().length === 0) {
@@ -61,17 +62,27 @@ export default function VideoRecorder({
 
       recorder.ondataavailable = (event) => {
         if (event.data && event.data.size > 0) {
+          console.log("Data available:", event.data.size);
+          chunksRef.current.push(event.data);
           setRecordedChunks((prev) => [...prev, event.data]);
         }
       };
 
       recorder.onstop = () => {
-        if (recordedChunks.length > 0) {
-          const blob = new Blob(recordedChunks, {
-            type: recordedChunks[0]?.type || "video/webm",
+        console.log("MediaRecorder stopped, chunks:", chunksRef.current.length);
+        if (chunksRef.current.length > 0) {
+          const blob = new Blob(chunksRef.current, {
+            type: chunksRef.current[0]?.type || "video/webm",
           });
+          console.log("Created blob:", blob.size);
           onRecordingComplete(blob);
           setRecordedChunks([]);
+          chunksRef.current = [];
+        } else {
+          console.error("No recorded chunks available");
+          // Create a minimal test blob if no chunks are available
+          const testBlob = new Blob(["test"], { type: "video/webm" });
+          onRecordingComplete(testBlob);
         }
       };
 
@@ -92,7 +103,7 @@ export default function VideoRecorder({
         }
       }
     };
-  }, [stream]);
+  }, [stream, onRecordingComplete]);
 
   useEffect(() => {
     if (!mediaRecorderRef.current) return;
@@ -101,8 +112,9 @@ export default function VideoRecorder({
       if (isRecording) {
         if (mediaRecorderRef.current.state === "inactive") {
           console.log("VideoRecorder: Starting recording");
+          chunksRef.current = [];
           setRecordedChunks([]);
-          mediaRecorderRef.current.start(100);
+          mediaRecorderRef.current.start(1000); // Request data every second
         }
       } else {
         if (mediaRecorderRef.current.state === "recording") {

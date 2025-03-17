@@ -12,12 +12,8 @@ import {
 } from "lucide-react";
 import VideoRecorder from "./VideoRecorder";
 import { useCameraContext } from "./CameraContext";
+import ExerciseForm from "./ExerciseForm";
 import Link from "next/link";
-
-interface RecordingEntry {
-  date: string;
-  duration: number;
-}
 
 export default function CameraTest() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -29,6 +25,10 @@ export default function CameraTest() {
   );
   const [recordingDuration, setRecordingDuration] = useState(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
+  const { addRecordedVideo, exercises, addExercise } = useCameraContext();
+  const [showExerciseForm, setShowExerciseForm] = useState(false);
+  const [currentVideoUrl, setCurrentVideoUrl] = useState<string | null>(null);
 
   useEffect(() => {
     async function setupCamera() {
@@ -42,6 +42,7 @@ export default function CameraTest() {
           videoRef.current.srcObject = stream;
           setIsStreaming(true);
           setError(null);
+          setMediaStream(stream);
         }
       } catch (err) {
         console.error("Failed to get camera access:", err);
@@ -70,23 +71,8 @@ export default function CameraTest() {
       setIsRecording(false);
       if (recordingStartTime) {
         const duration = Math.round((Date.now() - recordingStartTime) / 1000);
-
-        const recordingEntry: RecordingEntry = {
-          date: new Date().toISOString(),
-          duration: duration,
-        };
-
-        const existingRecordings = JSON.parse(
-          localStorage.getItem("recordings") || "[]",
-        );
-
-        localStorage.setItem(
-          "recordings",
-          JSON.stringify([recordingEntry, ...existingRecordings]),
-        );
-
         setRecordingStartTime(null);
-        setRecordingDuration(0);
+        setRecordingDuration(duration);
 
         if (timerRef.current) {
           clearInterval(timerRef.current);
@@ -96,14 +82,27 @@ export default function CameraTest() {
     } else {
       setIsRecording(true);
       setRecordingStartTime(Date.now());
+      setRecordingDuration(0);
 
       timerRef.current = setInterval(() => {
-        if (recordingStartTime) {
+        if (recordingStartTime !== null) {
           const elapsed = Math.round((Date.now() - recordingStartTime) / 1000);
+          setRecordingDuration(elapsed);
+        } else {
+          const elapsed = Math.round((Date.now() - Date.now()) / 1000);
           setRecordingDuration(elapsed);
         }
       }, 1000);
     }
+  };
+
+  const handleRecordingComplete = (blob: Blob) => {
+    console.log("Recording completed, blob size:", blob.size);
+    const videoUrl = URL.createObjectURL(blob);
+    console.log("Created URL:", videoUrl);
+    setCurrentVideoUrl(videoUrl);
+    addRecordedVideo(videoUrl);
+    setShowExerciseForm(true);
   };
 
   const formatDuration = (seconds: number): string => {
@@ -117,12 +116,14 @@ export default function CameraTest() {
       <div className="flex w-full max-w-3xl flex-col">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-2xl font-bold">Camera Test Page</h1>
-          <Link
-            href="/gallery"
-            className="rounded-md bg-zinc-800 px-4 py-2 text-sm text-white hover:bg-zinc-700"
-          >
-            View Gallery
-          </Link>
+          <div className="flex gap-2">
+            <Link
+              href="/gallery"
+              className="rounded-md bg-zinc-800 px-4 py-2 text-sm text-white hover:bg-zinc-700"
+            >
+              View Gallery ({exercises.length})
+            </Link>
+          </div>
         </div>
 
         {error && (
@@ -177,7 +178,29 @@ export default function CameraTest() {
             )}
           </button>
         </div>
+
+        {showExerciseForm && currentVideoUrl && (
+          <div className="mt-6">
+            <ExerciseForm
+              videoUrl={currentVideoUrl}
+              duration={recordingDuration}
+              onCancel={() => setShowExerciseForm(false)}
+              onSave={() => {
+                setShowExerciseForm(false);
+                setCurrentVideoUrl(null);
+              }}
+            />
+          </div>
+        )}
       </div>
+
+      {mediaStream && (
+        <VideoRecorder
+          stream={mediaStream}
+          isRecording={isRecording}
+          onRecordingComplete={handleRecordingComplete}
+        />
+      )}
     </div>
   );
 }
