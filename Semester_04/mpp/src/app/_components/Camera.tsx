@@ -14,6 +14,14 @@ import VideoRecorder from "./VideoRecorder";
 import { useCameraContext } from "./CameraContext";
 import ExerciseForm from "./ExerciseForm";
 import Link from "next/link";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog";
 
 export default function CameraTest() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -179,19 +187,27 @@ export default function CameraTest() {
           </button>
         </div>
 
-        {showExerciseForm && currentVideoUrl && (
-          <div className="mt-6">
-            <ExerciseForm
-              videoUrl={currentVideoUrl}
-              duration={recordingDuration}
-              onCancel={() => setShowExerciseForm(false)}
-              onSave={() => {
-                setShowExerciseForm(false);
-                setCurrentVideoUrl(null);
-              }}
-            />
-          </div>
-        )}
+        <Dialog open={showExerciseForm} onOpenChange={setShowExerciseForm}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Save Exercise</DialogTitle>
+              <DialogDescription>
+                Review and save your recorded exercise.
+              </DialogDescription>
+            </DialogHeader>
+            {currentVideoUrl && (
+              <ExerciseForm
+                videoUrl={currentVideoUrl}
+                duration={recordingDuration}
+                onCancel={() => setShowExerciseForm(false)}
+                onSave={() => {
+                  setShowExerciseForm(false);
+                  setCurrentVideoUrl(null);
+                }}
+              />
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
 
       {mediaStream && (
