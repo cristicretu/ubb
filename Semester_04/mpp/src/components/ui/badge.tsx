@@ -1,39 +1,38 @@
 import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
-
 import { cn } from "~/lib/utils";
 
-const badgeVariants = cva(
-  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-  {
-    variants: {
-      variant: {
-        default:
-          "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
-        secondary:
-          "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        destructive:
-          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        outline: "text-foreground",
-        good: "border-transparent bg-green-600 text-white",
-        medium: "border-transparent bg-yellow-500 text-white",
-        bad: "border-transparent bg-red-600 text-white",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  },
-);
+export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?:
+    | "default"
+    | "secondary"
+    | "destructive"
+    | "outline"
+    | "good"
+    | "medium"
+    | "bad";
+}
 
-export interface BadgeProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof badgeVariants> {}
+function Badge({ className, variant = "default", ...props }: BadgeProps) {
+  const variantStyles = {
+    default: "border-transparent bg-blue-600 text-white hover:bg-blue-700",
+    secondary: "border-transparent bg-zinc-700 text-white hover:bg-zinc-600",
+    destructive: "border-transparent bg-red-600 text-white hover:bg-red-700",
+    outline: "border-zinc-700 text-zinc-100",
+    good: "border-transparent bg-green-600 text-white",
+    medium: "border-transparent bg-yellow-500 text-white",
+    bad: "border-transparent bg-red-600 text-white",
+  };
 
-function Badge({ className, variant, ...props }: BadgeProps) {
   return (
-    <div className={cn(badgeVariants({ variant }), className)} {...props} />
+    <div
+      className={cn(
+        "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2",
+        variantStyles[variant],
+        className,
+      )}
+      {...props}
+    />
   );
 }
 
-export { Badge, badgeVariants };
+export { Badge };
