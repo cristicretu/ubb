@@ -23,12 +23,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       variant = "default",
       size = "default",
       asChild = false,
+      children,
       ...props
     },
     ref,
   ) => {
-    const Comp = asChild ? React.Fragment : "button";
-
     const variantStyles = {
       default: "bg-blue-600 text-white hover:bg-blue-700",
       destructive: "bg-red-600 text-white hover:bg-red-700",
@@ -45,17 +44,28 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       icon: "h-10 w-10 p-0",
     };
 
+    const buttonClasses = cn(
+      "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+      variantStyles[variant],
+      sizeStyles[size],
+      className,
+    );
+
+    if (asChild && React.isValidElement(children)) {
+      return React.cloneElement(children as React.ReactElement, {
+        className: cn(
+          buttonClasses,
+          (children as React.ReactElement).props.className,
+        ),
+        ref,
+        ...props,
+      });
+    }
+
     return (
-      <Comp
-        className={cn(
-          "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
-          variantStyles[variant],
-          sizeStyles[size],
-          className,
-        )}
-        ref={ref}
-        {...props}
-      />
+      <button className={buttonClasses} ref={ref} {...props}>
+        {children}
+      </button>
     );
   },
 );
