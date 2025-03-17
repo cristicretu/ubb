@@ -80,7 +80,6 @@ export default function VideoRecorder({
           chunksRef.current = [];
         } else {
           console.error("No recorded chunks available");
-          // Create a minimal test blob if no chunks are available
           const testBlob = new Blob(["test"], { type: "video/webm" });
           onRecordingComplete(testBlob);
         }
@@ -114,7 +113,7 @@ export default function VideoRecorder({
           console.log("VideoRecorder: Starting recording");
           chunksRef.current = [];
           setRecordedChunks([]);
-          mediaRecorderRef.current.start(1000); // Request data every second
+          mediaRecorderRef.current.start(1000);
         }
       } else {
         if (mediaRecorderRef.current.state === "recording") {

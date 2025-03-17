@@ -105,9 +105,7 @@ export default function CameraTest() {
   };
 
   const handleRecordingComplete = (blob: Blob) => {
-    console.log("Recording completed, blob size:", blob.size);
     const videoUrl = URL.createObjectURL(blob);
-    console.log("Created URL:", videoUrl);
     setCurrentVideoUrl(videoUrl);
     addRecordedVideo(videoUrl);
     setShowExerciseForm(true);
@@ -143,12 +141,12 @@ export default function CameraTest() {
                 Live
               </div>
 
-              {isRecording && (
+              {/* {isRecording && (
                 <div className="absolute left-2 top-2 flex items-center gap-2 rounded-full bg-red-500 px-3 py-1 text-xs font-medium text-white">
                   <span className="h-2 w-2 animate-pulse rounded-full bg-white"></span>
                   Recording {formatDuration(recordingDuration)}
                 </div>
-              )}
+              )} */}
 
               <button
                 onClick={toggleRecording}

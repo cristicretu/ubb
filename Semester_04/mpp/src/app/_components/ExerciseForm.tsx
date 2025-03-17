@@ -55,16 +55,12 @@ export default function ExerciseForm({
   const handleSave = () => {
     if (!validateName(name)) return;
 
-    console.log("Saving exercise with name:", name);
-
     if (initialData?.id) {
-      console.log("Updating existing exercise:", initialData.id);
       updateExercise(initialData.id, {
         name,
         form,
       });
     } else {
-      console.log("Adding new exercise with video:", videoUrl);
       addExercise({
         name,
         videoUrl,

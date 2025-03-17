@@ -54,26 +54,22 @@ export function CameraProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const addRecordedVideo = useCallback((videoUrl: string) => {
-    console.log("Adding recorded video:", videoUrl);
     setRecordedVideos((prev) => [videoUrl, ...prev]);
   }, []);
 
   const addExercise = useCallback((exercise: Omit<Exercise, "id">) => {
-    console.log("Adding exercise:", exercise);
     const newExercise = {
       ...exercise,
       id: Date.now().toString(),
     };
     setExercises((prev) => {
       const newState = [newExercise, ...prev];
-      console.log("New exercises state:", newState);
       return newState;
     });
   }, []);
 
   const updateExercise = useCallback(
     (id: string, updates: Partial<Omit<Exercise, "id">>) => {
-      console.log("Updating exercise:", id, updates);
       setExercises((prev) =>
         prev.map((ex) => (ex.id === id ? { ...ex, ...updates } : ex)),
       );
@@ -82,7 +78,6 @@ export function CameraProvider({ children }: { children: ReactNode }) {
   );
 
   const deleteExercise = useCallback((id: string) => {
-    console.log("Deleting exercise:", id);
     setExercises((prev) => prev.filter((ex) => ex.id !== id));
   }, []);
 

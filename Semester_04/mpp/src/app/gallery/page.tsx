@@ -44,11 +44,6 @@ export default function Gallery() {
   const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  // Debug output
-  useEffect(() => {
-    console.log("Gallery rendering with exercises:", exercises);
-  }, [exercises]);
-
   const formatDate = (dateStr: string): string => {
     const date = new Date(dateStr);
     return new Intl.DateTimeFormat("en-US", {
