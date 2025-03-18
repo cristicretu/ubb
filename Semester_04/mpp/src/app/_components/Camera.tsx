@@ -22,7 +22,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-
+import { Toaster } from "~/components/ui/sonner";
+import { toast } from "sonner";
 export default function CameraTest() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isStreaming, setIsStreaming] = useState(false);
@@ -179,6 +180,7 @@ export default function CameraTest() {
                 onSave={() => {
                   setShowExerciseForm(false);
                   setCurrentVideoUrl(null);
+                  toast.success("Exercise saved successfully");
                 }}
               />
             )}

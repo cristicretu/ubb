@@ -5,6 +5,7 @@ import { type Metadata } from "next";
 
 import { TRPCReactProvider } from "~/trpc/react";
 import { CameraProvider } from "./_components/CameraContext";
+import { Toaster } from "~/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Optima",
@@ -27,6 +28,7 @@ export default function RootLayout({
         <TRPCReactProvider>
           <CameraProvider>{children}</CameraProvider>
         </TRPCReactProvider>
+        <Toaster />
       </body>
     </html>
   );
