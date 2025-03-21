@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import PageLayout from "../_components/PageLayout";
 import { useCameraContext, Exercise } from "../_components/CameraContext";
 import ExerciseForm from "../_components/ExerciseForm";
+import ExerciseStatistics from "../_components/ExerciseStatistics";
+import ExerciseDurationChart from "../_components/ExerciseDurationChart";
+import ExerciseQualityChart from "../_components/ExerciseQualityChart";
 import Link from "next/link";
 import { Search, Filter, Calendar, ArrowUpDown, ArrowLeft } from "lucide-react";
 import {
@@ -32,7 +35,13 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 
-type SortOption = "date-newest" | "date-oldest" | "name-asc" | "name-desc";
+type SortOption =
+  | "date-newest"
+  | "date-oldest"
+  | "name-asc"
+  | "name-desc"
+  | "duration-highest"
+  | "duration-lowest";
 
 export default function Gallery() {
   const { exercises, deleteExercise } = useCameraContext();
@@ -43,6 +52,33 @@ export default function Gallery() {
   const [searchTerm, setSearchTerm] = useState("");
   const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  // Calculate duration statistics for highlighting
+  const durations = exercises.map((ex) => ex.duration);
+  const minDuration = Math.min(...durations);
+  const maxDuration = Math.max(...durations);
+  const avgDuration =
+    durations.length > 0
+      ? durations.reduce((acc, dur) => acc + dur, 0) / durations.length
+      : 0;
+
+  // Find exercise IDs for min/max/avg durations
+  const minDurationExId = exercises.find(
+    (ex) => ex.duration === minDuration,
+  )?.id;
+  const maxDurationExId = exercises.find(
+    (ex) => ex.duration === maxDuration,
+  )?.id;
+
+  // Find the exercise with duration closest to the average
+  const avgDurationExId =
+    exercises.length > 0
+      ? [...exercises].sort(
+          (a, b) =>
+            Math.abs(a.duration - avgDuration) -
+            Math.abs(b.duration - avgDuration),
+        )[0].id
+      : null;
 
   const formatDate = (dateStr: string): string => {
     const date = new Date(dateStr);
@@ -80,10 +116,34 @@ export default function Gallery() {
         return a.name.localeCompare(b.name);
       case "name-desc":
         return b.name.localeCompare(a.name);
+      case "duration-highest":
+        return b.duration - a.duration;
+      case "duration-lowest":
+        return a.duration - b.duration;
       default:
         return 0;
     }
   });
+
+  const getExerciseHighlight = (exerciseId: string) => {
+    if (exerciseId === maxDurationExId) {
+      return {
+        borderColor: "border-red-500",
+        label: "Longest Duration",
+      };
+    } else if (exerciseId === minDurationExId) {
+      return {
+        borderColor: "border-green-500",
+        label: "Shortest Duration",
+      };
+    } else if (exerciseId === avgDurationExId) {
+      return {
+        borderColor: "border-blue-500",
+        label: "Average Duration",
+      };
+    }
+    return { borderColor: "", label: "" };
+  };
 
   return (
     <PageLayout>
@@ -106,6 +166,19 @@ export default function Gallery() {
             </Button>
           </div>
         </div>
+
+        {exercises.length > 0 && (
+          <>
+            <ExerciseStatistics exercises={exercises} />
+
+            <div className="mb-6 grid gap-6 md:grid-cols-2">
+              {exercises.length > 1 && (
+                <ExerciseDurationChart exercises={exercises} />
+              )}
+              <ExerciseQualityChart exercises={exercises} />
+            </div>
+          </>
+        )}
 
         <div className="mb-8 space-y-4">
           <div className="flex flex-col gap-4 sm:flex-row">
@@ -148,6 +221,12 @@ export default function Gallery() {
                     <SelectItem value="date-oldest">Oldest First</SelectItem>
                     <SelectItem value="name-asc">Name (A-Z)</SelectItem>
                     <SelectItem value="name-desc">Name (Z-A)</SelectItem>
+                    <SelectItem value="duration-highest">
+                      Longest Duration
+                    </SelectItem>
+                    <SelectItem value="duration-lowest">
+                      Shortest Duration
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -189,55 +268,71 @@ export default function Gallery() {
 
         {sortedExercises.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {sortedExercises.map((exercise) => (
-              <Card key={exercise.id} className="flex flex-col overflow-hidden">
-                <div className="aspect-video overflow-hidden">
-                  <video
-                    src={exercise.videoUrl}
-                    controls
-                    className="h-full w-full object-cover"
-                    playsInline
-                  />
-                </div>
-                <CardHeader className="pb-2">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-xl">{exercise.name}</CardTitle>
-                    <Badge variant={exercise.form as any}>
-                      {exercise.form.charAt(0).toUpperCase() +
-                        exercise.form.slice(1)}
-                    </Badge>
+            {sortedExercises.map((exercise) => {
+              const highlight = getExerciseHighlight(exercise.id);
+
+              return (
+                <Card
+                  key={exercise.id}
+                  className={`flex flex-col overflow-hidden transition-all ${highlight.borderColor ? `border-2 ${highlight.borderColor}` : ""}`}
+                >
+                  <div className="aspect-video overflow-hidden">
+                    <video
+                      src={exercise.videoUrl}
+                      controls
+                      className="h-full w-full object-cover"
+                      playsInline
+                    />
                   </div>
-                  <CardDescription className="flex items-center gap-2">
-                    <Calendar className="h-3.5 w-3.5" />
-                    {formatDate(exercise.date)}
-                  </CardDescription>
-                  <CardDescription>
-                    Duration: {formatDuration(exercise.duration)}
-                  </CardDescription>
-                </CardHeader>
-                <CardFooter className="mt-auto pt-0">
-                  <div className="flex w-full gap-2">
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setEditingExercise(exercise);
-                        setDialogOpen(true);
-                      }}
-                      className="flex-1"
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      onClick={() => deleteExercise(exercise.id)}
-                      className="flex-1"
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </CardFooter>
-              </Card>
-            ))}
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-xl">{exercise.name}</CardTitle>
+                      <Badge variant={exercise.form as any}>
+                        {exercise.form.charAt(0).toUpperCase() +
+                          exercise.form.slice(1)}
+                      </Badge>
+                    </div>
+                    <CardDescription className="flex items-center gap-2">
+                      <Calendar className="h-3.5 w-3.5" />
+                      {formatDate(exercise.date)}
+                    </CardDescription>
+                    <CardDescription className="flex items-center justify-between">
+                      <span>Duration: {formatDuration(exercise.duration)}</span>
+
+                      {highlight.label && (
+                        <Badge
+                          variant="outline"
+                          className={`mt-1 ${highlight.borderColor.replace("border-", "text-")}`}
+                        >
+                          {highlight.label}
+                        </Badge>
+                      )}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardFooter className="mt-auto pt-0">
+                    <div className="flex w-full gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setEditingExercise(exercise);
+                          setDialogOpen(true);
+                        }}
+                        className="flex-1"
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        onClick={() => deleteExercise(exercise.id)}
+                        className="flex-1"
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </CardFooter>
+                </Card>
+              );
+            })}
           </div>
         ) : (
           <Card className="mx-auto w-full max-w-md">
@@ -249,11 +344,12 @@ export default function Gallery() {
                   : "Your recorded exercises will appear here."}
               </CardDescription>
             </CardHeader>
-            <CardFooter className="flex justify-center pb-6">
+            <CardContent className="text-center">
+              <p className="mb-4">Record your first exercise to get started.</p>
               <Button asChild>
-                <Link href="/">Record Your First Exercise</Link>
+                <Link href="/">Record New Exercise</Link>
               </Button>
-            </CardFooter>
+            </CardContent>
           </Card>
         )}
       </div>
