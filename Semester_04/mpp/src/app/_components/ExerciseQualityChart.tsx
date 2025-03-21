@@ -76,15 +76,20 @@ export default function ExerciseQualityChart({
   });
 
   return (
-    <Card className="mb-6">
+    <Card className="border-border border shadow-sm">
       <CardHeader className="pb-2">
-        <CardTitle>Form Quality Distribution</CardTitle>
+        <CardTitle className="text-lg font-medium">
+          Form Quality Distribution
+        </CardTitle>
         <CardDescription>Breakdown of exercise form quality</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col items-center justify-center gap-6 sm:flex-row">
           <div className="relative h-40 w-40">
-            <svg viewBox={`0 0 ${size} ${size}`} className="h-full w-full">
+            <svg
+              viewBox={`0 0 ${size} ${size}`}
+              className="h-full w-full drop-shadow-sm"
+            >
               {segmentPaths.map((segment, i) => (
                 <path
                   key={i}
@@ -99,14 +104,20 @@ export default function ExerciseQualityChart({
                 </path>
               ))}
 
-              <circle cx={center} cy={center} r={radius * 0.6} fill="white" />
+              <circle
+                cx={center}
+                cy={center}
+                r={radius * 0.6}
+                fill="white"
+                className="drop-shadow-sm"
+              />
 
               <text
                 x={center}
                 y={center}
                 textAnchor="middle"
                 dominantBaseline="middle"
-                className="text-lg font-medium"
+                className="text-lg font-semibold"
               >
                 {totalExercises}
               </text>
@@ -123,14 +134,14 @@ export default function ExerciseQualityChart({
             </svg>
           </div>
 
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3">
             {segments.map((segment, i) => (
-              <div key={i} className="flex items-center gap-2">
+              <div key={i} className="flex items-center gap-3">
                 <div
-                  className="h-4 w-4 rounded-sm"
+                  className="h-4 w-4 rounded-sm shadow-sm"
                   style={{ backgroundColor: segment.color }}
                 />
-                <span className="capitalize">{segment.type}</span>
+                <span className="font-medium capitalize">{segment.type}</span>
                 <span className="text-sm text-gray-500">
                   {formCounts[segment.type as keyof typeof formCounts]} (
                   {segment.percentage}%)

@@ -15,9 +15,11 @@ export default function ExerciseStatistics({
   // Return early if no exercises
   if (!exercises.length) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Exercise Statistics</CardTitle>
+      <Card className="bg-card border-border shadow-sm">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg font-medium">
+            Exercise Statistics
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground text-center">
@@ -63,9 +65,11 @@ export default function ExerciseStatistics({
   )[0];
 
   return (
-    <Card className="mb-6">
-      <CardHeader>
-        <CardTitle>Exercise Statistics</CardTitle>
+    <Card className="border-border mb-6 border shadow-sm">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-lg font-medium">
+          Exercise Statistics
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -76,16 +80,19 @@ export default function ExerciseStatistics({
                 label: "Shortest",
                 value: formatDuration(minDuration),
                 id: minDurationEx?.id,
+                color: "green",
               },
               {
                 label: "Average",
                 value: formatDuration(avgDuration),
                 id: avgDurationEx?.id,
+                color: "blue",
               },
               {
                 label: "Longest",
                 value: formatDuration(maxDuration),
                 id: maxDurationEx?.id,
+                color: "red",
               },
             ]}
           />
@@ -130,7 +137,7 @@ export default function ExerciseStatistics({
 
         <div className="mt-6">
           <h3 className="mb-2 font-medium">Form Distribution</h3>
-          <div className="flex h-6 w-full overflow-hidden rounded-full bg-gray-200">
+          <div className="flex h-6 w-full overflow-hidden rounded-full bg-slate-200 shadow-inner">
             {formCounts.bad > 0 && (
               <div
                 className="h-full bg-red-500"
@@ -177,15 +184,17 @@ function StatCard({
   }>;
 }) {
   return (
-    <div className="rounded-lg border p-3">
-      <h3 className="mb-2 font-medium">{title}</h3>
-      <div className="space-y-2">
+    <div className="border-border bg-card/50 hover:bg-card/80 rounded-lg border p-4 shadow-sm transition-colors">
+      <h3 className="mb-3 font-medium">{title}</h3>
+      <div className="space-y-2.5">
         {items.map((item, i) => (
           <div key={i} className="flex items-center justify-between">
-            <span className="text-muted-foreground text-sm">{item.label}:</span>
+            <span className="text-muted-foreground text-sm">{item.label}</span>
             <span className="font-medium" data-exercise-id={item.id || ""}>
               {item.color ? (
-                <Badge variant={item.color as any}>{item.value}</Badge>
+                <Badge variant={item.color as any} className="ml-2">
+                  {item.value}
+                </Badge>
               ) : (
                 item.value
               )}
