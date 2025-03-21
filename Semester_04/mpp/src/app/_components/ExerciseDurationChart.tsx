@@ -51,9 +51,9 @@ export default function ExerciseDurationChart({
   };
 
   return (
-    <Card className="mb-6">
+    <Card className="border-border border shadow-sm">
       <CardHeader className="pb-2">
-        <CardTitle>Duration Trend</CardTitle>
+        <CardTitle className="text-lg font-medium">Duration Trend</CardTitle>
         <CardDescription>
           Exercise durations over time. Average: {formatDuration(avgDuration)}
         </CardDescription>
@@ -98,7 +98,7 @@ export default function ExerciseDurationChart({
                     style={{ width: `${barWidth}%` }}
                   >
                     <div
-                      className={`mb-1 rounded-t opacity-90 transition-all hover:opacity-100 ${formColor}`}
+                      className={`mb-1 rounded-t opacity-90 shadow-sm transition-all hover:opacity-100 ${formColor}`}
                       style={{
                         height: `${height}px`,
                         width: `${adjustedBarWidth}%`,
