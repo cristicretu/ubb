@@ -8,8 +8,11 @@ interface PageLayoutProps {
 
 export default function PageLayout({ children }: PageLayoutProps) {
   return (
-    <div className="flex min-h-screen flex-col bg-black">
-      <main className="flex-1 pb-16">{children}</main>
+    <div
+      className="flex h-screen flex-col bg-black"
+      style={{ height: "100vh", overflowY: "auto" }}
+    >
+      <main className="flex-1 overflow-y-auto pb-16">{children}</main>
       <TabNavigation />
     </div>
   );
