@@ -34,6 +34,8 @@ interface CameraContextType {
   updateExercise: (id: string, updates: Partial<Omit<Exercise, "id">>) => void;
   deleteExercise: (id: string) => void;
   getExerciseById: (id: string) => Exercise | undefined;
+  addEventListener: (event: "exercisesChange", callback: () => void) => void;
+  removeEventListener: (event: "exercisesChange", callback: () => void) => void;
 }
 
 const defaultSettings: CameraSettings = {
@@ -49,6 +51,29 @@ export function CameraProvider({ children }: { children: ReactNode }) {
   const [recordedVideos, setRecordedVideos] = useState<string[]>([]);
   const [exercises, setExercises] = useState<Exercise[]>([]);
 
+  const [exerciseChangeListeners] = useState<(() => void)[]>([]);
+
+  useEffect(() => {
+    const savedExercises = localStorage.getItem("exercises");
+    if (savedExercises) {
+      try {
+        setExercises(JSON.parse(savedExercises));
+      } catch (error) {
+        console.error("Failed to parse saved exercises:", error);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (exercises.length > 0) {
+      localStorage.setItem("exercises", JSON.stringify(exercises));
+    }
+  }, [exercises]);
+
+  const notifyExerciseChange = useCallback(() => {
+    exerciseChangeListeners.forEach((listener) => listener());
+  }, [exerciseChangeListeners]);
+
   const updateSettings = useCallback((newSettings: Partial<CameraSettings>) => {
     setSettings((prev) => ({ ...prev, ...newSettings }));
   }, []);
@@ -57,35 +82,68 @@ export function CameraProvider({ children }: { children: ReactNode }) {
     setRecordedVideos((prev) => [videoUrl, ...prev]);
   }, []);
 
-  const addExercise = useCallback((exercise: Omit<Exercise, "id">) => {
-    const newExercise = {
-      ...exercise,
-      id: Date.now().toString(),
-    };
-    setExercises((prev) => {
-      const newState = [newExercise, ...prev];
-      return newState;
-    });
-  }, []);
+  const addExercise = useCallback(
+    (exercise: Omit<Exercise, "id">) => {
+      const newExercise = {
+        ...exercise,
+        id: Date.now().toString(),
+      };
+      setExercises((prev) => {
+        const newState = [newExercise, ...prev];
+        return newState;
+      });
+
+      setTimeout(() => notifyExerciseChange(), 50);
+    },
+    [notifyExerciseChange],
+  );
 
   const updateExercise = useCallback(
     (id: string, updates: Partial<Omit<Exercise, "id">>) => {
       setExercises((prev) =>
         prev.map((ex) => (ex.id === id ? { ...ex, ...updates } : ex)),
       );
+
+      setTimeout(() => notifyExerciseChange(), 50);
     },
-    [],
+    [notifyExerciseChange],
   );
 
-  const deleteExercise = useCallback((id: string) => {
-    setExercises((prev) => prev.filter((ex) => ex.id !== id));
-  }, []);
+  const deleteExercise = useCallback(
+    (id: string) => {
+      setExercises((prev) => prev.filter((ex) => ex.id !== id));
+
+      setTimeout(() => notifyExerciseChange(), 50);
+    },
+    [notifyExerciseChange],
+  );
 
   const getExerciseById = useCallback(
     (id: string) => {
       return exercises.find((ex) => ex.id === id);
     },
     [exercises],
+  );
+
+  const addEventListener = useCallback(
+    (event: "exercisesChange", callback: () => void) => {
+      if (event === "exercisesChange") {
+        exerciseChangeListeners.push(callback);
+      }
+    },
+    [exerciseChangeListeners],
+  );
+
+  const removeEventListener = useCallback(
+    (event: "exercisesChange", callback: () => void) => {
+      if (event === "exercisesChange") {
+        const index = exerciseChangeListeners.indexOf(callback);
+        if (index !== -1) {
+          exerciseChangeListeners.splice(index, 1);
+        }
+      }
+    },
+    [exerciseChangeListeners],
   );
 
   const contextValue = {
@@ -98,6 +156,8 @@ export function CameraProvider({ children }: { children: ReactNode }) {
     updateExercise,
     deleteExercise,
     getExerciseById,
+    addEventListener,
+    removeEventListener,
   };
 
   return (

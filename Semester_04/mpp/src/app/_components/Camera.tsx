@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import {
   Play,
   Square,
@@ -38,6 +38,8 @@ export default function CameraTest() {
   const { addRecordedVideo, exercises, addExercise } = useCameraContext();
   const [showExerciseForm, setShowExerciseForm] = useState(false);
   const [currentVideoUrl, setCurrentVideoUrl] = useState<string | null>(null);
+
+  const [chartKey, setChartKey] = useState(0);
 
   useEffect(() => {
     async function setupCamera() {

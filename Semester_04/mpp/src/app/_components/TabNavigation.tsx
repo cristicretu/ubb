@@ -27,7 +27,7 @@ export default function TabNavigation() {
   const pathname = usePathname();
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 border-t border-zinc-800 bg-zinc-900">
+    <div className="fixed bottom-0 left-0 right-0 z-10 border-t border-zinc-800 bg-zinc-900">
       <nav className="flex h-16 items-center justify-around">
         {tabs.map((tab) => {
           const isActive = pathname === tab.href;
