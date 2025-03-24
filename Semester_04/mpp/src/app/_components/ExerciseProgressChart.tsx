@@ -9,26 +9,37 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 interface ExerciseProgressChartProps {
   exercises: Exercise[];
+}
+
+interface ChartDataItem {
+  date: string;
+  displayDate: string;
+  intensity: number;
+  count: number;
+  form: {
+    good: number;
+    medium: number;
+    bad: number;
+  };
 }
 
 export default function ExerciseProgressChart({
   exercises,
 }: ExerciseProgressChartProps) {
   const [averageIntensityByDay, setAverageIntensityByDay] = useState<
-    {
-      date: string;
-      displayDate: string;
-      intensity: number;
-      count: number;
-      form: {
-        good: number;
-        medium: number;
-        bad: number;
-      };
-    }[]
+    ChartDataItem[]
   >([]);
 
   useEffect(() => {
@@ -103,21 +114,27 @@ export default function ExerciseProgressChart({
     return null;
   }
 
-  const chartHeight = 180;
-  const maxIntensity = Math.max(
-    ...averageIntensityByDay.map((day) => day.intensity),
-    1,
-  );
-
-  const points = averageIntensityByDay.map((day, index) => {
-    const x = (index / (averageIntensityByDay.length - 1 || 1)) * 100;
-    const y = 100 - (day.intensity / maxIntensity) * 100;
-    return `${x},${y}`;
-  });
-
-  const areaPoints = [`0,100`, ...points, `100,100`].join(" ");
-
-  const linePoints = points.join(" ");
+  // Custom tooltip component
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload as ChartDataItem;
+      return (
+        <div className="rounded border border-gray-200 bg-white p-2 shadow-sm">
+          <p className="font-medium">{data.displayDate}</p>
+          <p className="text-gray-600">
+            Intensity: {data.intensity.toFixed(1)}
+          </p>
+          <p className="text-gray-600">Exercises: {data.count}</p>
+          <div className="mt-1 text-xs">
+            <p className="text-green-600">Good: {data.form.good}</p>
+            <p className="text-yellow-500">Medium: {data.form.medium}</p>
+            <p className="text-red-500">Bad: {data.form.bad}</p>
+          </div>
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <Card className="border-border border shadow-sm">
@@ -130,115 +147,49 @@ export default function ExerciseProgressChart({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="relative h-[220px] w-full pt-4">
-          <div className="absolute left-0 top-0 flex h-full w-10 flex-col justify-between py-2 text-xs text-gray-500">
-            <span>High</span>
-            <span>Med</span>
-            <span>Low</span>
-          </div>
-
-          <div className="absolute inset-y-0 left-10 right-0">
-            <div className="absolute inset-0 flex flex-col justify-between">
-              <div className="border-t border-gray-200" />
-              <div className="border-t border-gray-200" />
-              <div className="border-t border-gray-200" />
-            </div>
-
-            <div className="relative h-full w-full">
-              <svg
-                viewBox="0 0 100 100"
-                preserveAspectRatio="none"
-                className="absolute inset-0 h-full w-full overflow-visible"
-              >
-                <defs>
-                  <linearGradient
-                    id="intensityGradient"
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="1"
-                  >
-                    <stop
-                      offset="0%"
-                      stopColor="rgb(79, 70, 229)"
-                      stopOpacity="0.7"
-                    />
-                    <stop
-                      offset="100%"
-                      stopColor="rgb(79, 70, 229)"
-                      stopOpacity="0.1"
-                    />
-                  </linearGradient>
-                </defs>
-                <polygon points={areaPoints} fill="url(#intensityGradient)" />
-                {/* Line */}
-                <polyline
-                  points={linePoints}
-                  fill="none"
-                  stroke="rgb(79, 70, 229)"
-                  strokeWidth="0.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                {/* Data points */}
-                {points.map((point, index) => {
-                  const [x, y] = point.split(",").map(parseFloat);
-                  return (
-                    <circle
-                      key={index}
-                      cx={x}
-                      cy={y}
-                      r="1.5"
-                      fill="white"
-                      stroke="rgb(79, 70, 229)"
-                      strokeWidth="0.5"
-                      className="hover:r-2 transition-all"
-                    >
-                      <title>
-                        {averageIntensityByDay[index].displayDate}:
-                        {Math.round(averageIntensityByDay[index].intensity)}{" "}
-                        intensity ({averageIntensityByDay[index].count}{" "}
-                        exercises)
-                      </title>
-                    </circle>
-                  );
-                })}
-              </svg>
-            </div>
-
-            <div className="absolute bottom-0 left-0 right-0 flex justify-between px-2 pt-2 text-xs text-gray-500">
-              {averageIntensityByDay.length > 7
-                ? averageIntensityByDay
-                    .filter(
-                      (_, i) =>
-                        i % Math.ceil(averageIntensityByDay.length / 5) === 0 ||
-                        i === averageIntensityByDay.length - 1,
-                    )
-                    .map((day, i) => <span key={i}>{day.displayDate}</span>)
-                : averageIntensityByDay.map((day, i) => (
-                    <span key={i}>{day.displayDate}</span>
-                  ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-4 flex items-center justify-center gap-6">
-          <div className="flex items-center gap-2">
-            <div className="h-3 w-3 rounded-full bg-indigo-600 opacity-70"></div>
-            <span className="text-xs text-gray-500">Intensity</span>
-          </div>
-          <div className="text-xs text-gray-500">
-            <span className="font-medium">Latest:</span>{" "}
-            {averageIntensityByDay.length > 0
-              ? `${Math.round(averageIntensityByDay[averageIntensityByDay.length - 1].intensity)} units`
-              : "N/A"}
-          </div>
-          <div className="text-xs text-gray-500">
-            <span className="font-medium">Highest:</span>{" "}
-            {averageIntensityByDay.length > 0
-              ? `${Math.round(Math.max(...averageIntensityByDay.map((d) => d.intensity)))} units`
-              : "N/A"}
-          </div>
+        <div className="h-[250px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart
+              data={averageIntensityByDay}
+              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+              <XAxis
+                dataKey="displayDate"
+                tickLine={false}
+                axisLine={{ stroke: "#e5e7eb" }}
+              />
+              <YAxis
+                label={{
+                  value: "Intensity",
+                  angle: -90,
+                  position: "insideLeft",
+                  style: {
+                    textAnchor: "middle",
+                    fontSize: 12,
+                    fill: "#6b7280",
+                  },
+                }}
+                tickLine={false}
+                axisLine={{ stroke: "#e5e7eb" }}
+              />
+              <Tooltip content={<CustomTooltip />} />
+              <Area
+                type="monotone"
+                dataKey="intensity"
+                stroke="#3b82f6"
+                fillOpacity={0.3}
+                fill="#93c5fd"
+                strokeWidth={2}
+                activeDot={{
+                  r: 6,
+                  strokeWidth: 2,
+                  stroke: "white",
+                  fill: "#2563eb",
+                }}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
       </CardContent>
     </Card>

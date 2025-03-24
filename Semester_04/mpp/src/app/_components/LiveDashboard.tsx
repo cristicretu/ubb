@@ -140,9 +140,7 @@ export default function LiveDashboard() {
         </div>
       </div>
 
-      {/* Dashboard cards */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {/* Today's exercises */}
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-medium">
