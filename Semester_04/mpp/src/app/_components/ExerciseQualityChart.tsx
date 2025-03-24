@@ -8,6 +8,14 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Legend,
+  Tooltip,
+} from "recharts";
 
 interface ExerciseQualityChartProps {
   exercises: Exercise[];
@@ -33,47 +41,58 @@ export default function ExerciseQualityChart({
     good: Math.round((formCounts.good / totalExercises) * 100),
   };
 
-  const segments = [
-    { type: "bad", percentage: formPercentages.bad, color: "#ef4444" },
-    { type: "medium", percentage: formPercentages.medium, color: "#eab308" },
-    { type: "good", percentage: formPercentages.good, color: "#22c55e" },
-  ].filter((segment) => segment.percentage > 0);
+  // Format data for Recharts
+  const chartData = [
+    { name: "Bad", value: formCounts.bad, percentage: formPercentages.bad },
+    {
+      name: "Medium",
+      value: formCounts.medium,
+      percentage: formPercentages.medium,
+    },
+    { name: "Good", value: formCounts.good, percentage: formPercentages.good },
+  ].filter((item) => item.value > 0);
 
-  const size = 160;
-  const radius = size / 2;
-  const center = size / 2;
+  const COLORS = ["#ef4444", "#eab308", "#22c55e"];
 
-  let currentAngle = 0;
-  const segmentPaths = segments.map((segment) => {
-    const angle = (segment.percentage / 100) * 360;
-    const endAngle = currentAngle + angle;
+  const renderCustomizedLabel = ({
+    cx,
+    cy,
+    midAngle,
+    innerRadius,
+    outerRadius,
+    percent,
+  }: any) => {
+    const RADIAN = Math.PI / 180;
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
-    const startX = center + radius * Math.cos((Math.PI * currentAngle) / 180);
-    const startY = center + radius * Math.sin((Math.PI * currentAngle) / 180);
-    const endX = center + radius * Math.cos((Math.PI * endAngle) / 180);
-    const endY = center + radius * Math.sin((Math.PI * endAngle) / 180);
+    return percent > 0.05 ? (
+      <text
+        x={x}
+        y={y}
+        fill="white"
+        textAnchor="middle"
+        dominantBaseline="central"
+        fontSize={12}
+        fontWeight="bold"
+      >
+        {`${(percent * 100).toFixed(0)}%`}
+      </text>
+    ) : null;
+  };
 
-    const largeArcFlag = angle > 180 ? 1 : 0;
-
-    const path = [
-      `M ${center} ${center}`,
-      `L ${startX} ${startY}`,
-      `A ${radius} ${radius} 0 ${largeArcFlag} 1 ${endX} ${endY}`,
-      "Z",
-    ].join(" ");
-
-    const result = {
-      path,
-      color: segment.color,
-      type: segment.type,
-      percentage: segment.percentage,
-      startAngle: currentAngle,
-      endAngle,
-    };
-
-    currentAngle = endAngle;
-    return result;
-  });
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="rounded border border-gray-200 bg-white p-2 text-sm shadow-sm">
+          <p className="font-medium">{`${payload[0].name}: ${payload[0].value}`}</p>
+          <p className="text-gray-500">{`${payload[0].payload.percentage}% of total`}</p>
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <Card className="border-border border shadow-sm">
@@ -84,71 +103,35 @@ export default function ExerciseQualityChart({
         <CardDescription>Breakdown of exercise form quality</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-col items-center justify-center gap-6 sm:flex-row">
-          <div className="relative h-40 w-40">
-            <svg
-              viewBox={`0 0 ${size} ${size}`}
-              className="h-full w-full drop-shadow-sm"
-            >
-              {segmentPaths.map((segment, i) => (
-                <path
-                  key={i}
-                  d={segment.path}
-                  fill={segment.color}
-                  stroke="white"
-                  strokeWidth="1"
-                >
-                  <title>
-                    {segment.type}: {segment.percentage}%
-                  </title>
-                </path>
-              ))}
-
-              <circle
-                cx={center}
-                cy={center}
-                r={radius * 0.6}
-                fill="white"
-                className="drop-shadow-sm"
+        <div className="h-[250px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={chartData}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="value"
+                label={renderCustomizedLabel}
+              >
+                {chartData.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip content={<CustomTooltip />} />
+              <Legend
+                formatter={(value, entry, index) => {
+                  const item = chartData[index];
+                  return `${value} - ${item.value} (${item.percentage}%)`;
+                }}
               />
-
-              <text
-                x={center}
-                y={center}
-                textAnchor="middle"
-                dominantBaseline="middle"
-                className="text-lg font-semibold"
-              >
-                {totalExercises}
-              </text>
-              <text
-                x={center}
-                y={center + 15}
-                textAnchor="middle"
-                dominantBaseline="middle"
-                className="text-xs"
-                fill="gray"
-              >
-                Total
-              </text>
-            </svg>
-          </div>
-
-          <div className="flex flex-col gap-3">
-            {segments.map((segment, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <div
-                  className="h-4 w-4 rounded-sm shadow-sm"
-                  style={{ backgroundColor: segment.color }}
-                />
-                <span className="font-medium capitalize">{segment.type}</span>
-                <span className="text-sm text-gray-500">
-                  {formCounts[segment.type as keyof typeof formCounts]} (
-                  {segment.percentage}%)
-                </span>
-              </div>
-            ))}
-          </div>
+            </PieChart>
+          </ResponsiveContainer>
         </div>
       </CardContent>
     </Card>

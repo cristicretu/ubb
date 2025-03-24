@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Exercise } from "./CameraContext";
 import {
   Card,
@@ -8,6 +9,16 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
 
 interface ExerciseDurationChartProps {
   exercises: Exercise[];
@@ -16,103 +27,107 @@ interface ExerciseDurationChartProps {
 export default function ExerciseDurationChart({
   exercises,
 }: ExerciseDurationChartProps) {
+  const [chartData, setChartData] = useState<
+    Array<{
+      date: string;
+      displayDate: string;
+      duration: number;
+      durationMinutes: number;
+    }>
+  >([]);
+
+  useEffect(() => {
+    const prepareData = () => {
+      if (!exercises.length) return [];
+
+      const sortedExercises = [...exercises].sort(
+        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+      );
+
+      // Process data for the chart
+      return sortedExercises.map((exercise) => {
+        const date = new Date(exercise.date);
+        const displayDate = date.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
+
+        return {
+          date: date.toISOString().split("T")[0],
+          displayDate,
+          duration: exercise.duration,
+          durationMinutes: Math.round((exercise.duration / 60) * 10) / 10,
+        };
+      });
+    };
+
+    setChartData(prepareData());
+  }, [exercises]);
+
   if (!exercises.length) {
     return null;
   }
 
-  const sortedExercises = [...exercises].sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-  );
-
-  const durations = sortedExercises.map((ex) => ex.duration);
-
-  const maxDuration = Math.max(...durations);
-
-  const chartHeight = 160;
-  const barWidth = 100 / (durations.length > 1 ? durations.length - 1 : 1);
-  const barGap = Math.min(4, barWidth / 4);
-  const adjustedBarWidth = barWidth - barGap;
-
-  const avgDuration =
-    durations.reduce((sum, val) => sum + val, 0) / durations.length;
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("en-US", {
-      month: "short",
-      day: "numeric",
-    }).format(date);
+  // Function to format the tooltip
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      return (
+        <div className="rounded border border-gray-200 bg-white p-2 shadow-sm">
+          <p className="font-medium">{data.displayDate}</p>
+          <p className="text-gray-600">
+            {`Duration: ${Math.floor(data.duration / 60)}:${String(
+              data.duration % 60,
+            ).padStart(2, "0")}`}
+          </p>
+        </div>
+      );
+    }
+    return null;
   };
 
-  const formatDuration = (seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  const formatYAxis = (value: number) => {
+    return `${value} min`;
   };
 
   return (
     <Card className="border-border border shadow-sm">
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-medium">Duration Trend</CardTitle>
-        <CardDescription>
-          Exercise durations over time. Average: {formatDuration(avgDuration)}
-        </CardDescription>
+        <CardTitle className="text-lg font-medium">Exercise Duration</CardTitle>
+        <CardDescription>Duration of each exercise over time</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="relative h-[200px] w-full">
-          {/* Chart Y-axis labels */}
-          <div className="absolute left-0 top-0 flex h-full w-12 flex-col justify-between px-2 text-xs text-gray-500">
-            <span>{formatDuration(maxDuration)}</span>
-            <span>{formatDuration(maxDuration / 2)}</span>
-            <span>0:00</span>
-          </div>
-          <div className="absolute inset-y-0 left-12 right-0">
-            <div
-              className="absolute left-0 right-0 border-t border-dashed border-blue-400"
-              style={{
-                top: `${(1 - avgDuration / maxDuration) * chartHeight}px`,
-              }}
-            />
-
-            <div className="absolute inset-0 border-b border-l border-gray-200">
-              <div className="absolute inset-0 flex flex-col justify-between">
-                <div className="border-t border-gray-200" />
-                <div className="border-t border-gray-200" />
-                <div className="border-t border-gray-200" />
-              </div>
-            </div>
-
-            <div className="absolute inset-0 flex items-end">
-              {sortedExercises.map((exercise, index) => {
-                const height = (exercise.duration / maxDuration) * chartHeight;
-                const formColor = {
-                  bad: "bg-red-500",
-                  medium: "bg-yellow-500",
-                  good: "bg-green-500",
-                }[exercise.form];
-
-                return (
-                  <div
-                    key={exercise.id}
-                    className="flex flex-col items-center"
-                    style={{ width: `${barWidth}%` }}
-                  >
-                    <div
-                      className={`mb-1 rounded-t opacity-90 shadow-sm transition-all hover:opacity-100 ${formColor}`}
-                      style={{
-                        height: `${height}px`,
-                        width: `${adjustedBarWidth}%`,
-                      }}
-                      title={`${exercise.name}: ${formatDuration(exercise.duration)}`}
-                    />
-                    <span className="mt-1 w-full rotate-45 truncate text-xs text-gray-500">
-                      {formatDate(exercise.date)}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+        <div className="h-[250px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              data={chartData}
+              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+              <XAxis
+                dataKey="displayDate"
+                tickLine={false}
+                axisLine={{ stroke: "#e5e7eb" }}
+                tick={{ fontSize: 12 }}
+              />
+              <YAxis
+                tickFormatter={formatYAxis}
+                tickLine={false}
+                axisLine={{ stroke: "#e5e7eb" }}
+                tick={{ fontSize: 12 }}
+              />
+              <Tooltip content={<CustomTooltip />} />
+              <Line
+                type="monotone"
+                dataKey="durationMinutes"
+                name="Duration"
+                stroke="#3b82f6"
+                strokeWidth={2}
+                dot={{ r: 4, fill: "#3b82f6", strokeWidth: 2, stroke: "white" }}
+                activeDot={{ r: 6, fill: "#1d4ed8" }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
       </CardContent>
     </Card>
