@@ -664,9 +664,11 @@
       .nav-toggle-label {
         display: none;
         cursor: pointer;
-        position: fixed;
-        top: 20px;
+        position: absolute;
+        top: 12px;
         right: 20px;
+        width: 25px;
+        height: 25px;
         z-index: 1002;
       }
 
@@ -714,6 +716,14 @@
       @media (max-width: 768px) {
         .nav-toggle-label {
           display: block;
+        }
+
+        .topbar-btns {
+          padding-right: 60px;
+        }
+
+        .topbar-container {
+          position: relative;
         }
 
         .topbar-links {
@@ -775,6 +785,7 @@
 
         .topbar-btns button:last-child {
           padding: 8px;
+          margin-right: 16px;
         }
       }
     </style>
