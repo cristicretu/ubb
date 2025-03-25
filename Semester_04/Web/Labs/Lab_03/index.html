@@ -26,14 +26,77 @@
           </svg>
         </div>
 
+        <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+        <label for="nav-toggle" class="nav-toggle-label">
+          <span></span>
+          <span></span>
+          <span></span>
+        </label>
+
         <nav class="topbar-links">
-          <a href="#">Products</a>
-          <a href="#">Industries</a>
-          <a href="#">Resources</a>
-          <a href="#">Customers</a>
-          <a href="#">Parteners</a>
-          <a href="#">Developers</a>
-          <a href="#">Company</a>
+          <div class="nav-item">
+            <input type="checkbox" id="products-toggle" class="dropdown-toggle" />
+            <label for="products-toggle">Products</label>
+            <div class="dropdown-content">
+              <a href="#">Product 1</a>
+              <a href="#">Product 2</a>
+              <a href="#">Product 3</a>
+            </div>
+          </div>
+          <div class="nav-item">
+            <input type="checkbox" id="industries-toggle" class="dropdown-toggle" />
+            <label for="industries-toggle">Industries</label>
+            <div class="dropdown-content">
+              <a href="#">Industry 1</a>
+              <a href="#">Industry 2</a>
+              <a href="#">Industry 3</a>
+            </div>
+          </div>
+          <div class="nav-item">
+            <input type="checkbox" id="resources-toggle" class="dropdown-toggle" />
+            <label for="resources-toggle">Resources</label>
+            <div class="dropdown-content">
+              <a href="#">Resource 1</a>
+              <a href="#">Resource 2</a>
+              <a href="#">Resource 3</a>
+            </div>
+          </div>
+          <div class="nav-item">
+            <input type="checkbox" id="customers-toggle" class="dropdown-toggle" />
+            <label for="customers-toggle">Customers</label>
+            <div class="dropdown-content">
+              <a href="#">Customer 1</a>
+              <a href="#">Customer 2</a>
+              <a href="#">Customer 3</a>
+            </div>
+          </div>
+          <div class="nav-item">
+            <input type="checkbox" id="partners-toggle" class="dropdown-toggle" />
+            <label for="partners-toggle">Partners</label>
+            <div class="dropdown-content">
+              <a href="#">Partner 1</a>
+              <a href="#">Partner 2</a>
+              <a href="#">Partner 3</a>
+            </div>
+          </div>
+          <div class="nav-item">
+            <input type="checkbox" id="developers-toggle" class="dropdown-toggle" />
+            <label for="developers-toggle">Developers</label>
+            <div class="dropdown-content">
+              <a href="#">Developer 1</a>
+              <a href="#">Developer 2</a>
+              <a href="#">Developer 3</a>
+            </div>
+          </div>
+          <div class="nav-item">
+            <input type="checkbox" id="company-toggle" class="dropdown-toggle" />
+            <label for="company-toggle">Company</label>
+            <div class="dropdown-content">
+              <a href="#">About</a>
+              <a href="#">Careers</a>
+              <a href="#">Contact</a>
+            </div>
+          </div>
         </nav>
 
         <div class="topbar-btns">
@@ -76,7 +139,7 @@
                 d="M12 11c3.866 0 7 3.134 7 7H5c0-3.866 3.134-7 7-7z"
               ></path>
             </svg>
-            View Accounts
+            <span class="button-text">View Accounts</span>
           </button>
           <button>
             <svg
@@ -93,7 +156,7 @@
               <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
               <line x1="3" y1="9" x2="21" y2="9"></line>
             </svg>
-            Contact Sales
+            <span class="button-text">Contact Sales</span>
           </button>
         </div>
       </div>
@@ -562,7 +625,7 @@
         cursor: pointer;
         display: flex;
         align-items: center;
-        gap: 5px;
+        gap: 8px;
         padding: 5px 10px;
         white-space: nowrap;
       }
@@ -592,6 +655,127 @@
       nav a {
         text-decoration: none;
         color: #fff;
+      }
+
+      .nav-toggle {
+        display: none;
+      }
+
+      .nav-toggle-label {
+        display: none;
+        cursor: pointer;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1002;
+      }
+
+      .nav-toggle-label span {
+        display: block;
+        width: 25px;
+        height: 3px;
+        background-color: white;
+        margin: 5px 0;
+        transition: 0.4s;
+      }
+
+      .nav-toggle:checked ~ .nav-toggle-label span:nth-child(1) {
+        transform: rotate(-45deg) translate(-5px, 6px);
+      }
+
+      .nav-toggle:checked ~ .nav-toggle-label span:nth-child(2) {
+        opacity: 0;
+      }
+
+      .nav-toggle:checked ~ .nav-toggle-label span:nth-child(3) {
+        transform: rotate(45deg) translate(-5px, -6px);
+      }
+
+      .dropdown-toggle {
+        display: none;
+      }
+
+      .dropdown-content {
+        display: none;
+        padding: 10px 0;
+      }
+
+      .dropdown-content a {
+        padding: 8px 16px;
+        display: block;
+        color: white;
+        text-decoration: none;
+      }
+
+      .dropdown-content a:hover {
+        background-color: #333;
+      }
+
+      @media (max-width: 768px) {
+        .nav-toggle-label {
+          display: block;
+        }
+
+        .topbar-links {
+          position: fixed;
+          top: 0;
+          right: 0;
+          width: 300px;
+          height: 100vh;
+          background-color: #121212;
+          user-select: none;
+          padding: 80px 20px;
+          transform: translateX(100%);
+          transition: transform 0.3s ease-in-out;
+          z-index: 1001;
+          flex-direction: column;
+          gap: 0;
+        }
+
+        .nav-toggle:checked ~ .topbar-links {
+          transform: translateX(0);
+        }
+
+        .nav-item {
+          width: 100%;
+        }
+
+        .nav-item label {
+          display: block;
+          padding: 15px;
+          color: white;
+          cursor: pointer;
+          position: relative;
+        }
+
+        .nav-item label::after {
+          content: '>';
+          transform: rotate(90deg);
+          position: absolute;
+          user-select: none;
+          right: 15px;
+          transition: transform 0.3s;
+        }
+
+        .dropdown-toggle:checked ~ label::after {
+          transform: rotate(270deg);
+        }
+
+        .dropdown-toggle:checked ~ .dropdown-content {
+          display: block;
+        }
+
+        .button-text {
+          display: none;
+        }
+
+        .topbar-btns button {
+          padding: 8px;
+        }
+
+        .topbar-btns button:last-child {
+          padding: 8px;
+        }
       }
     </style>
 
