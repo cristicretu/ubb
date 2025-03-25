@@ -38,63 +38,62 @@
             <input type="checkbox" id="products-toggle" class="dropdown-toggle" />
             <label for="products-toggle">Products</label>
             <div class="dropdown-content">
-              <a href="#">Product 1</a>
-              <a href="#">Product 2</a>
-              <a href="#">Product 3</a>
+              <a href="#">Oracle Cloud Infrastructure</a>
+              <a href="#">Oracle Cloud Applications</a>
+              <a href="#">Hardware and Software</a>
             </div>
           </div>
           <div class="nav-item">
             <input type="checkbox" id="industries-toggle" class="dropdown-toggle" />
             <label for="industries-toggle">Industries</label>
             <div class="dropdown-content">
-              <a href="#">Industry 1</a>
-              <a href="#">Industry 2</a>
-              <a href="#">Industry 3</a>
+              <a href="#">Industry SOlutions and Resources</a>
+              <a href="#">Industries</a>
             </div>
           </div>
           <div class="nav-item">
             <input type="checkbox" id="resources-toggle" class="dropdown-toggle" />
             <label for="resources-toggle">Resources</label>
             <div class="dropdown-content">
-              <a href="#">Resource 1</a>
-              <a href="#">Resource 2</a>
-              <a href="#">Resource 3</a>
+              <a href="#">Support</a>
+              <a href="#">Servides</a>
+              <a href="#">Help Center</a>
+              <a href="#">Downloads</a>
+              <a href="#">Working with Us</a>
             </div>
           </div>
           <div class="nav-item">
             <input type="checkbox" id="customers-toggle" class="dropdown-toggle" />
             <label for="customers-toggle">Customers</label>
             <div class="dropdown-content">
-              <a href="#">Customer 1</a>
-              <a href="#">Customer 2</a>
-              <a href="#">Customer 3</a>
+              <a href="#">Customer Programs</a>
+              <a href="#">Customer Stories</a>
             </div>
           </div>
           <div class="nav-item">
             <input type="checkbox" id="partners-toggle" class="dropdown-toggle" />
             <label for="partners-toggle">Partners</label>
             <div class="dropdown-content">
-              <a href="#">Partner 1</a>
-              <a href="#">Partner 2</a>
-              <a href="#">Partner 3</a>
+              <a href="#">Resources for Customers</a>
+              <a href="#">Resources for Partners</a>
             </div>
           </div>
           <div class="nav-item">
             <input type="checkbox" id="developers-toggle" class="dropdown-toggle" />
             <label for="developers-toggle">Developers</label>
             <div class="dropdown-content">
-              <a href="#">Developer 1</a>
-              <a href="#">Developer 2</a>
-              <a href="#">Developer 3</a>
+              <a href="#">Developer Resource Center</a>
+              <a href="#">Developer Community</a>
+              <a href="#">Developer Blog</a>
+              <a href="#">Oracle Dev Tour</a>
+              <a href="#">Developer Events</a>
             </div>
           </div>
           <div class="nav-item">
             <input type="checkbox" id="company-toggle" class="dropdown-toggle" />
             <label for="company-toggle">Company</label>
             <div class="dropdown-content">
-              <a href="#">About</a>
-              <a href="#">Careers</a>
-              <a href="#">Contact</a>
+              <a href="#">Company</a>
             </div>
           </div>
         </nav>
@@ -681,15 +680,15 @@
         transition: 0.4s;
       }
 
-      .nav-toggle:checked ~ .nav-toggle-label span:nth-child(1) {
+      .nav-toggle:checked + .nav-toggle-label span:nth-child(1) {
         transform: rotate(-45deg) translate(-5px, 6px);
       }
 
-      .nav-toggle:checked ~ .nav-toggle-label span:nth-child(2) {
+      .nav-toggle:checked + .nav-toggle-label span:nth-child(2) {
         opacity: 0;
       }
 
-      .nav-toggle:checked ~ .nav-toggle-label span:nth-child(3) {
+      .nav-toggle:checked + .nav-toggle-label span:nth-child(3) {
         transform: rotate(45deg) translate(-5px, -6px);
       }
 
@@ -767,11 +766,11 @@
           transition: transform 0.3s;
         }
 
-        .dropdown-toggle:checked ~ label::after {
+        .dropdown-toggle:checked + label::after {
           transform: rotate(270deg);
         }
 
-        .dropdown-toggle:checked ~ .dropdown-content {
+        .dropdown-toggle:checked + .dropdown-content {
           display: block;
         }
 
