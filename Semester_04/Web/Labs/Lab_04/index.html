@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Porsche History" />
+    <title>Porsche History</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-50 p-6 font-sans">
+
+    <div class="max-w-3xl mx-auto">
+      <h1 class="text-3xl font-bold text-gray-800 mb-6">Porsche History</h1>
+      
+      <div class="overflow-hidden rounded-md shadow">
+        <table class="w-full text-sm text-left bg-white">
+          <thead class="select-none">
+            <tr class="bg-gray-100 text-gray-700 uppercase">
+              <th class="px-6 py-3 font-semibold cursor-pointer hover:bg-gray-200 select-none" id="no">No</th>
+              <th class="px-6 py-3 font-semibold cursor-pointer hover:bg-gray-200 select-none" id="year">Year</th>
+              <th class="px-6 py-3 font-semibold cursor-pointer hover:bg-gray-200 select-none" id="model">Model</th>
+              <th class="px-6 py-3 font-semibold cursor-pointer hover:bg-gray-200 select-none" id="engine">Engine</th>
+              <th class="px-6 py-3 font-semibold cursor-pointer hover:bg-gray-200 select-none" id="power">Power</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </body>
+
+  <script>
+    /*
+    Write a JavaScript which will be used in an HTML document that contains a table having at least 3 columns and several lines. 
+    When the user clicks the table header the script will sort in ascending order the elements from the current column. 
+    If the user clicks again on the column header, the elements will be sorted in descending order.
+    */
+    const data = [
+      {
+        no: 6,
+        year: 2020,
+        model: "911",
+        engine: "3.0L Twin-Turbo Flat-6",
+        power: "379 HP"
+      },
+      {
+        no: 2,
+        year: 2021,
+        model: "Taycan",
+        engine: "Electric",
+        power: "670 HP"
+      },
+      {
+        no: 3,
+        year: 2022,
+        model: "911 GT3",
+        engine: "4.0L Flat-6",
+        power: "502 HP"
+      },
+      {
+        no: 5,
+        year: 2023,
+        model: "911 Turbo",
+        engine: "3.0L Twin-Turbo Flat-6",
+        power: "571 HP"
+      },
+      {
+        no: 1,
+        year: 2024,
+        model: "911 GT3RS",
+        engine: "4.0L Flat-6",
+        power: "520 HP"
+      },
+      {
+        no: 4,
+        year: 2025,
+        model: "911 Turbo S",
+        engine: "3.0L Twin-Turbo Flat-6",
+        power: "640 HP"
+      }
+    ]
+
+    const table = document.querySelector("table");
+    const tbody = document.querySelector("tbody");
+
+
+    function renderTable(data) {
+      tbody.innerHTML = "";
+
+      data.forEach(item => {
+      const row = document.createElement("tr");
+      row.classList.add( "hover:bg-gray-50");
+      row.innerHTML = `
+        <td class="px-6 py-4">${item.no}</td>
+        <td class="px-6 py-4">${item.year}</td>
+        <td class="px-6 py-4">${item.model}</td>
+        <td class="px-6 py-4">${item.engine}</td>
+        <td class="px-6 py-4">${item.power}</td>
+      `;
+      tbody.appendChild(row);
+    });
+    }
+
+    renderTable(data);  
+
+    const no = document.getElementById("no");
+    const year = document.getElementById("year");
+    const model = document.getElementById("model");
+    const engine = document.getElementById("engine");
+    const power = document.getElementById("power");
+
+    let selectedColumn = null;
+
+    console.log(no, year, model, engine, power);
+
+    no.addEventListener("click", () => {
+      if (selectedColumn === "no") {
+        data.reverse();
+      } else {
+        data.sort((a, b) => a.no - b.no);
+        selectedColumn = "no";
+      }
+      renderTable(data);
+      console.log(data);
+    });
+
+    year.addEventListener("click", () => {
+      if (selectedColumn === "year") {
+        data.reverse();
+      } else {
+        data.sort((a, b) => a.year - b.year);
+        selectedColumn = "year";
+      }
+      renderTable(data);
+      console.log(data);
+    });
+
+    model.addEventListener("click", () => {
+      if (selectedColumn === "model") {
+        data.reverse();
+      } else {
+        data.sort((a, b) => a.model.localeCompare(b.model));
+        selectedColumn = "model";
+      }
+      renderTable(data);
+      console.log(data);
+    });
+
+    engine.addEventListener("click", () => {
+      if (selectedColumn === "engine") {
+        data.reverse();
+      } else {
+        data.sort((a, b) => a.engine.localeCompare(b.engine));
+        selectedColumn = "engine";
+      }
+      renderTable(data);
+      console.log(data);
+    });
+
+    power.addEventListener("click", () => {
+      if (selectedColumn === "power") {
+        data.reverse();
+      } else {
+        data.sort((a, b) => a.power - b.power);
+        selectedColumn = "power";
+      }
+      renderTable(data);
+      console.log(data);
+    });
+    
+
+  </script>
+</html>
