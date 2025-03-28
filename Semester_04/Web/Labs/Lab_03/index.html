@@ -7,7 +7,7 @@
     <title>Porsche History</title>
     <link rel="stylesheet" href="style.css" />
   </head>
-  <body style="max-width: 1600px; margin: 0 auto">
+  <body class="messi">
     <section class="topbar">
       <div class="topbar-container">
         <div class="topbar-logo">
@@ -161,6 +161,8 @@
       </div>
     </section>
 
+    
+
     <section class="main-content">
       <div class="breadcrumbs">
         <div class="black-header">
@@ -188,35 +190,6 @@
           </p>
           <button class="learn-button">Learn how Java powers innovation</button>
         </div>
-      </div>
-    </section>
-
-    <section class="tabs-section">
-      <div class="tabs-container">
-        <a href="#" class="tab">Overview</a>
-        <a href="#" class="tab active">Technical Details</a>
-        <div class="active-tab-indicator"></div>
-      </div>
-    </section>
-
-    <section class="downloads-section">
-      <div class="downloads-container">
-        <h2>Newest Downloads</h2>
-        <ul class="downloads-list">
-          <li><a href="#">Java SE 23</a></li>
-          <li><a href="#">Java SE 21 (LTS)</a></li>
-          <li><a href="#">Java SE 17 (LTS)</a></li>
-          <li><a href="#">Java SE 11(LTS)</a></li>
-          <li><a href="#">Java SE 8</a></li>
-          <li><a href="#">Java Card</a></li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="downloads-banner">
-      <div class="downloads-banner-container">
-        <h2>All Oracle Java Downloads</h2>
-        <button class="download-now-btn">Download now</button>
       </div>
     </section>
 
@@ -304,12 +277,49 @@
       </div>
     </section>
 
+    <section class="tabs-section">
+      <div class="tabs-container">
+        <a href="#" class="tab">Overview</a>
+        <a href="#" class="tab active">Technical Details</a>
+        <div class="active-tab-indicator"></div>
+      </div>
+    </section>
+
+    <section class="downloads-section">
+      <div class="downloads-container">
+        <h2>Newest Downloads</h2>
+        <ul class="downloads-list">
+          <li><a href="#">Java SE 23</a></li>
+          <li><a href="#">Java SE 21 (LTS)</a></li>
+          <li><a href="#">Java SE 17 (LTS)</a></li>
+          <li><a href="#">Java SE 11(LTS)</a></li>
+          <li><a href="#">Java SE 8</a></li>
+          <li><a href="#">Java Card</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="downloads-banner">
+      <div class="downloads-banner-container">
+        <h2>All Oracle Java Downloads</h2>
+        <button class="download-now-btn">Download now</button>
+      </div>
+    </section>
+
+   
+
     <style>
+      .messi {
+        display: flex;
+        flex-direction: column-reverse;
+        margin: 0 auto;
+        max-width: 1600px; 
+      }
+
       .main-content {
         background-color: #333;
         color: white;
         padding: 0;
-        min-height: 300px;
       }
 
       .breadcrumbs {
@@ -550,10 +560,6 @@
         font-size: 1rem;
         text-align: center;
       }
-
-      .technology-item a:hover {
-        text-decoration: underline;
-      }
     </style>
 
     <style>
@@ -571,7 +577,7 @@
         padding-top: 12px;
         padding-bottom: 8px;
         position: sticky;
-        top: 0;
+        bottom: 0;
         z-index: 100;
       }
 
@@ -643,7 +649,6 @@
       @media (min-width: 1350px) {
         .topbar-container {
           grid-template-areas: "logo links buttons";
-          align-items: center;
         }
 
         .topbar-links {
@@ -680,18 +685,6 @@
         transition: 0.4s;
       }
 
-      .nav-toggle:checked + .nav-toggle-label span:nth-child(1) {
-        transform: rotate(-45deg) translate(-5px, 6px);
-      }
-
-      .nav-toggle:checked + .nav-toggle-label span:nth-child(2) {
-        opacity: 0;
-      }
-
-      .nav-toggle:checked + .nav-toggle-label span:nth-child(3) {
-        transform: rotate(45deg) translate(-5px, -6px);
-      }
-
       .dropdown-toggle {
         display: none;
       }
@@ -726,6 +719,7 @@
         }
 
         .topbar-links {
+          display: none;
           position: fixed;
           top: 0;
           right: 0;
@@ -734,15 +728,25 @@
           background-color: #121212;
           user-select: none;
           padding: 80px 20px;
-          transform: translateX(100%);
-          transition: transform 0.3s ease-in-out;
           z-index: 1001;
           flex-direction: column;
           gap: 0;
         }
 
         .nav-toggle:checked ~ .topbar-links {
-          transform: translateX(0);
+          display: flex;
+        }
+
+        .nav-toggle:checked + .nav-toggle-label span:nth-child(1) {
+          transform: rotate(-45deg) translate(-5px, 6px);
+        }
+
+        .nav-toggle:checked + .nav-toggle-label span:nth-child(2) {
+          opacity: 0;
+        }
+
+        .nav-toggle:checked + .nav-toggle-label span:nth-child(3) {
+          transform: rotate(45deg) translate(-5px, -6px);
         }
 
         .nav-item {
@@ -774,9 +778,6 @@
           display: block;
         }
 
-        .button-text {
-          display: none;
-        }
 
         .topbar-btns button {
           padding: 8px;
