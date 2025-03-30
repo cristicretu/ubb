@@ -54,21 +54,21 @@ export function CameraProvider({ children }: { children: ReactNode }) {
   const [exerciseChangeListeners] = useState<(() => void)[]>([]);
 
   useEffect(() => {
-    const savedExercises = localStorage.getItem("exercises");
-    if (savedExercises) {
+    const fetchExercises = async () => {
       try {
-        setExercises(JSON.parse(savedExercises));
+        const response = await fetch("/api/exercises");
+        if (!response.ok) {
+          throw new Error("Failed to fetch exercises");
+        }
+        const data = await response.json();
+        setExercises(data);
       } catch (error) {
-        console.error("Failed to parse saved exercises:", error);
+        console.error("Failed to fetch exercises:", error);
       }
-    }
-  }, []);
+    };
 
-  useEffect(() => {
-    if (exercises.length > 0) {
-      localStorage.setItem("exercises", JSON.stringify(exercises));
-    }
-  }, [exercises]);
+    fetchExercises();
+  }, []);
 
   const notifyExerciseChange = useCallback(() => {
     exerciseChangeListeners.forEach((listener) => listener());
@@ -83,37 +83,73 @@ export function CameraProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const addExercise = useCallback(
-    (exercise: Omit<Exercise, "id">) => {
-      const newExercise = {
-        ...exercise,
-        id: Date.now().toString(),
-      };
-      setExercises((prev) => {
-        const newState = [newExercise, ...prev];
-        return newState;
-      });
+    async (exercise: Omit<Exercise, "id">) => {
+      try {
+        const response = await fetch("/api/exercises", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(exercise),
+        });
 
-      setTimeout(() => notifyExerciseChange(), 50);
+        if (!response.ok) {
+          throw new Error("Failed to create exercise");
+        }
+
+        const newExercise = await response.json();
+        setExercises((prev) => [newExercise, ...prev]);
+        setTimeout(() => notifyExerciseChange(), 50);
+      } catch (error) {
+        console.error("Failed to add exercise:", error);
+      }
     },
     [notifyExerciseChange],
   );
 
   const updateExercise = useCallback(
-    (id: string, updates: Partial<Omit<Exercise, "id">>) => {
-      setExercises((prev) =>
-        prev.map((ex) => (ex.id === id ? { ...ex, ...updates } : ex)),
-      );
+    async (id: string, updates: Partial<Omit<Exercise, "id">>) => {
+      try {
+        const response = await fetch(`/api/exercises/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updates),
+        });
 
-      setTimeout(() => notifyExerciseChange(), 50);
+        if (!response.ok) {
+          throw new Error("Failed to update exercise");
+        }
+
+        const updatedExercise = await response.json();
+        setExercises((prev) =>
+          prev.map((ex) => (ex.id === id ? updatedExercise : ex)),
+        );
+        setTimeout(() => notifyExerciseChange(), 50);
+      } catch (error) {
+        console.error("Failed to update exercise:", error);
+      }
     },
     [notifyExerciseChange],
   );
 
   const deleteExercise = useCallback(
-    (id: string) => {
-      setExercises((prev) => prev.filter((ex) => ex.id !== id));
+    async (id: string) => {
+      try {
+        const response = await fetch(`/api/exercises/${id}`, {
+          method: "DELETE",
+        });
 
-      setTimeout(() => notifyExerciseChange(), 50);
+        if (!response.ok) {
+          throw new Error("Failed to delete exercise");
+        }
+
+        setExercises((prev) => prev.filter((ex) => ex.id !== id));
+        setTimeout(() => notifyExerciseChange(), 50);
+      } catch (error) {
+        console.error("Failed to delete exercise:", error);
+      }
     },
     [notifyExerciseChange],
   );
