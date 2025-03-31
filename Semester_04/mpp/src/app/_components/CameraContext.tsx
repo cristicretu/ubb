@@ -24,12 +24,24 @@ interface CameraSettings {
   recordAudio: boolean;
 }
 
+export interface ExerciseFilters {
+  form?: "bad" | "medium" | "good" | "all";
+  search?: string;
+  sortBy?: string;
+  page?: number;
+  limit?: number;
+}
+
 interface CameraContextType {
   settings: CameraSettings;
   updateSettings: (newSettings: Partial<CameraSettings>) => void;
   recordedVideos: string[];
   addRecordedVideo: (videoUrl: string) => void;
   exercises: Exercise[];
+  fetchFilteredExercises: (filters: ExerciseFilters) => Promise<{
+    exercises: Exercise[];
+    total: number;
+  }>;
   addExercise: (exercise: Omit<Exercise, "id">) => void;
   updateExercise: (id: string, updates: Partial<Omit<Exercise, "id">>) => void;
   deleteExercise: (id: string) => void;
@@ -61,14 +73,58 @@ export function CameraProvider({ children }: { children: ReactNode }) {
           throw new Error("Failed to fetch exercises");
         }
         const data = await response.json();
-        setExercises(data);
+        console.log("API response data:", data);
+
+        // Ensure data is properly formatted
+        if (Array.isArray(data)) {
+          setExercises(data);
+        } else if (
+          data &&
+          typeof data === "object" &&
+          Array.isArray(data.exercises)
+        ) {
+          // Handle case where API returns { exercises: [...] }
+          setExercises(data.exercises);
+        } else {
+          console.error("Unexpected API response format:", data);
+          setExercises([]);
+        }
       } catch (error) {
         console.error("Failed to fetch exercises:", error);
+        setExercises([]);
       }
     };
 
     fetchExercises();
   }, []);
+
+  const fetchFilteredExercises = useCallback(
+    async (filters: ExerciseFilters) => {
+      try {
+        const params = new URLSearchParams();
+        if (filters.form && filters.form !== "all")
+          params.append("form", filters.form);
+        if (filters.search) params.append("search", filters.search);
+        if (filters.sortBy) params.append("sortBy", filters.sortBy);
+        if (filters.page) params.append("page", filters.page.toString());
+        if (filters.limit) params.append("limit", filters.limit.toString());
+
+        const url = `/api/exercises?${params.toString()}`;
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch filtered exercises");
+        }
+
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error("Failed to fetch filtered exercises:", error);
+        return { exercises: [], total: 0 };
+      }
+    },
+    [],
+  );
 
   const notifyExerciseChange = useCallback(() => {
     exerciseChangeListeners.forEach((listener) => listener());
@@ -79,7 +135,10 @@ export function CameraProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const addRecordedVideo = useCallback((videoUrl: string) => {
-    setRecordedVideos((prev) => [videoUrl, ...prev]);
+    setRecordedVideos((prev) => {
+      const prevArray = Array.isArray(prev) ? prev : [];
+      return [videoUrl, ...prevArray];
+    });
   }, []);
 
   const addExercise = useCallback(
@@ -98,7 +157,10 @@ export function CameraProvider({ children }: { children: ReactNode }) {
         }
 
         const newExercise = await response.json();
-        setExercises((prev) => [newExercise, ...prev]);
+        setExercises((prev) => {
+          const prevArray = Array.isArray(prev) ? prev : [];
+          return [newExercise, ...prevArray];
+        });
         setTimeout(() => notifyExerciseChange(), 50);
       } catch (error) {
         console.error("Failed to add exercise:", error);
@@ -119,16 +181,20 @@ export function CameraProvider({ children }: { children: ReactNode }) {
         });
 
         if (!response.ok) {
-          throw new Error("Failed to update exercise");
+          const errorData = await response.json().catch(() => null);
+          const errorMessage = errorData?.error || "Failed to update exercise";
+          throw new Error(`${errorMessage} (Status: ${response.status})`);
         }
 
         const updatedExercise = await response.json();
-        setExercises((prev) =>
-          prev.map((ex) => (ex.id === id ? updatedExercise : ex)),
-        );
+        setExercises((prev) => {
+          const prevArray = Array.isArray(prev) ? prev : [];
+          return prevArray.map((ex) => (ex.id === id ? updatedExercise : ex));
+        });
         setTimeout(() => notifyExerciseChange(), 50);
       } catch (error) {
         console.error("Failed to update exercise:", error);
+        throw error; // Re-throw to allow calling code to handle the error
       }
     },
     [notifyExerciseChange],
@@ -145,7 +211,10 @@ export function CameraProvider({ children }: { children: ReactNode }) {
           throw new Error("Failed to delete exercise");
         }
 
-        setExercises((prev) => prev.filter((ex) => ex.id !== id));
+        setExercises((prev) => {
+          const prevArray = Array.isArray(prev) ? prev : [];
+          return prevArray.filter((ex) => ex.id !== id);
+        });
         setTimeout(() => notifyExerciseChange(), 50);
       } catch (error) {
         console.error("Failed to delete exercise:", error);
@@ -156,7 +225,8 @@ export function CameraProvider({ children }: { children: ReactNode }) {
 
   const getExerciseById = useCallback(
     (id: string) => {
-      return exercises.find((ex) => ex.id === id);
+      const exercisesArray = Array.isArray(exercises) ? exercises : [];
+      return exercisesArray.find((ex) => ex.id === id);
     },
     [exercises],
   );
@@ -187,7 +257,8 @@ export function CameraProvider({ children }: { children: ReactNode }) {
     updateSettings,
     recordedVideos,
     addRecordedVideo,
-    exercises,
+    exercises: Array.isArray(exercises) ? exercises : [],
+    fetchFilteredExercises,
     addExercise,
     updateExercise,
     deleteExercise,

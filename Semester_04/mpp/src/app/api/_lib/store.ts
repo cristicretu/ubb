@@ -32,6 +32,7 @@ class ExerciseStore {
     const index = this.exercises.findIndex((ex) => ex.id === id);
 
     if (index === -1) {
+      console.error(`Exercise with ID ${id} not found for update operation`);
       return null;
     }
 
