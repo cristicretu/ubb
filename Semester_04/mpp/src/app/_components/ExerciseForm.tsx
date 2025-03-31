@@ -61,13 +61,13 @@ export default function ExerciseForm({
 
     try {
       if (initialData?.id) {
-        updateExercise(initialData.id, {
+        await updateExercise(initialData.id, {
           name,
           form,
         });
         toast.success(`Exercise "${name}" updated successfully`);
       } else {
-        addExercise({
+        await addExercise({
           name,
           videoUrl,
           form,
@@ -80,7 +80,11 @@ export default function ExerciseForm({
       onSave();
     } catch (error) {
       console.error("Error saving exercise:", error);
-      toast.error("Failed to save exercise. Please try again.");
+      let errorMessage = "Failed to save exercise. Please try again.";
+      if (error instanceof Error) {
+        errorMessage = error.message || errorMessage;
+      }
+      toast.error(errorMessage);
     } finally {
       setIsSaving(false);
     }

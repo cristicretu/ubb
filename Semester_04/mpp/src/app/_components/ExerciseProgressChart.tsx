@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Exercise } from "./CameraContext";
+import { Exercise, useCameraContext } from "./CameraContext";
 import {
   Card,
   CardContent,
@@ -41,101 +41,93 @@ export default function ExerciseProgressChart({
   const [averageIntensityByDay, setAverageIntensityByDay] = useState<
     ChartDataItem[]
   >([]);
+  const { addEventListener, removeEventListener } = useCameraContext();
 
-  useEffect(() => {
-    const calculateIntensity = () => {
-      if (!exercises.length) return [];
+  const calculateIntensity = () => {
+    if (!exercises.length) return [];
 
-      const exercisesByDay: {
-        [key: string]: {
-          exercises: Exercise[];
-          totalDuration: number;
+    const exercisesByDay: {
+      [key: string]: {
+        exercises: Exercise[];
+        totalDuration: number;
+      };
+    } = {};
+
+    exercises.forEach((exercise) => {
+      const date = new Date(exercise.date);
+      const dateKey = date.toISOString().split("T")[0];
+
+      if (!exercisesByDay[dateKey as keyof typeof exercisesByDay]) {
+        exercisesByDay[dateKey as keyof typeof exercisesByDay] = {
+          exercises: [],
+          totalDuration: 0,
         };
-      } = {};
+      }
 
-      exercises.forEach((exercise) => {
-        const date = new Date(exercise.date);
-        const dateKey = date.toISOString().split("T")[0];
-
-        if (!exercisesByDay[dateKey]) {
-          exercisesByDay[dateKey] = {
-            exercises: [],
-            totalDuration: 0,
-          };
-        }
-
-        exercisesByDay[dateKey].exercises.push(exercise);
-        exercisesByDay[dateKey].totalDuration += exercise.duration;
-      });
-
-      const intensityData = Object.entries(exercisesByDay).map(
-        ([dateKey, data]) => {
-          const { exercises, totalDuration } = data;
-          const count = exercises.length;
-
-          const formCounts = {
-            good: exercises.filter((ex) => ex.form === "good").length,
-            medium: exercises.filter((ex) => ex.form === "medium").length,
-            bad: exercises.filter((ex) => ex.form === "bad").length,
-          };
-
-          const qualityFactor =
-            (formCounts.good * 1.0 +
-              formCounts.medium * 0.7 +
-              formCounts.bad * 0.4) /
-            count;
-
-          const intensity = (totalDuration * qualityFactor) / count;
-
-          const date = new Date(dateKey);
-          const displayDate = date.toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-          });
-
-          return {
-            date: dateKey,
-            displayDate,
-            intensity,
-            count,
-            form: formCounts,
-          };
-        },
+      exercisesByDay[dateKey as keyof typeof exercisesByDay].exercises.push(
+        exercise,
       );
+      exercisesByDay[dateKey as keyof typeof exercisesByDay].totalDuration +=
+        exercise.duration;
+    });
 
-      return intensityData.sort((a, b) => a.date.localeCompare(b.date));
-    };
+    const intensityData = Object.entries(exercisesByDay).map(
+      ([dateKey, data]) => {
+        const { exercises, totalDuration } = data;
+        const count = exercises.length;
 
-    const intensityData = calculateIntensity();
-    setAverageIntensityByDay(intensityData);
-  }, [exercises]);
+        const formCounts = {
+          good: exercises.filter((ex) => ex.form === "good").length,
+          medium: exercises.filter((ex) => ex.form === "medium").length,
+          bad: exercises.filter((ex) => ex.form === "bad").length,
+        };
 
-  if (!exercises.length) {
-    return null;
-  }
+        const qualityFactor =
+          (formCounts.good * 1.0 +
+            formCounts.medium * 0.7 +
+            formCounts.bad * 0.4) /
+          count;
 
-  // Custom tooltip component
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload as ChartDataItem;
-      return (
-        <div className="rounded border border-gray-200 bg-white p-2 shadow-sm">
-          <p className="font-medium">{data.displayDate}</p>
-          <p className="text-gray-600">
-            Intensity: {data.intensity.toFixed(1)}
-          </p>
-          <p className="text-gray-600">Exercises: {data.count}</p>
-          <div className="mt-1 text-xs">
-            <p className="text-green-600">Good: {data.form.good}</p>
-            <p className="text-yellow-500">Medium: {data.form.medium}</p>
-            <p className="text-red-500">Bad: {data.form.bad}</p>
-          </div>
-        </div>
-      );
-    }
-    return null;
+        const intensity = (totalDuration * qualityFactor) / count;
+
+        const date = new Date(dateKey);
+        const displayDate = date.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
+
+        return {
+          date: dateKey,
+          displayDate,
+          intensity,
+          count,
+          form: formCounts,
+        };
+      },
+    );
+
+    return intensityData.sort((a, b) => a.date.localeCompare(b.date));
   };
 
+  const updateChartData = () => {
+    const intensityData = calculateIntensity();
+    setAverageIntensityByDay(intensityData);
+  };
+
+  useEffect(() => {
+    // Update chart data when exercises prop changes
+    updateChartData();
+
+    // Subscribe to exercise changes to update the chart when data changes
+    addEventListener("exercisesChange", updateChartData);
+
+    // Cleanup
+    return () => {
+      removeEventListener("exercisesChange", updateChartData);
+    };
+  }, [exercises, addEventListener, removeEventListener]);
+
+  // Always render the chart component, even if there's no data
   return (
     <Card className="border-border border shadow-sm">
       <CardHeader className="pb-2">
@@ -173,7 +165,7 @@ export default function ExerciseProgressChart({
                 tickLine={false}
                 axisLine={{ stroke: "#e5e7eb" }}
               />
-              <Tooltip content={<CustomTooltip />} />
+              <Tooltip content={CustomTooltip} />
               <Area
                 type="monotone"
                 dataKey="intensity"
@@ -195,3 +187,23 @@ export default function ExerciseProgressChart({
     </Card>
   );
 }
+
+// Custom tooltip component
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload as ChartDataItem;
+    return (
+      <div className="rounded border border-gray-200 bg-white p-2 shadow-sm">
+        <p className="font-medium">{data.displayDate}</p>
+        <p className="text-gray-600">Intensity: {data.intensity.toFixed(1)}</p>
+        <p className="text-gray-600">Exercises: {data.count}</p>
+        <div className="mt-1 text-xs">
+          <p className="text-green-600">Good: {data.form.good}</p>
+          <p className="text-yellow-500">Medium: {data.form.medium}</p>
+          <p className="text-red-500">Bad: {data.form.bad}</p>
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
