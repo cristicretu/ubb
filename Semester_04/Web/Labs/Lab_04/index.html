@@ -27,18 +27,49 @@
           <tbody>
           </tbody>
         </table>
+       
+      </div>
+
+      <div class="flex justify-center items-center mt-24">
+        <input type="text" id="no" placeholder="No" />
+        <input type="text" id="year" placeholder="Year" />
+        <input type="text" id="model" placeholder="Model" />
+        <input type="text" id="engine" placeholder="Engine" />
+        <input type="text" id="power" placeholder="Power" />
+        <button id="add">Add</button>
       </div>
     </div>
 
   </body>
 
+
   <script>
-    /*
-    Write a JavaScript which will be used in an HTML document that contains a table having at least 3 columns and several lines. 
-    When the user clicks the table header the script will sort in ascending order the elements from the current column. 
-    If the user clicks again on the column header, the elements will be sorted in descending order.
-    */
-    const data = [
+    
+    const add = document.getElementById("add");
+    add.addEventListener("click", () => {
+      const noInput = document.querySelector("input#no").value;
+      const yearInput = document.querySelector("input#year").value;
+      const modelInput = document.querySelector("input#model").value;
+      const engineInput = document.querySelector("input#engine").value;
+      const powerInput = document.querySelector("input#power").value;
+
+      data.push({
+        no: noInput, 
+        year: yearInput, 
+        model: modelInput, 
+        engine: engineInput, 
+        power: powerInput
+      });
+      renderTable(data);
+
+      noInput.value = "";
+      yearInput.value = "";
+      modelInput.value = "";
+      engineInput.value = "";
+      powerInput.value = "";
+    });
+    
+    let data = [
       {
         no: 6,
         year: 2020,
@@ -86,22 +117,21 @@
     const table = document.querySelector("table");
     const tbody = document.querySelector("tbody");
 
-
     function renderTable(data) {
       tbody.innerHTML = "";
 
       data.forEach(item => {
-      const row = document.createElement("tr");
-      row.classList.add( "hover:bg-gray-50");
-      row.innerHTML = `
-        <td class="px-6 py-4">${item.no}</td>
-        <td class="px-6 py-4">${item.year}</td>
-        <td class="px-6 py-4">${item.model}</td>
-        <td class="px-6 py-4">${item.engine}</td>
-        <td class="px-6 py-4">${item.power}</td>
-      `;
-      tbody.appendChild(row);
-    });
+        const row = document.createElement("tr");
+        row.classList.add("hover:bg-gray-50");
+        row.innerHTML = `
+          <td class="px-6 py-4" contenteditable="true">${item.no}</td>
+          <td class="px-6 py-4" contenteditable="true">${item.year}</td>
+          <td class="px-6 py-4" contenteditable="true">${item.model}</td>
+          <td class="px-6 py-4" contenteditable="true">${item.engine}</td>
+          <td class="px-6 py-4" contenteditable="true">${item.power}</td>
+        `;
+        tbody.appendChild(row);
+      });
     }
 
     renderTable(data);  
@@ -169,6 +199,16 @@
       }
       renderTable(data);
       console.log(data);
+    });
+
+    tbody.addEventListener("click", (e) => {
+        e.target.addEventListener("blur", () => {
+          const row = e.target.parentElement.rowIndex - 1;
+          const idx = e.target.cellIndex;
+          const key = ["no", "year", "model", "engine", "power"][idx];
+          data[row][key] = e.target.textContent;
+          renderTable(data);
+        });
     });
     
 

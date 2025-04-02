@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { GET, POST } from "./route";
 import { exerciseStore } from "../_lib/store";
 
-// Mock the exerciseStore
 jest.mock("../_lib/store", () => {
   const mockExercises = [
     {
@@ -42,7 +41,6 @@ jest.mock("../_lib/store", () => {
   };
 });
 
-// Mock next/server modules
 jest.mock("next/server", () => {
   return {
     NextResponse: {
@@ -60,7 +58,6 @@ describe("GET /api/exercises", () => {
   });
 
   it("should return all exercises without filters", async () => {
-    // Create a mock request object with the required properties
     const request = {
       url: "http://localhost:3000/api/exercises",
       nextUrl: {
