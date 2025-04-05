@@ -8,7 +8,6 @@ export default function NetworkStatus() {
   const { isOnline, isServerAvailable } = useNetwork();
   const { pendingOperationsCount, syncPendingOperations } = useCameraContext();
 
-  
   if (isOnline && isServerAvailable && pendingOperationsCount === 0) {
     return null;
   }
@@ -19,7 +18,7 @@ export default function NetworkStatus() {
         {!isOnline && (
           <div className="flex items-center text-red-500">
             <svg
-              xmlns="http:
+              xmlns="http://www.w3.org/2000/svg"
               className="mr-2 h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
@@ -39,7 +38,7 @@ export default function NetworkStatus() {
         {isOnline && !isServerAvailable && (
           <div className="flex items-center text-amber-500">
             <svg
-              xmlns="http:
+              xmlns="http://www.w3.org/2000/svg"
               className="mr-2 h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
@@ -59,7 +58,7 @@ export default function NetworkStatus() {
         {pendingOperationsCount > 0 && (
           <div className="flex items-center text-blue-500">
             <svg
-              xmlns="http:
+              xmlns="http://www.w3.org/2000/svg"
               className="mr-2 h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
