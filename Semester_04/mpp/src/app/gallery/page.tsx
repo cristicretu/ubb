@@ -70,6 +70,7 @@ export default function Gallery() {
   } = useCameraContext();
 
   const fetchExercisesRef = useRef(fetchFilteredExercises);
+  const fetchStatsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     fetchExercisesRef.current = fetchFilteredExercises;
@@ -89,9 +90,19 @@ export default function Gallery() {
   const [isLoading, setIsLoading] = useState(false);
   const [totalExercises, setTotalExercises] = useState(0);
 
+  const [allExercisesForStats, setAllExercisesForStats] = useState<Exercise[]>(
+    [],
+  );
+  const [isLoadingStats, setIsLoadingStats] = useState(false);
+
   const [chartKey, setChartKey] = useState(0);
 
-  const exercisesArray = Array.isArray(exercises) ? exercises : [];
+  const exercisesArray =
+    allExercisesForStats.length > 0
+      ? allExercisesForStats
+      : Array.isArray(exercises)
+        ? exercises
+        : [];
 
   console.log("Exercises array length:", exercisesArray.length);
 
@@ -330,7 +341,75 @@ export default function Gallery() {
   ]);
 
   const handleLoadMore = async () => {
-    return await loadMoreExercises();
+    try {
+      console.log(
+        "Infinite scroll triggered, hasMoreExercises:",
+        hasMoreExercises,
+      );
+      console.log(
+        "Current filtered exercises count:",
+        filteredExercises.length,
+      );
+
+      const currentLoadedPage = Math.ceil(filteredExercises.length / 12);
+      const nextPage = currentLoadedPage + 1;
+
+      console.log("Loading page:", nextPage);
+
+      const filters: ExerciseFilters = {
+        form: formFilter === "all" ? undefined : formFilter,
+        search: searchTerm || undefined,
+        sortBy:
+          sortBy === "date-newest"
+            ? "date-desc"
+            : sortBy === "date-oldest"
+              ? "date-asc"
+              : sortBy === "name-asc"
+                ? "name-asc"
+                : sortBy === "name-desc"
+                  ? "name-desc"
+                  : sortBy === "duration-highest"
+                    ? "duration-desc"
+                    : sortBy === "duration-lowest"
+                      ? "duration-asc"
+                      : "date-desc",
+        page: nextPage,
+        limit: 12,
+      };
+
+      console.log("Fetching next page with filters:", filters);
+
+      const result = await fetchExercisesRef.current(filters);
+      console.log("Next page result:", result);
+
+      if (result.exercises && result.exercises.length > 0) {
+        setFilteredExercises((prevExercises) => [
+          ...prevExercises,
+          ...result.exercises,
+        ]);
+
+        const hasMore =
+          result.exercises.length === 12 &&
+          nextPage < Math.ceil(result.total / 12);
+        console.log(
+          "Has more pages:",
+          hasMore,
+          "Current page:",
+          nextPage,
+          "Total pages:",
+          Math.ceil(result.total / 12),
+        );
+
+        fetchAllExercisesForStats();
+        return true;
+      } else {
+        console.log("No more exercises to load");
+        return false;
+      }
+    } catch (error) {
+      console.error("Error in handleLoadMore:", error);
+      return false;
+    }
   };
 
   useEffect(() => {
@@ -356,6 +435,89 @@ export default function Gallery() {
     }
     return { borderColor: "", label: "" };
   };
+
+  const fetchAllExercisesForStats = useCallback(async () => {
+    if (isSyncing) return;
+
+    if (fetchStatsTimeoutRef.current) {
+      clearTimeout(fetchStatsTimeoutRef.current);
+      fetchStatsTimeoutRef.current = null;
+    }
+
+    fetchStatsTimeoutRef.current = setTimeout(async () => {
+      setIsLoadingStats(true);
+      try {
+        const statsFilters: ExerciseFilters = {
+          form: formFilter === "all" ? undefined : formFilter,
+          search: searchTerm || undefined,
+          sortBy:
+            sortBy === "date-newest"
+              ? "date-desc"
+              : sortBy === "date-oldest"
+                ? "date-asc"
+                : sortBy === "name-asc"
+                  ? "name-asc"
+                  : sortBy === "name-desc"
+                    ? "name-desc"
+                    : sortBy === "duration-highest"
+                      ? "duration-desc"
+                      : sortBy === "duration-lowest"
+                        ? "duration-asc"
+                        : "date-desc",
+          page: 1,
+          limit: 1000,
+        };
+
+        const result = await fetchExercisesRef.current(statsFilters);
+        console.log("Stats fetch result:", result);
+        setAllExercisesForStats(result.exercises);
+        setTotalExercises(result.total);
+
+        setChartKey((prev) => prev + 1);
+      } catch (error) {
+        console.error("Failed to load all exercises for statistics:", error);
+      } finally {
+        setIsLoadingStats(false);
+        fetchStatsTimeoutRef.current = null;
+      }
+    }, 300);
+  }, [formFilter, searchTerm, sortBy, isSyncing]);
+
+  useEffect(() => {
+    if (
+      isClient &&
+      (isOnline !== undefined || isServerAvailable !== undefined) &&
+      !isSyncing
+    ) {
+      fetchAllExercisesForStats();
+    }
+  }, [
+    isClient,
+    isOnline,
+    isServerAvailable,
+    isSyncing,
+    fetchAllExercisesForStats,
+  ]);
+
+  useEffect(() => {
+    const handleExerciseChange = () => {
+      fetchAllExercisesForStats();
+    };
+
+    addEventListener("exercisesChange", handleExerciseChange);
+
+    return () => {
+      removeEventListener("exercisesChange", handleExerciseChange);
+    };
+  }, [addEventListener, removeEventListener, fetchAllExercisesForStats]);
+
+  useEffect(() => {
+    return () => {
+      if (fetchStatsTimeoutRef.current) {
+        clearTimeout(fetchStatsTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <PageLayout>
@@ -384,8 +546,8 @@ export default function Gallery() {
           </div>
           <div className="flex items-center gap-2">
             <Badge variant="secondary" className="text-sm">
-              {exercisesArray.length} exercise
-              {exercisesArray.length !== 1 ? "s" : ""}
+              {totalExercises} exercise
+              {totalExercises !== 1 ? "s" : ""}
             </Badge>
             {pendingOperationsCount > 0 &&
               isOnline &&
@@ -410,37 +572,51 @@ export default function Gallery() {
         {isClient && exercisesArray.length > -1 && (
           <>
             <div className="mb-8">
-              <LiveDashboard />
+              <LiveDashboard
+                exercisesData={allExercisesForStats}
+                totalCount={totalExercises}
+              />
             </div>
 
-            <ExerciseStatistics
-              key={`stats-${chartKey}`}
-              exercises={exercisesArray}
-            />
-
-            <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2">
-              {exercisesArray.length > 1 && (
-                <ExerciseDurationChart
-                  key={`duration-${chartKey}`}
+            {isLoadingStats ? (
+              <div className="flex justify-center py-4">
+                <div className="flex items-center space-x-2">
+                  <div className="border-primary h-5 w-5 animate-spin rounded-full border-2 border-t-transparent"></div>
+                  <span>Loading statistics...</span>
+                </div>
+              </div>
+            ) : (
+              <>
+                <ExerciseStatistics
+                  key={`stats-${chartKey}`}
                   exercises={exercisesArray}
                 />
-              )}
-              <ExerciseQualityChart
-                key={`quality-${chartKey}`}
-                exercises={exercisesArray}
-              />
-            </div>
 
-            <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2">
-              <WeeklyProgressChart
-                key={`weekly-${chartKey}`}
-                exercises={exercisesArray}
-              />
-              <ExerciseProgressChart
-                key={`progress-${chartKey}`}
-                exercises={exercisesArray}
-              />
-            </div>
+                <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+                  {exercisesArray.length > 1 && (
+                    <ExerciseDurationChart
+                      key={`duration-${chartKey}`}
+                      exercises={exercisesArray}
+                    />
+                  )}
+                  <ExerciseQualityChart
+                    key={`quality-${chartKey}`}
+                    exercises={exercisesArray}
+                  />
+                </div>
+
+                <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <WeeklyProgressChart
+                    key={`weekly-${chartKey}`}
+                    exercises={exercisesArray}
+                  />
+                  <ExerciseProgressChart
+                    key={`progress-${chartKey}`}
+                    exercises={exercisesArray}
+                  />
+                </div>
+              </>
+            )}
           </>
         )}
 
