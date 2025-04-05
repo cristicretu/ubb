@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import PageLayout from "../_components/PageLayout";
 import {
   useCameraContext,
@@ -14,17 +14,10 @@ import ExerciseQualityChart from "../_components/ExerciseQualityChart";
 import WeeklyProgressChart from "../_components/WeeklyProgressChart";
 import ExerciseProgressChart from "../_components/ExerciseProgressChart";
 import LiveDashboard from "../_components/LiveDashboard";
+import InfiniteScroll from "../_components/InfiniteScroll";
+import { useNetwork } from "../_components/NetworkContext";
 import Link from "next/link";
-import {
-  Search,
-  Filter,
-  Calendar,
-  ArrowUpDown,
-  ArrowLeft,
-  ChevronLeft,
-  ChevronRight,
-  MoreHorizontal,
-} from "lucide-react";
+import { Search, Filter, Calendar, ArrowUpDown, ArrowLeft } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -61,8 +54,28 @@ type SortOption =
   | "duration-lowest";
 
 export default function Gallery() {
-  const { exercises, deleteExercise, fetchFilteredExercises } =
-    useCameraContext();
+  const { isOnline, isServerAvailable } = useNetwork();
+  const {
+    exercises,
+    deleteExercise,
+    fetchFilteredExercises,
+    hasMoreExercises,
+    isLoadingMore,
+    loadMoreExercises,
+    addEventListener,
+    removeEventListener,
+    isSyncing,
+    pendingOperationsCount,
+    syncPendingOperations,
+  } = useCameraContext();
+
+  
+  const fetchExercisesRef = useRef(fetchFilteredExercises);
+
+  
+  useEffect(() => {
+    fetchExercisesRef.current = fetchFilteredExercises;
+  }, [fetchFilteredExercises]);
 
   console.log("Raw exercises from context:", exercises);
 
@@ -74,13 +87,9 @@ export default function Gallery() {
   const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(6);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalExercises, setTotalExercises] = useState(0);
-
   const [filteredExercises, setFilteredExercises] = useState<Exercise[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [totalExercises, setTotalExercises] = useState(0);
 
   const [chartKey, setChartKey] = useState(0);
 
@@ -130,23 +139,148 @@ export default function Gallery() {
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
+  const [isClient, setIsClient] = useState(false);
+
+  
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  
+  useEffect(() => {
+    const handleExerciseChange = async () => {
+      
+      const filters: ExerciseFilters = {
+        form: formFilter === "all" ? undefined : formFilter,
+        search: searchTerm || undefined,
+        sortBy:
+          sortBy === "date-newest"
+            ? "date-desc"
+            : sortBy === "date-oldest"
+              ? "date-asc"
+              : sortBy === "name-asc"
+                ? "name-asc"
+                : sortBy === "name-desc"
+                  ? "name-desc"
+                  : sortBy === "duration-highest"
+                    ? "duration-desc"
+                    : sortBy === "duration-lowest"
+                      ? "duration-asc"
+                      : "date-desc",
+        page: 1,
+        limit: 12,
+      };
+
+      try {
+        setIsLoading(true);
+        const result = await fetchExercisesRef.current(filters);
+        setFilteredExercises(result.exercises);
+        setTotalExercises(result.total);
+      } catch (error) {
+        console.error("Failed to refresh exercises after changes:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    
+    addEventListener("exercisesChange", handleExerciseChange);
+
+    
+    return () => {
+      removeEventListener("exercisesChange", handleExerciseChange);
+    };
+  }, [addEventListener, removeEventListener, formFilter, searchTerm, sortBy]);
+
+  
+  useEffect(() => {
+    if (
+      isClient &&
+      (isOnline !== undefined || isServerAvailable !== undefined) &&
+      !isSyncing 
+    ) {
+      const loadFilteredExercises = async () => {
+        setIsLoading(true);
+        try {
+          const filters: ExerciseFilters = {
+            form: formFilter === "all" ? undefined : formFilter,
+            search: searchTerm || undefined,
+            sortBy:
+              sortBy === "date-newest"
+                ? "date-desc"
+                : sortBy === "date-oldest"
+                  ? "date-asc"
+                  : sortBy === "name-asc"
+                    ? "name-asc"
+                    : sortBy === "name-desc"
+                      ? "name-desc"
+                      : sortBy === "duration-highest"
+                        ? "duration-desc"
+                        : sortBy === "duration-lowest"
+                          ? "duration-asc"
+                          : "date-desc",
+            page: 1,
+            limit: 12,
+          };
+
+          
+          const result = await fetchExercisesRef.current(filters);
+          setFilteredExercises(result.exercises);
+          setTotalExercises(result.total);
+        } catch (error) {
+          console.error(
+            "Failed to load filtered exercises on network change:",
+            error,
+          );
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      loadFilteredExercises();
+    }
+  }, [
+    isClient,
+    isOnline,
+    isServerAvailable,
+    formFilter,
+    searchTerm,
+    sortBy,
+    isSyncing,
+  ]); 
+
   useEffect(() => {
     const loadFilteredExercises = async () => {
+      if (isSyncing) return; 
+
       setIsLoading(true);
       try {
         const filters: ExerciseFilters = {
           form: formFilter === "all" ? undefined : formFilter,
           search: searchTerm || undefined,
-          sortBy,
-          page: currentPage,
-          limit: itemsPerPage,
+          sortBy:
+            sortBy === "date-newest"
+              ? "date-desc"
+              : sortBy === "date-oldest"
+                ? "date-asc"
+                : sortBy === "name-asc"
+                  ? "name-asc"
+                  : sortBy === "name-desc"
+                    ? "name-desc"
+                    : sortBy === "duration-highest"
+                      ? "duration-desc"
+                      : sortBy === "duration-lowest"
+                        ? "duration-asc"
+                        : "date-desc",
+          page: 1, 
+          limit: 12, 
         };
 
-        const result = await fetchFilteredExercises(filters);
+        
+        const result = await fetchExercisesRef.current(filters);
         console.log("Filtered exercises result:", result);
         setFilteredExercises(result.exercises);
         setTotalExercises(result.total);
-        setTotalPages(Math.max(1, Math.ceil(result.total / itemsPerPage)));
       } catch (error) {
         console.error("Failed to load filtered exercises:", error);
       } finally {
@@ -155,18 +289,63 @@ export default function Gallery() {
     };
 
     loadFilteredExercises();
+  }, [formFilter, searchTerm, sortBy, isSyncing]); 
+
+  
+  useEffect(() => {
+    
+    if (isClient && !isSyncing && isOnline && isServerAvailable) {
+      const loadFilteredExercises = async () => {
+        setIsLoading(true);
+        try {
+          const filters: ExerciseFilters = {
+            form: formFilter === "all" ? undefined : formFilter,
+            search: searchTerm || undefined,
+            sortBy:
+              sortBy === "date-newest"
+                ? "date-desc"
+                : sortBy === "date-oldest"
+                  ? "date-asc"
+                  : sortBy === "name-asc"
+                    ? "name-asc"
+                    : sortBy === "name-desc"
+                      ? "name-desc"
+                      : sortBy === "duration-highest"
+                        ? "duration-desc"
+                        : sortBy === "duration-lowest"
+                          ? "duration-asc"
+                          : "date-desc",
+            page: 1,
+            limit: 12,
+          };
+
+          const result = await fetchExercisesRef.current(filters);
+          setFilteredExercises(result.exercises);
+          setTotalExercises(result.total);
+        } catch (error) {
+          console.error("Failed to refresh exercises after sync:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      
+      loadFilteredExercises();
+    }
   }, [
-    fetchFilteredExercises,
+    isSyncing,
+    isClient,
+    isOnline,
+    isServerAvailable,
     formFilter,
     searchTerm,
     sortBy,
-    currentPage,
-    itemsPerPage,
   ]);
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [formFilter, searchTerm, sortBy, itemsPerPage]);
+  
+  const handleLoadMore = async () => {
+    return await loadMoreExercises();
+  };
 
   useEffect(() => {
     setChartKey((prevKey) => prevKey + 1);
@@ -192,106 +371,6 @@ export default function Gallery() {
     return { borderColor: "", label: "" };
   };
 
-  const goToPage = (page: number) => {
-    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
-  };
-
-  const renderPaginationButtons = () => {
-    const buttons = [];
-    const maxVisibleButtons = 5;
-
-    let startPage = Math.max(
-      1,
-      currentPage - Math.floor(maxVisibleButtons / 2),
-    );
-    let endPage = Math.min(totalPages, startPage + maxVisibleButtons - 1);
-
-    if (endPage - startPage + 1 < maxVisibleButtons) {
-      startPage = Math.max(1, endPage - maxVisibleButtons + 1);
-    }
-
-    buttons.push(
-      <Button
-        key="prev"
-        variant="outline"
-        size="icon"
-        disabled={currentPage === 1}
-        onClick={() => goToPage(currentPage - 1)}
-      >
-        <ChevronLeft className="h-4 w-4" />
-      </Button>,
-    );
-
-    if (startPage > 1) {
-      buttons.push(
-        <Button
-          key="1"
-          variant={currentPage === 1 ? "default" : "outline"}
-          size="sm"
-          onClick={() => goToPage(1)}
-        >
-          1
-        </Button>,
-      );
-
-      if (startPage > 2) {
-        buttons.push(
-          <Button key="ellipsis1" variant="outline" size="sm" disabled>
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>,
-        );
-      }
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      buttons.push(
-        <Button
-          key={i}
-          variant={currentPage === i ? "default" : "outline"}
-          size="sm"
-          onClick={() => goToPage(i)}
-        >
-          {i}
-        </Button>,
-      );
-    }
-
-    if (endPage < totalPages) {
-      if (endPage < totalPages - 1) {
-        buttons.push(
-          <Button key="ellipsis2" variant="outline" size="sm" disabled>
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>,
-        );
-      }
-
-      buttons.push(
-        <Button
-          key={totalPages}
-          variant={currentPage === totalPages ? "default" : "outline"}
-          size="sm"
-          onClick={() => goToPage(totalPages)}
-        >
-          {totalPages}
-        </Button>,
-      );
-    }
-
-    buttons.push(
-      <Button
-        key="next"
-        variant="outline"
-        size="icon"
-        disabled={currentPage === totalPages}
-        onClick={() => goToPage(currentPage + 1)}
-      >
-        <ChevronRight className="h-4 w-4" />
-      </Button>,
-    );
-
-    return buttons;
-  };
-
   return (
     <PageLayout>
       <Toaster />
@@ -307,19 +386,42 @@ export default function Gallery() {
               </Link>
             </Button>
             <h1 className="text-3xl font-bold tracking-tight">Exercises</h1>
+            {isSyncing && (
+              <Badge
+                variant="outline"
+                className="ml-2 bg-yellow-100 text-yellow-800"
+              >
+                <div className="mr-1 h-2 w-2 animate-pulse rounded-full bg-yellow-500"></div>
+                Syncing...
+              </Badge>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <Badge variant="secondary" className="text-sm">
               {exercisesArray.length} exercise
               {exercisesArray.length !== 1 ? "s" : ""}
             </Badge>
+            {pendingOperationsCount > 0 &&
+              isOnline &&
+              isServerAvailable &&
+              !isSyncing && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    syncPendingOperations();
+                  }}
+                >
+                  Sync ({pendingOperationsCount})
+                </Button>
+              )}
             <Button asChild>
               <Link href="/">Record New</Link>
             </Button>
           </div>
         </div>
 
-        {exercisesArray.length > -1 && (
+        {isClient && exercisesArray.length > -1 && (
           <>
             <div className="mb-8">
               <LiveDashboard />
@@ -410,22 +512,6 @@ export default function Gallery() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="w-full sm:w-48">
-                <Select
-                  value={itemsPerPage.toString()}
-                  onValueChange={(value) => setItemsPerPage(Number(value))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Per Page" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="2">2 per page</SelectItem>
-                    <SelectItem value="4">4 per page</SelectItem>
-                    <SelectItem value="6">6 per page</SelectItem>
-                    <SelectItem value="8">8 per page</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
             </div>
           </div>
         </div>
@@ -457,6 +543,41 @@ export default function Gallery() {
                   setDialogOpen(false);
                   setEditingExercise(null);
                   setChartKey((prevKey) => prevKey + 1);
+
+                  
+                  
+                  setTimeout(async () => {
+                    try {
+                      const filters: ExerciseFilters = {
+                        form: formFilter === "all" ? undefined : formFilter,
+                        search: searchTerm || undefined,
+                        sortBy:
+                          sortBy === "date-newest"
+                            ? "date-desc"
+                            : sortBy === "date-oldest"
+                              ? "date-asc"
+                              : sortBy === "name-asc"
+                                ? "name-asc"
+                                : sortBy === "name-desc"
+                                  ? "name-desc"
+                                  : sortBy === "duration-highest"
+                                    ? "duration-desc"
+                                    : sortBy === "duration-lowest"
+                                      ? "duration-asc"
+                                      : "date-desc",
+                        page: 1,
+                        limit: 12,
+                      };
+
+                      const result = await fetchExercisesRef.current(filters);
+                      setFilteredExercises(result.exercises);
+                    } catch (error) {
+                      console.error(
+                        "Failed to refresh exercises after edit:",
+                        error,
+                      );
+                    }
+                  }, 100);
                 }}
               />
             )}
@@ -464,7 +585,26 @@ export default function Gallery() {
         </Dialog>
 
         {filteredExercises.length > 0 ? (
-          <>
+          <InfiniteScroll
+            loadMore={handleLoadMore}
+            hasMore={hasMoreExercises}
+            isLoading={isLoadingMore}
+            loadingComponent={
+              <div className="col-span-full flex justify-center py-4">
+                <div className="flex items-center space-x-2">
+                  <div className="border-primary h-5 w-5 animate-spin rounded-full border-2 border-t-transparent"></div>
+                  <span>Loading more exercises...</span>
+                </div>
+              </div>
+            }
+            endComponent={
+              <div className="col-span-full flex justify-center py-4">
+                <span className="text-muted-foreground">
+                  No more exercises to load
+                </span>
+              </div>
+            }
+          >
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
               {isLoading ? (
                 <div className="col-span-full flex justify-center py-8">
@@ -536,6 +676,9 @@ export default function Gallery() {
                             variant="destructive"
                             onClick={() => {
                               deleteExercise(exercise.id);
+                              setFilteredExercises((prev) =>
+                                prev.filter((ex) => ex.id !== exercise.id),
+                              );
                               setChartKey((prevKey) => prevKey + 1);
                             }}
                             className="flex-1"
@@ -549,40 +692,39 @@ export default function Gallery() {
                 })
               )}
             </div>
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="mt-8 flex justify-center">
-                <div className="flex items-center gap-2">
-                  {renderPaginationButtons()}
-                </div>
-              </div>
-            )}
-
-            {/* Results summary */}
-            <div className="mt-4 text-center text-sm text-gray-500">
-              Showing {filteredExercises.length} of {totalExercises} exercises
-            </div>
-          </>
+          </InfiniteScroll>
         ) : (
-          <Card className="border-border mx-auto w-full max-w-md border shadow-sm">
-            <CardHeader>
-              <CardTitle className="text-center">No exercises found</CardTitle>
-              <CardDescription className="text-center">
-                {exercisesArray.length > 0
-                  ? "Try adjusting your filters to see more exercises."
-                  : "Your recorded exercises will appear here."}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="text-center">
-              <p className="text-muted-foreground mb-4">
-                Record your first exercise to get started.
-              </p>
-              <Button asChild>
-                <Link href="/">Record New Exercise</Link>
-              </Button>
-            </CardContent>
-          </Card>
+          <div className="mt-16 flex flex-col items-center justify-center">
+            <div className="bg-muted mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+              <svg
+                xmlns="http:
+                className="text-muted-foreground h-8 w-8"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                />
+              </svg>
+            </div>
+            <h3 className="mb-2 text-xl font-semibold">No exercises found</h3>
+            <p className="text-muted-foreground mb-6 text-center">
+              {searchTerm || formFilter !== "all"
+                ? "Try adjusting your filters"
+                : !isClient
+                  ? "Start by recording a new exercise"
+                  : !isOnline || !isServerAvailable
+                    ? "You are offline. Record new exercises or reconnect to see your data."
+                    : "Start by recording a new exercise"}
+            </p>
+            <Button asChild>
+              <Link href="/">Record New Exercise</Link>
+            </Button>
+          </div>
         )}
       </div>
     </PageLayout>
