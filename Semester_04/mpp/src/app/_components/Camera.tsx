@@ -9,10 +9,12 @@ import {
   Camera as CameraIcon,
   Video,
   VideoOff,
+  Upload,
 } from "lucide-react";
 import VideoRecorder from "./VideoRecorder";
 import { useCameraContext } from "./CameraContext";
 import ExerciseForm from "./ExerciseForm";
+import UploadVideo from "./UploadVideo";
 import Link from "next/link";
 import {
   Dialog,
@@ -24,6 +26,7 @@ import {
 } from "~/components/ui/dialog";
 import { Toaster } from "~/components/ui/sonner";
 import { toast } from "sonner";
+
 export default function CameraTest() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isStreaming, setIsStreaming] = useState(false);
@@ -38,6 +41,7 @@ export default function CameraTest() {
   const { addRecordedVideo, exercises, addExercise } = useCameraContext();
   const [showExerciseForm, setShowExerciseForm] = useState(false);
   const [currentVideoUrl, setCurrentVideoUrl] = useState<string | null>(null);
+  const [showUploadMode, setShowUploadMode] = useState(false);
 
   const [chartKey, setChartKey] = useState(0);
 
@@ -64,7 +68,9 @@ export default function CameraTest() {
       }
     }
 
-    setupCamera();
+    if (!showUploadMode) {
+      setupCamera();
+    }
 
     return () => {
       if (videoRef.current?.srcObject) {
@@ -75,7 +81,7 @@ export default function CameraTest() {
         clearInterval(timerRef.current);
       }
     };
-  }, []);
+  }, [showUploadMode]);
 
   const toggleRecording = () => {
     if (isRecording) {
@@ -120,83 +126,120 @@ export default function CameraTest() {
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
+  const toggleMode = () => {
+    // If switching to upload mode, stop the camera stream
+    if (!showUploadMode && videoRef.current?.srcObject) {
+      const stream = videoRef.current.srcObject as MediaStream;
+      stream.getTracks().forEach((track) => track.stop());
+      setIsStreaming(false);
+      setMediaStream(null);
+    }
+
+    setShowUploadMode(!showUploadMode);
+  };
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4">
       <div className="flex w-full max-w-5xl flex-col">
+        <div className="mb-4 flex justify-end gap-2">
+          <button
+            onClick={toggleMode}
+            className="flex items-center gap-2 rounded-md bg-zinc-800 px-3 py-2 text-sm"
+          >
+            {showUploadMode ? (
+              <>
+                <CameraIcon size={16} />
+                Switch to Camera
+              </>
+            ) : (
+              <>
+                <Upload size={16} />
+                Switch to Upload
+              </>
+            )}
+          </button>
+        </div>
+
         {error && (
           <div className="mb-4 rounded bg-red-100 p-4 text-red-700">
             <p>{error}</p>
           </div>
         )}
 
-        <div className="relative mb-6 overflow-hidden rounded-lg">
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            muted
-            className="h-full w-full object-cover"
-          />
+        {showUploadMode ? (
+          <UploadVideo />
+        ) : (
+          <>
+            <div className="relative mb-6 overflow-hidden rounded-lg">
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                muted
+                className="h-full w-full object-cover"
+              />
 
-          {isStreaming && (
-            <>
-              <div className="absolute right-2 top-2 rounded-full bg-green-500 px-3 py-1 text-xs font-medium text-white">
-                Live
-              </div>
+              {isStreaming && (
+                <>
+                  <div className="absolute right-2 top-2 rounded-full bg-green-500 px-3 py-1 text-xs font-medium text-white">
+                    Live
+                  </div>
 
-              {/* {isRecording && (
-                <div className="absolute left-2 top-2 flex items-center gap-2 rounded-full bg-red-500 px-3 py-1 text-xs font-medium text-white">
-                  <span className="h-2 w-2 animate-pulse rounded-full bg-white"></span>
-                  Recording {formatDuration(recordingDuration)}
-                </div>
-              )} */}
+                  {/* {isRecording && (
+                    <div className="absolute left-2 top-2 flex items-center gap-2 rounded-full bg-red-500 px-3 py-1 text-xs font-medium text-white">
+                      <span className="h-2 w-2 animate-pulse rounded-full bg-white"></span>
+                      Recording {formatDuration(recordingDuration)}
+                    </div>
+                  )} */}
 
-              <button
-                onClick={toggleRecording}
-                disabled={!isStreaming}
-                className="absolute bottom-2 left-1/2 flex -translate-x-1/2 items-center justify-center gap-2"
-              >
-                <div
-                  className={`h-12 w-12 rounded-full ${
-                    isRecording ? "animate-pulse bg-red-500" : "bg-white"
-                  }`}
-                />
-              </button>
-            </>
-          )}
-        </div>
+                  <button
+                    onClick={toggleRecording}
+                    disabled={!isStreaming}
+                    className="absolute bottom-2 left-1/2 flex -translate-x-1/2 items-center justify-center gap-2"
+                  >
+                    <div
+                      className={`h-12 w-12 rounded-full ${
+                        isRecording ? "animate-pulse bg-red-500" : "bg-white"
+                      }`}
+                    />
+                  </button>
+                </>
+              )}
+            </div>
 
-        <Dialog open={showExerciseForm} onOpenChange={setShowExerciseForm}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>Save Exercise</DialogTitle>
-              <DialogDescription>
-                Review and save your recorded exercise.
-              </DialogDescription>
-            </DialogHeader>
-            {currentVideoUrl && (
-              <ExerciseForm
-                videoUrl={currentVideoUrl}
-                duration={recordingDuration}
-                onCancel={() => setShowExerciseForm(false)}
-                onSave={() => {
-                  setShowExerciseForm(false);
-                  setCurrentVideoUrl(null);
-                  toast.success("Exercise saved successfully");
-                }}
+            <Dialog open={showExerciseForm} onOpenChange={setShowExerciseForm}>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Save Exercise</DialogTitle>
+                  <DialogDescription>
+                    Review and save your recorded exercise.
+                  </DialogDescription>
+                </DialogHeader>
+                {currentVideoUrl && (
+                  <ExerciseForm
+                    videoUrl={currentVideoUrl}
+                    duration={recordingDuration}
+                    onCancel={() => setShowExerciseForm(false)}
+                    onSave={() => {
+                      setShowExerciseForm(false);
+                      setCurrentVideoUrl(null);
+                      toast.success("Exercise saved successfully");
+                    }}
+                  />
+                )}
+              </DialogContent>
+            </Dialog>
+
+            {mediaStream && (
+              <VideoRecorder
+                stream={mediaStream}
+                isRecording={isRecording}
+                onRecordingComplete={handleRecordingComplete}
               />
             )}
-          </DialogContent>
-        </Dialog>
+          </>
+        )}
       </div>
-
-      {mediaStream && (
-        <VideoRecorder
-          stream={mediaStream}
-          isRecording={isRecording}
-          onRecordingComplete={handleRecordingComplete}
-        />
-      )}
     </div>
   );
 }
