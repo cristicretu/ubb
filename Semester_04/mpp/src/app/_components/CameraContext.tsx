@@ -12,6 +12,7 @@ import {
 import { useNetwork } from "./NetworkContext";
 import { toast } from "sonner";
 import * as offlineStorage from "../_services/offlineStorage";
+import { useWebSocket } from "./WebSocketProvider";
 
 export interface Exercise {
   id: string;
@@ -58,6 +59,9 @@ interface CameraContextType {
   pendingOperationsCount: number;
   syncPendingOperations: () => Promise<void>;
   isSyncing: boolean;
+  startExerciseGenerator: (intervalMs?: number) => Promise<boolean>;
+  stopExerciseGenerator: () => Promise<boolean>;
+  isGeneratorRunning: boolean;
 }
 
 const defaultSettings: CameraSettings = {
@@ -72,6 +76,7 @@ const CameraContext = createContext<CameraContextType | undefined>(undefined);
 
 export function CameraProvider({ children }: { children: ReactNode }) {
   const { isOnline, isServerAvailable } = useNetwork();
+  const { lastEvent } = useWebSocket();
   const [settings, setSettings] = useState<CameraSettings>(defaultSettings);
   const [recordedVideos, setRecordedVideos] = useState<string[]>([]);
   const [exercises, setExercises] = useState<Exercise[]>([]);
@@ -81,6 +86,7 @@ export function CameraProvider({ children }: { children: ReactNode }) {
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
   const [pendingOperationsCount, setPendingOperationsCount] =
     useState<number>(0);
+  const [isGeneratorRunning, setIsGeneratorRunning] = useState<boolean>(false);
 
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
 
@@ -92,6 +98,64 @@ export function CameraProvider({ children }: { children: ReactNode }) {
   });
 
   const [exerciseChangeListeners] = useState<(() => void)[]>([]);
+
+  useEffect(() => {
+    if (!lastEvent) return;
+
+    console.log("Handling WebSocket event:", lastEvent.name, lastEvent.data);
+
+    if (lastEvent.name === "exercise:created") {
+      const newExercise = lastEvent.data as Exercise;
+
+      setExercises((prev) => {
+        if (prev.some((ex) => ex.id === newExercise.id)) {
+          return prev;
+        }
+
+        return [newExercise, ...prev];
+      });
+
+      const storedExercises = offlineStorage.loadExercisesFromStorage();
+      if (!storedExercises.some((ex) => ex.id === newExercise.id)) {
+        offlineStorage.saveExercisesToStorage([
+          newExercise,
+          ...storedExercises,
+        ]);
+      }
+
+      setTimeout(() => notifyExerciseChange(), 50);
+    } else if (lastEvent.name === "exercise:updated") {
+      const updatedExercise = lastEvent.data as Partial<Exercise> & {
+        id: string;
+      };
+
+      setExercises((prev) =>
+        prev.map((ex) =>
+          ex.id === updatedExercise.id ? { ...ex, ...updatedExercise } : ex,
+        ),
+      );
+
+      const storedExercises = offlineStorage.loadExercisesFromStorage();
+      const updatedStoredExercises = storedExercises.map((ex) =>
+        ex.id === updatedExercise.id ? { ...ex, ...updatedExercise } : ex,
+      );
+      offlineStorage.saveExercisesToStorage(updatedStoredExercises);
+
+      setTimeout(() => notifyExerciseChange(), 50);
+    } else if (lastEvent.name === "exercise:deleted") {
+      const { id } = lastEvent.data as { id: string };
+
+      setExercises((prev) => prev.filter((ex) => ex.id !== id));
+
+      const storedExercises = offlineStorage.loadExercisesFromStorage();
+      const updatedStoredExercises = storedExercises.filter(
+        (ex) => ex.id !== id,
+      );
+      offlineStorage.saveExercisesToStorage(updatedStoredExercises);
+
+      setTimeout(() => notifyExerciseChange(), 50);
+    }
+  }, [lastEvent]);
 
   useEffect(() => {
     const pendingOps = offlineStorage.getPendingOperations();
@@ -109,8 +173,86 @@ export function CameraProvider({ children }: { children: ReactNode }) {
 
     if (isOnline && isServerAvailable && !isSyncing) {
       fetchExercisesFromServer();
+
+      checkGeneratorStatus();
     }
   }, [isOnline, isServerAvailable, isSyncing]);
+
+  const checkGeneratorStatus = async () => {
+    try {
+      const response = await fetch("/api/background-worker");
+      if (response.ok) {
+        const data = await response.json();
+        setIsGeneratorRunning(data.isRunning);
+      }
+    } catch (error) {
+      console.error("Failed to check generator status:", error);
+    }
+  };
+
+  const startExerciseGenerator = async (intervalMs = 30000) => {
+    if (!isOnline || !isServerAvailable) {
+      toast.error("Cannot start generator while offline");
+      return false;
+    }
+
+    try {
+      const response = await fetch("/api/background-worker", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ action: "start", interval: intervalMs }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setIsGeneratorRunning(true);
+        toast.success("Started generating exercises in the background");
+        return true;
+      } else {
+        toast.error(data.message || "Failed to start generator");
+        return false;
+      }
+    } catch (error) {
+      console.error("Error starting generator:", error);
+      toast.error("Failed to start generator");
+      return false;
+    }
+  };
+
+  const stopExerciseGenerator = async () => {
+    if (!isOnline || !isServerAvailable) {
+      toast.error("Cannot stop generator while offline");
+      return false;
+    }
+
+    try {
+      const response = await fetch("/api/background-worker", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ action: "stop" }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setIsGeneratorRunning(false);
+        toast.success("Stopped generating exercises");
+        return true;
+      } else {
+        toast.error(data.message || "Failed to stop generator");
+        return false;
+      }
+    } catch (error) {
+      console.error("Error stopping generator:", error);
+      toast.error("Failed to stop generator");
+      return false;
+    }
+  };
 
   useEffect(() => {
     if (isOnline && isServerAvailable && pendingOperationsCount > 0) {
@@ -606,6 +748,9 @@ export function CameraProvider({ children }: { children: ReactNode }) {
     pendingOperationsCount,
     syncPendingOperations,
     isSyncing,
+    startExerciseGenerator,
+    stopExerciseGenerator,
+    isGeneratorRunning,
   };
 
   return (
