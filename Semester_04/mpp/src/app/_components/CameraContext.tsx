@@ -7,7 +7,11 @@ import {
   ReactNode,
   useCallback,
   useEffect,
+  useRef,
 } from "react";
+import { useNetwork } from "./NetworkContext";
+import { toast } from "sonner";
+import * as offlineStorage from "../_services/offlineStorage";
 
 export interface Exercise {
   id: string;
@@ -48,6 +52,12 @@ interface CameraContextType {
   getExerciseById: (id: string) => Exercise | undefined;
   addEventListener: (event: "exercisesChange", callback: () => void) => void;
   removeEventListener: (event: "exercisesChange", callback: () => void) => void;
+  hasMoreExercises: boolean;
+  isLoadingMore: boolean;
+  loadMoreExercises: () => Promise<boolean>;
+  pendingOperationsCount: number;
+  syncPendingOperations: () => Promise<void>;
+  isSyncing: boolean;
 }
 
 const defaultSettings: CameraSettings = {
@@ -56,50 +66,162 @@ const defaultSettings: CameraSettings = {
   recordAudio: true,
 };
 
+const DEFAULT_PAGE_SIZE = 10;
+
 const CameraContext = createContext<CameraContextType | undefined>(undefined);
 
 export function CameraProvider({ children }: { children: ReactNode }) {
+  const { isOnline, isServerAvailable } = useNetwork();
   const [settings, setSettings] = useState<CameraSettings>(defaultSettings);
   const [recordedVideos, setRecordedVideos] = useState<string[]>([]);
   const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [totalExercises, setTotalExercises] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
+  const [pendingOperationsCount, setPendingOperationsCount] =
+    useState<number>(0);
+
+  const [isSyncing, setIsSyncing] = useState<boolean>(false);
+
+  const currentFiltersRef = useRef<ExerciseFilters>({
+    form: "all",
+    sortBy: "date-desc",
+    page: 1,
+    limit: DEFAULT_PAGE_SIZE,
+  });
 
   const [exerciseChangeListeners] = useState<(() => void)[]>([]);
 
   useEffect(() => {
-    const fetchExercises = async () => {
-      try {
-        const response = await fetch("/api/exercises");
-        if (!response.ok) {
-          throw new Error("Failed to fetch exercises");
-        }
-        const data = await response.json();
-        console.log("API response data:", data);
-
-        // Ensure data is properly formatted
-        if (Array.isArray(data)) {
-          setExercises(data);
-        } else if (
-          data &&
-          typeof data === "object" &&
-          Array.isArray(data.exercises)
-        ) {
-          // Handle case where API returns { exercises: [...] }
-          setExercises(data.exercises);
-        } else {
-          console.error("Unexpected API response format:", data);
-          setExercises([]);
-        }
-      } catch (error) {
-        console.error("Failed to fetch exercises:", error);
-        setExercises([]);
-      }
-    };
-
-    fetchExercises();
+    const pendingOps = offlineStorage.getPendingOperations();
+    setPendingOperationsCount(pendingOps.length);
   }, []);
+
+  useEffect(() => {
+    const storedExercises = offlineStorage.loadExercisesFromStorage();
+
+    if (storedExercises.length > 0) {
+      const exercisesWithPendingChanges =
+        offlineStorage.applyPendingOperations(storedExercises);
+      setExercises(exercisesWithPendingChanges);
+    }
+
+    if (isOnline && isServerAvailable && !isSyncing) {
+      fetchExercisesFromServer();
+    }
+  }, [isOnline, isServerAvailable, isSyncing]);
+
+  useEffect(() => {
+    if (isOnline && isServerAvailable && pendingOperationsCount > 0) {
+      setIsSyncing(true);
+      syncPendingOperations();
+    }
+  }, [isOnline, isServerAvailable, pendingOperationsCount]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    if (isOnline && isServerAvailable && !isSyncing) {
+      if (pendingOperationsCount === 0) {
+        fetchExercisesFromServer();
+      }
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [isOnline, isServerAvailable, pendingOperationsCount, isSyncing]);
+
+  const fetchExercisesFromServer = async () => {
+    if (isSyncing) return;
+
+    try {
+      const filters = currentFiltersRef.current;
+      const result = await fetchFilteredExercises(filters);
+
+      const storedExercises = offlineStorage.loadExercisesFromStorage();
+
+      const localCreatedExercises = storedExercises.filter(
+        (ex) =>
+          ex.id.startsWith("local_") &&
+          !result.exercises.some((serverEx: Exercise) => serverEx.id === ex.id),
+      );
+
+      const mergedExercises = [...result.exercises, ...localCreatedExercises];
+
+      offlineStorage.saveExercisesToStorage(mergedExercises);
+
+      const exercisesWithPendingChanges =
+        offlineStorage.applyPendingOperations(mergedExercises);
+
+      setExercises(exercisesWithPendingChanges);
+      setTotalExercises(result.total + localCreatedExercises.length);
+      setHasMore(
+        filters.page ? result.exercises.length >= filters.limit! : false,
+      );
+    } catch (error) {
+      console.error("Failed to fetch exercises from server:", error);
+    }
+  };
+
+  const syncPendingOperations = async () => {
+    if (!isOnline || !isServerAvailable) {
+      toast.error(
+        "Cannot sync while offline. Will try again when connection is restored.",
+      );
+      setIsSyncing(false);
+      return;
+    }
+
+    try {
+      toast.loading("Syncing changes to server...", { id: "sync-toast" });
+      const result = await offlineStorage.syncWithServer("/api");
+
+      if (result.success) {
+        toast.success(`Successfully synced ${result.successCount} changes`, {
+          id: "sync-toast",
+        });
+        setPendingOperationsCount((prev) => prev - result.successCount);
+
+        await fetchExercisesFromServer();
+      } else {
+        toast.error(
+          `Synced ${result.successCount} changes, but ${result.failureCount} failed`,
+          { id: "sync-toast" },
+        );
+        setPendingOperationsCount((prev) => prev - result.successCount);
+
+        await fetchExercisesFromServer();
+      }
+    } catch (error) {
+      toast.error("Failed to sync changes. Will try again later.", {
+        id: "sync-toast",
+      });
+      console.error("Sync error:", error);
+
+      await fetchExercisesFromServer();
+    } finally {
+      setIsSyncing(false);
+    }
+  };
 
   const fetchFilteredExercises = useCallback(
     async (filters: ExerciseFilters) => {
+      currentFiltersRef.current = { ...currentFiltersRef.current, ...filters };
+
+      if (!isOnline || !isServerAvailable) {
+        const storedExercises = offlineStorage.loadExercisesFromStorage();
+
+        const exercisesWithPendingChanges =
+          offlineStorage.applyPendingOperations(storedExercises);
+
+        return offlineStorage.filterExercisesLocally(
+          exercisesWithPendingChanges,
+          filters,
+        );
+      }
+
       try {
         const params = new URLSearchParams();
         if (filters.form && filters.form !== "all")
@@ -117,14 +239,74 @@ export function CameraProvider({ children }: { children: ReactNode }) {
         }
 
         const data = await response.json();
+
+        if (!filters.page || filters.page === 1) {
+          offlineStorage.saveExercisesToStorage(data.exercises);
+        } else if (filters.page && filters.page > 1) {
+          const storedExercises = offlineStorage.loadExercisesFromStorage();
+          const updatedExercises = [...storedExercises];
+
+          data.exercises.forEach((newEx: Exercise) => {
+            if (!updatedExercises.some((ex) => ex.id === newEx.id)) {
+              updatedExercises.push(newEx);
+            }
+          });
+
+          offlineStorage.saveExercisesToStorage(updatedExercises);
+        }
+
         return data;
       } catch (error) {
         console.error("Failed to fetch filtered exercises:", error);
-        return { exercises: [], total: 0 };
+
+        const storedExercises = offlineStorage.loadExercisesFromStorage();
+        const exercisesWithPendingChanges =
+          offlineStorage.applyPendingOperations(storedExercises);
+        return offlineStorage.filterExercisesLocally(
+          exercisesWithPendingChanges,
+          filters,
+        );
       }
     },
-    [],
+    [isOnline, isServerAvailable],
   );
+
+  const loadMoreExercises = async () => {
+    if (!hasMore || isLoadingMore) return false;
+
+    setIsLoadingMore(true);
+
+    try {
+      const nextPage = currentPage + 1;
+      const filters = {
+        ...currentFiltersRef.current,
+        page: nextPage,
+      };
+
+      const result = await fetchFilteredExercises(filters);
+
+      if (result.exercises.length > 0) {
+        setExercises((prev) => {
+          const newExercises = result.exercises.filter(
+            (newEx: Exercise) =>
+              !prev.some((existingEx) => existingEx.id === newEx.id),
+          );
+          return [...prev, ...newExercises];
+        });
+        setCurrentPage(nextPage);
+        setHasMore(result.exercises.length >= DEFAULT_PAGE_SIZE);
+        return true;
+      } else {
+        setHasMore(false);
+        return false;
+      }
+    } catch (error) {
+      console.error("Failed to load more exercises:", error);
+      return false;
+    } finally {
+      setIsLoadingMore(false);
+    }
+  };
 
   const notifyExerciseChange = useCallback(() => {
     exerciseChangeListeners.forEach((listener) => listener());
@@ -143,6 +325,30 @@ export function CameraProvider({ children }: { children: ReactNode }) {
 
   const addExercise = useCallback(
     async (exercise: Omit<Exercise, "id">) => {
+      if (!isOnline || !isServerAvailable) {
+        offlineStorage.addPendingOperation({
+          type: "create",
+          entity: "exercise",
+          data: exercise,
+        });
+
+        const storedExercises = offlineStorage.loadExercisesFromStorage();
+        const updatedExercises = offlineStorage.applyCreateOperation(
+          storedExercises,
+          exercise,
+        );
+        offlineStorage.saveExercisesToStorage(updatedExercises);
+
+        setExercises((prev) =>
+          offlineStorage.applyCreateOperation(prev, exercise),
+        );
+        setPendingOperationsCount((prev) => prev + 1);
+
+        toast.success("Exercise saved locally. Will sync when online.");
+        setTimeout(() => notifyExerciseChange(), 50);
+        return;
+      }
+
       try {
         const response = await fetch("/api/exercises", {
           method: "POST",
@@ -161,16 +367,68 @@ export function CameraProvider({ children }: { children: ReactNode }) {
           const prevArray = Array.isArray(prev) ? prev : [];
           return [newExercise, ...prevArray];
         });
+
+        const storedExercises = offlineStorage.loadExercisesFromStorage();
+        const updatedExercises = [newExercise, ...storedExercises];
+        offlineStorage.saveExercisesToStorage(updatedExercises);
+
         setTimeout(() => notifyExerciseChange(), 50);
       } catch (error) {
         console.error("Failed to add exercise:", error);
+        toast.error("Failed to add exercise. Saving locally for later sync.");
+
+        offlineStorage.addPendingOperation({
+          type: "create",
+          entity: "exercise",
+          data: exercise,
+        });
+
+        const storedExercises = offlineStorage.loadExercisesFromStorage();
+        const updatedExercises = offlineStorage.applyCreateOperation(
+          storedExercises,
+          exercise,
+        );
+        offlineStorage.saveExercisesToStorage(updatedExercises);
+
+        setExercises((prev) =>
+          offlineStorage.applyCreateOperation(prev, exercise),
+        );
+        setPendingOperationsCount((prev) => prev + 1);
+
+        setTimeout(() => notifyExerciseChange(), 50);
       }
     },
-    [notifyExerciseChange],
+    [isOnline, isServerAvailable, notifyExerciseChange],
   );
 
   const updateExercise = useCallback(
     async (id: string, updates: Partial<Omit<Exercise, "id">>) => {
+      if (!isOnline || !isServerAvailable) {
+        offlineStorage.addPendingOperation({
+          type: "update",
+          entity: "exercise",
+          entityId: id,
+          data: updates,
+        });
+
+        const storedExercises = offlineStorage.loadExercisesFromStorage();
+        const updatedExercises = offlineStorage.applyUpdateOperation(
+          storedExercises,
+          id,
+          updates,
+        );
+        offlineStorage.saveExercisesToStorage(updatedExercises);
+
+        setExercises((prev) =>
+          offlineStorage.applyUpdateOperation(prev, id, updates),
+        );
+        setPendingOperationsCount((prev) => prev + 1);
+
+        toast.success("Exercise updated locally. Will sync when online.");
+        setTimeout(() => notifyExerciseChange(), 50);
+        return;
+      }
+
       try {
         const response = await fetch(`/api/exercises/${id}`, {
           method: "PUT",
@@ -191,17 +449,70 @@ export function CameraProvider({ children }: { children: ReactNode }) {
           const prevArray = Array.isArray(prev) ? prev : [];
           return prevArray.map((ex) => (ex.id === id ? updatedExercise : ex));
         });
+
+        const storedExercises = offlineStorage.loadExercisesFromStorage();
+        const updatedExercises = storedExercises.map((ex) =>
+          ex.id === id ? { ...ex, ...updatedExercise } : ex,
+        );
+        offlineStorage.saveExercisesToStorage(updatedExercises);
+
         setTimeout(() => notifyExerciseChange(), 50);
       } catch (error) {
         console.error("Failed to update exercise:", error);
-        throw error; // Re-throw to allow calling code to handle the error
+        toast.error(
+          "Failed to update exercise. Saving locally for later sync.",
+        );
+
+        offlineStorage.addPendingOperation({
+          type: "update",
+          entity: "exercise",
+          entityId: id,
+          data: updates,
+        });
+
+        const storedExercises = offlineStorage.loadExercisesFromStorage();
+        const updatedExercises = offlineStorage.applyUpdateOperation(
+          storedExercises,
+          id,
+          updates,
+        );
+        offlineStorage.saveExercisesToStorage(updatedExercises);
+
+        setExercises((prev) =>
+          offlineStorage.applyUpdateOperation(prev, id, updates),
+        );
+        setPendingOperationsCount((prev) => prev + 1);
+
+        setTimeout(() => notifyExerciseChange(), 50);
       }
     },
-    [notifyExerciseChange],
+    [isOnline, isServerAvailable, notifyExerciseChange],
   );
 
   const deleteExercise = useCallback(
     async (id: string) => {
+      if (!isOnline || !isServerAvailable) {
+        offlineStorage.addPendingOperation({
+          type: "delete",
+          entity: "exercise",
+          entityId: id,
+        });
+
+        const storedExercises = offlineStorage.loadExercisesFromStorage();
+        const updatedExercises = offlineStorage.applyDeleteOperation(
+          storedExercises,
+          id,
+        );
+        offlineStorage.saveExercisesToStorage(updatedExercises);
+
+        setExercises((prev) => offlineStorage.applyDeleteOperation(prev, id));
+        setPendingOperationsCount((prev) => prev + 1);
+
+        toast.success("Exercise deleted locally. Will sync when online.");
+        setTimeout(() => notifyExerciseChange(), 50);
+        return;
+      }
+
       try {
         const response = await fetch(`/api/exercises/${id}`, {
           method: "DELETE",
@@ -215,12 +526,36 @@ export function CameraProvider({ children }: { children: ReactNode }) {
           const prevArray = Array.isArray(prev) ? prev : [];
           return prevArray.filter((ex) => ex.id !== id);
         });
+
+        const storedExercises = offlineStorage.loadExercisesFromStorage();
+        const updatedExercises = storedExercises.filter((ex) => ex.id !== id);
+        offlineStorage.saveExercisesToStorage(updatedExercises);
+
         setTimeout(() => notifyExerciseChange(), 50);
       } catch (error) {
         console.error("Failed to delete exercise:", error);
+        toast.error("Failed to delete exercise. Saving action for later sync.");
+
+        offlineStorage.addPendingOperation({
+          type: "delete",
+          entity: "exercise",
+          entityId: id,
+        });
+
+        const storedExercises = offlineStorage.loadExercisesFromStorage();
+        const updatedExercises = offlineStorage.applyDeleteOperation(
+          storedExercises,
+          id,
+        );
+        offlineStorage.saveExercisesToStorage(updatedExercises);
+
+        setExercises((prev) => offlineStorage.applyDeleteOperation(prev, id));
+        setPendingOperationsCount((prev) => prev + 1);
+
+        setTimeout(() => notifyExerciseChange(), 50);
       }
     },
-    [notifyExerciseChange],
+    [isOnline, isServerAvailable, notifyExerciseChange],
   );
 
   const getExerciseById = useCallback(
@@ -265,6 +600,12 @@ export function CameraProvider({ children }: { children: ReactNode }) {
     getExerciseById,
     addEventListener,
     removeEventListener,
+    hasMoreExercises: hasMore,
+    isLoadingMore,
+    loadMoreExercises,
+    pendingOperationsCount,
+    syncPendingOperations,
+    isSyncing,
   };
 
   return (

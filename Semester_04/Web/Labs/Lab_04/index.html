@@ -47,27 +47,78 @@
     
     const add = document.getElementById("add");
     add.addEventListener("click", () => {
-      const noInput = document.querySelector("input#no").value;
-      const yearInput = document.querySelector("input#year").value;
-      const modelInput = document.querySelector("input#model").value;
-      const engineInput = document.querySelector("input#engine").value;
-      const powerInput = document.querySelector("input#power").value;
+      const noInput = document.querySelector("input#no");
+      const yearInput = document.querySelector("input#year");
+      const modelInput = document.querySelector("input#model");
+      const engineInput = document.querySelector("input#engine");
+      const powerInput = document.querySelector("input#power");
 
-      data.push({
-        no: noInput, 
-        year: yearInput, 
-        model: modelInput, 
-        engine: engineInput, 
-        power: powerInput
-      });
-      renderTable(data);
+      let isValid = true;
+      
+      isValid = validateInput(noInput, validateNo) && isValid;
+      isValid = validateInput(yearInput, validateYear) && isValid;
+      isValid = validateInput(modelInput, validateNotEmpty) && isValid;
+      isValid = validateInput(engineInput, validateNotEmpty) && isValid;
+      isValid = validateInput(powerInput, validatePower) && isValid;
 
-      noInput.value = "";
-      yearInput.value = "";
-      modelInput.value = "";
-      engineInput.value = "";
-      powerInput.value = "";
+      if (isValid) {
+        data.push({
+          no: parseInt(noInput.value), 
+          year: parseInt(yearInput.value), 
+          model: modelInput.value, 
+          engine: engineInput.value, 
+          power: powerInput.value
+        });
+        renderTable(data);
+
+        noInput.value = "";
+        yearInput.value = "";
+        modelInput.value = "";
+        engineInput.value = "";
+        powerInput.value = "";
+        
+        [noInput, yearInput, modelInput, engineInput, powerInput].forEach(input => {
+          input.classList.remove("border-red-500", "bg-red-50");
+        });
+      }
     });
+    
+    function validateNo(value) {
+      if (!value.trim() || isNaN(parseInt(value))) {
+        return false;
+      }
+      
+      const numValue = parseInt(value);
+      const currentNos = data.map(item => parseInt(item.no));
+      const maxNo = currentNos.length > 0 ? Math.max(...currentNos) : 0;
+      
+      return numValue === maxNo + 1;
+    }
+    
+    function validateYear(value) {
+      const year = parseInt(value);
+      return !isNaN(year) && year >= 1900 && year <= new Date().getFullYear() + 10;
+    }
+    
+    function validateNotEmpty(value) {
+      return value.trim() !== "";
+    }
+    
+    function validatePower(value) {
+      return value.trim() !== "" && value.includes("HP");
+    }
+    
+    function validateInput(inputElement, validationFn) {
+      const isValid = validationFn(inputElement.value);
+      
+      if (!isValid) {
+        inputElement.classList.add("border-red-500", "bg-red-50");
+      } else {
+        inputElement.classList.remove("border-red-500", "bg-red-50");
+      }
+      
+      return isValid;
+    }
     
     let data = [
       {
@@ -124,11 +175,11 @@
         const row = document.createElement("tr");
         row.classList.add("hover:bg-gray-50");
         row.innerHTML = `
-          <td class="px-6 py-4" contenteditable="true">${item.no}</td>
-          <td class="px-6 py-4" contenteditable="true">${item.year}</td>
-          <td class="px-6 py-4" contenteditable="true">${item.model}</td>
-          <td class="px-6 py-4" contenteditable="true">${item.engine}</td>
-          <td class="px-6 py-4" contenteditable="true">${item.power}</td>
+          <td class="px-6 py-4" contenteditable="true" data-type="no">${item.no}</td>
+          <td class="px-6 py-4" contenteditable="true" data-type="year">${item.year}</td>
+          <td class="px-6 py-4" contenteditable="true" data-type="model">${item.model}</td>
+          <td class="px-6 py-4" contenteditable="true" data-type="engine">${item.engine}</td>
+          <td class="px-6 py-4" contenteditable="true" data-type="power">${item.power}</td>
         `;
         tbody.appendChild(row);
       });
@@ -202,15 +253,52 @@
     });
 
     tbody.addEventListener("click", (e) => {
-        e.target.addEventListener("blur", () => {
-          const row = e.target.parentElement.rowIndex - 1;
-          const idx = e.target.cellIndex;
-          const key = ["no", "year", "model", "engine", "power"][idx];
-          data[row][key] = e.target.textContent;
-          renderTable(data);
-        });
+        if (e.target.hasAttribute("contenteditable")) {
+          const originalValue = e.target.textContent;
+          
+          e.target.addEventListener("blur", () => {
+            const row = e.target.parentElement.rowIndex - 1;
+            const idx = e.target.cellIndex;
+            const key = ["no", "year", "model", "engine", "power"][idx];
+            const newValue = e.target.textContent;
+            
+            let isValid = true;
+            switch (key) {
+              case "no":
+                isValid = !isNaN(parseInt(newValue));
+                break;
+              case "year":
+                isValid = validateYear(newValue);
+                break;
+              case "model":
+              case "engine":
+                isValid = validateNotEmpty(newValue);
+                break;
+              case "power":
+                isValid = validatePower(newValue);
+                break;
+            }
+            
+            if (isValid) {
+              e.target.classList.remove("bg-red-50", "text-red-700");
+              if (key === "no" || key === "year") {
+                data[row][key] = parseInt(newValue);
+              } else {
+                data[row][key] = newValue;
+              }
+            } else {
+              e.target.classList.add("bg-red-50", "text-red-700");
+              setTimeout(() => {
+                e.target.textContent = originalValue;
+                e.target.classList.remove("bg-red-50", "text-red-700");
+                data[row][key] = originalValue;
+              }, 3000);
+            }
+          });
+        }
     });
-    
 
+    
+    
   </script>
 </html>

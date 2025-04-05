@@ -5,6 +5,8 @@ import { type Metadata } from "next";
 
 import { TRPCReactProvider } from "~/trpc/react";
 import { CameraProvider } from "./_components/CameraContext";
+import { NetworkProvider } from "./_components/NetworkContext";
+import NetworkStatus from "./_components/NetworkStatus";
 import { Toaster } from "~/components/ui/sonner";
 
 export const metadata: Metadata = {
@@ -26,7 +28,12 @@ export default function RootLayout({
     <html lang="en" className={`${GeistSans.variable}`}>
       <body className="min-h-screen bg-black text-white">
         <TRPCReactProvider>
-          <CameraProvider>{children}</CameraProvider>
+          <NetworkProvider>
+            <CameraProvider>
+              {children}
+              <NetworkStatus />
+            </CameraProvider>
+          </NetworkProvider>
         </TRPCReactProvider>
         <Toaster />
       </body>
