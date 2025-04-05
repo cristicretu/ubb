@@ -12,9 +12,16 @@ import {
 import { Badge } from "~/components/ui/badge";
 import { Activity, TrendingUp, Clock, Zap, Award } from "lucide-react";
 
-export default function LiveDashboard() {
-  const { exercises, addEventListener, removeEventListener } =
-    useCameraContext();
+interface LiveDashboardProps {
+  exercisesData: Exercise[];
+  totalCount: number;
+}
+
+export default function LiveDashboard({
+  exercisesData,
+  totalCount,
+}: LiveDashboardProps) {
+  const { addEventListener, removeEventListener } = useCameraContext();
   const [recentActivity, setRecentActivity] = useState<{
     type: "add" | "update" | "delete";
     timestamp: number;
@@ -30,12 +37,12 @@ export default function LiveDashboard() {
   });
 
   const calculateStats = useCallback(() => {
-    if (!exercises.length) return;
+    if (!exercisesData.length) return;
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const todayExercises = exercises.filter((ex) => {
+    const todayExercises = exercisesData.filter((ex) => {
       const exDate = new Date(ex.date);
       return exDate >= today;
     });
@@ -48,7 +55,7 @@ export default function LiveDashboard() {
     let streak = 0;
     const exerciseDays = new Set<string>();
 
-    exercises.forEach((ex) => {
+    exercisesData.forEach((ex) => {
       const date = new Date(ex.date);
       exerciseDays.add(
         `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`,
@@ -65,7 +72,7 @@ export default function LiveDashboard() {
       checkDate.setDate(checkDate.getDate() - 1);
     }
 
-    const recentExercises = [...exercises]
+    const recentExercises = [...exercisesData]
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
       .slice(0, 5);
 
@@ -75,7 +82,7 @@ export default function LiveDashboard() {
       streak,
       recentExercises,
     });
-  }, [exercises]);
+  }, [exercisesData]);
 
   useEffect(() => {
     const handleExercisesChange = () => {
@@ -194,10 +201,10 @@ export default function LiveDashboard() {
           <CardContent>
             <div className="flex items-center">
               <Activity className="mr-2 h-5 w-5 text-purple-500" />
-              <span className="text-2xl font-bold">{exercises.length}</span>
+              <span className="text-2xl font-bold">{totalCount}</span>
             </div>
             <p className="text-muted-foreground mt-2 text-sm">
-              {exercises.length > 0
+              {totalCount > 0
                 ? `Great progress! Keep it up.`
                 : "Record your first exercise to get started."}
             </p>
@@ -217,35 +224,36 @@ export default function LiveDashboard() {
               <Award className="h-5 w-5 text-green-500" />
               <div className="flex gap-2">
                 <Badge variant="outline" className="text-green-500">
-                  {exercises.filter((ex) => ex.form === "good").length} Good
+                  {exercisesData.filter((ex) => ex.form === "good").length} Good
                 </Badge>
                 <Badge variant="outline" className="text-yellow-500">
-                  {exercises.filter((ex) => ex.form === "medium").length} Medium
+                  {exercisesData.filter((ex) => ex.form === "medium").length}{" "}
+                  Medium
                 </Badge>
                 <Badge variant="outline" className="text-red-500">
-                  {exercises.filter((ex) => ex.form === "bad").length} Bad
+                  {exercisesData.filter((ex) => ex.form === "bad").length} Bad
                 </Badge>
               </div>
             </div>
             <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-gray-200">
-              {exercises.length > 0 && (
+              {exercisesData.length > 0 && (
                 <div className="flex h-full">
                   <div
                     className="h-full bg-green-500"
                     style={{
-                      width: `${(exercises.filter((ex) => ex.form === "good").length / exercises.length) * 100}%`,
+                      width: `${(exercisesData.filter((ex) => ex.form === "good").length / exercisesData.length) * 100}%`,
                     }}
                   />
                   <div
                     className="h-full bg-yellow-500"
                     style={{
-                      width: `${(exercises.filter((ex) => ex.form === "medium").length / exercises.length) * 100}%`,
+                      width: `${(exercisesData.filter((ex) => ex.form === "medium").length / exercisesData.length) * 100}%`,
                     }}
                   />
                   <div
                     className="h-full bg-red-500"
                     style={{
-                      width: `${(exercises.filter((ex) => ex.form === "bad").length / exercises.length) * 100}%`,
+                      width: `${(exercisesData.filter((ex) => ex.form === "bad").length / exercisesData.length) * 100}%`,
                     }}
                   />
                 </div>
