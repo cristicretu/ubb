@@ -69,10 +69,8 @@ export default function Gallery() {
     syncPendingOperations,
   } = useCameraContext();
 
-  
   const fetchExercisesRef = useRef(fetchFilteredExercises);
 
-  
   useEffect(() => {
     fetchExercisesRef.current = fetchFilteredExercises;
   }, [fetchFilteredExercises]);
@@ -141,15 +139,12 @@ export default function Gallery() {
 
   const [isClient, setIsClient] = useState(false);
 
-  
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  
   useEffect(() => {
     const handleExerciseChange = async () => {
-      
       const filters: ExerciseFilters = {
         form: formFilter === "all" ? undefined : formFilter,
         search: searchTerm || undefined,
@@ -183,21 +178,18 @@ export default function Gallery() {
       }
     };
 
-    
     addEventListener("exercisesChange", handleExerciseChange);
 
-    
     return () => {
       removeEventListener("exercisesChange", handleExerciseChange);
     };
   }, [addEventListener, removeEventListener, formFilter, searchTerm, sortBy]);
 
-  
   useEffect(() => {
     if (
       isClient &&
       (isOnline !== undefined || isServerAvailable !== undefined) &&
-      !isSyncing 
+      !isSyncing
     ) {
       const loadFilteredExercises = async () => {
         setIsLoading(true);
@@ -223,7 +215,6 @@ export default function Gallery() {
             limit: 12,
           };
 
-          
           const result = await fetchExercisesRef.current(filters);
           setFilteredExercises(result.exercises);
           setTotalExercises(result.total);
@@ -247,11 +238,11 @@ export default function Gallery() {
     searchTerm,
     sortBy,
     isSyncing,
-  ]); 
+  ]);
 
   useEffect(() => {
     const loadFilteredExercises = async () => {
-      if (isSyncing) return; 
+      if (isSyncing) return;
 
       setIsLoading(true);
       try {
@@ -272,11 +263,10 @@ export default function Gallery() {
                       : sortBy === "duration-lowest"
                         ? "duration-asc"
                         : "date-desc",
-          page: 1, 
-          limit: 12, 
+          page: 1,
+          limit: 12,
         };
 
-        
         const result = await fetchExercisesRef.current(filters);
         console.log("Filtered exercises result:", result);
         setFilteredExercises(result.exercises);
@@ -289,11 +279,9 @@ export default function Gallery() {
     };
 
     loadFilteredExercises();
-  }, [formFilter, searchTerm, sortBy, isSyncing]); 
+  }, [formFilter, searchTerm, sortBy, isSyncing]);
 
-  
   useEffect(() => {
-    
     if (isClient && !isSyncing && isOnline && isServerAvailable) {
       const loadFilteredExercises = async () => {
         setIsLoading(true);
@@ -329,7 +317,6 @@ export default function Gallery() {
         }
       };
 
-      
       loadFilteredExercises();
     }
   }, [
@@ -342,7 +329,6 @@ export default function Gallery() {
     sortBy,
   ]);
 
-  
   const handleLoadMore = async () => {
     return await loadMoreExercises();
   };
@@ -544,8 +530,6 @@ export default function Gallery() {
                   setEditingExercise(null);
                   setChartKey((prevKey) => prevKey + 1);
 
-                  
-                  
                   setTimeout(async () => {
                     try {
                       const filters: ExerciseFilters = {
@@ -697,7 +681,7 @@ export default function Gallery() {
           <div className="mt-16 flex flex-col items-center justify-center">
             <div className="bg-muted mb-4 flex h-16 w-16 items-center justify-center rounded-full">
               <svg
-                xmlns="http:
+                xmlns="http://www.w3.org/2000/svg"
                 className="text-muted-foreground h-8 w-8"
                 fill="none"
                 viewBox="0 0 24 24"
