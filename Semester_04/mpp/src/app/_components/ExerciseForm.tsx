@@ -60,6 +60,57 @@ export default function ExerciseForm({
     setIsSaving(true);
 
     try {
+      // Make sure the videoUrl is a valid URL
+      let validVideoUrl = videoUrl;
+
+      console.log("Processing video URL:", videoUrl);
+
+      // Check if we have a URL at all
+      if (!videoUrl || typeof videoUrl !== "string") {
+        toast.error("Invalid video URL: URL must be a string");
+        setIsSaving(false);
+        return;
+      }
+
+      // Only check for blob URLs that haven't been uploaded yet
+      if (
+        (videoUrl.startsWith("blob:") || videoUrl.startsWith("data:")) &&
+        !videoUrl.includes("/uploads/") &&
+        !videoUrl.includes("http")
+      ) {
+        // This appears to be an unprocessed blob URL
+        console.log("Blob URL detected that hasn't been uploaded:", videoUrl);
+        toast.error(
+          "Cannot save blob URLs directly. Please upload the video first.",
+        );
+        setIsSaving(false);
+        return;
+      }
+
+      try {
+        // Try to create a proper URL object to validate it
+        if (videoUrl.startsWith("http")) {
+          // It's already an absolute URL, validate it
+          const urlObj = new URL(videoUrl);
+          validVideoUrl = urlObj.toString(); // Normalized URL
+          console.log("Using absolute URL:", validVideoUrl);
+        } else {
+          // It's a relative URL, convert to absolute
+          const urlObj = new URL(videoUrl, window.location.origin);
+          validVideoUrl = urlObj.toString();
+          console.log("Converted relative URL to absolute:", validVideoUrl);
+        }
+      } catch (error) {
+        console.error("URL validation error:", error);
+        toast.error(
+          `Invalid video URL: ${error instanceof Error ? error.message : "Unknown error"}`,
+        );
+        setIsSaving(false);
+        return;
+      }
+
+      console.log("Submitting exercise with video URL:", validVideoUrl);
+
       if (initialData?.id) {
         await updateExercise(initialData.id, {
           name,
@@ -69,7 +120,7 @@ export default function ExerciseForm({
       } else {
         await addExercise({
           name,
-          videoUrl,
+          videoUrl: validVideoUrl,
           form,
           date: new Date().toISOString(),
           duration,
@@ -100,6 +151,31 @@ export default function ExerciseForm({
             className="h-48 w-full rounded-md object-cover"
             playsInline
           />
+          <div className="mt-2 flex justify-end">
+            <a
+              href={videoUrl}
+              download={`exercise-${new Date().toISOString().slice(0, 10)}.mp4`}
+              className="flex items-center gap-1 rounded-md bg-blue-600 px-3 py-1 text-sm text-white"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Download
+            </a>
+          </div>
         </div>
       )}
 

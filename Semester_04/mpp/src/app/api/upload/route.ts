@@ -35,11 +35,26 @@ export async function POST(request: NextRequest) {
     const filePath = join(UPLOAD_DIR, filename);
     await writeFile(filePath, buffer);
 
-    const fileUrl = `/uploads/${filename}`;
+    // Get the host from the request headers
+    const host = request.headers.get("host") || "localhost:3000";
+    const protocol = host.includes("localhost") ? "http" : "https";
+
+    // Generate a relative URL (for local storage)
+    const relativeUrl = `/uploads/${filename}`;
+
+    // Generate an absolute URL (for API validation)
+    const absoluteUrl = `${protocol}://${host}${relativeUrl}`;
+
+    console.log("File uploaded successfully:", {
+      filename,
+      relativeUrl,
+      absoluteUrl,
+    });
 
     return NextResponse.json({
       success: true,
-      fileUrl,
+      fileUrl: absoluteUrl, // Use absolute URL
+      relativeUrl, // Also provide relative URL
       filename,
       size: file.size,
       type: file.type,

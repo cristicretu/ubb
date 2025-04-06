@@ -846,6 +846,54 @@ export default function Gallery() {
                             Delete
                           </Button>
                         </div>
+                        <div className="mt-2 w-full">
+                          <a
+                            href={exercise.videoUrl}
+                            download={`exercise-${exercise.name}-${new Date(exercise.date).toISOString().slice(0, 10)}.mp4`}
+                            className="flex w-full items-center justify-center gap-1 rounded-md bg-blue-600 px-3 py-1.5 text-sm text-white"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => {
+                              if (
+                                exercise.videoUrl &&
+                                !exercise.videoUrl.startsWith("http")
+                              ) {
+                                e.preventDefault();
+                                const absoluteUrl = new URL(
+                                  exercise.videoUrl,
+                                  window.location.origin,
+                                ).toString();
+                                console.log(
+                                  "Converting to absolute URL for download:",
+                                  absoluteUrl,
+                                );
+
+                                const tempLink = document.createElement("a");
+                                tempLink.href = absoluteUrl;
+                                tempLink.download = `exercise-${exercise.name}-${new Date(exercise.date).toISOString().slice(0, 10)}.mp4`;
+                                tempLink.target = "_blank";
+                                tempLink.rel = "noopener noreferrer";
+                                tempLink.click();
+                              }
+                            }}
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-4 w-4"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                              <polyline points="7 10 12 15 17 10"></polyline>
+                              <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            Download Video
+                          </a>
+                        </div>
                       </CardFooter>
                     </Card>
                   );
