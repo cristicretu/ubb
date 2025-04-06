@@ -44,6 +44,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { Toaster } from "~/components/ui/sonner";
+import { toast } from "sonner";
 
 type SortOption =
   | "date-newest"
@@ -835,11 +836,28 @@ export default function Gallery() {
                           <Button
                             variant="destructive"
                             onClick={() => {
-                              deleteExercise(exercise.id);
-                              setFilteredExercises((prev) =>
-                                prev.filter((ex) => ex.id !== exercise.id),
+                              console.log(
+                                `Attempting to delete exercise with ID: ${exercise.id}`,
+                                exercise,
                               );
-                              setChartKey((prevKey) => prevKey + 1);
+                              try {
+                                deleteExercise(exercise.id);
+                                console.log(
+                                  `Delete initiated for exercise ID: ${exercise.id}`,
+                                );
+                                setFilteredExercises((prev) =>
+                                  prev.filter((ex) => ex.id !== exercise.id),
+                                );
+                                setChartKey((prevKey) => prevKey + 1);
+                              } catch (error) {
+                                console.error(
+                                  `Error deleting exercise ID ${exercise.id}:`,
+                                  error,
+                                );
+                                toast.error(
+                                  `Failed to delete exercise: ${error instanceof Error ? error.message : "Unknown error"}`,
+                                );
+                              }
                             }}
                             className="flex-1"
                           >

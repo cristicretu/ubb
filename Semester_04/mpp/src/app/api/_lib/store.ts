@@ -1699,7 +1699,44 @@ class ExerciseStore {
   }
 
   getById(id: string): Exercise | undefined {
-    return this.exercises.find((ex) => ex.id === id);
+    console.log(`ExerciseStore.getById called with ID: ${id}`);
+
+    // Normalize the input ID (handle both string and numeric formats)
+    const normalizedInputId = String(id).trim();
+    console.log(`Normalized input ID: ${normalizedInputId}`);
+
+    let exercise = this.exercises.find((ex) => ex.id === normalizedInputId);
+
+    if (!exercise && /^\d+$/.test(normalizedInputId)) {
+      console.log(`Trying numeric comparison for ID: ${normalizedInputId}`);
+      exercise = this.exercises.find((ex) => {
+        // Normalize stored ID if it's numeric
+        if (/^\d+$/.test(ex.id)) {
+          const normalizedStoredId = String(ex.id).trim();
+          const match = normalizedStoredId === normalizedInputId;
+          if (match) {
+            console.log(
+              `Found match with normalized ID comparison: ${ex.id} === ${normalizedInputId}`,
+            );
+          }
+          return match;
+        }
+        return false;
+      });
+    }
+
+    console.log(
+      `ExerciseStore.getById result for ID ${id}:`,
+      exercise ? "Found" : "Not Found",
+    );
+
+    // If we still didn't find it, log all IDs for debugging
+    if (!exercise) {
+      const allIds = this.exercises.map((ex) => ex.id);
+      console.log(`Available exercise IDs:`, allIds);
+    }
+
+    return exercise;
   }
 
   add(exercise: Omit<Exercise, "id">): Exercise {
@@ -1708,15 +1745,52 @@ class ExerciseStore {
       id: Date.now().toString(),
     };
 
+    console.log(
+      `ExerciseStore.add: Creating new exercise with ID ${newExercise.id}`,
+    );
     this.exercises = [newExercise, ...this.exercises];
     return newExercise;
   }
 
   update(id: string, updates: Partial<Omit<Exercise, "id">>): Exercise | null {
-    const index = this.exercises.findIndex((ex) => ex.id === id);
+    console.log(
+      `ExerciseStore.update: Updating exercise with ID ${id}`,
+      updates,
+    );
+
+    // Normalize the input ID (handle both string and numeric formats)
+    const normalizedInputId = String(id).trim();
+    console.log(`Normalized input ID for update: ${normalizedInputId}`);
+
+    // Try direct match first
+    let index = this.exercises.findIndex((ex) => ex.id === normalizedInputId);
+
+    // If not found, try numeric comparison if the ID looks like a number
+    if (index === -1 && /^\d+$/.test(normalizedInputId)) {
+      console.log(
+        `Trying numeric comparison for update ID: ${normalizedInputId}`,
+      );
+      index = this.exercises.findIndex((ex) => {
+        // Normalize stored ID if it's numeric
+        if (/^\d+$/.test(ex.id)) {
+          const normalizedStoredId = String(ex.id).trim();
+          const match = normalizedStoredId === normalizedInputId;
+          if (match) {
+            console.log(
+              `Found match for update with normalized ID comparison: ${ex.id} === ${normalizedInputId}`,
+            );
+          }
+          return match;
+        }
+        return false;
+      });
+    }
 
     if (index === -1) {
       console.error(`Exercise with ID ${id} not found for update operation`);
+      // Debug: list IDs of all exercises to help diagnose the issue
+      const allIds = this.exercises.map((ex) => ex.id);
+      console.log(`Available exercise IDs:`, allIds);
       return null;
     }
 
@@ -1726,17 +1800,55 @@ class ExerciseStore {
     };
 
     this.exercises[index] = updatedExercise;
+    console.log(
+      `ExerciseStore.update: Successfully updated exercise with ID ${id}`,
+    );
     return updatedExercise;
   }
 
   delete(id: string): Exercise | null {
-    const index = this.exercises.findIndex((ex) => ex.id === id);
+    console.log(`ExerciseStore.delete: Deleting exercise with ID ${id}`);
+
+    // Normalize the input ID (handle both string and numeric formats)
+    const normalizedInputId = String(id).trim();
+    console.log(`Normalized input ID for delete: ${normalizedInputId}`);
+
+    // Try direct match first
+    let index = this.exercises.findIndex((ex) => ex.id === normalizedInputId);
+
+    // If not found, try numeric comparison if the ID looks like a number
+    if (index === -1 && /^\d+$/.test(normalizedInputId)) {
+      console.log(
+        `Trying numeric comparison for delete ID: ${normalizedInputId}`,
+      );
+      index = this.exercises.findIndex((ex) => {
+        // Normalize stored ID if it's numeric
+        if (/^\d+$/.test(ex.id)) {
+          const normalizedStoredId = String(ex.id).trim();
+          const match = normalizedStoredId === normalizedInputId;
+          if (match) {
+            console.log(
+              `Found match for delete with normalized ID comparison: ${ex.id} === ${normalizedInputId}`,
+            );
+          }
+          return match;
+        }
+        return false;
+      });
+    }
 
     if (index === -1) {
+      console.error(`Exercise with ID ${id} not found for delete operation`);
+      // Debug: list IDs of all exercises to help diagnose the issue
+      const allIds = this.exercises.map((ex) => ex.id);
+      console.log(`Available exercise IDs:`, allIds);
       return null;
     }
 
     const [deletedExercise] = this.exercises.splice(index, 1);
+    console.log(
+      `ExerciseStore.delete: Successfully deleted exercise with ID ${id}`,
+    );
     return deletedExercise;
   }
 
