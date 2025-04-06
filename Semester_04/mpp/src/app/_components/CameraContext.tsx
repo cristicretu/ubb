@@ -539,7 +539,14 @@ export function CameraProvider({ children }: { children: ReactNode }) {
 
               // Create a more helpful error message
               const errorMessages = Object.entries(fieldErrors)
-                .map(([field, errors]) => `${field}: ${errors.join(", ")}`)
+                .map(([field, errors]) => {
+                  const errorText = Array.isArray(errors)
+                    ? errors.join(", ")
+                    : typeof errors === "string"
+                      ? errors
+                      : "Invalid value";
+                  return `${field}: ${errorText}`;
+                })
                 .join("; ");
 
               throw new Error(`Validation failed: ${errorMessages}`);
@@ -614,7 +621,22 @@ export function CameraProvider({ children }: { children: ReactNode }) {
   const getExerciseById = useCallback(
     (id: string) => {
       const exercisesArray = Array.isArray(exercises) ? exercises : [];
-      return exercisesArray.find((ex) => ex.id === id);
+
+      // First try direct lookup
+      let exercise = exercisesArray.find((ex) => ex.id === id);
+
+      // If that fails, try using normalized ID comparison
+      if (
+        !exercise &&
+        typeof offlineStorage.findExerciseByNormalizedId === "function"
+      ) {
+        exercise = offlineStorage.findExerciseByNormalizedId(
+          exercisesArray,
+          id,
+        );
+      }
+
+      return exercise;
     },
     [exercises],
   );
@@ -647,8 +669,100 @@ export function CameraProvider({ children }: { children: ReactNode }) {
         return;
       }
 
+      // Move variable declarations outside the try block so they're available in the catch block
+      let serverIdToUse = id;
+      let updatedExercise = null;
+
       try {
-        const response = await fetch(`/api/exercises/${id}`, {
+        console.log("Updating exercise:", id, updates);
+        console.log(
+          `[MEZI] updateExercise called with ID: ${id}, Type: ${typeof id}, URL will be: /api/exercises/${id}`,
+        );
+
+        // Get the exercise from local state to help with matching
+        const exerciseToUpdate = getExerciseById(id);
+        if (!exerciseToUpdate) {
+          console.log(
+            `[MEZI] Warning: Cannot find exercise with ID ${id} in local state`,
+          );
+        }
+
+        // Try to find the correct server ID if there's a mismatch
+        let serverExerciseLookupFailed = false;
+
+        // Only do a server lookup if we have a name to match (safer than just ID)
+        if (exerciseToUpdate?.name) {
+          try {
+            console.log(
+              `[MEZI] Looking up exercise on server by name: "${exerciseToUpdate.name}"`,
+            );
+            // Fetch all exercises from the server
+            const serverResponse = await fetch("/api/exercises");
+            if (serverResponse.ok) {
+              const data = await serverResponse.json();
+              const serverExercises = data.exercises || [];
+
+              // Try to find a matching exercise by name (more reliable than ID)
+              const matchingServerExercise = serverExercises.find(
+                (ex: Exercise) => ex.name === exerciseToUpdate.name,
+              );
+
+              if (matchingServerExercise) {
+                console.log(
+                  `[MEZI] Found matching exercise on server with ID: ${matchingServerExercise.id}`,
+                );
+                if (matchingServerExercise.id !== id) {
+                  console.log(
+                    `[MEZI] ID mismatch - Local: ${id}, Server: ${matchingServerExercise.id}`,
+                  );
+                  // Use the server's ID for the API call
+                  serverIdToUse = matchingServerExercise.id;
+                }
+              } else {
+                console.log(
+                  `[MEZI] No matching exercise found on server by name: "${exerciseToUpdate.name}"`,
+                );
+              }
+            } else {
+              console.log(
+                `[MEZI] Server lookup failed with status: ${serverResponse.status}`,
+              );
+              serverExerciseLookupFailed = true;
+            }
+          } catch (lookupError) {
+            console.error(
+              `[MEZI] Error looking up exercise on server:`,
+              lookupError,
+            );
+            serverExerciseLookupFailed = true;
+          }
+        }
+
+        // If our server lookup failed but we found a local ID format that differs
+        if (
+          serverExerciseLookupFailed &&
+          exerciseToUpdate &&
+          exerciseToUpdate.id !== id
+        ) {
+          serverIdToUse = exerciseToUpdate.id;
+          console.log(
+            `[MEZI] Falling back to local ID format: ${serverIdToUse}`,
+          );
+        }
+
+        console.log(`[MEZI] Making API call with ID: ${serverIdToUse}`);
+
+        // Log the exact URL being used
+        const apiUrl = `/api/exercises/${serverIdToUse}`;
+        console.log(`[MEZI] API URL: "${apiUrl}"`);
+
+        // Try to extract any hidden characters or encoding issues
+        console.log(
+          `[MEZI] URL character codes:`,
+          [...apiUrl].map((c) => `${c}:${c.charCodeAt(0)}`),
+        );
+
+        const response = await fetch(apiUrl, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -656,29 +770,56 @@ export function CameraProvider({ children }: { children: ReactNode }) {
           body: JSON.stringify(updates),
         });
 
+        const responseData = await response.json().catch(() => ({
+          error: "Failed to parse response",
+        }));
+        console.log("[MEZI] Update response:", response.status, responseData);
+        console.log("Update response:", response.status, responseData);
+
         if (!response.ok) {
-          const errorData = await response.json().catch(() => null);
-          const errorMessage = errorData?.error || "Failed to update exercise";
+          const errorMessage =
+            responseData?.error || "Failed to update exercise";
           throw new Error(`${errorMessage} (Status: ${response.status})`);
         }
 
-        const updatedExercise = await response.json();
+        // Make sure we have a complete exercise object with all properties
+        updatedExercise = {
+          ...getExerciseById(serverIdToUse),
+          ...responseData,
+          id: serverIdToUse, // Ensure ID is preserved
+        };
+
+        console.log("Updated exercise:", updatedExercise);
+
+        // Update local state
         setExercises((prev) => {
           const prevArray = Array.isArray(prev) ? prev : [];
-          return prevArray.map((ex) => (ex.id === id ? updatedExercise : ex));
+          const normalizedId = String(serverIdToUse).trim();
+          return prevArray.map((ex) => {
+            const normalizedExId = String(ex.id).trim();
+            return normalizedExId === normalizedId ? updatedExercise : ex;
+          });
         });
 
+        // Update offline storage
         const storedExercises = offlineStorage.loadExercisesFromStorage();
-        const updatedExercises = storedExercises.map((ex) =>
-          ex.id === id ? { ...ex, ...updatedExercise } : ex,
-        );
+        const normalizedId = String(serverIdToUse).trim();
+        const updatedExercises = storedExercises.map((ex) => {
+          const normalizedExId = String(ex.id).trim();
+          return normalizedExId === normalizedId
+            ? { ...ex, ...updatedExercise }
+            : ex;
+        });
         offlineStorage.saveExercisesToStorage(updatedExercises);
 
+        // Emit WebSocket event
         if (socket && isConnected) {
+          console.log("Emitting socket update event:", updatedExercise);
           socket.emit("exercise:update", updatedExercise);
         } else {
           try {
-            await fetch("/api/socket-emit", {
+            console.log("Emitting HTTP update event:", updatedExercise);
+            const wsResponse = await fetch("/api/socket-emit", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -688,6 +829,13 @@ export function CameraProvider({ children }: { children: ReactNode }) {
                 data: updatedExercise,
               }),
             });
+
+            if (!wsResponse.ok) {
+              console.error(
+                "WebSocket emit HTTP response error:",
+                await wsResponse.text(),
+              );
+            }
           } catch (wsError) {
             console.error("Failed to emit WebSocket event:", wsError);
           }
@@ -697,33 +845,70 @@ export function CameraProvider({ children }: { children: ReactNode }) {
       } catch (error) {
         console.error("Failed to update exercise:", error);
         toast.error(
-          "Failed to update exercise. Saving locally for later sync.",
+          error instanceof Error
+            ? error.message
+            : "Failed to update exercise. Saving locally for later sync.",
         );
 
+        // Add to pending operations with the correct ID
         offlineStorage.addPendingOperation({
           type: "update",
           entity: "exercise",
-          entityId: id,
+          entityId: serverIdToUse, // Now using the scoped variable
           data: updates,
         });
 
-        const storedExercises = offlineStorage.loadExercisesFromStorage();
-        const updatedExercises = offlineStorage.applyUpdateOperation(
-          storedExercises,
-          id,
-          updates,
-        );
-        offlineStorage.saveExercisesToStorage(updatedExercises);
+        // If the update failed but we got far enough to create the updated exercise object
+        if (updatedExercise) {
+          // Use the updated exercise object for storage
+          const storedExercises = offlineStorage.loadExercisesFromStorage();
+          const normalizedId = String(serverIdToUse).trim();
+          const updatedExercises = storedExercises.map((ex) => {
+            const normalizedExId = String(ex.id).trim();
+            return normalizedExId === normalizedId
+              ? { ...ex, ...updatedExercise }
+              : ex;
+          });
+          offlineStorage.saveExercisesToStorage(updatedExercises);
 
-        setExercises((prev) =>
-          offlineStorage.applyUpdateOperation(prev, id, updates),
-        );
+          setExercises((prev) => {
+            const prevArray = Array.isArray(prev) ? prev : [];
+            return prevArray.map((ex) => {
+              const normalizedExId = String(ex.id).trim();
+              return normalizedExId === normalizedId
+                ? { ...ex, ...updatedExercise }
+                : ex;
+            });
+          });
+        } else {
+          // Fallback to the standard update operation
+          const storedExercises = offlineStorage.loadExercisesFromStorage();
+          // This will use our updated normalized ID comparison in applyUpdateOperation
+          const updatedExercises = offlineStorage.applyUpdateOperation(
+            storedExercises,
+            serverIdToUse,
+            updates,
+          );
+          offlineStorage.saveExercisesToStorage(updatedExercises);
+
+          // Apply the same update to the state
+          setExercises((prev) =>
+            offlineStorage.applyUpdateOperation(prev, serverIdToUse, updates),
+          );
+        }
+
         setPendingOperationsCount((prev) => prev + 1);
-
         setTimeout(() => notifyExerciseChange(), 50);
       }
     },
-    [isOnline, isServerAvailable, notifyExerciseChange, socket, isConnected],
+    [
+      isOnline,
+      isServerAvailable,
+      notifyExerciseChange,
+      socket,
+      isConnected,
+      getExerciseById,
+    ],
   );
 
   const deleteExercise = useCallback(
@@ -752,31 +937,48 @@ export function CameraProvider({ children }: { children: ReactNode }) {
 
       try {
         const exerciseToDelete = getExerciseById(id);
+        console.log("Deleting exercise:", id, exerciseToDelete?.name);
 
         const response = await fetch(`/api/exercises/${id}`, {
           method: "DELETE",
         });
 
+        const responseData = await response.json().catch(() => ({
+          error: "Failed to parse response",
+        }));
+        console.log("Delete response:", response.status, responseData);
+
         if (!response.ok) {
-          throw new Error("Failed to delete exercise");
+          const errorMessage =
+            responseData?.error || "Failed to delete exercise";
+          throw new Error(`${errorMessage} (Status: ${response.status})`);
         }
 
-        const deletedExercise = await response.json();
-
+        // Update local state
         setExercises((prev) => {
           const prevArray = Array.isArray(prev) ? prev : [];
           return prevArray.filter((ex) => ex.id !== id);
         });
 
+        // Update offline storage
         const storedExercises = offlineStorage.loadExercisesFromStorage();
         const updatedExercises = storedExercises.filter((ex) => ex.id !== id);
         offlineStorage.saveExercisesToStorage(updatedExercises);
 
+        // Emit WebSocket event
         if (socket && isConnected) {
+          console.log("Emitting socket delete event:", {
+            id,
+            name: exerciseToDelete?.name,
+          });
           socket.emit("exercise:delete", { id, name: exerciseToDelete?.name });
         } else {
           try {
-            await fetch("/api/socket-emit", {
+            console.log("Emitting HTTP delete event:", {
+              id,
+              name: exerciseToDelete?.name,
+            });
+            const wsResponse = await fetch("/api/socket-emit", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -786,15 +988,46 @@ export function CameraProvider({ children }: { children: ReactNode }) {
                 data: { id, name: exerciseToDelete?.name },
               }),
             });
+
+            if (!wsResponse.ok) {
+              console.error(
+                "WebSocket emit HTTP response error:",
+                await wsResponse.text(),
+              );
+            }
           } catch (wsError) {
             console.error("Failed to emit WebSocket event:", wsError);
           }
         }
 
         setTimeout(() => notifyExerciseChange(), 50);
+        toast.success("Exercise deleted successfully");
       } catch (error) {
         console.error("Failed to delete exercise:", error);
-        toast.error("Failed to delete exercise");
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Failed to delete exercise. Will try again when online.",
+        );
+
+        // Add to pending operations
+        offlineStorage.addPendingOperation({
+          type: "delete",
+          entity: "exercise",
+          entityId: id,
+        });
+
+        const storedExercises = offlineStorage.loadExercisesFromStorage();
+        const updatedExercises = offlineStorage.applyDeleteOperation(
+          storedExercises,
+          id,
+        );
+        offlineStorage.saveExercisesToStorage(updatedExercises);
+
+        setExercises((prev) => offlineStorage.applyDeleteOperation(prev, id));
+        setPendingOperationsCount((prev) => prev + 1);
+
+        setTimeout(() => notifyExerciseChange(), 50);
       }
     },
     [

@@ -27,6 +27,16 @@ export default function ExerciseForm({
   );
   const [isSaving, setIsSaving] = useState(false);
 
+  useEffect(() => {
+    // Debug logging for the initialData
+    if (initialData?.id) {
+      console.log(
+        `ExerciseForm initialized with ID: ${initialData.id}`,
+        initialData,
+      );
+    }
+  }, [initialData]);
+
   const validateName = (value: string) => {
     if (!value.trim()) {
       setNameError("Exercise name cannot be empty");
@@ -60,82 +70,102 @@ export default function ExerciseForm({
     setIsSaving(true);
 
     try {
-      // Make sure the videoUrl is a valid URL
-      let validVideoUrl = videoUrl;
-
-      console.log("Processing video URL:", videoUrl);
-
-      // Check if we have a URL at all
       if (!videoUrl || typeof videoUrl !== "string") {
-        toast.error("Invalid video URL: URL must be a string");
-        setIsSaving(false);
-        return;
+        throw new Error("Video URL is required");
       }
 
-      // Only check for blob URLs that haven't been uploaded yet
-      if (
-        (videoUrl.startsWith("blob:") || videoUrl.startsWith("data:")) &&
-        !videoUrl.includes("/uploads/") &&
-        !videoUrl.includes("http")
-      ) {
-        // This appears to be an unprocessed blob URL
-        console.log("Blob URL detected that hasn't been uploaded:", videoUrl);
-        toast.error(
-          "Cannot save blob URLs directly. Please upload the video first.",
+      if (videoUrl.startsWith("blob:") && !videoUrl.includes("uploaded")) {
+        throw new Error(
+          "Please wait for the video to finish uploading before saving",
         );
-        setIsSaving(false);
-        return;
       }
 
+      let finalVideoUrl = videoUrl;
       try {
-        // Try to create a proper URL object to validate it
-        if (videoUrl.startsWith("http")) {
-          // It's already an absolute URL, validate it
-          const urlObj = new URL(videoUrl);
-          validVideoUrl = urlObj.toString(); // Normalized URL
-          console.log("Using absolute URL:", validVideoUrl);
+        // Validate and normalize the URL
+        if (finalVideoUrl.startsWith("http")) {
+          // This is already an absolute URL, just validate it
+          new URL(finalVideoUrl);
         } else {
-          // It's a relative URL, convert to absolute
-          const urlObj = new URL(videoUrl, window.location.origin);
-          validVideoUrl = urlObj.toString();
-          console.log("Converted relative URL to absolute:", validVideoUrl);
+          // This is a relative URL, convert to absolute
+          finalVideoUrl = new URL(
+            finalVideoUrl,
+            window.location.origin,
+          ).toString();
         }
-      } catch (error) {
-        console.error("URL validation error:", error);
-        toast.error(
-          `Invalid video URL: ${error instanceof Error ? error.message : "Unknown error"}`,
-        );
-        setIsSaving(false);
-        return;
+      } catch (urlError) {
+        console.error("Invalid URL:", urlError, videoUrl);
+        throw new Error(`Invalid video URL: ${videoUrl}`);
       }
 
-      console.log("Submitting exercise with video URL:", validVideoUrl);
+      const currentDate = new Date().toISOString();
 
       if (initialData?.id) {
-        await updateExercise(initialData.id, {
+        const exerciseId = initialData.id.toString();
+        console.log(
+          `[MEZI] Updating exercise with ID format check: ${exerciseId}, Type: ${typeof initialData.id}, Raw value: ${initialData.id}`,
+        );
+
+        // Check the format of the ID
+        let formattedId = exerciseId;
+
+        // If it's a numeric ID, ensure it's a clean string without any hidden whitespace
+        if (/^\d+$/.test(exerciseId)) {
+          formattedId = exerciseId.trim();
+          console.log(
+            `[MEZI] Using cleaned numeric ID for API call: ${formattedId}`,
+          );
+        }
+
+        console.log(`Updating exercise with ID: ${formattedId}`, {
           name,
+          videoUrl: finalVideoUrl,
           form,
+          date: currentDate,
+          duration,
         });
-        toast.success(`Exercise "${name}" updated successfully`);
+
+        try {
+          await updateExercise(formattedId, {
+            name,
+            videoUrl: finalVideoUrl,
+            form,
+            date: currentDate,
+            duration,
+          });
+          toast.success(`Exercise "${name}" updated successfully`);
+          onSave();
+        } catch (updateError) {
+          console.error(
+            `Failed to update exercise with ID ${formattedId}:`,
+            updateError,
+          );
+          throw updateError;
+        }
       } else {
+        console.log(`Creating new exercise:`, {
+          name,
+          videoUrl: finalVideoUrl,
+          form,
+          date: currentDate,
+          duration,
+        });
+
         await addExercise({
           name,
-          videoUrl: validVideoUrl,
+          videoUrl: finalVideoUrl,
           form,
-          date: new Date().toISOString(),
+          date: currentDate,
           duration,
         });
         toast.success(`Exercise "${name}" saved successfully`);
+        onSave();
       }
-
-      onSave();
     } catch (error) {
       console.error("Error saving exercise:", error);
-      let errorMessage = "Failed to save exercise. Please try again.";
-      if (error instanceof Error) {
-        errorMessage = error.message || errorMessage;
-      }
-      toast.error(errorMessage);
+      toast.error(
+        error instanceof Error ? error.message : "Failed to save exercise",
+      );
     } finally {
       setIsSaving(false);
     }
