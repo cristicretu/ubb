@@ -76,7 +76,7 @@ const CameraContext = createContext<CameraContextType | undefined>(undefined);
 
 export function CameraProvider({ children }: { children: ReactNode }) {
   const { isOnline, isServerAvailable } = useNetwork();
-  const { lastEvent } = useWebSocket();
+  const { lastEvent, socket, isConnected } = useWebSocket();
   const [settings, setSettings] = useState<CameraSettings>(defaultSettings);
   const [recordedVideos, setRecordedVideos] = useState<string[]>([]);
   const [exercises, setExercises] = useState<Exercise[]>([]);
@@ -467,22 +467,31 @@ export function CameraProvider({ children }: { children: ReactNode }) {
 
   const addExercise = useCallback(
     async (exercise: Omit<Exercise, "id">) => {
+      let validExercise = { ...exercise };
+
+      if (!validExercise.videoUrl.startsWith("http")) {
+        validExercise.videoUrl = new URL(
+          validExercise.videoUrl,
+          window.location.origin,
+        ).toString();
+      }
+
       if (!isOnline || !isServerAvailable) {
         offlineStorage.addPendingOperation({
           type: "create",
           entity: "exercise",
-          data: exercise,
+          data: validExercise,
         });
 
         const storedExercises = offlineStorage.loadExercisesFromStorage();
         const updatedExercises = offlineStorage.applyCreateOperation(
           storedExercises,
-          exercise,
+          validExercise,
         );
         offlineStorage.saveExercisesToStorage(updatedExercises);
 
         setExercises((prev) =>
-          offlineStorage.applyCreateOperation(prev, exercise),
+          offlineStorage.applyCreateOperation(prev, validExercise),
         );
         setPendingOperationsCount((prev) => prev + 1);
 
@@ -492,19 +501,55 @@ export function CameraProvider({ children }: { children: ReactNode }) {
       }
 
       try {
+        console.log(
+          "Sending exercise to API:",
+          JSON.stringify(validExercise, null, 2),
+        );
         const response = await fetch("/api/exercises", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(exercise),
+          body: JSON.stringify(validExercise),
         });
 
-        if (!response.ok) {
-          throw new Error("Failed to create exercise");
+        let responseData;
+        try {
+          responseData = await response.json();
+        } catch (jsonError) {
+          console.error("Failed to parse API response:", jsonError);
+          responseData = { error: "Invalid response from server" };
         }
 
-        const newExercise = await response.json();
+        console.log("API response:", response.status, responseData);
+
+        if (!response.ok) {
+          // Extract validation error details
+          if (responseData?.details) {
+            console.error("Validation errors:", responseData.details);
+
+            // Check for specific validation errors
+            if (responseData.details.fieldErrors) {
+              const fieldErrors = responseData.details.fieldErrors;
+
+              // Log each field error
+              Object.entries(fieldErrors).forEach(([field, errors]) => {
+                console.error(`Field '${field}' errors:`, errors);
+              });
+
+              // Create a more helpful error message
+              const errorMessages = Object.entries(fieldErrors)
+                .map(([field, errors]) => `${field}: ${errors.join(", ")}`)
+                .join("; ");
+
+              throw new Error(`Validation failed: ${errorMessages}`);
+            }
+          }
+
+          throw new Error(responseData?.error || "Failed to create exercise");
+        }
+
+        const newExercise = responseData;
         setExercises((prev) => {
           const prevArray = Array.isArray(prev) ? prev : [];
           return [newExercise, ...prevArray];
@@ -514,33 +559,64 @@ export function CameraProvider({ children }: { children: ReactNode }) {
         const updatedExercises = [newExercise, ...storedExercises];
         offlineStorage.saveExercisesToStorage(updatedExercises);
 
+        if (socket && isConnected) {
+          socket.emit("exercise:create", newExercise);
+        } else {
+          try {
+            await fetch("/api/socket-emit", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                event: "exercise:created",
+                data: newExercise,
+              }),
+            });
+          } catch (wsError) {
+            console.error("Failed to emit WebSocket event:", wsError);
+          }
+        }
+
         setTimeout(() => notifyExerciseChange(), 50);
       } catch (error) {
         console.error("Failed to add exercise:", error);
-        toast.error("Failed to add exercise. Saving locally for later sync.");
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Failed to add exercise. Saving locally for later sync.",
+        );
 
         offlineStorage.addPendingOperation({
           type: "create",
           entity: "exercise",
-          data: exercise,
+          data: validExercise,
         });
 
         const storedExercises = offlineStorage.loadExercisesFromStorage();
         const updatedExercises = offlineStorage.applyCreateOperation(
           storedExercises,
-          exercise,
+          validExercise,
         );
         offlineStorage.saveExercisesToStorage(updatedExercises);
 
         setExercises((prev) =>
-          offlineStorage.applyCreateOperation(prev, exercise),
+          offlineStorage.applyCreateOperation(prev, validExercise),
         );
         setPendingOperationsCount((prev) => prev + 1);
 
         setTimeout(() => notifyExerciseChange(), 50);
       }
     },
-    [isOnline, isServerAvailable, notifyExerciseChange],
+    [isOnline, isServerAvailable, notifyExerciseChange, socket, isConnected],
+  );
+
+  const getExerciseById = useCallback(
+    (id: string) => {
+      const exercisesArray = Array.isArray(exercises) ? exercises : [];
+      return exercisesArray.find((ex) => ex.id === id);
+    },
+    [exercises],
   );
 
   const updateExercise = useCallback(
@@ -598,6 +674,25 @@ export function CameraProvider({ children }: { children: ReactNode }) {
         );
         offlineStorage.saveExercisesToStorage(updatedExercises);
 
+        if (socket && isConnected) {
+          socket.emit("exercise:update", updatedExercise);
+        } else {
+          try {
+            await fetch("/api/socket-emit", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                event: "exercise:updated",
+                data: updatedExercise,
+              }),
+            });
+          } catch (wsError) {
+            console.error("Failed to emit WebSocket event:", wsError);
+          }
+        }
+
         setTimeout(() => notifyExerciseChange(), 50);
       } catch (error) {
         console.error("Failed to update exercise:", error);
@@ -628,7 +723,7 @@ export function CameraProvider({ children }: { children: ReactNode }) {
         setTimeout(() => notifyExerciseChange(), 50);
       }
     },
-    [isOnline, isServerAvailable, notifyExerciseChange],
+    [isOnline, isServerAvailable, notifyExerciseChange, socket, isConnected],
   );
 
   const deleteExercise = useCallback(
@@ -656,6 +751,8 @@ export function CameraProvider({ children }: { children: ReactNode }) {
       }
 
       try {
+        const exerciseToDelete = getExerciseById(id);
+
         const response = await fetch(`/api/exercises/${id}`, {
           method: "DELETE",
         });
@@ -663,6 +760,8 @@ export function CameraProvider({ children }: { children: ReactNode }) {
         if (!response.ok) {
           throw new Error("Failed to delete exercise");
         }
+
+        const deletedExercise = await response.json();
 
         setExercises((prev) => {
           const prevArray = Array.isArray(prev) ? prev : [];
@@ -673,39 +772,39 @@ export function CameraProvider({ children }: { children: ReactNode }) {
         const updatedExercises = storedExercises.filter((ex) => ex.id !== id);
         offlineStorage.saveExercisesToStorage(updatedExercises);
 
+        if (socket && isConnected) {
+          socket.emit("exercise:delete", { id, name: exerciseToDelete?.name });
+        } else {
+          try {
+            await fetch("/api/socket-emit", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                event: "exercise:deleted",
+                data: { id, name: exerciseToDelete?.name },
+              }),
+            });
+          } catch (wsError) {
+            console.error("Failed to emit WebSocket event:", wsError);
+          }
+        }
+
         setTimeout(() => notifyExerciseChange(), 50);
       } catch (error) {
         console.error("Failed to delete exercise:", error);
-        toast.error("Failed to delete exercise. Saving action for later sync.");
-
-        offlineStorage.addPendingOperation({
-          type: "delete",
-          entity: "exercise",
-          entityId: id,
-        });
-
-        const storedExercises = offlineStorage.loadExercisesFromStorage();
-        const updatedExercises = offlineStorage.applyDeleteOperation(
-          storedExercises,
-          id,
-        );
-        offlineStorage.saveExercisesToStorage(updatedExercises);
-
-        setExercises((prev) => offlineStorage.applyDeleteOperation(prev, id));
-        setPendingOperationsCount((prev) => prev + 1);
-
-        setTimeout(() => notifyExerciseChange(), 50);
+        toast.error("Failed to delete exercise");
       }
     },
-    [isOnline, isServerAvailable, notifyExerciseChange],
-  );
-
-  const getExerciseById = useCallback(
-    (id: string) => {
-      const exercisesArray = Array.isArray(exercises) ? exercises : [];
-      return exercisesArray.find((ex) => ex.id === id);
-    },
-    [exercises],
+    [
+      isOnline,
+      isServerAvailable,
+      getExerciseById,
+      notifyExerciseChange,
+      socket,
+      isConnected,
+    ],
   );
 
   const addEventListener = useCallback(

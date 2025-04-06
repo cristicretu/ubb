@@ -113,11 +113,84 @@ export default function CameraTest() {
     }
   };
 
-  const handleRecordingComplete = (blob: Blob) => {
+  const handleRecordingComplete = async (blob: Blob) => {
     const videoUrl = URL.createObjectURL(blob);
     setCurrentVideoUrl(videoUrl);
-    addRecordedVideo(videoUrl);
-    setShowExerciseForm(true);
+
+    try {
+      const formData = new FormData();
+      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+      const filename = `recording-${timestamp}.webm`;
+      const file = new File([blob], filename, {
+        type: blob.type || "video/webm",
+      });
+      formData.append("file", file);
+
+      console.log("Recording blob details:", {
+        type: blob.type,
+        size: blob.size,
+        filename,
+      });
+
+      toast.loading("Saving recording...", { id: "save-recording" });
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text().catch(() => "Unknown error");
+        throw new Error(
+          `Upload failed with status: ${response.status} - ${errorText}`,
+        );
+      }
+
+      let data;
+      try {
+        data = await response.json();
+        console.log("Upload response:", data);
+      } catch (error) {
+        console.error("Failed to parse upload response:", error);
+        throw new Error("Invalid server response");
+      }
+
+      if (data.success && data.fileUrl) {
+        toast.success("Recording saved to server", { id: "save-recording" });
+
+        // Use the absolute URL from the server directly
+        let serverVideoUrl = data.fileUrl;
+
+        // Debug additional info about the URL
+        console.log("Server video URL details:", {
+          url: serverVideoUrl,
+          origin: window.location.origin,
+          isAbsolute: serverVideoUrl.startsWith("http"),
+          urlObj: serverVideoUrl.startsWith("http")
+            ? new URL(serverVideoUrl)
+            : null,
+        });
+
+        console.log("Final video URL for exercise:", serverVideoUrl);
+
+        URL.revokeObjectURL(videoUrl);
+
+        setCurrentVideoUrl(serverVideoUrl);
+
+        addRecordedVideo(serverVideoUrl);
+        setShowExerciseForm(true);
+      } else {
+        throw new Error(data.error || "Upload failed - no file URL returned");
+      }
+    } catch (error) {
+      console.error("Error saving recording:", error);
+      toast.error(
+        `Failed to save recording to server: ${error instanceof Error ? error.message : "Unknown error"}`,
+        { id: "save-recording" },
+      );
+      addRecordedVideo(videoUrl);
+      setShowExerciseForm(true);
+    }
   };
 
   const formatDuration = (seconds: number): string => {

@@ -37,17 +37,17 @@ export default function SocketHandler(
 
     socket.on("exercise:create", (data) => {
       console.log("Exercise created:", data);
-      socket.broadcast.emit("exercise:created", data);
+      io.emit("exercise:created", data);
     });
 
     socket.on("exercise:update", (data) => {
       console.log("Exercise updated:", data);
-      socket.broadcast.emit("exercise:updated", data);
+      io.emit("exercise:updated", data);
     });
 
     socket.on("exercise:delete", (data) => {
       console.log("Exercise deleted:", data);
-      socket.broadcast.emit("exercise:deleted", data);
+      io.emit("exercise:deleted", data);
     });
   });
 
