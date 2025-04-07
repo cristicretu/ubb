@@ -26,6 +26,7 @@ import {
 } from "~/components/ui/dialog";
 import { Toaster } from "~/components/ui/sonner";
 import { toast } from "sonner";
+import { useNetwork } from "./NetworkContext";
 
 export default function CameraTest() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -42,6 +43,7 @@ export default function CameraTest() {
   const [showExerciseForm, setShowExerciseForm] = useState(false);
   const [currentVideoUrl, setCurrentVideoUrl] = useState<string | null>(null);
   const [showUploadMode, setShowUploadMode] = useState(false);
+  const { isOnline, isServerAvailable } = useNetwork();
 
   const [chartKey, setChartKey] = useState(0);
 
@@ -114,8 +116,18 @@ export default function CameraTest() {
   };
 
   const handleRecordingComplete = async (blob: Blob) => {
-    const videoUrl = URL.createObjectURL(blob);
+    // Create blob URL with special marker for offline saving
+    const videoUrl = URL.createObjectURL(blob) + "#offline";
     setCurrentVideoUrl(videoUrl);
+
+    if (!isOnline || !isServerAvailable) {
+      console.log("Network unavailable, saving recording locally");
+      toast.success("Recording saved locally", { id: "save-recording" });
+
+      addRecordedVideo(videoUrl);
+      setShowExerciseForm(true);
+      return;
+    }
 
     try {
       const formData = new FormData();
@@ -188,6 +200,8 @@ export default function CameraTest() {
         `Failed to save recording to server: ${error instanceof Error ? error.message : "Unknown error"}`,
         { id: "save-recording" },
       );
+
+      // Fall back to local storage on error
       addRecordedVideo(videoUrl);
       setShowExerciseForm(true);
     }

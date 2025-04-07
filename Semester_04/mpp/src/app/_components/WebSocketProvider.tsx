@@ -35,13 +35,10 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
     let socketInstance: Socket | null = null;
     let initializationTimeout: NodeJS.Timeout | null = null;
 
-    // First, ensure the Socket.io server is initialized
     const initSocket = async () => {
       try {
-        // Call the API route to initialize the Socket.io server
         await fetch("/api/socket");
 
-        // Then create the socket connection with more robust options
         socketInstance = io({
           path: "/api/socket",
           reconnection: true,
@@ -49,14 +46,14 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
           reconnectionDelay: 1000,
           timeout: 20000,
           autoConnect: true,
-          forceNew: connectionAttempts > 2, // Force new connection after multiple attempts
-          transports: ["polling", "websocket"], // Start with polling, upgrade to websocket
+          forceNew: connectionAttempts > 2,
+          transports: ["polling", "websocket"],
         });
 
         socketInstance.on("connect", () => {
           console.log("Socket connected:", socketInstance?.id);
           setIsConnected(true);
-          // Only show toast on first successful connection or after a disconnect
+
           if (!wasConnectedRef.current) {
             toast.success("Real-time connection established");
             wasConnectedRef.current = true;
@@ -72,25 +69,22 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
 
         socketInstance.on("connect_error", (err) => {
           console.error("Socket connection error:", err);
-          // Only show the toast error once, not for every retry
+
           if (wasConnectedRef.current) {
             toast.error("Failed to connect to real-time service");
             wasConnectedRef.current = false;
           }
           setIsConnected(false);
 
-          // After multiple failures, try to recreate the socket
           if (connectionAttempts > 3 && socketInstance) {
             socketInstance.close();
 
-            // Try again after a delay
             initializationTimeout = setTimeout(() => {
               setConnectionAttempts((prev) => prev + 1);
             }, 5000);
           }
         });
 
-        // Listen for exercise events
         socketInstance.on("exercise:created", (data) => {
           console.log("New exercise created:", data);
           setLastEvent({ name: "exercise:created", data });
@@ -110,12 +104,11 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
         setSocket(socketInstance);
       } catch (error) {
         console.error("Failed to initialize socket:", error);
-        // Don't show a toast on every retry
+
         if (connectionAttempts === 0) {
           toast.error("Failed to initialize real-time service");
         }
 
-        // Try again after a delay
         initializationTimeout = setTimeout(() => {
           setConnectionAttempts((prev) => prev + 1);
         }, 5000);
@@ -124,7 +117,6 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
 
     initSocket();
 
-    // Clean up on unmount
     return () => {
       if (socketInstance) {
         socketInstance.disconnect();
@@ -133,7 +125,7 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
         clearTimeout(initializationTimeout);
       }
     };
-  }, [connectionAttempts]); // Removed isConnected from dependencies
+  }, [connectionAttempts]);
 
   return (
     <WebSocketContext.Provider value={{ socket, isConnected, lastEvent }}>

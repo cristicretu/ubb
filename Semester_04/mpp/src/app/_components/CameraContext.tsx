@@ -469,6 +469,7 @@ export function CameraProvider({ children }: { children: ReactNode }) {
     async (exercise: Omit<Exercise, "id">) => {
       let validExercise = { ...exercise };
 
+      // Ensure we have a valid video URL format
       if (!validExercise.videoUrl.startsWith("http")) {
         validExercise.videoUrl = new URL(
           validExercise.videoUrl,
@@ -476,27 +477,40 @@ export function CameraProvider({ children }: { children: ReactNode }) {
         ).toString();
       }
 
+      // If offline, just store locally without attempting upload
       if (!isOnline || !isServerAvailable) {
-        offlineStorage.addPendingOperation({
-          type: "create",
-          entity: "exercise",
-          data: validExercise,
-        });
+        // Save video URL to local storage first
+        try {
+          // You might need to store actual video data separately if needed
+          console.log(
+            "Saving exercise with video URL locally:",
+            validExercise.videoUrl,
+          );
 
-        const storedExercises = offlineStorage.loadExercisesFromStorage();
-        const updatedExercises = offlineStorage.applyCreateOperation(
-          storedExercises,
-          validExercise,
-        );
-        offlineStorage.saveExercisesToStorage(updatedExercises);
+          offlineStorage.addPendingOperation({
+            type: "create",
+            entity: "exercise",
+            data: validExercise,
+          });
 
-        setExercises((prev) =>
-          offlineStorage.applyCreateOperation(prev, validExercise),
-        );
-        setPendingOperationsCount((prev) => prev + 1);
+          const storedExercises = offlineStorage.loadExercisesFromStorage();
+          const updatedExercises = offlineStorage.applyCreateOperation(
+            storedExercises,
+            validExercise,
+          );
+          offlineStorage.saveExercisesToStorage(updatedExercises);
 
-        toast.success("Exercise saved locally. Will sync when online.");
-        setTimeout(() => notifyExerciseChange(), 50);
+          setExercises((prev) =>
+            offlineStorage.applyCreateOperation(prev, validExercise),
+          );
+          setPendingOperationsCount((prev) => prev + 1);
+
+          toast.success("Exercise saved locally. Will sync when online.");
+          setTimeout(() => notifyExerciseChange(), 50);
+        } catch (error) {
+          console.error("Failed to save exercise locally:", error);
+          toast.error("Failed to save exercise locally.");
+        }
         return;
       }
 
@@ -671,7 +685,7 @@ export function CameraProvider({ children }: { children: ReactNode }) {
 
       // Move variable declarations outside the try block so they're available in the catch block
       let serverIdToUse = id;
-      let updatedExercise = null;
+      let updatedExercise: Exercise | null = null;
 
       try {
         console.log("Updating exercise:", id, updates);
@@ -797,7 +811,9 @@ export function CameraProvider({ children }: { children: ReactNode }) {
           const normalizedId = String(serverIdToUse).trim();
           return prevArray.map((ex) => {
             const normalizedExId = String(ex.id).trim();
-            return normalizedExId === normalizedId ? updatedExercise : ex;
+            return normalizedExId === normalizedId
+              ? (updatedExercise as Exercise)
+              : ex;
           });
         });
 
