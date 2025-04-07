@@ -36,7 +36,6 @@ export default function FileUpload({
     const file = files[0];
     if (!file) return;
 
-    // Validate file size
     if (file.size > maxFileSize) {
       setError(
         `File is too large. Maximum size is ${maxFileSize / (1024 * 1024)}MB`,
@@ -47,13 +46,11 @@ export default function FileUpload({
       return;
     }
 
-    // Reset state
     setError(null);
     setUploading(true);
     setProgress(0);
 
     try {
-      // Check if we should use chunked upload
       if (isLargeFile(file)) {
         await uploadLargeFile(file);
       } else {
@@ -65,7 +62,6 @@ export default function FileUpload({
       toast.error("Failed to upload file. Please try again.");
     } finally {
       setUploading(false);
-      // Reset the file input
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }

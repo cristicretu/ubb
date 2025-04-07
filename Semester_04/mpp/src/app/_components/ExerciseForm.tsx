@@ -74,7 +74,14 @@ export default function ExerciseForm({
         throw new Error("Video URL is required");
       }
 
-      if (videoUrl.startsWith("blob:") && !videoUrl.includes("uploaded")) {
+      const isOffline = !window.navigator.onLine;
+
+      if (
+        videoUrl.startsWith("blob:") &&
+        !videoUrl.includes("uploaded") &&
+        !videoUrl.includes("#offline") &&
+        !isOffline
+      ) {
         throw new Error(
           "Please wait for the video to finish uploading before saving",
         );
