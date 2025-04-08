@@ -81,11 +81,18 @@
 
       $("#complete-payment-button").click(function () {
         let modalValues = "";
+
         $("#modal input").each(function () {
           modalValues += $(this).val() + " ";
         });
 
-        $("#payment-details textarea").val(modalValues.trim());
+        if (modalValues.trim() === "") {
+          alert("Please fill in all fields");
+          return;
+        } else {
+          $("#payment-details textarea").val(modalValues.trim());
+        }
+
         $("#payment-details textarea").prop("disabled", true);
         $("#payment-details").show();
 
