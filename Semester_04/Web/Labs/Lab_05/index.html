@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Porsche History" />
+    <title>Porsche History</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+  <script>
+    // Solve the following task using only the jQuery library
+    //  (production version, jquery.min.js, or developement version
+    //  , jquery.js); YOU ARE NOT ALLOWED TO USE ANY OTHER JS LIBRARY,
+    //   PLUGIN OR EXTENSION BESIDES THE JQUERY LIBRARY. Write a web page
+    //    which contains a form with at least 5 input fields and a button.
+    //    If the user clicks on that button a modal interface window (actually a div)
+    //     should pop out in the center of the browser window. This
+    //     modal window should contain 4 input fields and a button.
+    //     If the user clicks on that button, the modal window disappears
+    //     and all the values inserted by the user in the modal window's
+    //      input fields will be concatenated and added to a text field
+    //      in the main form. During the time the modal window is displayed,
+    //      the fields from the main form will be inactive and a transparrent
+    //      gray div should be displayed on top of the web page (this grey div
+    //      should be beneath the modal window and should occupy the whole
+    //      browser window).
+
+    $(document).ready(function () {
+      $("#modal").hide();
+      $("#overlay").hide();
+      $("#payment-details").hide();
+
+      let isModalOpen = false;
+
+      function toggleModal() {
+        $("#modal").fadeToggle(300);
+        $("#overlay").fadeToggle(300);
+        isModalOpen = !isModalOpen;
+
+        if (isModalOpen) {
+          console.log("modal is open");
+          $("form input").prop("disabled", true);
+          $("form input").addClass("disabled:opacity-50");
+        } else {
+          console.log("modal is closed");
+          $("form input").prop("disabled", false);
+          $("form input").removeClass("disabled:opacity-50");
+        }
+      }
+
+      function validateForm() {
+        let isValid = true;
+        $("form input").each(function () {
+          if ($(this).val() === "") {
+            isValid = false;
+          }
+        });
+
+        return isValid;
+      }
+
+      $("#payment-button").click(function (event) {
+        event.preventDefault();
+        let errorMessage = "";
+        if (validateForm() || true) {
+          toggleModal();
+        } else {
+          alert("Please fill in all fields");
+        }
+      });
+
+      $("#cancel-button").click(function () {
+        toggleModal();
+      });
+
+      $("#overlay").click(function () {
+        toggleModal();
+      });
+
+      $("#complete-payment-button").click(function () {
+        let modalValues = "";
+        $("#modal input").each(function () {
+          modalValues += $(this).val() + " ";
+        });
+
+        $("#payment-details textarea").val(modalValues.trim());
+        $("#payment-details textarea").prop("disabled", true);
+        $("#payment-details").show();
+
+        toggleModal();
+
+        $("#payment-button").prop("disabled", true);
+        $("#payment-button").addClass("opacity-50");
+      });
+    });
+  </script>
+
+  <body class="bg-gray-50 p-6 font-sans">
+    <div
+      id="overlay"
+      class="bg-black/90 absolute inset-0 flex items-center justify-center z-10"
+    ></div>
+
+    <div
+      id="modal"
+      class="bg-neutral-100 rounded-md border border-neutral-200 flex flex-col gap-8 z-50 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+    >
+      <div class="flex flex-col gap-4 px-6 py-4">
+        <h2 class="text-xl font-semibold">Secure Payment</h2>
+        <p class="text-neutral-500 mb-4">
+          Please enter your payment details to secure your Porsche reservation.
+        </p>
+
+        <div class="flex flex-col gap-2">
+          <p class="text-neutral-500">Cardholder Name</p>
+          <input
+            id="cardholder-name"
+            type="text"
+            class="w-full rounded-md border border-neutral-200 p-2"
+            placeholder="Name as it appears on card"
+          />
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <p class="text-neutral-500">Card Number</p>
+          <input
+            id="card-number"
+            type="text"
+            class="w-full rounded-md border border-neutral-200 p-2"
+            placeholder="XXXX XXXX XXXX XXXX"
+          />
+        </div>
+
+        <div class="flex gap-4">
+          <div class="flex flex-col gap-2 w-1/2">
+            <p class="text-neutral-500">Expiration Date</p>
+            <input
+              id="expiration-date"
+              type="text"
+              class="w-full rounded-md border border-neutral-200 p-2"
+              placeholder="MM/YY"
+            />
+          </div>
+          <div class="flex flex-col gap-2 w-1/2">
+            <p class="text-neutral-500">Security Code (CVV)</p>
+            <input
+              id="security-code"
+              type="text"
+              class="w-full rounded-md border border-neutral-200 p-2"
+              placeholder="XXX"
+            />
+          </div>
+        </div>
+
+        <div class="flex justify-between mt-4">
+          <button
+            id="cancel-button"
+            class="bg-white border border-neutral-300 px-4 py-2 rounded-md"
+          >
+            Cancel
+          </button>
+          <button
+            id="complete-payment-button"
+            class="bg-black text-white px-4 py-2 rounded-md"
+          >
+            Complete Payment
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="max-w-3xl mx-auto">
+      <form
+        class="bg-neutral-100 rounded-md border border-neutral-200 flex flex-col gap-8"
+      >
+        <div
+          class="p-6 bg-neutral-900 text-neutral-100 overflow-hidden rounded-t-md"
+        >
+          <h1 class="text-2xl font-bold">Porsche Reservation Form</h1>
+          <p class="text-neutral-400">
+            Reserve your dream Porsche with a deposit today
+          </p>
+        </div>
+        <div class="flex flex-col gap-4 px-6">
+          <div class="flex flex-col gap-2">
+            <p class="text-neutral-500">Full Name</p>
+            <input
+              id="full-name"
+              type="text"
+              class="w-full rounded-md border border-neutral-200 p-2 disabled:opacity-50"
+              placeholder="John Doe"
+            />
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <p class="text-neutral-500">Email</p>
+            <input
+              id="email"
+              type="email"
+              class="w-full rounded-md border border-neutral-200 p-2 disabled:opacity-50"
+              placeholder="john.doe@example.com"
+            />
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <p class="text-neutral-500">Phone</p>
+            <input
+              id="phone"
+              type="tel"
+              class="w-full rounded-md border border-neutral-200 p-2 disabled:opacity-50"
+              placeholder="123-456-7890"
+            />
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <p class="text-neutral-500">Porsche Model</p>
+            <input
+              id="porsche-model"
+              type="text"
+              class="w-full rounded-md border border-neutral-200 p-2 disabled:opacity-50"
+              placeholder="911"
+            />
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <p class="text-neutral-500">Preferred Dealership</p>
+            <input
+              id="preferred-dealership"
+              type="text"
+              class="w-full rounded-md border border-neutral-200 p-2 disabled:opacity-50"
+              placeholder="Porsche of Beverly Hills"
+            />
+          </div>
+
+          <div id="payment-details" class="flex flex-col gap-2">
+            <hr class="border-neutral-200" />
+            <p class="text-neutral-500">Payment Details</p>
+            <div class="flex flex-col gap-2">
+              <textarea
+                id="payment-details"
+                class="w-full rounded-md border border-neutral-200 p-2 disabled:opacity-50"
+                placeholder="Payment Details"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+        <button
+          id="payment-button"
+          class="bg-neutral-900 text-neutral-100 p-2 flex items-center gap-2 justify-center rounded-md hover:bg-neutral-700 transition-colors"
+        >
+          <svg
+            class="w-3.5 h-3.5 me-2"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 18 21"
+          >
+            <path
+              d="M15 12a1 1 0 0 0 .962-.726l2-7A1 1 0 0 0 17 3H3.77L3.175.745A1 1 0 0 0 2.208 0H1a1 1 0 0 0 0 2h.438l.6 2.255v.019l2 7 .746 2.986A3 3 0 1 0 9 17a2.966 2.966 0 0 0-.184-1h2.368c-.118.32-.18.659-.184 1a3 3 0 1 0 3-3H6.78l-.5-2H15Z"
+            />
+          </svg>
+          Proceed to Payment
+        </button>
+      </form>
+    </div>
+  </body>
+</html>
