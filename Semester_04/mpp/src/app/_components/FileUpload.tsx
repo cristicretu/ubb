@@ -47,6 +47,23 @@ export default function FileUpload({
     }
 
     setError(null);
+
+    if (!isOnline) {
+      console.log("Network unavailable, saving file locally");
+      const blobUrl = URL.createObjectURL(file) + "#offline";
+      toast.success("File saved locally", { id: "local-file" });
+
+      if (onUploadComplete) {
+        onUploadComplete(blobUrl);
+      }
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+
+      return;
+    }
+
     setUploading(true);
     setProgress(0);
 
@@ -58,8 +75,16 @@ export default function FileUpload({
       }
     } catch (error) {
       console.error("Upload error:", error);
-      setError("Failed to upload file. Please try again.");
-      toast.error("Failed to upload file. Please try again.");
+
+      // Fall back to local blob URL on error
+      const blobUrl = URL.createObjectURL(file) + "#offline";
+      toast.warning("Upload failed, using local file instead", {
+        id: "local-file",
+      });
+
+      if (onUploadComplete) {
+        onUploadComplete(blobUrl);
+      }
     } finally {
       setUploading(false);
       if (fileInputRef.current) {
@@ -164,7 +189,7 @@ export default function FileUpload({
           type="file"
           accept={accept}
           onChange={handleFileChange}
-          disabled={uploading || !isOnline}
+          disabled={uploading}
           className="hidden"
           id="file-upload-input"
         />
@@ -184,9 +209,7 @@ export default function FileUpload({
         ) : (
           <label
             htmlFor="file-upload-input"
-            className={`flex h-32 w-full cursor-pointer flex-col items-center justify-center ${
-              !isOnline ? "cursor-not-allowed opacity-50" : ""
-            }`}
+            className="flex h-32 w-full cursor-pointer flex-col items-center justify-center"
           >
             <svg
               className="mb-3 h-8 w-8 text-gray-400"
@@ -204,7 +227,7 @@ export default function FileUpload({
             </svg>
             {!isOnline ? (
               <p className="text-sm text-gray-500">
-                You must be online to upload files
+                You're offline - files will be saved locally
               </p>
             ) : (
               <>

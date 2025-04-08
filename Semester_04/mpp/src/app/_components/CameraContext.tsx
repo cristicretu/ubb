@@ -89,6 +89,8 @@ export function CameraProvider({ children }: { children: ReactNode }) {
   const [isGeneratorRunning, setIsGeneratorRunning] = useState<boolean>(false);
 
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
+  const [broadcastChannel, setBroadcastChannel] =
+    useState<BroadcastChannel | null>(null);
 
   const currentFiltersRef = useRef<ExerciseFilters>({
     form: "all",
@@ -154,6 +156,30 @@ export function CameraProvider({ children }: { children: ReactNode }) {
       offlineStorage.saveExercisesToStorage(updatedStoredExercises);
 
       setTimeout(() => notifyExerciseChange(), 50);
+    } else if (lastEvent.name === "data:synced") {
+      console.log("Received data:synced event:", lastEvent.data);
+
+      // Reset current state to ensure we get a fresh copy
+      setCurrentPage(1);
+
+      // Update filters to get first page
+      currentFiltersRef.current = {
+        ...currentFiltersRef.current,
+        page: 1,
+      };
+
+      // Force clear exercises to ensure we don't have stale data
+      setExercises([]);
+
+      console.log("Fetching fresh data from server after sync event");
+
+      // Use a small timeout to ensure state updates have propagated
+      setTimeout(() => {
+        fetchExercisesFromServer(true).then(() => {
+          console.log("Data refresh completed after sync event");
+          notifyExerciseChange();
+        });
+      }, 100);
     }
   }, [lastEvent]);
 
@@ -275,7 +301,7 @@ export function CameraProvider({ children }: { children: ReactNode }) {
     };
   }, [isOnline, isServerAvailable, pendingOperationsCount, isSyncing]);
 
-  const fetchExercisesFromServer = async () => {
+  const fetchExercisesFromServer = async (forceRefresh = false) => {
     if (isSyncing) return;
 
     try {
@@ -290,14 +316,63 @@ export function CameraProvider({ children }: { children: ReactNode }) {
           !result.exercises.some((serverEx: Exercise) => serverEx.id === ex.id),
       );
 
-      const mergedExercises = [...result.exercises, ...localCreatedExercises];
+      // When filtering, fetch a complete new dataset
+      if (forceRefresh || filters.page === 1 || !filters.page) {
+        // Complete replacement of the stored exercises
+        const mergedExercises = [...result.exercises, ...localCreatedExercises];
+        offlineStorage.saveExercisesToStorage(mergedExercises);
 
-      offlineStorage.saveExercisesToStorage(mergedExercises);
+        const exercisesWithPendingChanges =
+          offlineStorage.applyPendingOperations(mergedExercises);
 
-      const exercisesWithPendingChanges =
-        offlineStorage.applyPendingOperations(mergedExercises);
+        console.log(
+          `Setting ${exercisesWithPendingChanges.length} exercises from server (${forceRefresh ? "forced refresh" : "normal refresh"})`,
+        );
+        setExercises(exercisesWithPendingChanges);
+      } else {
+        // Append mode for pagination
+        const mergedExercises = [...result.exercises, ...localCreatedExercises];
 
-      setExercises(exercisesWithPendingChanges);
+        // For existing exercises, update them in storage
+        const updatedStoredExercises = [...storedExercises];
+
+        result.exercises.forEach((serverEx: Exercise) => {
+          const existingIndex = updatedStoredExercises.findIndex(
+            (ex) => ex.id === serverEx.id,
+          );
+
+          if (existingIndex >= 0) {
+            updatedStoredExercises[existingIndex] = serverEx;
+          } else {
+            updatedStoredExercises.push(serverEx);
+          }
+        });
+
+        offlineStorage.saveExercisesToStorage(updatedStoredExercises);
+
+        const exercisesWithPendingChanges =
+          offlineStorage.applyPendingOperations(updatedStoredExercises);
+
+        setExercises((prev) => {
+          // Merge with existing exercises, replacing any that have the same ID
+          const newExercises = [...prev];
+
+          result.exercises.forEach((serverEx: Exercise) => {
+            const existingIndex = newExercises.findIndex(
+              (ex) => ex.id === serverEx.id,
+            );
+
+            if (existingIndex >= 0) {
+              newExercises[existingIndex] = serverEx;
+            } else {
+              newExercises.push(serverEx);
+            }
+          });
+
+          return newExercises;
+        });
+      }
+
       setTotalExercises(result.total + localCreatedExercises.length);
       setHasMore(
         filters.page ? result.exercises.length >= filters.limit! : false,
@@ -326,7 +401,48 @@ export function CameraProvider({ children }: { children: ReactNode }) {
         });
         setPendingOperationsCount((prev) => prev - result.successCount);
 
-        await fetchExercisesFromServer();
+        // Force refresh exercises after successful sync
+        await fetchExercisesFromServer(true);
+
+        // Broadcast sync completion to all tabs
+        if (broadcastChannel) {
+          console.log("Broadcasting sync completion to other tabs");
+          broadcastChannel.postMessage({
+            type: "SYNC_COMPLETED",
+            timestamp: new Date().toISOString(),
+            count: result.successCount,
+          });
+        }
+
+        // Emit event to notify other clients about the successful sync
+        if (socket && isConnected) {
+          console.log("Emitting data:synced event to socket");
+          socket.emit("data:synced", {
+            count: result.successCount,
+            success: true,
+            timestamp: new Date().toISOString(),
+          });
+        } else {
+          try {
+            console.log("Emitting data:synced event to socket via fetch");
+            await fetch("/api/socket-emit", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                event: "data:synced",
+                data: {
+                  count: result.successCount,
+                  success: true,
+                  timestamp: new Date().toISOString(),
+                },
+              }),
+            });
+          } catch (wsError) {
+            console.error("Failed to emit sync WebSocket event:", wsError);
+          }
+        }
       } else {
         toast.error(
           `Synced ${result.successCount} changes, but ${result.failureCount} failed`,
@@ -334,7 +450,55 @@ export function CameraProvider({ children }: { children: ReactNode }) {
         );
         setPendingOperationsCount((prev) => prev - result.successCount);
 
-        await fetchExercisesFromServer();
+        // Force refresh exercises after partial sync
+        await fetchExercisesFromServer(true);
+
+        // Broadcast sync completion to all tabs
+        if (broadcastChannel) {
+          console.log("Broadcasting partial sync completion to other tabs");
+          broadcastChannel.postMessage({
+            type: "SYNC_COMPLETED",
+            timestamp: new Date().toISOString(),
+            count: result.successCount,
+            partial: true,
+          });
+        }
+
+        // Emit event to notify other clients about partial sync
+        if (result.successCount > 0) {
+          if (socket && isConnected) {
+            console.log("Emitting partial data:synced event to socket");
+            socket.emit("data:synced", {
+              count: result.successCount,
+              failCount: result.failureCount,
+              success: false,
+              timestamp: new Date().toISOString(),
+            });
+          } else {
+            try {
+              console.log(
+                "Emitting partial data:synced event to socket via fetch",
+              );
+              await fetch("/api/socket-emit", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  event: "data:synced",
+                  data: {
+                    count: result.successCount,
+                    failCount: result.failureCount,
+                    success: false,
+                    timestamp: new Date().toISOString(),
+                  },
+                }),
+              });
+            } catch (wsError) {
+              console.error("Failed to emit sync WebSocket event:", wsError);
+            }
+          }
+        }
       }
     } catch (error) {
       toast.error("Failed to sync changes. Will try again later.", {
@@ -469,8 +633,10 @@ export function CameraProvider({ children }: { children: ReactNode }) {
     async (exercise: Omit<Exercise, "id">) => {
       let validExercise = { ...exercise };
 
-      // Ensure we have a valid video URL format
-      if (!validExercise.videoUrl.startsWith("http")) {
+      if (
+        !validExercise.videoUrl.startsWith("blob:") &&
+        !validExercise.videoUrl.startsWith("http")
+      ) {
         validExercise.videoUrl = new URL(
           validExercise.videoUrl,
           window.location.origin,
@@ -1076,6 +1242,40 @@ export function CameraProvider({ children }: { children: ReactNode }) {
     },
     [exerciseChangeListeners],
   );
+
+  useEffect(() => {
+    // Initialize BroadcastChannel for cross-tab communication
+    let channel: BroadcastChannel | null = null;
+
+    if (typeof window !== "undefined" && "BroadcastChannel" in window) {
+      channel = new BroadcastChannel("exercise-sync-channel");
+      setBroadcastChannel(channel);
+
+      channel.onmessage = (event) => {
+        console.log("Received broadcast message:", event.data);
+        if (event.data.type === "SYNC_COMPLETED") {
+          console.log("Refreshing data after sync in another tab");
+          // Force refresh exercises after sync in another tab
+          setCurrentPage(1);
+          currentFiltersRef.current = {
+            ...currentFiltersRef.current,
+            page: 1,
+          };
+          setExercises([]);
+
+          setTimeout(() => {
+            fetchExercisesFromServer(true);
+          }, 100);
+        }
+      };
+    }
+
+    return () => {
+      if (channel) {
+        channel.close();
+      }
+    };
+  }, []);
 
   const contextValue = {
     settings,

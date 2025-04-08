@@ -101,6 +101,11 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
           setLastEvent({ name: "exercise:deleted", data });
         });
 
+        socketInstance.on("data:synced", (data) => {
+          console.log("Data synced event received:", data);
+          setLastEvent({ name: "data:synced", data });
+        });
+
         setSocket(socketInstance);
       } catch (error) {
         console.error("Failed to initialize socket:", error);
