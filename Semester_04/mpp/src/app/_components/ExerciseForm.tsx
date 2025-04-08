@@ -93,6 +93,8 @@ export default function ExerciseForm({
         if (finalVideoUrl.startsWith("http")) {
           // This is already an absolute URL, just validate it
           new URL(finalVideoUrl);
+        } else if (finalVideoUrl.startsWith("blob:")) {
+          console.log("Using blob URL directly:", finalVideoUrl);
         } else {
           // This is a relative URL, convert to absolute
           finalVideoUrl = new URL(

@@ -49,6 +49,11 @@ export default function SocketHandler(
       console.log("Exercise deleted:", data);
       io.emit("exercise:deleted", data);
     });
+
+    socket.on("data:synced", (data) => {
+      console.log("Data synced:", data);
+      io.emit("data:synced", data);
+    });
   });
 
   console.log("Socket server started");
