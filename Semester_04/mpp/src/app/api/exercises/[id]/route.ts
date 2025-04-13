@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { exerciseStore } from "../../_lib/store";
+import prisma from "../../_lib/prisma";
 
 const updateExerciseSchema = z.object({
   name: z.string().min(1, "Name is required").optional(),
@@ -39,13 +39,26 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } },
 ) {
-  const exercise = exerciseStore.getById(params.id);
+  try {
+    const exercise = await prisma.exercise.findUnique({
+      where: { id: params.id },
+    });
 
-  if (!exercise) {
-    return NextResponse.json({ error: "Exercise not found" }, { status: 404 });
+    if (!exercise) {
+      return NextResponse.json(
+        { error: "Exercise not found" },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json(exercise);
+  } catch (error) {
+    console.error(`Error fetching exercise ${params.id}:`, error);
+    return NextResponse.json(
+      { error: "Failed to fetch exercise" },
+      { status: 500 },
+    );
   }
-
-  return NextResponse.json(exercise);
 }
 
 export async function PUT(
@@ -104,7 +117,11 @@ export async function PUT(
       );
     }
 
-    const existingExercise = exerciseStore.getById(params.id);
+    // Check if exercise exists
+    const existingExercise = await prisma.exercise.findUnique({
+      where: { id: params.id },
+    });
+
     if (!existingExercise) {
       console.error(`Exercise with ID ${params.id} not found for update`);
       return NextResponse.json(
@@ -113,15 +130,19 @@ export async function PUT(
       );
     }
 
-    const updatedExercise = exerciseStore.update(params.id, result.data);
+    // Prepare data for update
+    const updateData: any = { ...result.data };
 
-    if (!updatedExercise) {
-      console.error(`Failed to update exercise with ID ${params.id}`);
-      return NextResponse.json(
-        { error: "Failed to update exercise" },
-        { status: 500 },
-      );
+    // Convert date string to Date object if provided
+    if (updateData.date) {
+      updateData.date = new Date(updateData.date);
     }
+
+    // Update the exercise in the database
+    const updatedExercise = await prisma.exercise.update({
+      where: { id: params.id },
+      data: updateData,
+    });
 
     console.log(
       "Successfully updated exercise:",
@@ -144,7 +165,11 @@ export async function DELETE(
   try {
     console.log(`Deleting exercise with ID: ${params.id}`);
 
-    const existingExercise = exerciseStore.getById(params.id);
+    // Check if exercise exists
+    const existingExercise = await prisma.exercise.findUnique({
+      where: { id: params.id },
+    });
+
     if (!existingExercise) {
       console.error(`Exercise with ID ${params.id} not found for deletion`);
       return NextResponse.json(
@@ -153,15 +178,10 @@ export async function DELETE(
       );
     }
 
-    const deletedExercise = exerciseStore.delete(params.id);
-
-    if (!deletedExercise) {
-      console.error(`Failed to delete exercise with ID ${params.id}`);
-      return NextResponse.json(
-        { error: "Failed to delete exercise" },
-        { status: 500 },
-      );
-    }
+    // Delete the exercise
+    const deletedExercise = await prisma.exercise.delete({
+      where: { id: params.id },
+    });
 
     console.log(
       "Successfully deleted exercise:",

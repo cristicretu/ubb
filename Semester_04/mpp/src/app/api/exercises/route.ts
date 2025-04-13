@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { exerciseStore, Exercise } from "../_lib/store";
+import prisma from "../_lib/prisma";
 
 const createExerciseSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -41,57 +41,77 @@ export async function GET(request: NextRequest) {
 
   const form = searchParams.get("form");
   const search = searchParams.get("search");
-  const sortBy = searchParams.get("sortBy");
+  const sortBy = searchParams.get("sortBy") || "date-newest";
   const page = parseInt(searchParams.get("page") || "1");
   const limit = parseInt(searchParams.get("limit") || "10");
 
-  let exercises = exerciseStore.getAll();
+  // Build query conditions
+  const where: any = {};
 
-  if (form) {
-    exercises = exercises.filter((ex) => ex.form === form);
+  if (form && form !== "all") {
+    where.form = form;
   }
 
   if (search && search.trim() !== "") {
-    const searchLower = search.toLowerCase();
-    exercises = exercises.filter((ex) =>
-      ex.name.toLowerCase().includes(searchLower),
+    where.name = {
+      contains: search,
+      mode: "insensitive", // Case-insensitive search
+    };
+  }
+
+  // Determine sort order
+  let orderBy: any = {};
+  switch (sortBy) {
+    case "date-newest":
+    case "date-desc":
+      orderBy = { date: "desc" };
+      break;
+    case "date-oldest":
+    case "date-asc":
+      orderBy = { date: "asc" };
+      break;
+    case "name-asc":
+      orderBy = { name: "asc" };
+      break;
+    case "name-desc":
+      orderBy = { name: "desc" };
+      break;
+    case "duration-highest":
+      orderBy = { duration: "desc" };
+      break;
+    case "duration-lowest":
+      orderBy = { duration: "asc" };
+      break;
+    default:
+      orderBy = { date: "desc" };
+  }
+
+  try {
+    // Count total matching exercises
+    const total = await prisma.exercise.count({ where });
+
+    // Get paginated exercises
+    const exercises = await prisma.exercise.findMany({
+      where,
+      orderBy,
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    return NextResponse.json({
+      exercises,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    });
+  } catch (error) {
+    console.error("Error fetching exercises:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch exercises" },
+      { status: 500 },
     );
   }
-
-  const total = exercises.length;
-
-  if (sortBy) {
-    exercises = [...exercises].sort((a, b) => {
-      switch (sortBy) {
-        case "date-newest":
-          return new Date(b.date).getTime() - new Date(a.date).getTime();
-        case "date-oldest":
-          return new Date(a.date).getTime() - new Date(b.date).getTime();
-        case "name-asc":
-          return a.name.localeCompare(b.name);
-        case "name-desc":
-          return b.name.localeCompare(a.name);
-        case "duration-highest":
-          return b.duration - a.duration;
-        case "duration-lowest":
-          return a.duration - b.duration;
-        default:
-          return 0;
-      }
-    });
-  }
-
-  const startIndex = (page - 1) * limit;
-  const endIndex = startIndex + limit;
-  const paginatedExercises = exercises.slice(startIndex, endIndex);
-
-  return NextResponse.json({
-    exercises: paginatedExercises,
-    total,
-    page,
-    limit,
-    totalPages: Math.ceil(total / limit),
-  });
 }
 
 export async function POST(request: NextRequest) {
@@ -170,7 +190,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const newExercise = exerciseStore.add(result.data);
+    // Create new exercise with Prisma
+    const newExercise = await prisma.exercise.create({
+      data: {
+        name: result.data.name,
+        videoUrl: result.data.videoUrl,
+        form: result.data.form,
+        date: new Date(result.data.date),
+        duration: result.data.duration,
+      },
+    });
+
     console.log("Created new exercise:", JSON.stringify(newExercise, null, 2));
 
     return NextResponse.json(newExercise, { status: 201 });
