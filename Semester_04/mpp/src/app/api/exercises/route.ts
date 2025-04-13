@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import prisma from "../_lib/prisma";
+import { auth } from "~/server/auth";
 
 const createExerciseSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -45,6 +46,10 @@ export async function GET(request: NextRequest) {
   const page = parseInt(searchParams.get("page") || "1");
   const limit = parseInt(searchParams.get("limit") || "10");
 
+  // Get the authenticated user (if any)
+  const session = await auth();
+  const userId = session?.user?.id;
+
   // Build query conditions
   const where: any = {};
 
@@ -57,6 +62,12 @@ export async function GET(request: NextRequest) {
       contains: search,
       mode: "insensitive", // Case-insensitive search
     };
+  }
+
+  // If authenticated, show only user's exercises
+  // If not authenticated, show public exercises
+  if (userId) {
+    where.userId = userId;
   }
 
   // Determine sort order
@@ -96,6 +107,14 @@ export async function GET(request: NextRequest) {
       orderBy,
       skip: (page - 1) * limit,
       take: limit,
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
     });
 
     return NextResponse.json({
@@ -116,6 +135,18 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    // Get the authenticated user
+    const session = await auth();
+    const userId = session?.user?.id;
+
+    // Check if user is authenticated
+    if (!userId) {
+      return NextResponse.json(
+        { error: "You must be signed in to create exercises" },
+        { status: 401 },
+      );
+    }
+
     let body;
     try {
       body = await request.json();
@@ -190,7 +221,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create new exercise with Prisma
+    // Create new exercise with Prisma and associate with user
     const newExercise = await prisma.exercise.create({
       data: {
         name: result.data.name,
@@ -198,6 +229,7 @@ export async function POST(request: NextRequest) {
         form: result.data.form,
         date: new Date(result.data.date),
         duration: result.data.duration,
+        userId: userId,
       },
     });
 

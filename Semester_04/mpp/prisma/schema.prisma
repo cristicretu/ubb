@@ -36,9 +36,14 @@ model Exercise {
     duration Int
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    
+    // Add relation to User
+    user    User?    @relation(fields: [userId], references: [id])
+    userId  String?
 
     @@index([form])
     @@index([name])
+    @@index([userId])
 }
 
 // Necessary for Next auth
@@ -78,6 +83,12 @@ model User {
     accounts      Account[]
     sessions      Session[]
     posts         Post[]
+    
+    // Add password field for credentials login
+    password      String?
+    
+    // Add exercises relation
+    exercises     Exercise[]
 }
 
 model VerificationToken {

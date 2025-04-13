@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import prisma from "../../_lib/prisma";
+import { auth } from "~/server/auth";
 
 const updateExerciseSchema = z.object({
   name: z.string().min(1, "Name is required").optional(),
@@ -40,14 +41,36 @@ export async function GET(
   { params }: { params: { id: string } },
 ) {
   try {
+    const id = params.id;
+
+    // Get authenticated user
+    const session = await auth();
+    const userId = session?.user?.id;
+
     const exercise = await prisma.exercise.findUnique({
-      where: { id: params.id },
+      where: { id },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
     });
 
     if (!exercise) {
       return NextResponse.json(
         { error: "Exercise not found" },
         { status: 404 },
+      );
+    }
+
+    // If the exercise belongs to a user, verify ownership
+    if (exercise.userId && exercise.userId !== userId) {
+      return NextResponse.json(
+        { error: "You don't have permission to access this exercise" },
+        { status: 403 },
       );
     }
 
@@ -66,6 +89,19 @@ export async function PUT(
   { params }: { params: { id: string } },
 ) {
   try {
+    const id = params.id;
+
+    // Get authenticated user
+    const session = await auth();
+    const userId = session?.user?.id;
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "You must be signed in to update exercises" },
+        { status: 401 },
+      );
+    }
+
     let body;
     try {
       body = await request.json();
@@ -77,7 +113,7 @@ export async function PUT(
       );
     }
 
-    console.log("Updating exercise:", params.id, JSON.stringify(body, null, 2));
+    console.log("Updating exercise:", id, JSON.stringify(body, null, 2));
 
     // Process videoUrl if provided
     if (body.videoUrl && typeof body.videoUrl === "string") {
@@ -117,16 +153,24 @@ export async function PUT(
       );
     }
 
-    // Check if exercise exists
+    // Check if exercise exists and if the user owns it
     const existingExercise = await prisma.exercise.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!existingExercise) {
-      console.error(`Exercise with ID ${params.id} not found for update`);
+      console.error(`Exercise with ID ${id} not found for update`);
       return NextResponse.json(
         { error: "Exercise not found" },
         { status: 404 },
+      );
+    }
+
+    // Verify ownership
+    if (existingExercise.userId && existingExercise.userId !== userId) {
+      return NextResponse.json(
+        { error: "You don't have permission to update this exercise" },
+        { status: 403 },
       );
     }
 
@@ -140,7 +184,7 @@ export async function PUT(
 
     // Update the exercise in the database
     const updatedExercise = await prisma.exercise.update({
-      where: { id: params.id },
+      where: { id },
       data: updateData,
     });
 
@@ -163,24 +207,45 @@ export async function DELETE(
   { params }: { params: { id: string } },
 ) {
   try {
-    console.log(`Deleting exercise with ID: ${params.id}`);
+    const id = params.id;
 
-    // Check if exercise exists
+    // Get authenticated user
+    const session = await auth();
+    const userId = session?.user?.id;
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "You must be signed in to delete exercises" },
+        { status: 401 },
+      );
+    }
+
+    console.log(`Deleting exercise with ID: ${id}`);
+
+    // Check if exercise exists and if user owns it
     const existingExercise = await prisma.exercise.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!existingExercise) {
-      console.error(`Exercise with ID ${params.id} not found for deletion`);
+      console.error(`Exercise with ID ${id} not found for deletion`);
       return NextResponse.json(
         { error: "Exercise not found" },
         { status: 404 },
       );
     }
 
+    // Verify ownership
+    if (existingExercise.userId && existingExercise.userId !== userId) {
+      return NextResponse.json(
+        { error: "You don't have permission to delete this exercise" },
+        { status: 403 },
+      );
+    }
+
     // Delete the exercise
     const deletedExercise = await prisma.exercise.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     console.log(
