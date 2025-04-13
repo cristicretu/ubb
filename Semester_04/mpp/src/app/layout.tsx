@@ -10,6 +10,8 @@ import { WebSocketProvider } from "./_components/WebSocketProvider";
 import NetworkStatus from "./_components/NetworkStatus";
 import RealtimeNotification from "./_components/RealtimeNotification";
 import { Toaster } from "~/components/ui/sonner";
+import { SessionProvider } from "~/components/providers/session-provider";
+import Navbar from "./_components/Navbar";
 
 export const metadata: Metadata = {
   title: "Optima",
@@ -29,17 +31,20 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
       <body className="min-h-screen bg-black text-white">
-        <TRPCReactProvider>
-          <NetworkProvider>
-            <WebSocketProvider>
-              <CameraProvider>
-                {children}
-                <NetworkStatus />
-                <RealtimeNotification />
-              </CameraProvider>
-            </WebSocketProvider>
-          </NetworkProvider>
-        </TRPCReactProvider>
+        <SessionProvider>
+          <TRPCReactProvider>
+            <NetworkProvider>
+              <WebSocketProvider>
+                <CameraProvider>
+                  <Navbar />
+                  <main>{children}</main>
+                  <NetworkStatus />
+                  <RealtimeNotification />
+                </CameraProvider>
+              </WebSocketProvider>
+            </NetworkProvider>
+          </TRPCReactProvider>
+        </SessionProvider>
         <Toaster />
       </body>
     </html>

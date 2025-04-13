@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
@@ -78,18 +79,66 @@ const exercises = [
 async function main() {
   console.log("Starting seed...");
 
-  // Delete existing data
+  // Create a test user
+  const hashedPassword = await bcrypt.hash("password123", 10);
+
+  // Check if test user already exists
+  const existingUser = await prisma.user.findUnique({
+    where: { email: "test@example.com" },
+  });
+
+  let userId;
+
+  if (existingUser) {
+    userId = existingUser.id;
+    console.log("Test user already exists, using existing user");
+  } else {
+    const newUser = await prisma.user.create({
+      data: {
+        name: "Test User",
+        email: "test@example.com",
+        password: hashedPassword,
+      },
+    });
+    userId = newUser.id;
+    console.log("Created test user:", newUser.email);
+  }
+
+  // Delete existing exercises
   await prisma.exercise.deleteMany();
   console.log("Cleared existing exercises");
 
-  // Insert seed data
+  // Insert seed data and associate with the test user
   for (const exercise of exercises) {
     await prisma.exercise.create({
-      data: exercise,
+      data: {
+        ...exercise,
+        userId: userId,
+      },
     });
   }
 
-  console.log(`Seeded ${exercises.length} exercises`);
+  // Also create some exercises without a user (for users who aren't logged in)
+  for (let i = 0; i < 5; i++) {
+    await prisma.exercise.create({
+      data: {
+        name: `Public Exercise ${i + 1}`,
+        videoUrl: `https://example.com/public-exercise-${i + 1}.mp4`,
+        form: ["bad", "medium", "good"][Math.floor(Math.random() * 3)] as
+          | "bad"
+          | "medium"
+          | "good",
+        date: new Date(
+          Date.now() - Math.floor(Math.random() * 30 * 24 * 60 * 60 * 1000),
+        ),
+        duration: Math.floor(Math.random() * 600) + 60,
+      },
+    });
+  }
+
+  console.log(
+    `Seeded ${exercises.length} user exercises and 5 public exercises`,
+  );
 }
 
 main()
