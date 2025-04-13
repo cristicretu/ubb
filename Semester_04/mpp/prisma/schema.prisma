@@ -26,6 +26,21 @@ model Post {
     @@index([name])
 }
 
+// New Exercise model based on the existing in-memory structure
+model Exercise {
+    id       String   @id @default(uuid())
+    name     String
+    videoUrl String
+    form     String   // "bad" | "medium" | "good"
+    date     DateTime
+    duration Int
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([form])
+    @@index([name])
+}
+
 // Necessary for Next auth
 model Account {
     id                       String  @id @default(cuid())

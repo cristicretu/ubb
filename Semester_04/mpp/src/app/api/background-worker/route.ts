@@ -1,67 +1,119 @@
-import { NextResponse } from "next/server";
-import { startExerciseGenerator } from "./exerciseGenerator";
+import { NextRequest, NextResponse } from "next/server";
+import prisma from "../_lib/prisma";
 
-let stopGenerator: (() => void) | null = null;
+let generatorInterval: NodeJS.Timeout | null = null;
+let isRunning = false;
 
-const getHostUrl = () => {
-  return "http://localhost:3000";
-};
+// Function to generate a random exercise
+async function generateRandomExercise() {
+  try {
+    const exerciseNames = [
+      "Squats",
+      "Push-ups",
+      "Pull-ups",
+      "Deadlifts",
+      "Lunges",
+      "Bench Press",
+      "Planks",
+      "Bicep Curls",
+      "Shoulder Press",
+      "Russian Twists",
+      "Crunches",
+      "Leg Raises",
+      "Mountain Climbers",
+      "Jumping Jacks",
+      "Burpees",
+      "Box Jumps",
+      "Kettlebell Swings",
+    ];
 
-export async function GET(req: Request) {
-  const isRunning = stopGenerator !== null;
+    const forms = ["bad", "medium", "good"];
 
-  return NextResponse.json({
-    isRunning,
-    message: isRunning ? "Generator is running" : "Generator is not running",
-  });
+    const randomExercise = {
+      name: `${exerciseNames[Math.floor(Math.random() * exerciseNames.length)]} ${Math.floor(Math.random() * 100)}`,
+      videoUrl: `https://example.com/videos/exercise-${Math.floor(Math.random() * 1000)}.mp4`,
+      form: forms[Math.floor(Math.random() * forms.length)] as
+        | "bad"
+        | "medium"
+        | "good",
+      date: new Date(
+        Date.now() - Math.floor(Math.random() * 30 * 24 * 60 * 60 * 1000),
+      ), // Random date in the last 30 days
+      duration: Math.floor(Math.random() * 600) + 60, // 60-660 seconds
+    };
+
+    const createdExercise = await prisma.exercise.create({
+      data: randomExercise,
+    });
+
+    console.log("Generated random exercise:", createdExercise);
+
+    // Emit WebSocket event if needed
+    // You could add WebSocket emit code here
+
+    return createdExercise;
+  } catch (error) {
+    console.error("Error generating random exercise:", error);
+    throw error;
+  }
 }
 
-export async function POST(req: Request) {
-  try {
-    try {
-      await fetch(`${getHostUrl()}/api/socket`);
-    } catch (error) {
-      console.error("Failed to initialize Socket.io server:", error);
-    }
+// GET handler to check status
+export async function GET(request: NextRequest) {
+  return NextResponse.json({ isRunning });
+}
 
-    const body = await req.json();
-    const { action, interval } = body;
+// POST handler to start/stop generator
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { action, interval = 30000 } = body;
 
     if (action === "start") {
-      if (stopGenerator !== null) {
+      if (isRunning) {
         return NextResponse.json({
           success: false,
-          message: "Generator is already running",
+          message: "Generator already running",
+          isRunning,
         });
       }
 
-      const intervalMs = interval ? Number(interval) : 30000;
-      stopGenerator = startExerciseGenerator(intervalMs);
+      // Generate one exercise immediately
+      await generateRandomExercise();
+
+      // Set up interval for regular generation
+      generatorInterval = setInterval(generateRandomExercise, interval);
+      isRunning = true;
 
       return NextResponse.json({
         success: true,
-        message: `Generator started with interval of ${intervalMs}ms`,
+        message: `Started exercise generator with interval ${interval}ms`,
+        isRunning,
       });
     } else if (action === "stop") {
-      if (stopGenerator === null) {
+      if (!isRunning || !generatorInterval) {
         return NextResponse.json({
           success: false,
-          message: "Generator is not running",
+          message: "Generator not running",
+          isRunning: false,
         });
       }
 
-      stopGenerator();
-      stopGenerator = null;
+      clearInterval(generatorInterval);
+      generatorInterval = null;
+      isRunning = false;
 
       return NextResponse.json({
         success: true,
-        message: "Generator stopped",
+        message: "Stopped exercise generator",
+        isRunning,
       });
     } else {
       return NextResponse.json(
         {
           success: false,
-          message: 'Invalid action. Use "start" or "stop"',
+          message: "Invalid action. Use 'start' or 'stop'",
+          isRunning,
         },
         { status: 400 },
       );
@@ -71,7 +123,8 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         success: false,
-        message: "Internal server error",
+        message: `Error: ${error instanceof Error ? error.message : String(error)}`,
+        isRunning,
       },
       { status: 500 },
     );
