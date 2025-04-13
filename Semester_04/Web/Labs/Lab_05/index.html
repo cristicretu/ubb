@@ -10,29 +10,16 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
   <script>
-    // Solve the following task using only the jQuery library
-    //  (production version, jquery.min.js, or developement version
-    //  , jquery.js); YOU ARE NOT ALLOWED TO USE ANY OTHER JS LIBRARY,
-    //   PLUGIN OR EXTENSION BESIDES THE JQUERY LIBRARY. Write a web page
-    //    which contains a form with at least 5 input fields and a button.
-    //    If the user clicks on that button a modal interface window (actually a div)
-    //     should pop out in the center of the browser window. This
-    //     modal window should contain 4 input fields and a button.
-    //     If the user clicks on that button, the modal window disappears
-    //     and all the values inserted by the user in the modal window's
-    //      input fields will be concatenated and added to a text field
-    //      in the main form. During the time the modal window is displayed,
-    //      the fields from the main form will be inactive and a transparrent
-    //      gray div should be displayed on top of the web page (this grey div
-    //      should be beneath the modal window and should occupy the whole
-    //      browser window).
-
     $(document).ready(function () {
       $("#modal").hide();
       $("#overlay").hide();
       $("#payment-details").hide();
+      $("#input-container").css("display", "none");
+      $("#concatenated-inputs").css("display", "none");
 
       let isModalOpen = false;
+      let addedInputs = [];
+      let initialInputs = [];
 
       function toggleModal() {
         $("#modal").fadeToggle(300);
@@ -100,6 +87,66 @@
 
         $("#payment-button").prop("disabled", true);
         $("#payment-button").addClass("opacity-50");
+
+        stealInitialInputs();
+        stealAllInputs();
+        includeAddedInputs();
+      });
+
+      function stealInitialInputs() {
+        $("#initial-form input").each(function () {
+          initialInputs.push($(this).val());
+        });
+      }
+
+      function stealAllInputs() {
+        $("#payment-form input").each(function () {
+          addedInputs.push($(this).val());
+        });
+      }
+
+      function includeAddedInputs() {
+        $("#input-container").css("display", "flex");
+        $("#concatenated-inputs").css("display", "flex");
+
+        addedInputs.forEach(function (input, index) {
+          $("#input-container").append(
+          `<div class="flex flex-col gap-2">
+            <p class="text-neutral-500">${input}</p>
+            <input
+              type="text"
+              class="w-full rounded-md border border-neutral-200 p-2"
+              value="${input}"
+            />
+          </div>
+        `
+          )
+
+          $("#concatenated-inputs").append(
+            `<p class="text-neutral-500">${input}</p>
+            <input
+              type="text"
+              class="w-full rounded-md border border-neutral-200 p-2"
+              value="${initialInputs[index] && input ? initialInputs[index] + ' ' + input : initialInputs[index] || input}"
+            />`
+          );
+        });
+
+      }
+
+      $("#add-more-button").click(function () {
+        $("#payment-form").append(
+          `<div class="flex flex-col gap-2">
+            <p class="text-neutral-500">Cardholder Name</p>
+            <input
+              id="added-input-${addedInputs.length}"
+              type="text"
+              class="w-full rounded-md border border-neutral-200 p-2"
+              placeholder="Input ${addedInputs.length + 1}"
+            />
+          </div>
+        `
+        )
       });
     });
   </script>
@@ -114,7 +161,7 @@
       id="modal"
       class="bg-neutral-100 rounded-md border border-neutral-200 flex flex-col gap-8 z-50 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
     >
-      <div class="flex flex-col gap-4 px-6 py-4">
+      <div id="payment-form" class="flex flex-col gap-4 px-6 py-4">
         <h2 class="text-xl font-semibold">Secure Payment</h2>
         <p class="text-neutral-500 mb-4">
           Please enter your payment details to secure your Porsche reservation.
@@ -168,6 +215,9 @@
           >
             Cancel
           </button>
+          <button id="add-more-button" class="bg-black text-white px-4 py-2 rounded-md">
+            Add More
+          </button>
           <button
             id="complete-payment-button"
             class="bg-black text-white px-4 py-2 rounded-md"
@@ -180,6 +230,7 @@
 
     <div class="max-w-3xl mx-auto">
       <form
+      id="initial-form"
         class="bg-neutral-100 rounded-md border border-neutral-200 flex flex-col gap-8"
       >
         <div
@@ -190,69 +241,77 @@
             Reserve your dream Porsche with a deposit today
           </p>
         </div>
-        <div class="flex flex-col gap-4 px-6">
-          <div class="flex flex-col gap-2">
-            <p class="text-neutral-500">Full Name</p>
-            <input
-              id="full-name"
-              type="text"
-              class="w-full rounded-md border border-neutral-200 p-2 disabled:opacity-50"
-              placeholder="John Doe"
-            />
-          </div>
 
-          <div class="flex flex-col gap-2">
-            <p class="text-neutral-500">Email</p>
-            <input
-              id="email"
-              type="email"
-              class="w-full rounded-md border border-neutral-200 p-2 disabled:opacity-50"
-              placeholder="john.doe@example.com"
-            />
-          </div>
 
-          <div class="flex flex-col gap-2">
-            <p class="text-neutral-500">Phone</p>
-            <input
-              id="phone"
-              type="tel"
-              class="w-full rounded-md border border-neutral-200 p-2 disabled:opacity-50"
-              placeholder="123-456-7890"
-            />
-          </div>
-
-          <div class="flex flex-col gap-2">
-            <p class="text-neutral-500">Porsche Model</p>
-            <input
-              id="porsche-model"
-              type="text"
-              class="w-full rounded-md border border-neutral-200 p-2 disabled:opacity-50"
-              placeholder="911"
-            />
-          </div>
-
-          <div class="flex flex-col gap-2">
-            <p class="text-neutral-500">Preferred Dealership</p>
-            <input
-              id="preferred-dealership"
-              type="text"
-              class="w-full rounded-md border border-neutral-200 p-2 disabled:opacity-50"
-              placeholder="Porsche of Beverly Hills"
-            />
-          </div>
-
-          <div id="payment-details" class="flex flex-col gap-2">
-            <hr class="border-neutral-200" />
-            <p class="text-neutral-500">Payment Details</p>
+        <div class="flex">
+          <div class="flex flex-col gap-4 px-6">
             <div class="flex flex-col gap-2">
-              <textarea
-                id="payment-details"
+              <p class="text-neutral-500">Full Name</p>
+              <input
+                id="full-name"
+                type="text"
                 class="w-full rounded-md border border-neutral-200 p-2 disabled:opacity-50"
-                placeholder="Payment Details"
-              ></textarea>
+                placeholder="John Doe"
+              />
+            </div>
+  
+            <div class="flex flex-col gap-2">
+              <p class="text-neutral-500">Email</p>
+              <input
+                id="email"
+                type="email"
+                class="w-full rounded-md border border-neutral-200 p-2 disabled:opacity-50"
+                placeholder="john.doe@example.com"
+              />
+            </div>
+  
+            <div class="flex flex-col gap-2">
+              <p class="text-neutral-500">Phone</p>
+              <input
+                id="phone"
+                type="tel"
+                class="w-full rounded-md border border-neutral-200 p-2 disabled:opacity-50"
+                placeholder="123-456-7890"
+              />
+            </div>
+  
+            <div class="flex flex-col gap-2">
+              <p class="text-neutral-500">Porsche Model</p>
+              <input
+                id="porsche-model"
+                type="text"
+                class="w-full rounded-md border border-neutral-200 p-2 disabled:opacity-50"
+                placeholder="911"
+              />
+            </div>
+  
+            <div class="flex flex-col gap-2">
+              <p class="text-neutral-500">Preferred Dealership</p>
+              <input
+                id="preferred-dealership"
+                type="text"
+                class="w-full rounded-md border border-neutral-200 p-2 disabled:opacity-50"
+                placeholder="Porsche of Beverly Hills"
+              />
+            </div>
+  
+            <div id="payment-details" class="flex flex-col gap-2">
+              <hr class="border-neutral-200" />
+              <p class="text-neutral-500">Payment Details</p>
+              <div class="flex flex-col gap-2">
+                <textarea
+                  id="payment-details"
+                  class="w-full rounded-md border border-neutral-200 p-2 disabled:opacity-50"
+                  placeholder="Payment Details"
+                ></textarea>
+              </div>
             </div>
           </div>
+
+          <div id="input-container" class="flex flex-col gap-4 px-6"></div>
+          <div id="concatenated-inputs" class="flex flex-col gap-4 px-6"></div>
         </div>
+
         <button
           id="payment-button"
           class="bg-neutral-900 text-neutral-100 p-2 flex items-center gap-2 justify-center rounded-md hover:bg-neutral-700 transition-colors"
