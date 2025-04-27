@@ -704,6 +704,11 @@ export function CameraProvider({ children }: { children: ReactNode }) {
         console.log("API response:", response.status, responseData);
 
         if (!response.ok) {
+          // Handle authentication error specifically
+          if (response.status === 401) {
+            throw new Error("You must be signed in to create exercises");
+          }
+
           // Extract validation error details
           if (responseData?.details) {
             console.error("Validation errors:", responseData.details);
