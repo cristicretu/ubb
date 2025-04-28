@@ -11,12 +11,15 @@
     <nav class="bg-neutral-800 text-white shadow-md mb-6">
         <div class="container mx-auto px-4 py-3">
             <div class="flex justify-between items-center">
-                <a class="text-xl font-bold" href="index.php">Car Dealership</a>
+                <?php
+                $base_url = (strpos($_SERVER['REQUEST_URI'], '/views/') !== false) ? '../' : '';
+                ?>
+                <a class="text-xl font-bold" href="<?php echo $base_url; ?>index.php">Car Dealership</a>
                 <div class="hidden md:block">
                     <div class="flex space-x-4">
-                        <a class="px-3 py-2 hover:bg-neutral-700 rounded" href="index.php">Browse Cars</a>
-                        <a class="px-3 py-2 hover:bg-neutral-700 rounded" href="views/add_car.php">Add Car</a>
-                        <a class="px-3 py-2 hover:bg-neutral-700 rounded" href="views/categories.php">Categories</a>
+                        <a class="px-3 py-2 hover:bg-neutral-700 rounded" href="<?php echo $base_url; ?>index.php">Browse Cars</a>
+                        <a class="px-3 py-2 hover:bg-neutral-700 rounded" href="<?php echo $base_url; ?>views/add_car.php">Add Car</a>
+                        <a class="px-3 py-2 hover:bg-neutral-700 rounded" href="<?php echo $base_url; ?>views/categories.php">Categories</a>
                     </div>
                 </div>
                 <div class="md:hidden">
@@ -28,9 +31,8 @@
                 </div>
             </div>
             <div id="mobile-menu" class="md:hidden hidden mt-3">
-                <a class="block px-3 py-2 hover:bg-neutral-700 rounded mt-1" href="index.php">Browse Cars</a>
-                <a class="block px-3 py-2 hover:bg-neutral-700 rounded mt-1" href="views/add_car.php">Add Car</a>
-                <a class="block px-3 py-2 hover:bg-neutral-700 rounded mt-1" href="views/categories.php">Categories</a>
+                <a class="block px-3 py-2 hover:bg-neutral-700 rounded mt-1" href="<?php echo $base_url; ?>index.php">Browse Cars</a>
+                <a class="block px-3 py-2 hover:bg-neutral-700 rounded mt-1" href="<?php echo $base_url; ?>views/add_car.php">Add Car</a>
             </div>
         </div>
     </nav>
