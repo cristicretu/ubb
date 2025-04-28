@@ -81,22 +81,27 @@ function renderCars() {
     });
 }
 
-function deleteCar(carId) {
-    fetch(`api/cars/delete.php?id=${carId}`, {
-        method: 'DELETE'
-    })
-    .then(response => response.json())
-    .then(data => {
-    })
-    .catch(error => {
-        console.error('Error deleting car:', error);
-    });
-}
-
 function confirmDeleteCar(carId) {
     if (confirm('Are you sure you want to delete this car?')) {
-        deleteCar(carId);
-        loadCarsFromCategory(car.category_id);
+        fetch(`api/cars/delete.php?id=${carId}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const activeTab = document.querySelector('#categories-tabs .border-blue-500');
+                if (activeTab) {
+                    const categoryId = activeTab.dataset.categoryId;
+                    loadCarsFromCategory(categoryId);
+                }
+            } else {
+                alert('Error deleting car: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting car:', error);
+            alert('Error deleting car. Please check console for details.');
+        });
     }
 }
 

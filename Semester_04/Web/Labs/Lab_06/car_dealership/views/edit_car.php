@@ -85,35 +85,49 @@ include_once '../includes/header.php';
 </div>
 
 <script>
+const urlParams = new URLSearchParams(window.location.search);
+const carId = urlParams.get('id');
 
-let car = null;
-let carId = window.location.pathname.split('/').pop();
+if (!carId) {
+    alert('Car ID is missing!');
+    window.location.href = '../index.php';
+}
 
-function loadCar() {
-    fetch('../api/cars/read_one.php?id=' + carId)
+function loadCarData() {
+    fetch(`../api/cars/read_one.php?id=${carId}`)
         .then(response => response.json())
         .then(data => {
-            car = data.record;
+            if (data.success) {
+                const car = data.record;
+                document.getElementById('model').value = car.model;
+                document.getElementById('year').value = car.year;
+                document.getElementById('engine_power').value = car.engine_power;
+                document.getElementById('fuel_type').value = car.fuel_type;
+                document.getElementById('price').value = car.price;
+                document.getElementById('color').value = car.color;
+                document.getElementById('history').value = car.history || '';
+                
+                window.carCategoryId = car.category_id;
+            } else {
+                alert('Error loading car data: ' + data.message);
+                window.location.href = '../index.php';
+            }
+        })
+        .catch(error => {
+            console.error('Error loading car:', error);
+            alert('Error loading car data. Please check console for details.');
         });
 }
 
-function renderCar() {
-    document.getElementById('model').value = car.model;
-    document.getElementById('year').value = car.year;
-    document.getElementById('engine_power').value = car.engine_power;
-    document.getElementById('fuel_type').value = car.fuel_type;
-    document.getElementById('price').value = car.price;
-    document.getElementById('color').value = car.color;
-    document.getElementById('history').value = car.history;
-    document.getElementById('category_id').value = car.category_id;
-}
-
 document.addEventListener('DOMContentLoaded', function() {
+    loadCarData();
+    
     fetch('../api/categories.php')
         .then(response => response.json())
         .then(data => {
             if (data.records && data.records.length > 0) {
                 const categorySelect = document.getElementById('category_id');
+                categorySelect.innerHTML = '<option value="">Select Category</option>';
                 
                 data.records.forEach(category => {
                     const option = document.createElement('option');
@@ -121,18 +135,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     option.textContent = category.name;
                     categorySelect.appendChild(option);
                 });
+                
+                if (window.carCategoryId) {
+                    categorySelect.value = window.carCategoryId;
+                }
             }
         })
         .catch(error => {
             console.error('Error loading categories:', error);
         });
-
 });
 
 document.getElementById('add-car-form').addEventListener('submit', function(event) {
     event.preventDefault();
     
     const formData = new FormData();
+    formData.append('id', carId);
     formData.append('model', document.getElementById('model').value);
     formData.append('engine_power', document.getElementById('engine_power').value);
     formData.append('fuel_type', document.getElementById('fuel_type').value);
@@ -142,22 +160,22 @@ document.getElementById('add-car-form').addEventListener('submit', function(even
     formData.append('history', document.getElementById('history').value);
     formData.append('category_id', document.getElementById('category_id').value);
 
-    fetch('../api/cars/create.php', {
+    fetch('../api/cars/edit.php', {
         method: 'POST',
         body: formData
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert('Car added successfully');
+            alert('Car updated successfully');
             window.location.href = '../index.php';
         } else {
-            alert('Error adding car: ' + data.message);
+            alert('Error updating car: ' + data.message);
         }
     })
     .catch(error => {
-        console.error('Error adding car:', error);
-        alert('Error adding car. Please check console for details.');
+        console.error('Error updating car:', error);
+        alert('Error updating car. Please check console for details.');
     });
 });
 </script>
