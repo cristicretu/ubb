@@ -93,6 +93,39 @@ class Car {
         return false;
     }
 
+    public function delete() {
+        $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
+
+        $stmt = $this->conn->prepare($query);
+        
+        $stmt->bindParam(1, $this->id);
+
+        if($stmt->execute()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function update() {
+        $query = "UPDATE " . $this->table_name . " SET model = ?, engine_power = ?, fuel_type = ?, price = ?, color = ?, year = ?, history = ?, category_id = ? WHERE id = ?";
+
+        $stmt = $this->conn->prepare($query);
+        
+        $stmt->bindParam(1, $this->model);
+        $stmt->bindParam(2, $this->engine_power);
+        $stmt->bindParam(3, $this->fuel_type);
+        $stmt->bindParam(4, $this->price);
+        $stmt->bindParam(5, $this->color);
+        $stmt->bindParam(6, $this->year);
+        $stmt->bindParam(7, $this->history);
+        $stmt->bindParam(8, $this->category_id);
+        $stmt->bindParam(9, $this->id);
+
+        if($stmt->execute()) {
+            return true;
+        }
+    }
 
 }
 ?>

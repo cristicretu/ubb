@@ -71,11 +71,33 @@ function renderCars() {
             </div>
             <div class="mt-3 flex justify-between items-center">
                 <span class="text-lg font-bold text-green-600">${USDollar.format(car.price)}</span>
-                <button class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition">View Details</button>
+                <div class="flex items-center gap-2">
+                    <button class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition" onclick="window.location.href='views/edit_car.php?id=${car.id}'">Edit</button>
+                    <button class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition" onclick="confirmDeleteCar(${car.id})">Delete</button>
+                </div>
             </div>
         `;
         carsContainer.appendChild(carElement);
     });
+}
+
+function deleteCar(carId) {
+    fetch(`api/cars/delete.php?id=${carId}`, {
+        method: 'DELETE'
+    })
+    .then(response => response.json())
+    .then(data => {
+    })
+    .catch(error => {
+        console.error('Error deleting car:', error);
+    });
+}
+
+function confirmDeleteCar(carId) {
+    if (confirm('Are you sure you want to delete this car?')) {
+        deleteCar(carId);
+        loadCarsFromCategory(car.category_id);
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
