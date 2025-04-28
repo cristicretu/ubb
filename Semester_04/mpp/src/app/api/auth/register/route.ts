@@ -11,10 +11,8 @@ const userSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    // Parse request body
     const body = await request.json();
 
-    // Validate user data
     const result = userSchema.safeParse(body);
     if (!result.success) {
       return NextResponse.json(
@@ -25,7 +23,6 @@ export async function POST(request: NextRequest) {
 
     const { name, email, password } = result.data;
 
-    // Check if user already exists
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
@@ -37,10 +34,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create new user
     const user = await prisma.user.create({
       data: {
         name,
@@ -51,7 +46,6 @@ export async function POST(request: NextRequest) {
         id: true,
         name: true,
         email: true,
-        // Do not return the password
       },
     });
 

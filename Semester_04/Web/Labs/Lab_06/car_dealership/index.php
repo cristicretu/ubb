@@ -15,10 +15,69 @@ include_once 'includes/header.php';
         
         <div id="category-content" class="mt-4">
         </div>
+
+        <div id="cars-container" class="mt-4">
+        </div>
     </div>
 </div>
 
 <script>
+
+let cars = [];
+
+let USDollar = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+});
+
+function loadCarsFromCategory(categoryId) {
+    fetch(`api/cars/read.php?category_id=${categoryId}`)
+        .then(response => response.json())
+        .then(data => {
+            cars = data.records;
+            renderCars();
+        })
+        .catch(error => {
+            console.error('Error loading cars:', error);
+        });
+}
+
+function renderCars() {
+    const carsContainer = document.getElementById('cars-container');
+    carsContainer.innerHTML = '';
+
+    cars.forEach(car => {
+        const carElement = document.createElement('div');
+        carElement.className = 'bg-white p-4 rounded-lg border border-gray-200 mb-4';
+        carElement.innerHTML = `
+            <h3 class="text-lg font-semibold mb-2">${car.model}</h3>
+            <div class="grid grid-cols-2 gap-2 mt-2">
+                <div class="flex items-center">
+                    <span class="text-gray-500 mr-2">Engine:</span>
+                    <span class="font-medium">${car.engine_power}</span>
+                </div>
+                <div class="flex items-center">
+                    <span class="text-gray-500 mr-2">Fuel:</span>
+                    <span class="font-medium">${car.fuel_type}</span>
+                </div>
+                <div class="flex items-center">
+                    <span class="text-gray-500 mr-2">Color:</span>
+                    <span class="font-medium">${car.color}</span>
+                </div>
+                <div class="flex items-center">
+                    <span class="text-gray-500 mr-2">Year:</span>
+                    <span class="font-medium">${car.year}</span>
+                </div>
+            </div>
+            <div class="mt-3 flex justify-between items-center">
+                <span class="text-lg font-bold text-green-600">${USDollar.format(car.price)}</span>
+                <button class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition">View Details</button>
+            </div>
+        `;
+        carsContainer.appendChild(carElement);
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     fetch('api/categories.php')
         .then(response => response.json())
@@ -39,6 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <h3 class="text-xl font-semibold mb-2">${category.name}</h3>
                             <p class="text-gray-700">${category.description || 'No description available'}</p>
                         `;
+                        loadCarsFromCategory(category.id);
                     } else {
                         tabElement.classList.add('text-gray-500', 'hover:text-gray-700');
                     }
@@ -56,6 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <h3 class="text-xl font-semibold mb-2">${category.name}</h3>
                             <p class="text-gray-700">${category.description || 'No description available'}</p>
                         `;
+                        loadCarsFromCategory(category.id);
                     });
                     
                     tabsContainer.appendChild(tabElement);

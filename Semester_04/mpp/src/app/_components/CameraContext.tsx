@@ -13,6 +13,7 @@ import { useNetwork } from "./NetworkContext";
 import { toast } from "sonner";
 import * as offlineStorage from "../_services/offlineStorage";
 import { useWebSocket } from "./WebSocketProvider";
+import { useSession } from "next-auth/react";
 
 export interface Exercise {
   id: string;
@@ -100,6 +101,7 @@ export function CameraProvider({ children }: { children: ReactNode }) {
   });
 
   const [exerciseChangeListeners] = useState<(() => void)[]>([]);
+  const { data: session } = useSession();
 
   useEffect(() => {
     if (!lastEvent) return;
@@ -631,6 +633,12 @@ export function CameraProvider({ children }: { children: ReactNode }) {
 
   const addExercise = useCallback(
     async (exercise: Omit<Exercise, "id">) => {
+      // Check if user is authenticated
+      if (!session?.user) {
+        toast.error("You must be signed in to create exercises");
+        return;
+      }
+
       let validExercise = { ...exercise };
 
       if (
@@ -671,7 +679,9 @@ export function CameraProvider({ children }: { children: ReactNode }) {
           );
           setPendingOperationsCount((prev) => prev + 1);
 
-          toast.success("Exercise saved locally. Will sync when online.");
+          toast.success(
+            `Exercise "${validExercise.name}" saved locally. Will sync when online.`,
+          );
           setTimeout(() => notifyExerciseChange(), 50);
         } catch (error) {
           console.error("Failed to save exercise locally:", error);
@@ -771,8 +781,21 @@ export function CameraProvider({ children }: { children: ReactNode }) {
         }
 
         setTimeout(() => notifyExerciseChange(), 50);
+
+        // Add success toast for successful API creation
+        toast.success(`Exercise "${newExercise.name}" saved successfully`);
       } catch (error) {
         console.error("Failed to add exercise:", error);
+
+        // If this is an authentication error, just show the error without saving locally
+        if (
+          error instanceof Error &&
+          error.message === "You must be signed in to create exercises"
+        ) {
+          toast.error(error.message);
+          return;
+        }
+
         toast.error(
           error instanceof Error
             ? error.message
@@ -800,7 +823,14 @@ export function CameraProvider({ children }: { children: ReactNode }) {
         setTimeout(() => notifyExerciseChange(), 50);
       }
     },
-    [isOnline, isServerAvailable, notifyExerciseChange, socket, isConnected],
+    [
+      isOnline,
+      isServerAvailable,
+      notifyExerciseChange,
+      socket,
+      isConnected,
+      session,
+    ],
   );
 
   const getExerciseById = useCallback(
