@@ -105,6 +105,11 @@ function confirmDeleteCar(carId) {
     }
 }
 
+function removeCars() {
+    const carsContainer = document.getElementById('cars-container');
+    carsContainer.innerHTML = '';
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     fetch('api/categories.php')
         .then(response => response.json())
@@ -143,6 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <h3 class="text-xl font-semibold mb-2">${category.name}</h3>
                             <p class="text-gray-700">${category.description || 'No description available'}</p>
                         `;
+                        removeCars();
                         loadCarsFromCategory(category.id);
                     });
                     
