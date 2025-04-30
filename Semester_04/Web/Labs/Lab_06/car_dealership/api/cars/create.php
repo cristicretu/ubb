@@ -33,6 +33,7 @@ if (
     $car->history = isset($data['history']) ? $data['history'] : "";
     $car->category_id = $data['category_id'];
     $car->created_at = date('Y-m-d H:i:s');
+    $car->features = isset($data['features']) ? $data['features'] : "";
 
     if ($car->create()) {
         http_response_code(201);

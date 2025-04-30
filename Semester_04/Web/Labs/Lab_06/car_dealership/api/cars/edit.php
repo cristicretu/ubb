@@ -30,7 +30,8 @@ if (
     !empty($data['price']) &&
     !empty($data['color']) &&
     !empty($data['year']) &&
-    !empty($data['category_id'])
+    !empty($data['category_id']) &&
+    !empty($data['features'])
 ) {
     $car->model = $data['model'];
     $car->engine_power = $data['engine_power'];
@@ -40,6 +41,7 @@ if (
     $car->year = $data['year'];
     $car->history = isset($data['history']) ? $data['history'] : "";
     $car->category_id = $data['category_id'];
+    $car->features = isset($data['features']) ? $data['features'] : "";
 
     if ($car->update()) {
         http_response_code(200);

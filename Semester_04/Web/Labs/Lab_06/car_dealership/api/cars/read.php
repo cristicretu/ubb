@@ -31,7 +31,8 @@ if ($num > 0) {
             "color" => $color,
             "year" => $year,
             "history" => $history,
-            "category_id" => $category_id
+            "category_id" => $category_id,
+            "features" => $features
             );
 
         array_push($cars_arr["records"], $car_item);

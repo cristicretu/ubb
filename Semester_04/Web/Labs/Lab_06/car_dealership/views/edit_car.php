@@ -71,6 +71,13 @@ include_once '../includes/header.php';
                 <textarea id="history" name="history" rows="4"
                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
             </div>
+
+            <div>
+                <label for="features" class="block text-sm font-medium text-gray-700 mb-1">Features</label>
+                <input type="text" id="features" name="features" rows="4"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"></input>
+                <p class="text-xs text-gray-500">Separate features with commas</p>
+            </div>
             
             <div class="flex justify-end space-x-3">
                 <a href="../index.php" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition">
@@ -106,6 +113,7 @@ function loadCarData() {
                 document.getElementById('price').value = car.price;
                 document.getElementById('color').value = car.color;
                 document.getElementById('history').value = car.history || '';
+                document.getElementById('features').value = car.features || '';
                 
                 window.carCategoryId = car.category_id;
             } else {
@@ -159,6 +167,7 @@ document.getElementById('add-car-form').addEventListener('submit', function(even
     formData.append('year', document.getElementById('year').value);
     formData.append('history', document.getElementById('history').value);
     formData.append('category_id', document.getElementById('category_id').value);
+    formData.append('features', document.getElementById('features').value);
 
     fetch('../api/cars/edit.php', {
         method: 'POST',

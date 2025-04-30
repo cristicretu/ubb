@@ -48,6 +48,7 @@ function renderCars() {
 
     cars.forEach(car => {
         const carElement = document.createElement('div');
+        const features = car.features ? car.features.split(',') : [];
         carElement.className = 'bg-white p-4 rounded-lg border border-gray-200 mb-4';
         carElement.innerHTML = `
             <h3 class="text-lg font-semibold mb-2">${car.model}</h3>
@@ -68,6 +69,8 @@ function renderCars() {
                     <span class="text-gray-500 mr-2">Year:</span>
                     <span class="font-medium">${car.year}</span>
                 </div>
+
+                ${features.map(feature => `<span class="text-gray-500 mr-2">${feature}</span>`).join('')}
             </div>
             <div class="mt-3 flex justify-between items-center">
                 <span class="text-lg font-bold text-green-600">${USDollar.format(car.price)}</span>

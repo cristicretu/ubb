@@ -25,7 +25,8 @@ if ($car->model != null) {
         "year" => $car->year,
         "history" => $car->history,
         "category_id" => $car->category_id,
-        "created_at" => $car->created_at
+        "created_at" => $car->created_at,
+        "features" => $car->features
     );
 
     http_response_code(200);
