@@ -9,7 +9,30 @@
 </head>
 <body class="bg-neutral-100">
     <script>
-        const previousFilters = [];
+        document.addEventListener('DOMContentLoaded', function() {
+            const historyStack = JSON.parse(localStorage.getItem('categoryHistory') || '[]');
+            const prevPageLink = document.getElementById('previous-page');
+            
+            if (historyStack.length > 0) {
+                const prevItem = historyStack[historyStack.length - 1];
+                prevPageLink.textContent = `← ${prevItem.name}`;
+                prevPageLink.href = `${prevItem.baseUrl}index.php?category_id=${prevItem.id}`;
+                
+                prevPageLink.addEventListener('click', function(e) {
+                    console.log('clicked');
+                    e.preventDefault();
+                    
+                    if (historyStack.length > 0) {
+                        const targetUrl = this.href;
+                        
+                        historyStack.pop();
+                        localStorage.setItem('categoryHistory', JSON.stringify(historyStack));
+                        
+                        window.location.href = targetUrl;
+                    }
+                });
+            }
+        });
     </script>
     <nav class="bg-neutral-800 text-white shadow-md mb-6">
         <div class="container mx-auto px-4 py-3">
@@ -19,7 +42,7 @@
                 ?>
                 <div class="flex items-center space-x-2">
                     <a class="text-xl font-bold" href="<?php echo $base_url; ?>index.php">Car Dealership</a>
-                    <a id="previous-page" class="text-white hover:text-neutral-300" href="<?php echo $base_url; ?>index.php"></a>
+                    <a id="previous-page" class="text-white hover:text-neutral-300"></a>
                 </div>
                 <div class="hidden md:block">
                     <div class="flex space-x-4">

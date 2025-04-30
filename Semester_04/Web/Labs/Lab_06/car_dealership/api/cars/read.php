@@ -15,10 +15,10 @@ $category_id = isset($_GET['category_id']) ? $_GET['category_id'] : null;
 $stmt = $car->readAll($category_id);
 $num = $stmt->rowCount();
 
-if ($num > 0) {
-    $cars_arr = array();
-    $cars_arr["records"] = array();
+$cars_arr = array();
+$cars_arr["records"] = array();
 
+if ($num > 0) {
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         extract($row);
 
