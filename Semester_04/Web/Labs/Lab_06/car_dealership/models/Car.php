@@ -14,13 +14,14 @@ class Car {
     public $history;
     public $category_id;
     public $created_at;
+    public $features;
 
     public function __construct($db) {
         $this->conn = $db;
     }
 
     public function readAll($category_id = null) {
-        $query = "SELECT id, model, engine_power, fuel_type, price, color, year, history, category_id, created_at FROM " . $this->table_name;
+        $query = "SELECT id, model, engine_power, fuel_type, price, color, year, history, category_id, created_at, features FROM " . $this->table_name;
         
         if ($category_id !== null) {
             $query .= " WHERE category_id = ?";
@@ -40,7 +41,7 @@ class Car {
     }
 
     public function readOne() {
-        $query = "SELECT id, model, engine_power, fuel_type, price, color, year, history, category_id, created_at FROM " . $this->table_name . " WHERE id = ? LIMIT 0,1";
+        $query = "SELECT id, model, engine_power, fuel_type, price, color, year, history, category_id, created_at, features FROM " . $this->table_name . " WHERE id = ? LIMIT 0,1";
         
         $stmt = $this->conn->prepare($query);
         
@@ -59,11 +60,11 @@ class Car {
         $this->history = $row['history'];
         $this->category_id = $row['category_id'];
         $this->created_at = $row['created_at'];
-
+        $this->features = $row['features'];
     }
 
     public function create() {
-        $query = "INSERT INTO " . $this->table_name . " SET model = ?, engine_power = ?, fuel_type = ?, price = ?, color = ?, year = ?, history = ?, category_id = ?, created_at = ?";
+        $query = "INSERT INTO " . $this->table_name . " SET model = ?, engine_power = ?, fuel_type = ?, price = ?, color = ?, year = ?, history = ?, category_id = ?, created_at = ?, features = ?";
 
         $stmt = $this->conn->prepare($query);
         
@@ -75,7 +76,7 @@ class Car {
         $this->year = htmlspecialchars(strip_tags($this->year));
         $this->history = htmlspecialchars(strip_tags($this->history));
         $this->category_id = htmlspecialchars(strip_tags($this->category_id));
-
+        $this->features = htmlspecialchars(strip_tags($this->features));
         $stmt->bindParam(1, $this->model);
         $stmt->bindParam(2, $this->engine_power);
         $stmt->bindParam(3, $this->fuel_type);
@@ -85,6 +86,7 @@ class Car {
         $stmt->bindParam(7, $this->history);
         $stmt->bindParam(8, $this->category_id);
         $stmt->bindParam(9, $this->created_at);
+        $stmt->bindParam(10, $this->features);
 
         if($stmt->execute()) {
             return true;
@@ -108,7 +110,7 @@ class Car {
     }
 
     public function update() {
-        $query = "UPDATE " . $this->table_name . " SET model = ?, engine_power = ?, fuel_type = ?, price = ?, color = ?, year = ?, history = ?, category_id = ? WHERE id = ?";
+        $query = "UPDATE " . $this->table_name . " SET model = ?, engine_power = ?, fuel_type = ?, price = ?, color = ?, year = ?, history = ?, category_id = ?, features = ? WHERE id = ?";
 
         $stmt = $this->conn->prepare($query);
         
@@ -120,8 +122,8 @@ class Car {
         $stmt->bindParam(6, $this->year);
         $stmt->bindParam(7, $this->history);
         $stmt->bindParam(8, $this->category_id);
-        $stmt->bindParam(9, $this->id);
-
+        $stmt->bindParam(9, $this->features);
+        $stmt->bindParam(10, $this->id);
         if($stmt->execute()) {
             return true;
         }

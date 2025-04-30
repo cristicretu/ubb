@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS categories (
   name VARCHAR(100) NOT NULL,
   description TEXT,
   PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+);
 
 CREATE TABLE IF NOT EXISTS cars (
   id INT NOT NULL AUTO_INCREMENT,
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS cars (
   created_at DATETIME NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (category_id) REFERENCES categories(id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+);
 
 INSERT INTO categories (name, description) VALUES
 ('Sedan', 'Four-door passenger cars'),
@@ -30,3 +30,5 @@ INSERT INTO categories (name, description) VALUES
 INSERT INTO cars (model, engine_power, fuel_type, price, color, year, history, category_id, created_at) VALUES
 ('Toyota Camry', '203 hp', 'Gasoline', 15000.00, 'Silver', 2018, 'Single owner', 1, NOW()),
 ('Honda CR-V', '190 hp', 'Gasoline', 18500.00, 'Blue', 2019, 'Two owners', 2, NOW()); 
+
+alter table cars add column features TEXT;
