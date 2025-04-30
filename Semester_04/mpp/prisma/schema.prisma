@@ -46,6 +46,38 @@ model Exercise {
     @@index([userId])
 }
 
+// Activity Log model to track CRUD operations
+model ActivityLog {
+    id          String   @id @default(uuid())
+    action      String   // CREATE, READ, UPDATE, DELETE
+    entity      String   // The entity being acted upon (e.g., Exercise, User, Post)
+    entityId    String   // The ID of the entity
+    details     String?  // Additional details about the action
+    createdAt   DateTime @default(now())
+    
+    // Relations
+    user        User     @relation(fields: [userId], references: [id])
+    userId      String
+
+    @@index([userId])
+    @@index([action])
+    @@index([entity])
+    @@index([createdAt])
+}
+
+// MonitoredUser model to track suspicious users
+model MonitoredUser {
+    id                String   @id @default(uuid())
+    reason            String   // Reason for monitoring
+    activelyMonitored Boolean  @default(true)
+    createdAt         DateTime @default(now())
+    updatedAt         DateTime @updatedAt
+    
+    // Relations
+    user              User     @relation(fields: [userId], references: [id])
+    userId            String   @unique
+}
+
 // Necessary for Next auth
 model Account {
     id                       String  @id @default(cuid())
@@ -87,10 +119,17 @@ model User {
     // Add password field for credentials login
     password      String?
     
+    // Add role field for user permissions ("USER" or "ADMIN")
     role          String    @default("USER")
     
     // Add exercises relation
     exercises     Exercise[]
+    
+    // Add activity logs relation
+    activityLogs  ActivityLog[]
+    
+    // Add monitored user relation
+    monitoredUser MonitoredUser?
 }
 
 model VerificationToken {
