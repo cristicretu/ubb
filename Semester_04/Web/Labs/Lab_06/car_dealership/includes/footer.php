@@ -3,9 +3,6 @@
         <div class="container mx-auto px-4">
             <div class="flex flex-col md:flex-row justify-between">
             </div>
-            <div class="mt-6 border-t border-neutral-300 pt-4 text-sm text-neutral-400">
-                <p>&copy; <?php echo date("Y"); ?> Car Dealership. All rights reserved.</p>
-            </div>
         </div>
     </footer>
 
