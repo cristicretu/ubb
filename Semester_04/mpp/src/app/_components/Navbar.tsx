@@ -5,12 +5,15 @@ import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 
+const ADMIN_ROLE = "ADMIN";
+
 export default function Navbar() {
   const { data: session, status } = useSession();
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Close mobile menu when changing routes
+  const isAdmin = session?.user?.role === ADMIN_ROLE;
+
   useEffect(() => {
     setIsMenuOpen(false);
   }, [pathname]);
@@ -58,6 +61,18 @@ export default function Navbar() {
                   Settings
                 </Link>
               )}
+              {isAdmin && (
+                <Link
+                  href="/admin"
+                  className={`rounded-md px-3 py-2 text-sm font-medium ${
+                    pathname === "/admin"
+                      ? "bg-gray-900 text-white"
+                      : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                  }`}
+                >
+                  Admin
+                </Link>
+              )}
             </div>
           </div>
           <div className="hidden sm:ml-6 sm:flex sm:items-center">
@@ -67,6 +82,11 @@ export default function Navbar() {
               <div className="flex items-center space-x-4">
                 <span className="text-sm text-gray-300">
                   {session.user?.name || session.user?.email}
+                  {isAdmin && (
+                    <span className="ml-2 inline-flex items-center rounded-full bg-purple-100 px-2.5 py-0.5 text-xs font-medium text-purple-800">
+                      Admin
+                    </span>
+                  )}
                 </span>
                 <button
                   onClick={() => signOut({ callbackUrl: "/" })}
@@ -168,6 +188,18 @@ export default function Navbar() {
               Settings
             </Link>
           )}
+          {isAdmin && (
+            <Link
+              href="/admin"
+              className={`block rounded-md px-3 py-2 text-base font-medium ${
+                pathname === "/admin"
+                  ? "bg-gray-900 text-white"
+                  : "text-gray-300 hover:bg-gray-700 hover:text-white"
+              }`}
+            >
+              Admin
+            </Link>
+          )}
         </div>
         <div className="border-t border-gray-700 pb-3 pt-4">
           {status === "loading" ? (
@@ -176,6 +208,11 @@ export default function Navbar() {
             <div className="space-y-3 px-4">
               <div className="text-base font-medium text-white">
                 {session.user?.name || session.user?.email}
+                {isAdmin && (
+                  <span className="ml-2 inline-flex items-center rounded-full bg-purple-100 px-2.5 py-0.5 text-xs font-medium text-purple-800">
+                    Admin
+                  </span>
+                )}
               </div>
               <button
                 onClick={() => signOut({ callbackUrl: "/" })}

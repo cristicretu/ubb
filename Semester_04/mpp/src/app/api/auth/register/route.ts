@@ -3,10 +3,14 @@ import bcrypt from "bcryptjs";
 import prisma from "../../_lib/prisma";
 import { z } from "zod";
 
+const USER_ROLE = "USER";
+const ADMIN_ROLE = "ADMIN";
+
 const userSchema = z.object({
   name: z.string().min(2, "Name is required"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
+  role: z.enum([USER_ROLE, ADMIN_ROLE]).optional().default(USER_ROLE),
 });
 
 export async function POST(request: NextRequest) {
@@ -21,7 +25,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { name, email, password } = result.data;
+    const { name, email, password, role } = result.data;
 
     const existingUser = await prisma.user.findUnique({
       where: { email },
@@ -41,11 +45,13 @@ export async function POST(request: NextRequest) {
         name,
         email,
         password: hashedPassword,
+        role,
       },
       select: {
         id: true,
         name: true,
         email: true,
+        role: true,
       },
     });
 

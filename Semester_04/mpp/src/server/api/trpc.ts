@@ -131,3 +131,19 @@ export const protectedProcedure = t.procedure
       },
     });
   });
+
+export const ADMIN_ROLE = "ADMIN";
+
+export const adminProcedure = protectedProcedure.use(
+  t.middleware(async ({ ctx, next }) => {
+    if (ctx.session.user.role !== ADMIN_ROLE) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Admin access required",
+      });
+    }
+    return next({
+      ctx,
+    });
+  }),
+);
