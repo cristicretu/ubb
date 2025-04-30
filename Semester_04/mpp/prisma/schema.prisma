@@ -87,6 +87,8 @@ model User {
     // Add password field for credentials login
     password      String?
     
+    role          String    @default("USER")
+    
     // Add exercises relation
     exercises     Exercise[]
 }

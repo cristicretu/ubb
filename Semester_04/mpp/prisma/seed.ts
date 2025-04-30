@@ -3,6 +3,9 @@ import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
+const USER_ROLE = "USER";
+const ADMIN_ROLE = "ADMIN";
+
 const exercises = [
   {
     name: "Battle Ropes 89",
@@ -79,7 +82,7 @@ const exercises = [
 async function main() {
   console.log("Starting seed...");
 
-  // Create a test user
+  // Create a test regular user
   const hashedPassword = await bcrypt.hash("password123", 10);
 
   // Check if test user already exists
@@ -92,16 +95,51 @@ async function main() {
   if (existingUser) {
     userId = existingUser.id;
     console.log("Test user already exists, using existing user");
+
+    if (!existingUser.role) {
+      await prisma.user.update({
+        where: { id: existingUser.id },
+        data: { role: USER_ROLE },
+      });
+    }
   } else {
     const newUser = await prisma.user.create({
       data: {
         name: "Test User",
         email: "test@example.com",
         password: hashedPassword,
+        role: USER_ROLE,
       },
     });
     userId = newUser.id;
     console.log("Created test user:", newUser.email);
+  }
+
+  const existingAdmin = await prisma.user.findUnique({
+    where: { email: "admin@example.com" },
+  });
+
+  if (existingAdmin) {
+    console.log("Admin user already exists");
+
+    // Update the admin with the ADMIN role if not set
+    if (!existingAdmin.role || existingAdmin.role !== ADMIN_ROLE) {
+      await prisma.user.update({
+        where: { id: existingAdmin.id },
+        data: { role: ADMIN_ROLE },
+      });
+      console.log("Updated admin user with ADMIN role");
+    }
+  } else {
+    const adminUser = await prisma.user.create({
+      data: {
+        name: "Admin User",
+        email: "admin@example.com",
+        password: hashedPassword,
+        role: ADMIN_ROLE,
+      },
+    });
+    console.log("Created admin user:", adminUser.email);
   }
 
   // Delete existing exercises
