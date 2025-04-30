@@ -114,6 +114,9 @@ function removeCars() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    const categoryId = new URLSearchParams(window.location.search).get('category_id') || 0;
+    console.log(categoryId);
+    
     fetch('api/categories.php')
         .then(response => response.json())
         .then(data => {
@@ -127,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     tabElement.dataset.categoryId = category.id;
                     tabElement.textContent = category.name;
                     
-                    if (index === 0) {
+                    if (category.id == categoryId) {
                         tabElement.classList.add('border-b-2', 'border-blue-500', 'text-blue-600', 'font-medium');
                         document.getElementById('category-content').innerHTML = `
                             <h3 class="text-xl font-semibold mb-2">${category.name}</h3>
@@ -139,6 +142,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     
                     tabElement.addEventListener('click', function() {
+                        const currentActiveTab = document.querySelector('#categories-tabs .border-blue-500');
+                        let previousCategory = '';
+                        let previousId = '';
+                        if (currentActiveTab) {
+                            const prevCatId = currentActiveTab.dataset.categoryId;
+                            previousCategory = currentActiveTab.textContent;
+                            previousId = prevCatId;
+                        }
+                        
                         document.querySelectorAll('#categories-tabs > div').forEach(tab => {
                             tab.classList.remove('border-b-2', 'border-blue-500', 'text-blue-600', 'font-medium');
                             tab.classList.add('text-gray-500', 'hover:text-gray-700');
@@ -151,6 +163,29 @@ document.addEventListener('DOMContentLoaded', function() {
                             <h3 class="text-xl font-semibold mb-2">${category.name}</h3>
                             <p class="text-gray-700">${category.description || 'No description available'}</p>
                         `;
+                        
+                        if (previousCategory) {
+                            const historyStack = JSON.parse(localStorage.getItem('categoryHistory') || '[]');
+                            console.log(historyStack);
+                            historyStack.push({
+                                name: previousCategory,
+                                id: previousId,
+                                baseUrl: '<?php echo $base_url; ?>'
+                            });
+                            
+                            localStorage.setItem('categoryHistory', JSON.stringify(historyStack));
+                            
+                            const prevPageLink = document.getElementById('previous-page');
+                            if (prevPageLink) {
+                                prevPageLink.textContent = `← ${previousCategory}`;
+                                prevPageLink.href = '<?php echo $base_url; ?>index.php?category_id=' + previousId;
+                            }
+                        }
+                        
+                        const url = new URL(window.location);
+                        url.searchParams.set('category_id', category.id);
+                        window.history.replaceState({}, '', url);
+                        
                         removeCars();
                         loadCarsFromCategory(category.id);
                     });
