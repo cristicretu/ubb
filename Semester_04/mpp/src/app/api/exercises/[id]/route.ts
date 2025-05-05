@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import prisma from "../../_lib/prisma";
 import { auth } from "~/server/auth";
+import {
+  logRead,
+  logUpdate,
+  logDelete,
+  LogEntityType,
+} from "~/server/services/logger";
 
 const updateExerciseSchema = z.object({
   name: z.string().min(1, "Name is required").optional(),
@@ -71,6 +77,16 @@ export async function GET(
       return NextResponse.json(
         { error: "You don't have permission to access this exercise" },
         { status: 403 },
+      );
+    }
+
+    // Log this read action if user is authenticated
+    if (session?.user) {
+      void logRead(
+        session.user,
+        LogEntityType.EXERCISE,
+        id,
+        `Get exercise by ID: ${exercise.name} via REST API`,
       );
     }
 
@@ -188,6 +204,16 @@ export async function PUT(
       data: updateData,
     });
 
+    // Log this update if user is authenticated
+    if (session?.user) {
+      void logUpdate(
+        session.user,
+        LogEntityType.EXERCISE,
+        id,
+        `Updated exercise: ${updatedExercise.name} via REST API`,
+      );
+    }
+
     console.log(
       "Successfully updated exercise:",
       JSON.stringify(updatedExercise, null, 2),
@@ -247,6 +273,14 @@ export async function DELETE(
     const deletedExercise = await prisma.exercise.delete({
       where: { id },
     });
+
+    // Log this deletion
+    void logDelete(
+      session.user,
+      LogEntityType.EXERCISE,
+      id,
+      `Deleted exercise: ${existingExercise.name} via REST API`,
+    );
 
     console.log(
       "Successfully deleted exercise:",

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import prisma from "../_lib/prisma";
 import { auth } from "~/server/auth";
+import { logRead, logCreate, LogEntityType } from "~/server/services/logger";
 
 const createExerciseSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -116,6 +117,16 @@ export async function GET(request: NextRequest) {
         },
       },
     });
+
+    // Log this read action if user is authenticated
+    if (session?.user) {
+      void logRead(
+        session.user,
+        LogEntityType.EXERCISE,
+        "all",
+        "Get all exercises via REST API",
+      );
+    }
 
     return NextResponse.json({
       exercises,
@@ -232,6 +243,14 @@ export async function POST(request: NextRequest) {
         userId: userId,
       },
     });
+
+    // Log this creation
+    void logCreate(
+      session.user,
+      LogEntityType.EXERCISE,
+      newExercise.id,
+      `Created exercise: ${newExercise.name} via REST API`,
+    );
 
     console.log("Created new exercise:", JSON.stringify(newExercise, null, 2));
 
