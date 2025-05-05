@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../_lib/prisma";
+import { LogEntityType, logCreate } from "~/server/services/logger";
 
 let generatorInterval: NodeJS.Timeout | null = null;
 let isRunning = false;
@@ -45,6 +46,15 @@ async function generateRandomExercise() {
     const createdExercise = await prisma.exercise.create({
       data: randomExercise,
     });
+
+    // We don't have a real user for background generated exercises,
+    // but we should still log the activity using a system user ID
+    void logCreate(
+      { id: "system" }, // Using a special "system" user ID
+      LogEntityType.EXERCISE,
+      createdExercise.id,
+      `Auto-generated exercise: ${createdExercise.name}`,
+    );
 
     console.log("Generated random exercise:", createdExercise);
 
