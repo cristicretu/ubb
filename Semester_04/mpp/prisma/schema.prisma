@@ -26,7 +26,6 @@ model Post {
     @@index([name])
 }
 
-// New Exercise model based on the existing in-memory structure
 model Exercise {
     id       String   @id @default(uuid())
     name     String
@@ -46,13 +45,12 @@ model Exercise {
     @@index([userId])
 }
 
-// Activity Log model to track CRUD operations
 model ActivityLog {
     id          String   @id @default(uuid())
-    action      String   // CREATE, READ, UPDATE, DELETE
-    entity      String   // The entity being acted upon (e.g., Exercise, User, Post)
-    entityId    String   // The ID of the entity
-    details     String?  // Additional details about the action
+    action      String   
+    entity      String   
+    entityId    String   
+    details     String?  
     createdAt   DateTime @default(now())
     
     // Relations
@@ -65,10 +63,9 @@ model ActivityLog {
     @@index([createdAt])
 }
 
-// MonitoredUser model to track suspicious users
 model MonitoredUser {
     id                String   @id @default(uuid())
-    reason            String   // Reason for monitoring
+    reason            String   
     activelyMonitored Boolean  @default(true)
     createdAt         DateTime @default(now())
     updatedAt         DateTime @updatedAt
@@ -78,7 +75,6 @@ model MonitoredUser {
     userId            String   @unique
 }
 
-// Necessary for Next auth
 model Account {
     id                       String  @id @default(cuid())
     userId                   String

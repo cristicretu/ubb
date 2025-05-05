@@ -11,6 +11,10 @@
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "db:seed": "tsx prisma/seed.ts",
+    "db:stress-test": "tsx scripts/stress-test-data-generator.ts",
+    "db:performance-test": "jmeter -n -t scripts/jmeter-test-plan.jmx -l jmeter-results.jtl",
+    "db:performance-test-gui": "jmeter -t scripts/jmeter-test-plan.jmx",
+    "db:run-all-tests": "bash scripts/run-performance-tests.sh",
     "dev": "next dev --turbo",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
@@ -21,7 +25,8 @@
     "start": "next start",
     "test": "jest",
     "test:watch": "jest --watch",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "seed-logs": "ts-node --project tsconfig.json -r tsconfig-paths/register ./src/scripts/seed-logs.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.2",
@@ -55,6 +60,7 @@
     "zod": "^3.23.3"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.7.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^14.6.1",
