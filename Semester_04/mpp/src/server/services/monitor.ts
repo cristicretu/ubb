@@ -2,9 +2,13 @@ import { db } from "~/server/db";
 import { LogActionType } from "./logger";
 
 // Constants for monitoring
-const SUSPICIOUS_THRESHOLD = 50; // Number of actions in time window to be suspicious
-const TIME_WINDOW_MINUTES = 5; // Time window in minutes
-const CHECK_INTERVAL_MINUTES = 2; // How often to check for suspicious activity
+const SUSPICIOUS_THRESHOLD = 10; // Number of actions in time window to be suspicious (reduced from 50 to 10)
+const TIME_WINDOW_SECONDS = 10; // Time window in seconds (changed from minutes to seconds)
+const TIME_WINDOW_MINUTES = TIME_WINDOW_SECONDS / 60; // Convert seconds to minutes for existing code
+const CHECK_INTERVAL_SECONDS = 5; // How often to check for suspicious activity (reduced to 5 seconds)
+const CHECK_INTERVAL_MINUTES = CHECK_INTERVAL_SECONDS / 60; // Convert for existing code
+
+let monitoringInterval: NodeJS.Timeout | null = null;
 
 /**
  * Check for suspicious activity by users
@@ -12,16 +16,18 @@ const CHECK_INTERVAL_MINUTES = 2; // How often to check for suspicious activity
  */
 export async function checkForSuspiciousActivity() {
   try {
-    const timeWindowStart = new Date(
-      Date.now() - TIME_WINDOW_MINUTES * 60 * 1000,
+    const timeWindowAgo = new Date(Date.now() - TIME_WINDOW_SECONDS * 1000);
+
+    console.log(
+      `[Monitor] Checking for suspicious activity since ${timeWindowAgo.toISOString()}`,
     );
 
-    // Get counts of actions by user in the time window
+    // Get counts of actions by user in the last TIME_WINDOW_SECONDS
     const userActionCounts = await db.activityLog.groupBy({
       by: ["userId"],
       where: {
         createdAt: {
-          gte: timeWindowStart,
+          gte: timeWindowAgo,
         },
       },
       _count: {
@@ -34,81 +40,104 @@ export async function checkForSuspiciousActivity() {
       },
     });
 
-    // Identify suspicious users (those exceeding the threshold)
+    // Filter for users who have more actions than the threshold
     const suspiciousUsers = userActionCounts.filter(
-      (userCount) => userCount._count.id >= SUSPICIOUS_THRESHOLD,
+      (user) => user._count.id >= SUSPICIOUS_THRESHOLD,
     );
 
-    // Add suspicious users to the monitored list
-    for (const suspiciousUser of suspiciousUsers) {
-      const userId = suspiciousUser.userId;
+    console.log(`[Monitor] Found ${suspiciousUsers.length} suspicious users`);
+
+    // For each suspicious user, add them to the monitoredUser table if not already there
+    for (const user of suspiciousUsers) {
+      const userId = user.userId;
+
+      if (!userId) continue;
+
+      const userDetails = await db.user.findUnique({
+        where: { id: userId },
+        select: { email: true, name: true },
+      });
+
+      console.log(
+        `[Monitor] User ${userDetails?.email || userId} performed ${user._count.id} actions in ${TIME_WINDOW_SECONDS} seconds`,
+      );
 
       // Check if user is already being monitored
-      const existingMonitoring = await db.monitoredUser.findUnique({
+      const existing = await db.monitoredUser.findUnique({
         where: { userId },
       });
 
-      if (!existingMonitoring) {
-        // Get more details about the suspicious activity
-        const recentActions = await db.activityLog.findMany({
-          where: {
-            userId,
-            createdAt: {
-              gte: timeWindowStart,
-            },
-          },
-          orderBy: {
-            createdAt: "desc",
-          },
-          take: 10, // Get the 10 most recent actions
-        });
-
-        const actionSummary = recentActions
-          .map((log) => `${log.action} ${log.entity}`)
-          .join(", ");
-
-        // Add user to monitored list
+      if (!existing) {
+        // Add to monitored users
         await db.monitoredUser.create({
           data: {
             userId,
-            reason: `${suspiciousUser._count.id} actions in ${TIME_WINDOW_MINUTES} minutes. Recent actions: ${actionSummary}`,
+            reason: `Performed ${user._count.id} actions in ${TIME_WINDOW_SECONDS} seconds`,
+            activelyMonitored: true,
           },
         });
-
         console.log(
-          `Added user ${userId} to monitored list for suspicious activity: ${suspiciousUser._count.id} actions in ${TIME_WINDOW_MINUTES} minutes`,
+          `[Monitor] Added user ${userDetails?.email || userId} to monitored users`,
+        );
+      } else {
+        // Update the existing entry to ensure it's active
+        await db.monitoredUser.update({
+          where: { userId },
+          data: {
+            reason: `Performed ${user._count.id} actions in ${TIME_WINDOW_SECONDS} seconds (updated)`,
+            activelyMonitored: true,
+          },
+        });
+        console.log(
+          `[Monitor] Updated monitoring status for ${userDetails?.email || userId}`,
         );
       }
     }
 
     return suspiciousUsers;
   } catch (error) {
-    console.error("Error checking for suspicious activity:", error);
+    console.error("[Monitor] Error checking for suspicious activity:", error);
     return [];
   }
 }
 
 /**
- * Initialize the monitoring system that runs in the background
- * Can be called once when the server starts
+ * Initialize the monitoring system
+ * Starts a background process that periodically checks for suspicious activity
  */
 export function initializeMonitoring() {
-  // Run the check initially
-  void checkForSuspiciousActivity();
-
-  // Then set up interval
-  const intervalMs = CHECK_INTERVAL_MINUTES * 60 * 1000;
-
-  const intervalId = setInterval(() => {
-    void checkForSuspiciousActivity();
-  }, intervalMs);
+  // Clear any existing interval
+  if (monitoringInterval) {
+    clearInterval(monitoringInterval);
+  }
 
   console.log(
-    `Monitoring system initialized. Checking every ${CHECK_INTERVAL_MINUTES} minutes.`,
+    `[Monitor] Initializing monitoring system. Checking every ${CHECK_INTERVAL_SECONDS} seconds.`,
   );
 
-  // Return the interval ID so it can be cleared if needed
-  return intervalId;
+  // Set up an interval to check for suspicious activity
+  monitoringInterval = setInterval(async () => {
+    try {
+      await checkForSuspiciousActivity();
+    } catch (error) {
+      console.error("[Monitor] Error in monitoring check:", error);
+    }
+  }, CHECK_INTERVAL_SECONDS * 1000);
+
+  return monitoringInterval;
+}
+
+/**
+ * Stop the monitoring system
+ */
+export function stopMonitoring() {
+  if (monitoringInterval) {
+    clearInterval(monitoringInterval);
+    monitoringInterval = null;
+    console.log("[Monitor] Monitoring system stopped");
+    return true;
+  }
+  return false;
 }
 
 /**

@@ -3,6 +3,10 @@ import { z } from "zod";
 import prisma from "../_lib/prisma";
 import { auth } from "~/server/auth";
 import { logRead, logCreate, LogEntityType } from "~/server/services/logger";
+import { initializeMonitoring } from "~/server/services/monitor";
+
+// Ensure the monitoring system is initialized
+let isMonitoringInitialized = false;
 
 const createExerciseSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -146,6 +150,13 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    // Initialize monitoring if needed
+    if (!isMonitoringInitialized) {
+      initializeMonitoring();
+      isMonitoringInitialized = true;
+      console.log("[API] Initialized monitoring system on first request");
+    }
+
     // Get the authenticated user
     const session = await auth();
     const userId = session?.user?.id;
