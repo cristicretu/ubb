@@ -1,13 +1,15 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Observable, map } from "rxjs";
 import { Car } from "../models/car.model";
 
 @Injectable({
   providedIn: "root",
 })
 export class CarService {
-  private apiUrl = "/api/cars";
+  // Always use the direct URL to the backend
+  private apiBase = "http://localhost:8000/api";
+  private apiUrl = `${this.apiBase}/cars`;
 
   constructor(private http: HttpClient) {}
 
@@ -18,7 +20,11 @@ export class CarService {
   }
 
   getCar(id: number): Observable<{ data: Car }> {
-    return this.http.get<{ data: Car }>(`${this.apiUrl}/read_one.php?id=${id}`);
+    return this.http
+      .get<{ success: boolean; record: Car }>(
+        `${this.apiUrl}/read_one.php?id=${id}`
+      )
+      .pipe(map((response) => ({ data: response.record })));
   }
 
   createCar(
