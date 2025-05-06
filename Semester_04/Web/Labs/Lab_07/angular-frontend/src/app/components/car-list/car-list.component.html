@@ -1,0 +1,67 @@
+<div class="mb-6">
+  <h1 class="text-3xl font-bold text-neutral-800 mb-4">Car Dealership</h1>
+  
+  <div class="bg-white p-4 rounded shadow-md mb-6">
+    <div class="overflow-x-auto">
+      <div class="flex space-x-2 mb-4 pb-1 whitespace-nowrap">
+        <div *ngFor="let category of categories" 
+          [class.border-b-2]="selectedCategoryId === category.id"
+          [class.border-blue-500]="selectedCategoryId === category.id"
+          [class.text-blue-600]="selectedCategoryId === category.id"
+          [class.font-medium]="selectedCategoryId === category.id"
+          [class.text-gray-500]="selectedCategoryId !== category.id"
+          [class.hover:text-gray-700]="selectedCategoryId !== category.id"
+          class="cursor-pointer px-4 py-2 text-center transition-colors duration-200"
+          (click)="selectCategory(category)">
+          {{ category.name }}
+        </div>
+      </div>
+    </div>
+    
+    <div *ngIf="selectedCategory" class="mt-4">
+      <h3 class="text-xl font-semibold mb-2">{{ selectedCategory.name }}</h3>
+      <p class="text-gray-700">{{ selectedCategory.description || 'No description available' }}</p>
+    </div>
+
+    <div class="mt-4">
+      <div *ngFor="let car of cars" class="bg-white p-4 rounded-lg border border-gray-200 mb-4">
+        <h3 class="text-lg font-semibold mb-2">{{ car.model }}</h3>
+        <div class="grid grid-cols-2 gap-2 mt-2">
+          <div class="flex items-center">
+            <span class="text-gray-500 mr-2">Engine:</span>
+            <span class="font-medium">{{ car.engine_power }}</span>
+          </div>
+          <div class="flex items-center">
+            <span class="text-gray-500 mr-2">Fuel:</span>
+            <span class="font-medium">{{ car.fuel_type }}</span>
+          </div>
+          <div class="flex items-center">
+            <span class="text-gray-500 mr-2">Color:</span>
+            <span class="font-medium">{{ car.color }}</span>
+          </div>
+          <div class="flex items-center">
+            <span class="text-gray-500 mr-2">Year:</span>
+            <span class="font-medium">{{ car.year }}</span>
+          </div>
+
+          <ng-container *ngIf="car.features">
+            <span *ngFor="let feature of car.features.split(',')" class="text-gray-500 mr-2">{{ feature }}</span>
+          </ng-container>
+        </div>
+        <div class="mt-3 flex justify-between items-center">
+          <span class="text-lg font-bold text-green-600">{{ formatCurrency(car.price) }}</span>
+          <div class="flex items-center gap-2">
+            <button class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition" 
+                    [routerLink]="['/edit-car', car.id]">Edit</button>
+            <button class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition" 
+                    (click)="confirmDeleteCar(car, $event)">Delete</button>
+          </div>
+        </div>
+      </div>
+      
+      <div *ngIf="cars.length === 0" class="p-4 text-center text-gray-500">
+        No cars found in this category.
+      </div>
+    </div>
+  </div>
+</div> 

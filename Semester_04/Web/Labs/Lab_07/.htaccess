@@ -1,0 +1,15 @@
+RewriteEngine On
+
+# API requests go to PHP backend
+RewriteRule ^api/ - [L]
+RewriteRule ^config/ - [L]
+RewriteRule ^models/ - [L]
+RewriteRule ^includes/ - [L]
+
+# Angular app routes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(add-car|edit-car)(/.*)?$ dist/index.html [L]
+
+# Default PHP index for root requests
+RewriteRule ^$ index.php [L]
