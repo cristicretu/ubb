@@ -1,0 +1,26 @@
+<nav class="bg-neutral-800 text-white shadow-md mb-6">
+  <div class="container mx-auto px-4 py-3">
+    <div class="flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+        <a class="text-xl font-bold" routerLink="/">Car Dealership</a>
+      </div>
+      <div class="hidden md:block">
+        <div class="flex space-x-4">
+          <a class="px-3 py-2 hover:bg-neutral-700 rounded" routerLink="/" routerLinkActive="bg-neutral-700" [routerLinkActiveOptions]="{exact: true}">Browse Cars</a>
+          <a class="px-3 py-2 hover:bg-neutral-700 rounded" routerLink="/add-car" routerLinkActive="bg-neutral-700">Add Car</a>
+        </div>
+      </div>
+      <div class="md:hidden">
+        <button (click)="toggleMenu()" class="text-white hover:text-neutral-300">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div *ngIf="isMenuOpen" class="md:hidden mt-3">
+      <a class="block px-3 py-2 hover:bg-neutral-700 rounded mt-1" routerLink="/" routerLinkActive="bg-neutral-700" [routerLinkActiveOptions]="{exact: true}">Browse Cars</a>
+      <a class="block px-3 py-2 hover:bg-neutral-700 rounded mt-1" routerLink="/add-car" routerLinkActive="bg-neutral-700">Add Car</a>
+    </div>
+  </div>
+</nav> 
