@@ -7,7 +7,6 @@ import { Car } from "../models/car.model";
   providedIn: "root",
 })
 export class CarService {
-  // Always use the direct URL to the backend
   private apiBase = "http://localhost:8000/api";
   private apiUrl = `${this.apiBase}/cars`;
 

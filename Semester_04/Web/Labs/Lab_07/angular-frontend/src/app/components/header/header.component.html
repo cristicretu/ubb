@@ -3,6 +3,11 @@
     <div class="flex justify-between items-center">
       <div class="flex items-center space-x-2">
         <a class="text-xl font-bold" routerLink="/">Car Dealership</a>
+        <ng-container *ngIf="previousCategoryTitle">
+          <button (click)="goToPreviousCategory()" class="ml-4 px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+            ← {{ previousCategoryTitle }}
+          </button>
+        </ng-container>
       </div>
       <div class="hidden md:block">
         <div class="flex space-x-4">
