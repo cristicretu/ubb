@@ -14,6 +14,8 @@ export class CarListComponent implements OnInit {
   categories: Category[] = [];
   selectedCategoryId: number = 0;
   selectedCategory?: Category;
+  numberOfCars: number = 0;
+  showOnlyBlueCars: boolean = false;
 
   constructor(
     private carService: CarService,
@@ -41,11 +43,9 @@ export class CarListComponent implements OnInit {
       next: (data) => {
         this.categories = data.records;
 
-        // If no category is selected yet and we have categories, select the first one
         if (this.categories.length > 0 && !this.selectedCategoryId) {
           this.selectCategory(this.categories[0]);
         } else if (this.selectedCategoryId) {
-          // Find the selected category in the loaded categories
           this.selectedCategory = this.categories.find(
             (c) => c.id === this.selectedCategoryId
           );
@@ -56,12 +56,26 @@ export class CarListComponent implements OnInit {
     });
   }
 
+  toggleShowOnlyBlueCars(): void {
+    this.showOnlyBlueCars = !this.showOnlyBlueCars;
+    this.loadCarsFromCategory(this.selectedCategoryId);
+  }
+
   selectCategory(category: Category): void {
+    if (this.selectedCategory) {
+      localStorage.setItem(
+        "previousCategory",
+        JSON.stringify({
+          id: this.selectedCategory.id,
+          name: this.selectedCategory.name,
+        })
+      );
+    }
     this.selectedCategoryId = category.id;
     this.selectedCategory = category;
+    this.showOnlyBlueCars = false;
     this.loadCarsFromCategory(category.id);
 
-    // Update the URL with the selected category
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { category_id: category.id },
@@ -72,7 +86,10 @@ export class CarListComponent implements OnInit {
   loadCarsFromCategory(categoryId: number): void {
     this.carService.getCars(categoryId).subscribe({
       next: (data) => {
-        this.cars = data.records;
+        this.cars = data.records.filter(
+          (car) => !this.showOnlyBlueCars || car.color === "blue"
+        );
+        this.numberOfCars = this.cars.length;
       },
       error: (err) => console.error("Error loading cars:", err),
     });
