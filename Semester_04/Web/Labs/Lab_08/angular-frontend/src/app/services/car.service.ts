@@ -29,16 +29,40 @@ export class CarService {
   createCar(
     car: Car
   ): Observable<{ success: boolean; message: string; id?: number }> {
+    const carForApi = {
+      Id: car.id,
+      Model: car.model,
+      EnginePower: car.engine_power,
+      FuelType: car.fuel_type,
+      Color: car.color,
+      Year: car.year,
+      Price: car.price,
+      Features: car.features || null,
+      CategoryId: car.category_id,
+    };
+
     return this.http.post<{ success: boolean; message: string; id?: number }>(
       `${this.apiUrl}/create`,
-      car
+      carForApi
     );
   }
 
   updateCar(car: Car): Observable<{ success: boolean; message: string }> {
+    const carForApi = {
+      Id: car.id,
+      Model: car.model,
+      EnginePower: car.engine_power,
+      FuelType: car.fuel_type,
+      Color: car.color,
+      Year: car.year,
+      Price: car.price,
+      Features: car.features || null,
+      CategoryId: car.category_id,
+    };
+
     return this.http.post<{ success: boolean; message: string }>(
       `${this.apiUrl}/edit`,
-      car
+      carForApi
     );
   }
 
