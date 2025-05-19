@@ -14,14 +14,14 @@ export class CarService {
 
   getCars(categoryId: number): Observable<{ records: Car[] }> {
     return this.http.get<{ records: Car[] }>(
-      `${this.apiUrl}/read.php?category_id=${categoryId}`
+      `${this.apiUrl}/read?category_id=${categoryId}`
     );
   }
 
   getCar(id: number): Observable<{ data: Car }> {
     return this.http
       .get<{ success: boolean; record: Car }>(
-        `${this.apiUrl}/read_one.php?id=${id}`
+        `${this.apiUrl}/read_one?id=${id}`
       )
       .pipe(map((response) => ({ data: response.record })));
   }
@@ -30,21 +30,21 @@ export class CarService {
     car: Car
   ): Observable<{ success: boolean; message: string; id?: number }> {
     return this.http.post<{ success: boolean; message: string; id?: number }>(
-      `${this.apiUrl}/create.php`,
+      `${this.apiUrl}/create`,
       car
     );
   }
 
   updateCar(car: Car): Observable<{ success: boolean; message: string }> {
     return this.http.post<{ success: boolean; message: string }>(
-      `${this.apiUrl}/edit.php`,
+      `${this.apiUrl}/edit`,
       car
     );
   }
 
   deleteCar(id: number): Observable<{ success: boolean; message: string }> {
     return this.http.delete<{ success: boolean; message: string }>(
-      `${this.apiUrl}/delete.php?id=${id}`
+      `${this.apiUrl}/delete?id=${id}`
     );
   }
 }
