@@ -1,0 +1,125 @@
+<div class="mb-6">
+  <h1 class="text-3xl font-bold text-neutral-800 mb-4">Edit Car</h1>
+
+  <div *ngIf="alertMessage" 
+       [class.bg-red-100]="alertType === 'error'"
+       [class.border-red-200]="alertType === 'error'"
+       [class.text-red-800]="alertType === 'error'"
+       [class.bg-green-100]="alertType === 'success'"
+       [class.border-green-200]="alertType === 'success'"
+       [class.text-green-800]="alertType === 'success'"
+       class="border p-3 rounded mb-4">
+    {{ alertMessage }}
+  </div>
+
+  <div *ngIf="isLoading" class="bg-white p-6 rounded shadow-md text-center">
+    <p class="text-gray-600">Loading car details...</p>
+  </div>
+
+  <div *ngIf="!isLoading" class="bg-white p-6 rounded shadow-md">
+    <form [formGroup]="carForm" (ngSubmit)="onSubmit()">
+      <input type="hidden" formControlName="id">
+      
+      <div class="mb-4">
+        <label for="model" class="block text-sm font-medium text-gray-700 mb-1">Model</label>
+        <input type="text" id="model" formControlName="model" 
+               class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+               [class.border-red-500]="carForm.get('model')?.invalid && carForm.get('model')?.touched">
+        <div *ngIf="carForm.get('model')?.invalid && carForm.get('model')?.touched" class="text-red-500 text-sm mt-1">
+          <div *ngIf="carForm.get('model')?.errors?.['required']">Model is required.</div>
+          <div *ngIf="carForm.get('model')?.errors?.['minlength']">Model must be at least 2 characters.</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="mb-4">
+          <label for="engine_power" class="block text-sm font-medium text-gray-700 mb-1">Engine Power</label>
+          <input type="text" id="engine_power" formControlName="engine_power" 
+                class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                [class.border-red-500]="carForm.get('engine_power')?.invalid && carForm.get('engine_power')?.touched">
+          <div *ngIf="carForm.get('engine_power')?.invalid && carForm.get('engine_power')?.touched" class="text-red-500 text-sm mt-1">
+            Engine power is required.
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label for="fuel_type" class="block text-sm font-medium text-gray-700 mb-1">Fuel Type</label>
+          <select id="fuel_type" formControlName="fuel_type" 
+                 class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                 [class.border-red-500]="carForm.get('fuel_type')?.invalid && carForm.get('fuel_type')?.touched">
+            <option value="">Select Fuel Type</option>
+            <option value="Gasoline">Gasoline</option>
+            <option value="Diesel">Diesel</option>
+            <option value="Electric">Electric</option>
+            <option value="Hybrid">Hybrid</option>
+          </select>
+          <div *ngIf="carForm.get('fuel_type')?.invalid && carForm.get('fuel_type')?.touched" class="text-red-500 text-sm mt-1">
+            Fuel type is required.
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label for="color" class="block text-sm font-medium text-gray-700 mb-1">Color</label>
+          <input type="text" id="color" formControlName="color" 
+                class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                [class.border-red-500]="carForm.get('color')?.invalid && carForm.get('color')?.touched">
+          <div *ngIf="carForm.get('color')?.invalid && carForm.get('color')?.touched" class="text-red-500 text-sm mt-1">
+            Color is required.
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label for="year" class="block text-sm font-medium text-gray-700 mb-1">Year</label>
+          <input type="number" id="year" formControlName="year" 
+                class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                [class.border-red-500]="carForm.get('year')?.invalid && carForm.get('year')?.touched">
+          <div *ngIf="carForm.get('year')?.invalid && carForm.get('year')?.touched" class="text-red-500 text-sm mt-1">
+            <div *ngIf="carForm.get('year')?.errors?.['required']">Year is required.</div>
+            <div *ngIf="carForm.get('year')?.errors?.['min']">Year must be at least 1900.</div>
+            <div *ngIf="carForm.get('year')?.errors?.['max']">Year cannot be in the future.</div>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Price (USD)</label>
+          <input type="number" id="price" formControlName="price" 
+                class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                [class.border-red-500]="carForm.get('price')?.invalid && carForm.get('price')?.touched">
+          <div *ngIf="carForm.get('price')?.invalid && carForm.get('price')?.touched" class="text-red-500 text-sm mt-1">
+            <div *ngIf="carForm.get('price')?.errors?.['required']">Price is required.</div>
+            <div *ngIf="carForm.get('price')?.errors?.['min']">Price must be positive.</div>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label for="category_id" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+          <select id="category_id" formControlName="category_id" 
+                 class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                 [class.border-red-500]="carForm.get('category_id')?.invalid && carForm.get('category_id')?.touched">
+            <option value="">Select Category</option>
+            <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+          </select>
+          <div *ngIf="carForm.get('category_id')?.invalid && carForm.get('category_id')?.touched" class="text-red-500 text-sm mt-1">
+            Category is required.
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label for="features" class="block text-sm font-medium text-gray-700 mb-1">Features (comma-separated)</label>
+        <textarea id="features" formControlName="features" rows="3"
+                 class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+      </div>
+
+      <div class="flex justify-between">
+        <button type="button" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition" routerLink="/">
+          Cancel
+        </button>
+        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+                [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Saving...' : 'Update Car' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div> 
