@@ -109,7 +109,47 @@ namespace CarDealershipApi.Controllers
         [HttpGet("read_one")]
         public async Task<ActionResult<dynamic>> ReadOneCar([FromQuery] int id)
         {
-            return await GetCar(id);
+            try
+            {
+                var car = await _context.Cars
+                    .Where(c => c.Id == id)
+                    .Select(c => new 
+                    {
+                        id = c.Id,
+                        model = c.Model ?? string.Empty,
+                        engine_power = c.EnginePower ?? string.Empty,
+                        fuel_type = c.FuelType ?? string.Empty,
+                        price = c.Price,
+                        color = c.Color ?? string.Empty,
+                        year = c.Year,
+                        history = c.History ?? string.Empty,
+                        category_id = c.CategoryId,
+                        features = c.Features ?? string.Empty
+                    })
+                    .FirstOrDefaultAsync();
+
+                if (car == null)
+                {
+                    return NotFound(new { 
+                        success = false, 
+                        message = "Car not found", 
+                        requestedId = id 
+                    });
+                }
+                
+                return new { 
+                    success = true, 
+                    record = car 
+                };
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { 
+                    success = false, 
+                    error = ex.Message, 
+                    stack = ex.StackTrace 
+                });
+            }
         }
 
         // POST: api/cars

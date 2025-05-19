@@ -18,12 +18,22 @@ export class CarService {
     );
   }
 
-  getCar(id: number): Observable<{ data: Car }> {
+  getCar(id: number): Observable<{ data: Car | null }> {
     return this.http
       .get<{ success: boolean; record: Car }>(
         `${this.apiUrl}/read_one?id=${id}`
       )
-      .pipe(map((response) => ({ data: response.record })));
+      .pipe(
+        map((response) => {
+          console.log("API Response:", response);
+          if (response.success && response.record) {
+            return { data: response.record };
+          } else {
+            console.error("Error getting car:", response);
+            return { data: null };
+          }
+        })
+      );
   }
 
   createCar(

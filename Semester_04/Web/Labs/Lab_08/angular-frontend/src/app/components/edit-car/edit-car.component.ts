@@ -72,22 +72,33 @@ export class EditCarComponent implements OnInit {
 
   loadCar(id: number): void {
     this.isLoading = true;
+    console.log("Loading car with ID:", id);
     this.carService.getCar(id).subscribe({
       next: (response) => {
         this.isLoading = false;
+        console.log("Car data received:", response);
         if (response.data) {
           this.carForm.patchValue(response.data);
         } else {
-          this.showAlert("Car not found", "error");
+          this.showAlert(
+            "Car not found. Please check the ID and try again.",
+            "error"
+          );
           setTimeout(() => {
             this.router.navigate(["/"]);
-          }, 2000);
+          }, 3000);
         }
       },
       error: (err) => {
         this.isLoading = false;
         console.error("Error loading car:", err);
-        this.showAlert("Error loading car. Please try again later.", "error");
+        this.showAlert(
+          `Error loading car: ${err.message || "Unknown error"}`,
+          "error"
+        );
+        setTimeout(() => {
+          this.router.navigate(["/"]);
+        }, 3000);
       },
     });
   }
