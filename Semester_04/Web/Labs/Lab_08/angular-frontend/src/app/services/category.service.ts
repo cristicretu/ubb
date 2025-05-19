@@ -9,8 +9,8 @@ import { environment } from "../../environments/environment";
 })
 export class CategoryService {
   private apiUrl = environment.production
-    ? "/api/categories.php"
-    : "http://localhost:8000/api/categories.php";
+    ? "/api/categories"
+    : "http://localhost:8000/api/categories";
 
   constructor(private http: HttpClient) {}
 

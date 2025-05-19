@@ -7,3 +7,21 @@ node_modules/
 .env.production.local
 angular-frontend/.angular/
 **/.angular/
+
+.vscode/
+# dotnet
+*.csproj
+*.sln
+*.csproj.user
+*.csproj.user.cache
+*.csproj.user.cache.json
+*.csproj.user.cache.json.gz
+obj/
+bin/
+Debug/
+Release/
+
+*.log
+*.log.*
+*.log.*.*
+*.log.*.*.*
