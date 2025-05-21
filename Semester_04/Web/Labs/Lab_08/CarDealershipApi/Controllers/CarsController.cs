@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CarDealershipApi.Data;
@@ -10,6 +11,7 @@ namespace CarDealershipApi.Controllers
 {
     [Route("api/cars")]
     [ApiController]
+    [Authorize]
     public class CarsController : ControllerBase
     {
         private readonly CarDealershipContext _context;

@@ -3,6 +3,8 @@ using CarDealershipApi.Data;
 using CarDealershipApi.Middleware;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using Microsoft.AspNetCore.Identity;
+using CarDealershipApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,13 +12,65 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Car Dealership API", Version = "v1" });
+    
+    // Add security definition
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 // Database connection
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
                       "server=localhost;database=car_dealership;user=root;password=";
 builder.Services.AddDbContext<CarDealershipContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+// Add Identity with default cookie authentication
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => {
+    options.Password.RequireDigit = false;
+    options.Password.RequiredLength = 1; 
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireLowercase = false;
+    
+    // User settings
+    options.User.RequireUniqueEmail = false;
+})
+.AddEntityFrameworkStores<CarDealershipContext>()
+.AddDefaultTokenProviders();
+
+// Configure identity cookies
+builder.Services.ConfigureApplicationCookie(options => 
+{
+    options.Cookie.Name = "CarDealership.Auth";
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.ExpireTimeSpan = TimeSpan.FromDays(14);
+    options.SlidingExpiration = true;
+});
 
 // Add CORS
 builder.Services.AddCors(options =>
@@ -46,6 +100,8 @@ app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 
+// Add authentication middleware
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

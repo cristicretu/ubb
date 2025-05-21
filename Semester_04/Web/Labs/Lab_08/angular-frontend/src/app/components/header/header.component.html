@@ -3,7 +3,7 @@
     <div class="flex justify-between items-center">
       <div class="flex items-center space-x-2">
         <a class="text-xl font-bold" routerLink="/">Car Dealership</a>
-        <ng-container *ngIf="previousCategoryTitle">
+        <ng-container *ngIf="previousCategoryTitle && isAuthenticated">
           <button (click)="goToPreviousCategory()" class="ml-4 px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
             ← {{ previousCategoryTitle }}
           </button>
@@ -11,8 +11,18 @@
       </div>
       <div class="hidden md:block">
         <div class="flex space-x-4">
-          <a class="px-3 py-2 hover:bg-neutral-700 rounded" routerLink="/" routerLinkActive="bg-neutral-700" [routerLinkActiveOptions]="{exact: true}">Browse Cars</a>
-          <a class="px-3 py-2 hover:bg-neutral-700 rounded" routerLink="/add-car" routerLinkActive="bg-neutral-700">Add Car</a>
+          <!-- Show these links when authenticated -->
+          <ng-container *ngIf="isAuthenticated">
+            <a class="px-3 py-2 hover:bg-neutral-700 rounded" routerLink="/" routerLinkActive="bg-neutral-700" [routerLinkActiveOptions]="{exact: true}">Browse Cars</a>
+            <a class="px-3 py-2 hover:bg-neutral-700 rounded" routerLink="/add-car" routerLinkActive="bg-neutral-700">Add Car</a>
+            <button (click)="logout()" class="px-3 py-2 hover:bg-neutral-700 rounded">Logout</button>
+          </ng-container>
+          
+          <!-- Show these links when not authenticated -->
+          <ng-container *ngIf="!isAuthenticated">
+            <a class="px-3 py-2 hover:bg-neutral-700 rounded" routerLink="/login" routerLinkActive="bg-neutral-700">Login</a>
+            <a class="px-3 py-2 hover:bg-neutral-700 rounded" routerLink="/register" routerLinkActive="bg-neutral-700">Register</a>
+          </ng-container>
         </div>
       </div>
       <div class="md:hidden">
@@ -24,8 +34,18 @@
       </div>
     </div>
     <div *ngIf="isMenuOpen" class="md:hidden mt-3">
-      <a class="block px-3 py-2 hover:bg-neutral-700 rounded mt-1" routerLink="/" routerLinkActive="bg-neutral-700" [routerLinkActiveOptions]="{exact: true}">Browse Cars</a>
-      <a class="block px-3 py-2 hover:bg-neutral-700 rounded mt-1" routerLink="/add-car" routerLinkActive="bg-neutral-700">Add Car</a>
+      <!-- Mobile menu: authenticated links -->
+      <ng-container *ngIf="isAuthenticated">
+        <a class="block px-3 py-2 hover:bg-neutral-700 rounded mt-1" routerLink="/" routerLinkActive="bg-neutral-700" [routerLinkActiveOptions]="{exact: true}">Browse Cars</a>
+        <a class="block px-3 py-2 hover:bg-neutral-700 rounded mt-1" routerLink="/add-car" routerLinkActive="bg-neutral-700">Add Car</a>
+        <button (click)="logout()" class="block w-full text-left px-3 py-2 hover:bg-neutral-700 rounded mt-1">Logout</button>
+      </ng-container>
+      
+      <!-- Mobile menu: unauthenticated links -->
+      <ng-container *ngIf="!isAuthenticated">
+        <a class="block px-3 py-2 hover:bg-neutral-700 rounded mt-1" routerLink="/login" routerLinkActive="bg-neutral-700">Login</a>
+        <a class="block px-3 py-2 hover:bg-neutral-700 rounded mt-1" routerLink="/register" routerLinkActive="bg-neutral-700">Register</a>
+      </ng-container>
     </div>
   </div>
 </nav> 
