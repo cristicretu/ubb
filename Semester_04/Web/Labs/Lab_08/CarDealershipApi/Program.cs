@@ -62,24 +62,30 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => {
 .AddEntityFrameworkStores<CarDealershipContext>()
 .AddDefaultTokenProviders();
 
-// Configure identity cookies
 builder.Services.ConfigureApplicationCookie(options => 
 {
     options.Cookie.Name = "CarDealership.Auth";
-    options.Cookie.SameSite = SameSiteMode.None;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.None; 
+    options.Cookie.SecurePolicy = CookieSecurePolicy.None; 
+    options.Cookie.HttpOnly = true; 
     options.ExpireTimeSpan = TimeSpan.FromDays(14);
     options.SlidingExpiration = true;
+    
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.StatusCode = 401;
+        return Task.CompletedTask;
+    };
 });
 
-// Add CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", builder =>
     {
-        builder.AllowAnyOrigin()
+        builder.WithOrigins("http://localhost:4200") // Specific origin needed for credentials
                .AllowAnyMethod()
-               .AllowAnyHeader();
+               .AllowAnyHeader()
+               .AllowCredentials(); /
     });
 });
 
@@ -92,13 +98,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Use custom CORS middleware
-app.UseMiddleware<CorsMiddleware>();
 
 // Use CORS
 app.UseCors("AllowAll");
 
-app.UseHttpsRedirection();
 
 // Add authentication middleware
 app.UseAuthentication();
