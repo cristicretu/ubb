@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { Router, NavigationEnd } from "@angular/router";
 import { CategoryService } from "../../services/category.service";
 import { Category } from "../../models/category.model";
+import { AuthService } from "../../services/auth.service";
 
 @Component({
   selector: "app-header",
@@ -12,13 +13,19 @@ export class HeaderComponent implements OnInit {
   previousCategoryTitle: string | null = null;
   previousCategoryId: number | null = null;
   categories: Category[] = [];
+  isAuthenticated = false;
 
   constructor(
     private router: Router,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.authService.isAuthenticated.subscribe((auth) => {
+      this.isAuthenticated = auth;
+    });
+
     this.categoryService.getCategories().subscribe({
       next: (data) => {
         this.categories = data.records;
@@ -33,6 +40,14 @@ export class HeaderComponent implements OnInit {
       if (event instanceof NavigationEnd) {
         this.loadPreviousCategory();
       }
+    });
+  }
+
+  logout(): void {
+    this.authService.logout().subscribe({
+      next: () => {
+        this.router.navigate(["/login"]);
+      },
     });
   }
 
