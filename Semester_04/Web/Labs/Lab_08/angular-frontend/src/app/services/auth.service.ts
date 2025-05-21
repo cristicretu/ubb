@@ -8,37 +8,71 @@ import { tap } from "rxjs/operators";
 })
 export class AuthService {
   private apiUrl = "http://localhost:8000/api";
-  private isAuthenticatedSubject = new BehaviorSubject<boolean>(
-    this.hasToken()
-  );
+  private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.checkAuthStatus();
+  }
+
+  checkAuthStatus(): void {
+    this.http
+      .get<{ isAuthenticated: boolean }>(`${this.apiUrl}/Auth/status`, {
+        withCredentials: true,
+      })
+      .subscribe({
+        next: (response) => {
+          console.log("Auth status check:", response);
+          this.isAuthenticatedSubject.next(response.isAuthenticated);
+        },
+        error: () => {
+          console.log("Not authenticated");
+          this.isAuthenticatedSubject.next(false);
+        },
+      });
+  }
 
   register(username: string, password: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/Auth/register`, {
-      username,
-      password,
-    });
+    return this.http.post(
+      `${this.apiUrl}/Auth/register`,
+      {
+        username,
+        password,
+      },
+      { withCredentials: true }
+    );
   }
 
   login(username: string, password: string): Observable<any> {
     return this.http
-      .post(`${this.apiUrl}/Auth/login`, { username, password })
+      .post(
+        `${this.apiUrl}/Auth/login`,
+        { username, password },
+        {
+          withCredentials: true,
+        }
+      )
       .pipe(
-        tap(() => {
+        tap((response) => {
+          console.log("Login response:", response);
           this.isAuthenticatedSubject.next(true);
-          localStorage.setItem("authenticated", "true");
         })
       );
   }
 
   logout(): Observable<any> {
-    return this.http.post(`${this.apiUrl}/Auth/logout`, {}).pipe(
-      tap(() => {
-        this.isAuthenticatedSubject.next(false);
-        localStorage.removeItem("authenticated");
-      })
-    );
+    return this.http
+      .post(
+        `${this.apiUrl}/Auth/logout`,
+        {},
+        {
+          withCredentials: true,
+        }
+      )
+      .pipe(
+        tap(() => {
+          this.isAuthenticatedSubject.next(false);
+        })
+      );
   }
 
   get isAuthenticated(): Observable<boolean> {
@@ -47,9 +81,5 @@ export class AuthService {
 
   get isAuthenticatedValue(): boolean {
     return this.isAuthenticatedSubject.value;
-  }
-
-  private hasToken(): boolean {
-    return localStorage.getItem("authenticated") === "true";
   }
 }

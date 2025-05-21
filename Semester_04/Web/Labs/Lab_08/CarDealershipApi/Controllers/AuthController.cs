@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using CarDealershipApi.Models;
 using System;
+using Microsoft.AspNetCore.Authorization;
+using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 
 namespace CarDealershipApi.Controllers
 {
@@ -12,13 +15,25 @@ namespace CarDealershipApi.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ILogger<AuthController> _logger;
 
         public AuthController(
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            ILogger<AuthController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _logger = logger;
+        }
+
+        [HttpGet("status")]
+        public IActionResult CheckAuthStatus()
+        {
+            var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
+            
+            
+            return Ok(new { isAuthenticated });
         }
 
         [HttpPost("register")]
