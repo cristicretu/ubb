@@ -1,0 +1,57 @@
+<div class="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="w-full max-w-md space-y-8 bg-white p-8 rounded-lg shadow-md">
+    <div>
+      <h2 class="text-center text-3xl font-bold tracking-tight text-gray-900">Register</h2>
+    </div>
+    
+    <div *ngIf="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+      {{ errorMessage }}
+    </div>
+    
+    <form class="mt-8 space-y-6" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div>
+        <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+        <input 
+          type="text" 
+          id="username" 
+          formControlName="username" 
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" 
+          [ngClass]="{'border-red-500': registerForm.get('username')?.invalid && registerForm.get('username')?.touched}"
+        />
+        <div *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched" class="text-red-500 text-sm mt-1">
+          Username is required
+        </div>
+      </div>
+      
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          formControlName="password" 
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          [ngClass]="{'border-red-500': registerForm.get('password')?.invalid && registerForm.get('password')?.touched}"
+        />
+        <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="text-red-500 text-sm mt-1">
+          Password is required
+        </div>
+      </div>
+      
+      <div>
+        <button 
+          type="submit" 
+          class="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          [disabled]="registerForm.invalid || loading"
+          [ngClass]="{'opacity-50 cursor-not-allowed': registerForm.invalid || loading}"
+        >
+          {{ loading ? 'Registering...' : 'Register' }}
+        </button>
+      </div>
+      
+      <div class="text-sm text-center">
+        <span class="text-gray-500">Already have an account?</span>
+        <a routerLink="/login" class="font-medium text-indigo-600 hover:text-indigo-500 ml-1">Login</a>
+      </div>
+    </form>
+  </div>
+</div> 
