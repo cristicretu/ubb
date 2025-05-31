@@ -41,12 +41,30 @@ public class DatabaseUtil {
           "obstacles TEXT, " +
           "apple TEXT, " +
           "snake TEXT NOT NULL, " +
+          "current_direction VARCHAR(10) DEFAULT 'RIGHT', " +
           "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+          "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE" +
+          ")";
+
+      String createMovesTable = "CREATE TABLE IF NOT EXISTS moves (" +
+          "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+          "game_state_id INTEGER NOT NULL, " +
+          "user_id INTEGER NOT NULL, " +
+          "direction VARCHAR(10) NOT NULL, " +
+          "from_x INTEGER NOT NULL, " +
+          "from_y INTEGER NOT NULL, " +
+          "to_x INTEGER NOT NULL, " +
+          "to_y INTEGER NOT NULL, " +
+          "ate_apple BOOLEAN DEFAULT FALSE, " +
+          "score_after_move INTEGER DEFAULT 0, " +
+          "move_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+          "FOREIGN KEY (game_state_id) REFERENCES game_states(id) ON DELETE CASCADE, " +
           "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE" +
           ")";
 
       stmt.execute(createUsersTable);
       stmt.execute(createGameStatesTable);
+      stmt.execute(createMovesTable);
 
       System.out.println("Database initialized successfully!");
 

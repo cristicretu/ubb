@@ -12,7 +12,7 @@ import java.util.Optional;
 public class GameStateRepository {
 
   public GameState save(GameState gameState) throws SQLException {
-    String sql = "INSERT INTO game_states (user_id, score, obstacles, apple, snake) VALUES (?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO game_states (user_id, score, obstacles, apple, snake, current_direction) VALUES (?, ?, ?, ?, ?, ?)";
 
     try (Connection conn = DatabaseUtil.getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -22,6 +22,7 @@ public class GameStateRepository {
       stmt.setString(3, serializePositions(gameState.getObstacles()));
       stmt.setString(4, serializePosition(gameState.getApple()));
       stmt.setString(5, serializePositions(gameState.getSnake()));
+      stmt.setString(6, gameState.getCurrentDirection());
 
       int affectedRows = stmt.executeUpdate();
 
@@ -98,7 +99,7 @@ public class GameStateRepository {
   }
 
   public GameState update(GameState gameState) throws SQLException {
-    String sql = "UPDATE game_states SET user_id = ?, score = ?, obstacles = ?, apple = ?, snake = ? WHERE id = ?";
+    String sql = "UPDATE game_states SET user_id = ?, score = ?, obstacles = ?, apple = ?, snake = ?, current_direction = ? WHERE id = ?";
 
     try (Connection conn = DatabaseUtil.getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -108,7 +109,8 @@ public class GameStateRepository {
       stmt.setString(3, serializePositions(gameState.getObstacles()));
       stmt.setString(4, serializePosition(gameState.getApple()));
       stmt.setString(5, serializePositions(gameState.getSnake()));
-      stmt.setLong(6, gameState.getId());
+      stmt.setString(6, gameState.getCurrentDirection());
+      stmt.setLong(7, gameState.getId());
 
       int affectedRows = stmt.executeUpdate();
 
@@ -154,6 +156,7 @@ public class GameStateRepository {
     gameState.setObstacles(deserializePositions(rs.getString("obstacles")));
     gameState.setApple(deserializePosition(rs.getString("apple")));
     gameState.setSnake(deserializePositions(rs.getString("snake")));
+    gameState.setCurrentDirection(rs.getString("current_direction"));
     return gameState;
   }
 
