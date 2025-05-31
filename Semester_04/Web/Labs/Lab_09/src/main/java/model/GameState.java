@@ -11,6 +11,8 @@ public class GameState {
 
   private Position[] snake;
 
+  private String currentDirection; // Track current movement direction
+
   public Long getId() {
     return id;
   }
@@ -57,5 +59,13 @@ public class GameState {
 
   public void setSnake(Position[] snake) {
     this.snake = snake;
+  }
+
+  public String getCurrentDirection() {
+    return currentDirection;
+  }
+
+  public void setCurrentDirection(String currentDirection) {
+    this.currentDirection = currentDirection;
   }
 }
