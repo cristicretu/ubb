@@ -5,7 +5,7 @@
          http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
 
-    <display-name>Hello World Web App</display-name>
+    <display-name>Game Hub - JSP Servlets</display-name>
 
     <!-- Hello World Servlet -->
     <servlet>
