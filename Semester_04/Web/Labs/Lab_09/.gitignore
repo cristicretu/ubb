@@ -98,6 +98,13 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+gameHub.db
+snake.db
+
 # Temporary files
 *.tmp
 *.temp
