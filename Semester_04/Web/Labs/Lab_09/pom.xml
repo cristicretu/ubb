@@ -6,11 +6,11 @@
     
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.example</groupId>
-    <artifactId>hello-world-web</artifactId>
+    <artifactId>game-hub-web</artifactId>
     <version>1.0.0</version>
     <packaging>war</packaging>
     
-    <name>Hello World Web Application</name>
+    <name>Game Hub Web Application</name>
     
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -38,7 +38,7 @@
     </dependencies>
     
     <build>
-        <finalName>hello-world</finalName>
+        <finalName>ROOT</finalName>
         
         <plugins>
             <!-- Compiler Plugin -->
@@ -69,7 +69,7 @@
                 <version>2.2</version>
                 <configuration>
                     <port>8080</port>
-                    <path>/hello-world</path>
+                    <path>/</path>
                 </configuration>
             </plugin>
         </plugins>
