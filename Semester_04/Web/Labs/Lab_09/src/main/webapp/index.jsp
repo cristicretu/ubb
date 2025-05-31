@@ -40,43 +40,23 @@
             <h1 class="text-4xl font-bold text-gray-800 mb-2">🐍 Snake Game</h1>
         </header>
 
-        <!-- Main Content -->
-        <div class="grid md:grid-cols-2 gap-6 mb-8">
-            <!-- Welcome Card -->
-            <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-4">
-                    <% if (isLoggedIn) { %>
-                        Ready to Play!
-                    <% } else { %>
-                        Welcome!
-                    <% } %>
-                </h2>
-                <p class="text-gray-600 mb-4">Current time: <span class="font-mono text-blue-600"><%= new java.util.Date() %></span></p>
-                <% if (isLoggedIn) { %>
-                    <p class="text-gray-600 mb-4">You're logged in and ready to start gaming!</p>
-                <% } else { %>
-                    <p class="text-gray-600 mb-4">Please login or register to start playing and tracking your scores.</p>
-                <% } %>
-                <a href="hello" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition-colors duration-200 inline-block">Test Servlet Connection</a>
+        <% if (isLoggedIn) { %>
+            <div id="game-container"></div>
+        <% } else { %>
+            <div class="flex justify-center space-x-4">
+                <a href="/login/index.jsp" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full transition-colors duration-200 block text-center">🔑 Login</a>
+                <a href="/register/index.jsp" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-full transition-colors duration-200 block text-center">📝 Register</a>
             </div>
+        <% } %>
 
-            <!-- Quick Actions -->
-            <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Quick Actions</h2>
-                <div class="space-y-3">
-                    <% if (isLoggedIn) { %>
-                        <button onclick="startSnakeGame()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-full transition-colors duration-200">🐍 Play Snake Game</button>
-                    <% } else { %>
-                        <a href="/login/index.jsp" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full transition-colors duration-200 block text-center">🔑 Login</a>
-                        <a href="/register/index.jsp" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-full transition-colors duration-200 block text-center">📝 Register</a>
-                    <% } %>
-                </div>
-            </div>
-        </div>
+        
 
     </div>
 
     <script>
+        const cells = 25;
+
+        
         function startSnakeGame() {
             alert('Snake game coming soon! 🐍');
             // TODO: Implement snake game

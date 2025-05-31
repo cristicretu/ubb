@@ -34,7 +34,19 @@ public class DatabaseUtil {
           "last_login TIMESTAMP" +
           ")";
 
+      String createGameStatesTable = "CREATE TABLE IF NOT EXISTS game_states (" +
+          "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+          "user_id INTEGER NOT NULL, " +
+          "score INTEGER DEFAULT 0, " +
+          "obstacles TEXT, " +
+          "apple TEXT, " +
+          "snake TEXT NOT NULL, " +
+          "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+          "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE" +
+          ")";
+
       stmt.execute(createUsersTable);
+      stmt.execute(createGameStatesTable);
 
       System.out.println("Database initialized successfully!");
 
