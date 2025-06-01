@@ -350,7 +350,6 @@ public class GameStateServlet extends HttpServlet {
     gameState.setUserId(user.getId());
     gameState.setScore(0);
 
-    // Initialize snake in the center
     Position[] snake = new Position[3];
     snake[0] = new Position(10, 10); // Head
     snake[1] = new Position(9, 10);
@@ -411,8 +410,18 @@ public class GameStateServlet extends HttpServlet {
 
     // Check for collisions
     if (isCollision(newHead, currentSnake, gameState.getObstacles())) {
-      // Game over - redirect to show final state
-      session.setAttribute("gameMessage", "Game Over! You hit something!");
+      Long startTime = (Long) session.getAttribute("gameStartTime");
+      String gameOverMessage = "Game Over! You hit something! Final score: " + gameState.getScore();
+
+      if (startTime != null) {
+        long timeSpent = (System.currentTimeMillis() - startTime) / 1000; // seconds
+        long minutes = timeSpent / 60;
+        long seconds = timeSpent % 60;
+        String timeFormatted = String.format("%02d:%02d", minutes, seconds);
+        gameOverMessage += ". Time played: " + timeFormatted;
+      }
+
+      session.setAttribute("gameMessage", gameOverMessage);
       response.sendRedirect("/");
       return;
     }
@@ -508,7 +517,18 @@ public class GameStateServlet extends HttpServlet {
         session.setAttribute("user", user);
         session.setAttribute("gameMessage", "New High Score: " + gameState.getScore() + "!");
       } else {
-        session.setAttribute("gameMessage", "Game ended. Final score: " + gameState.getScore());
+        Long startTime = (Long) session.getAttribute("gameStartTime");
+        if (startTime != null) {
+          long timeSpent = (System.currentTimeMillis() - startTime) / 1000; // seconds
+          long minutes = timeSpent / 60;
+          long seconds = timeSpent % 60;
+          String timeFormatted = String.format("%02d:%02d", minutes, seconds);
+          session.setAttribute("gameMessage",
+              "Game ended. Final score: " + gameState.getScore() +
+                  ". Time played: " + timeFormatted);
+        } else {
+          session.setAttribute("gameMessage", "Game ended. Final score: " + gameState.getScore());
+        }
       }
     }
 
@@ -688,6 +708,9 @@ public class GameStateServlet extends HttpServlet {
     }
 
     gameState.setSnake(newSnake);
+
+    // Update current direction
+    gameState.setCurrentDirection(currentDirection);
 
     // Create and save the move record
     Move move = new Move(
