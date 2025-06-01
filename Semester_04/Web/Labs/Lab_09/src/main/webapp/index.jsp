@@ -41,7 +41,6 @@
     %>
     
     <div class="max-w-4xl mx-auto">
-        <!-- User Header (if logged in) -->
         <% if (isLoggedIn) { %>
             <div class="bg-white rounded-lg shadow-md p-4 mb-6 border border-gray-200">
                 <div class="flex justify-between items-center">
@@ -61,13 +60,11 @@
             </div>
         <% } %>
 
-        <!-- Header -->
         <header class="text-center mb-8">
             <h1 class="text-4xl font-bold text-gray-800 mb-2">🐍 Snake Game</h1>
         </header>
 
         <% if (isLoggedIn) { %>
-            <!-- Game Messages -->
             <%
                 String gameMessage = (String) session.getAttribute("gameMessage");
                 if (gameMessage != null) {
@@ -78,13 +75,15 @@
                 </div>
             <% } %>
             
-            <!-- Game Section -->
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                 <% if (currentGame != null) { %>
-                    <!-- Current Game Display -->
                     <div class="mb-4">
                         <div class="flex justify-between items-center mb-2">
                             <h3 class="text-lg font-semibold">Current Game - Score: <%= currentGame.getScore() %></h3>
+                            <div class="text-right">
+                                <div class="text-sm text-gray-600">Time Played:</div>
+                                <div id="gameTimer" class="text-lg font-bold text-blue-600">00:00</div>
+                            </div>
                         </div>
                         
                         <!-- Game Grid -->
@@ -164,9 +163,32 @@
     </div>
 
     <% if (isLoggedIn && currentGame != null) { %>
+    <%
+        Long gameStartTime = (Long) session.getAttribute("gameStartTime");
+        if (gameStartTime == null) {
+            gameStartTime = new java.util.Date().getTime(); // Fallback to current time
+        }
+    %>
     <script>
         let gameInterval;
         let gameActive = true;
+        let timerInterval;
+        
+        const gameStartTime = <%= gameStartTime %>;
+        
+        // Function to update the timer display
+        function updateTimer() {
+            const currentTime = Date.now();
+            const elapsedSeconds = Math.floor((currentTime - gameStartTime) / 1000);
+            const minutes = Math.floor(elapsedSeconds / 60);
+            const seconds = elapsedSeconds % 60;
+            
+            const timerDisplay = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+            document.getElementById('gameTimer').textContent = timerDisplay;
+        }
+        
+        updateTimer();
+        timerInterval = setInterval(updateTimer, 1000);
 
         // function startAutoMovement() {
         //     if (gameInterval) clearInterval(gameInterval);
@@ -244,11 +266,10 @@
             }
         });
 
-        startAutoMovement();
-
         window.addEventListener('beforeunload', function() {
             gameActive = false;
             if (gameInterval) clearInterval(gameInterval);
+            if (timerInterval) clearInterval(timerInterval);
         });
     </script>
     <% } %>
