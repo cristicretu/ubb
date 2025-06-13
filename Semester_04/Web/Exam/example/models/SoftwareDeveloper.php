@@ -15,8 +15,6 @@ class SoftwareDeveloper {
     public function readAll() {
         $query = "SELECT id, name, age, skills FROM " . $this->table_name;
         
-        $query .= " ORDER BY created_at DESC";
-        
         $stmt = $this->conn->prepare($query);
         
         $stmt->execute();
