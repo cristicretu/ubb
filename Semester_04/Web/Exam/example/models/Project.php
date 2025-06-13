@@ -39,20 +39,62 @@ class Project {
         return $stmt;
     }
 
+    public function assignProject($projectName, $projectManagerID) {
+        // Check if project already exists
+        $query = "SELECT id FROM " . $this->table_name . " WHERE name = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(1, $projectName);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$row) {
+            // Create new project
+            if ($this->create($projectName, $projectManagerID)) {
+                $projectId = $this->conn->lastInsertId();
+            } else {
+                error_log("Failed to create project: $projectName with manager ID: $projectManagerID");
+                return null;
+            }
+        } else {
+            // Update existing project
+            $query = "UPDATE " . $this->table_name . " SET ProjectManagerID = ? WHERE id = ?";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(1, $projectManagerID);
+            $stmt->bindParam(2, $row['id']);
+            if (!$stmt->execute()) {
+                error_log("Failed to update project: $projectName with manager ID: $projectManagerID");
+                return null;
+            }
+            $projectId = $row['id'];
+        }
+        
+        // Return the project details
+        $query = "SELECT id, ProjectManagerID, name, description, members FROM " . $this->table_name . " WHERE id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(1, $projectId);
+        if (!$stmt->execute()) {
+            error_log("Failed to fetch project details for ID: $projectId");
+            return null;
+        }
+        
+        return $stmt;
+    }
 
-    public function create() {
-        $query = "INSERT INTO " . $this->table_name . " SET ProjectManagerID = ?, name = ?, description = ?, members = ?";
+
+    public function create($projectName, $projectManagerID) {
+        $query = "INSERT INTO " . $this->table_name . " (ProjectManagerID, name, description, members) VALUES (?, ?, ?, ?)";
 
         $stmt = $this->conn->prepare($query);
         
-        $this->ProjectManagerID = htmlspecialchars(strip_tags($this->ProjectManagerID));
-        $this->name = htmlspecialchars(strip_tags($this->name));
-        $this->description = htmlspecialchars(strip_tags($this->description));
-        $this->members = htmlspecialchars(strip_tags($this->members));
-        $stmt->bindParam(1, $this->ProjectManagerID);
-        $stmt->bindParam(2, $this->name);
-        $stmt->bindParam(3, $this->description);
-        $stmt->bindParam(4, $this->members);
+        $cleanProjectManagerID = htmlspecialchars(strip_tags($projectManagerID));
+        $cleanProjectName = htmlspecialchars(strip_tags($projectName));
+        $cleanDescription = htmlspecialchars(strip_tags(''));
+        $cleanMembers = htmlspecialchars(strip_tags(''));
+        
+        $stmt->bindParam(1, $cleanProjectManagerID);
+        $stmt->bindParam(2, $cleanProjectName);
+        $stmt->bindParam(3, $cleanDescription);
+        $stmt->bindParam(4, $cleanMembers);
 
         if($stmt->execute()) {
             return true;

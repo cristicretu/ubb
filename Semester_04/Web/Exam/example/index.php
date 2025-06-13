@@ -14,13 +14,18 @@ include_once 'includes/header.php';
             <h2 class="text-xl font-bold text-neutral-800 mb-4">Your Projects</h2>
             <div id="your-projects-tabs" class="flex flex-col space-y-2  mb-4 pb-1 whitespace-nowrap">
             </div>
+
+            <h2 class="text-xl font-bold text-neutral-800 mb-4">Assign Project</h2>
+            <form id="add-project-form" class="flex flex-col space-y-2  mb-4 pb-1 whitespace-nowrap">
+                <input type="text" id="project-name" placeholder="Project Name">
+                <input type="text" id="project-members" placeholder="Project Manager Name">
+                <button type="submit" id="add-project-button">Add Project</button>
+            </form>
         </div>
         
-        <div id="category-content" class="mt-4">
-        </div>
+        
 
-        <div id="cars-container" class="mt-4">
-        </div>
+       
     </div>
 </div>
 
@@ -32,6 +37,33 @@ include_once 'includes/header.php';
         const data = await response.json();
         return data.record.id;
     }
+
+    const assignProject = async (projectName, projectManagerName) => {
+        const doesUserExist = await fetch(`api/SoftwareDeveloper/findOne.php?name=${encodeURIComponent(projectManagerName)}`, {
+            method: 'GET',
+        });
+        const data = await doesUserExist.json();
+        console.log(data);
+        if (data.record) {
+            const response = await fetch(`api/Project/Assign.php?projectName=${encodeURIComponent(projectName)}&projectManagerID=${data.record.id}`, {
+                method: 'GET',
+            });
+            const result = await response.json();
+            console.log('Assignment result:', result);
+            
+            if (result.record) {
+                return result.record.id;
+            } else {
+                console.error('Assignment failed:', result.message);
+                alert('Project assignment failed: ' + (result.message || 'Unknown error'));
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+
 
     const getAllProjects = async () => {
         const response = await fetch(`api/Project/readAll.php`);
@@ -67,8 +99,19 @@ include_once 'includes/header.php';
     }
     document.addEventListener('DOMContentLoaded', async () => {
         const userID = await getUserID(localStorage.getItem('currentUser'));
-        const projects = await getYourProjects(userID);
-        const allProjects = await getAllProjects();
+        await getYourProjects(userID);
+        await getAllProjects();
+    });
+
+    document.getElementById('add-project-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const projectName = document.getElementById('project-name').value;
+        const projectManagerName = document.getElementById('project-members').value;
+        
+        if (projectName && projectManagerName) {
+            await assignProject(projectName, projectManagerName);
+            location.reload();
+        }
     });
 </script>
 
