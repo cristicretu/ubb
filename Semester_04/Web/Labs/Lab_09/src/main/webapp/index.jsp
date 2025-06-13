@@ -89,7 +89,7 @@
                         <!-- Game Grid -->
                         <div class="inline-block border-2 border-gray-400 bg-gray-100 p-2">
                             <%
-                                final int GRID_SIZE = 25;
+                                final int GRID_SIZE = 20;
                                 Position[] snake = currentGame.getSnake();
                                 Position[] obstacles = currentGame.getObstacles();
                                 Position apple = currentGame.getApple();
