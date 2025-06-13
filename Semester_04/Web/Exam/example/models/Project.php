@@ -16,8 +16,6 @@ class Project {
     public function readAll() {
         $query = "SELECT id, ProjectManagerID, name, description, members FROM " . $this->table_name;
         
-        $query .= " ORDER BY created_at DESC";
-        
         $stmt = $this->conn->prepare($query);
         
         $stmt->execute();
@@ -26,6 +24,10 @@ class Project {
     }
 
     public function readAllByProjectManagerID($projectManagerID) {
+        if ($projectManagerID == null) {
+            return $this->readAll();
+        }
+        
         $query = "SELECT id, ProjectManagerID, name, description, members FROM " . $this->table_name . " WHERE ProjectManagerID = ?";
         
         $stmt = $this->conn->prepare($query);
