@@ -7,7 +7,7 @@ include_once 'includes/header.php';
     <h1 class="text-3xl font-bold text-neutral-800 mb-4"> Login</h1>
     <div class="bg-white p-4 rounded shadow-md mb-6">
         <form id="login-form" action="index.php" method="post">
-            <input type="text" name="username" placeholder="Username">
+            <input type="text" id="username" name="username" placeholder="Username">
             <button type="submit" id="login-button">Login</button>
         </form>
     </div>
@@ -21,8 +21,17 @@ const saveName = (name) => {
 document.getElementById('login-button').addEventListener('click', function(event) {
     const username = document.getElementById('username').value;
     event.preventDefault();
+    
+    if (username.trim() === '') {
+        alert('Please enter a username');
+        return;
+    }
+    
     saveName(username);
-    window.location.href = 'index.php';
+    
+    setTimeout(() => {
+        window.location.href = 'index.php';
+    }, 100);
 });
 </script>
 

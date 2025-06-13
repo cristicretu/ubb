@@ -10,9 +10,7 @@
 <body class="bg-neutral-100">
     <script>
         const currentUser = localStorage.getItem('currentUser');
-        if (!currentUser && window.location.pathname !== '/login.php') {
-            window.location.href = 'login.php';
-        }
+        
         document.addEventListener('DOMContentLoaded', function() {
             const userSpan = document.getElementById('current-user-span');
             if (userSpan && currentUser) {

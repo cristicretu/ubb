@@ -25,6 +25,18 @@ class Project {
         return $stmt;
     }
 
+    public function readAllByProjectManagerID($projectManagerID) {
+        $query = "SELECT id, ProjectManagerID, name, description, members FROM " . $this->table_name . " WHERE ProjectManagerID = ?";
+        
+        $stmt = $this->conn->prepare($query);
+        
+        $stmt->bindParam(1, $projectManagerID);
+
+        $stmt->execute();
+
+        return $stmt;
+    }
+
 
     public function create() {
         $query = "INSERT INTO " . $this->table_name . " SET ProjectManagerID = ?, name = ?, description = ?, members = ?";
@@ -70,10 +82,12 @@ class Project {
         $stmt->bindParam(2, $this->name);
         $stmt->bindParam(3, $this->description);
         $stmt->bindParam(4, $this->members);
-        $stmt->bindParam(4, $this->id);
+        $stmt->bindParam(5, $this->id);
         if($stmt->execute()) {
             return true;
         }
+
+        return false;
     }
 
 }

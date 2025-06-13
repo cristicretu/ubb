@@ -1,5 +1,5 @@
 <?php
-class Car {
+class SoftwareDeveloper {
     private $conn;
     private $table_name = "SoftwareDeveloper";
 
@@ -22,6 +22,29 @@ class Car {
         $stmt->execute();
         
         return $stmt;
+    }
+
+
+    public function findOne($name) {
+        $query = "SELECT id, name, age, skills FROM " . $this->table_name . " WHERE name = ?";
+        
+        $stmt = $this->conn->prepare($query);
+        
+        $stmt->bindParam(1, $name);
+
+        $stmt->execute();
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if($row) {
+            $this->id = $row['id'];
+            $this->name = $row['name'];
+            $this->age = $row['age'];
+            $this->skills = $row['skills'];
+            return true;
+        }
+        
+        return false;
     }
 
 

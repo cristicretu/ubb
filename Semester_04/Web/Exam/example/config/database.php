@@ -1,6 +1,6 @@
 <?php
 class Database {
-    private $db_file = "test.db";
+    private $db_file = "/Users/huge/fun/ubb/Semester_04/Web/Exam/example/tezt";
     private $conn;
 
     public function getConnection() {
