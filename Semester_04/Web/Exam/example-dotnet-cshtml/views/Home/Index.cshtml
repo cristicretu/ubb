@@ -1,7 +1,10 @@
+@model List<ProjectManagement.Models.Project>
+
 @{
     ViewData["Title"] = "Home Page";
 
     var username = Context.Session.GetString("Username");
+    var userID = ViewBag.UserID;
 
     if (string.IsNullOrEmpty(username)) {
         Context.Response.Redirect("/Login/Index");
@@ -9,9 +12,36 @@
     }
 }
 
-<div class="text-center fade-in">
+<div class="flex flex-col gap-4 items-start">
     <h1>Welcome, @username</h1>
     <form action="/Login/Logout" method="post">
         <button type="submit">Logout</button>
     </form>
+
+    <h2 class="text-2xl font-bold">Projects</h2>
+    <div class="flex flex-col gap-4 bg-gray-100 p-4 rounded-lg w-full">
+        @foreach (var project in Model)
+        {
+            <div class="bg-white rounded-lg p-4 flex justify-between items-center divide-x-2 divide-gray-200 space-x-4">
+                <h3 class="">@project.Name</h3>
+                <p class="text-gray-600">@project.Description</p>
+                <p class="text-gray-600">@project.Members</p>
+            </div>
+        }
+    </div>
+
+     <h2 class="text-2xl font-bold">Your Projects</h2>
+    <div class="flex flex-col gap-4 bg-gray-100 p-4 rounded-lg w-full">
+        @foreach (var project in Model.Where(p => p.ProjectManagerID == userID))
+        {
+            <div class="bg-white rounded-lg p-4 flex justify-between items-center divide-x-2 divide-gray-200 space-x-4">
+                <h3 class="">@project.Name</h3>
+                <p class="text-gray-600">@project.Description</p>
+                <p class="text-gray-600">@project.Members</p>
+            </div>
+        }
+    </div>
+
+
+
 </div> 
