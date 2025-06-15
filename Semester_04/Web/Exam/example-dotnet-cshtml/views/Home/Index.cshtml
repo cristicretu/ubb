@@ -1,10 +1,15 @@
 @model List<ProjectManagement.Models.Project>
 
 @{
-    ViewData["Title"] = "Home Page";
-
-    var username = Context.Session.GetString("Username");
-    var userID = ViewBag.UserID;
+    ViewData["Title"] = "Project Management";
+    var username = ViewBag.Username as string;
+    var userID = ViewBag.UserID as int?;
+    var allProjects = ViewBag.AllProjects as List<ProjectManagement.Models.Project> ?? new List<ProjectManagement.Models.Project>();
+    var yourProjects = ViewBag.YourProjects as List<ProjectManagement.Models.Project> ?? new List<ProjectManagement.Models.Project>();
+    var memberProjects = ViewBag.MemberProjects as List<ProjectManagement.Models.Project> ?? new List<ProjectManagement.Models.Project>();
+    var allDevelopers = ViewBag.AllDevelopers as List<ProjectManagement.Models.SoftwareDeveloper> ?? new List<ProjectManagement.Models.SoftwareDeveloper>();
+    var successMessage = ViewBag.SuccessMessage as string;
+    var errorMessage = ViewBag.ErrorMessage as string;
 
     if (string.IsNullOrEmpty(username)) {
         Context.Response.Redirect("/Login/Index");
@@ -12,36 +17,189 @@
     }
 }
 
-<div class="flex flex-col gap-4 items-start">
-    <h1>Welcome, @username</h1>
-    <form action="/Login/Logout" method="post">
-        <button type="submit">Logout</button>
-    </form>
-
-    <h2 class="text-2xl font-bold">Projects</h2>
-    <div class="flex flex-col gap-4 bg-gray-100 p-4 rounded-lg w-full">
-        @foreach (var project in Model)
-        {
-            <div class="bg-white rounded-lg p-4 flex justify-between items-center divide-x-2 divide-gray-200 space-x-4">
-                <h3 class="">@project.Name</h3>
-                <p class="text-gray-600">@project.Description</p>
-                <p class="text-gray-600">@project.Members</p>
+<div class="mb-6">
+    <h1 class="text-3xl font-bold text-neutral-800 mb-4">Project Management</h1>
+    <p class="text-gray-600 mb-4">Welcome, @username! 
+        <a href="/Login/Logout" class="text-blue-500 hover:underline">Logout</a>
+    </p>
+    
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+            @successMessage
+        </div>
+    }
+    
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            @errorMessage
+        </div>
+    }
+    
+    <div class="bg-white p-4 rounded shadow-md mb-6">
+        <div class="overflow-x-auto">
+            
+            <h2 class="text-xl font-bold text-neutral-800 mb-4">All Projects</h2>
+            <div class="flex flex-col space-y-2 mb-6">
+                @if (!allProjects.Any())
+                {
+                    <p class="text-gray-500 italic">No projects found.</p>
+                }
+                else
+                {
+                    @foreach (var proj in allProjects)
+                    {
+                        <div class="flex flex-row gap-2 items-center justify-between p-2 border border-gray-300 rounded-md">
+                            <h3 class="font-semibold">@(proj.Name ?? "Unnamed Project")</h3>
+                            <p>@(proj.Description ?? "No description")</p>
+                            <p>Members: @(proj.Members ?? "None")</p>
+                        </div>
+                    }
+                }
             </div>
-        }
-    </div>
 
-     <h2 class="text-2xl font-bold">Your Projects</h2>
-    <div class="flex flex-col gap-4 bg-gray-100 p-4 rounded-lg w-full">
-        @foreach (var project in Model.Where(p => p.ProjectManagerID == userID))
-        {
-            <div class="bg-white rounded-lg p-4 flex justify-between items-center divide-x-2 divide-gray-200 space-x-4">
-                <h3 class="">@project.Name</h3>
-                <p class="text-gray-600">@project.Description</p>
-                <p class="text-gray-600">@project.Members</p>
+            <h2 class="text-xl font-bold text-neutral-800 mb-4">Your Managed Projects</h2>
+            <div class="flex flex-col space-y-2 mb-6">
+                @if (!yourProjects.Any())
+                {
+                    <p class="text-gray-500 italic">You are not managing any projects.</p>
+                }
+                else
+                {
+                    @foreach (var proj in yourProjects)
+                    {
+                        <div class="flex flex-row gap-2 items-center justify-between p-2 border border-gray-300 rounded-md">
+                            <h3 class="font-semibold">@(proj.Name ?? "Unnamed Project")</h3>
+                            <p>@(proj.Description ?? "No description")</p>
+                            <p>Members: @(proj.Members ?? "None")</p>
+                        </div>
+                    }
+                }
             </div>
-        }
+
+            <h2 class="text-xl font-bold text-neutral-800 mb-4">Projects You're Member Of</h2>
+            <div class="flex flex-col space-y-2 mb-6">
+                @if (!memberProjects.Any())
+                {
+                    <p class="text-gray-500 italic">You are not a member of any projects.</p>
+                }
+                else
+                {
+                    @foreach (var proj in memberProjects)
+                    {
+                        <div class="flex flex-row gap-2 items-center justify-between p-2 border border-gray-300 rounded-md">
+                            <h3 class="font-semibold">@(proj.Name ?? "Unnamed Project")</h3>
+                            <p>@(proj.Description ?? "No description")</p>
+                            <p>Members: @proj.Members</p>
+                        </div>
+                    }
+                }
+            </div>
+
+            <h2 class="text-xl font-bold text-neutral-800 mb-4">Assign Project</h2>
+            <form method="post" action="/Home/Index" class="flex flex-col space-y-2 mb-6">
+                <input type="hidden" name="action" value="assign_project">
+                <input type="text" name="project_name" placeholder="Project Name" class="p-2 border border-gray-300 rounded" required>
+                <input type="text" name="project_manager_name" placeholder="Project Manager Name" class="p-2 border border-gray-300 rounded" required>
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">Add Project</button>
+            </form>
+
+            <!-- Developers Section -->
+            <h2 class="text-xl font-bold text-neutral-800 mb-4">Developers</h2>
+            <div class="flex flex-row gap-2 mb-4">
+                <button id="show-all-devs" class="bg-blue-500 text-white px-4 py-2 rounded-md">Show All Developers</button>
+                <input type="text" id="skill-filter" placeholder="Filter by skill (e.g., Java)" class="p-2 border border-gray-300 rounded">
+                <button id="filter-devs" class="bg-green-500 text-white px-4 py-2 rounded-md">Filter</button>
+            </div>
+
+            <div id="all-devs-tabs" class="flex flex-col space-y-2 mb-4" style="display: none;">
+                @foreach (var dev in allDevelopers)
+                {
+                    <div class="developer-item p-2 border border-gray-300 rounded-md" 
+                         data-name="@(dev.Name ?? "")" 
+                         data-skills="@(dev.Skills ?? "")">
+                        @(dev.Name ?? "Unknown") - @(dev.Skills ?? "No skills listed")
+                    </div>
+                }
+            </div>
+        </div>
     </div>
+</div>
 
+<script>
+const showAllDevelopers = () => {
+    const devsContainer = document.getElementById('all-devs-tabs');
+    const allDevItems = devsContainer.querySelectorAll('.developer-item');
+    
+    allDevItems.forEach(item => {
+        item.style.display = 'block';
+    });
+    
+    devsContainer.style.display = 'block';
+}
 
+const filterDevelopersBySkill = (skill) => {
+    const devsContainer = document.getElementById('all-devs-tabs');
+    const allDevItems = devsContainer.querySelectorAll('.developer-item');
+    let visibleCount = 0;
+    
+    if (skill.trim() === '') {
+        showAllDevelopers();
+        return;
+    }
+    
+    // Filter developers based on skill
+    allDevItems.forEach(item => {
+        const devSkills = item.getAttribute('data-skills').toLowerCase();
+        if (devSkills.includes(skill.toLowerCase())) {
+            item.style.display = 'block';
+            visibleCount++;
+        } else {
+            item.style.display = 'none';
+        }
+    });
+    
+    // Show the container
+    devsContainer.style.display = 'block';
+    
+    // Handle no results case
+    if (visibleCount === 0) {
+        // Create or update no results message
+        let noResultsMsg = document.getElementById('no-devs-message');
+        if (!noResultsMsg) {
+            noResultsMsg = document.createElement('div');
+            noResultsMsg.id = 'no-devs-message';
+            noResultsMsg.className = 'p-2 text-gray-500 italic';
+            devsContainer.appendChild(noResultsMsg);
+        }
+        noResultsMsg.textContent = 'No developers found with this skill';
+        noResultsMsg.style.display = 'block';
+    } else {
+        // Hide no results message if it exists
+        const noResultsMsg = document.getElementById('no-devs-message');
+        if (noResultsMsg) {
+            noResultsMsg.style.display = 'none';
+        }
+    }
+}
 
-</div> 
+// Event listeners
+document.getElementById('show-all-devs').addEventListener('click', () => {
+    showAllDevelopers();
+    document.getElementById('skill-filter').value = '';
+});
+
+document.getElementById('filter-devs').addEventListener('click', () => {
+    const skill = document.getElementById('skill-filter').value.trim();
+    filterDevelopersBySkill(skill);
+});
+
+// Allow filtering on Enter key press
+document.getElementById('skill-filter').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        const skill = e.target.value.trim();
+        filterDevelopersBySkill(skill);
+    }
+});
+</script> 
