@@ -1,0 +1,43 @@
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center fade-in">
+    <h1 class="text-6xl font-bold text-gray-900 mb-6">Hello World!</h1>
+    <p class="text-xl text-gray-600 mb-4">Welcome to the .NET MVC Project Management System</p>
+    <p class="text-lg text-gray-500 mb-8">This application is configured to use the same SQLite database as your PHP application.</p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-2xl font-semibold text-gray-800 mb-4">Models Created</h3>
+            <ul class="space-y-2 text-left">
+                <li class="flex items-center text-green-600">
+                    <span class="mr-2">✅</span>
+                    <span>SoftwareDeveloper</span>
+                </li>
+                <li class="flex items-center text-green-600">
+                    <span class="mr-2">✅</span>
+                    <span>Project</span>
+                </li>
+                <li class="flex items-center text-green-600">
+                    <span class="mr-2">✅</span>
+                    <span>Category</span>
+                </li>
+                <li class="flex items-center text-green-600">
+                    <span class="mr-2">✅</span>
+                    <span>Car</span>
+                </li>
+            </ul>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-2xl font-semibold text-gray-800 mb-4">Database</h3>
+            <p class="text-gray-600 mb-2">Connected to: <code class="bg-gray-100 px-2 py-1 rounded text-sm">tezt</code> (SQLite)</p>
+            <p class="text-gray-600">Same database as your PHP app</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-2xl font-semibold text-gray-800 mb-4">Ready for Development</h3>
+            <p class="text-gray-600 mb-2">Models and DB context are ready.</p>
+            <p class="text-gray-600">You can now build your API and frontend!</p>
+        </div>
+    </div>
+</div> 
