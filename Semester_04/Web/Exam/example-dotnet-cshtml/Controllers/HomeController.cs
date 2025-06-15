@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ProjectManagement.Data;
+using ProjectManagement.Models;
 
 namespace ProjectManagement.Controllers
 {
@@ -14,11 +15,26 @@ namespace ProjectManagement.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            var projects = _context.Projects.ToList();
+            return View(projects);
         }
 
         public IActionResult Error()
         {
+            return View();
+        }
+
+    
+        public IActionResult Projects()
+        {
+            var projects = _context.Projects.ToList();
+            return View(projects);
+        }
+
+        public IActionResult GetUserID(string username)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+            ViewBag.UserID = user.Id;
             return View();
         }
     }
