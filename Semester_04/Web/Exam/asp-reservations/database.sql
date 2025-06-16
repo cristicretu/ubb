@@ -28,6 +28,20 @@ create table Reservations (
   idReservedResource int
 );
 
+insert into Flights (date, destinationCity, availableSeats) values ('2025-10-10', 'cluj', 2);
+insert into Flights (date, destinationCity, availableSeats) values ('2025-10-10', 'cluj', 200);
+insert into Flights (date, destinationCity, availableSeats) values ('2025-10-10', 'cluj', 0);
+insert into Flights (date, destinationCity, availableSeats) values ('2025-10-10', 'Paris', 2);
+insert into Flights (date, destinationCity, availableSeats) values ('2025-10-10', 'Barcelona', 2);
+insert into Flights (date, destinationCity, availableSeats) values ('2025-10-10', 'London', 2);
+
+
+insert into Hotels (hotelName, date, city, availableRooms) values ('Hotel 1', '2025-10-10', 'cluj', 2);
+insert into Hotels (hotelName, date, city, availableRooms) values ('Hotel 2', '2025-10-10', 'cluj', 200);
+insert into Hotels (hotelName, date, city, availableRooms) values ('Hotel 3', '2025-10-10', 'cluj', 0);
+insert into Hotels (hotelName, date, city, availableRooms) values ('Hotel 4', '2025-10-10', 'Paris', 2);
+insert into Hotels (hotelName, date, city, availableRooms) values ('Hotel 5', '2025-10-10', 'Barcelona', 2);
+insert into Hotels (hotelName, date, city, availableRooms) values ('Hotel 6', '2025-10-10', 'London', 2);
 
 CREATE TABLE SoftwareDeveloper (
   id INTEGER PRIMARY KEY AUTOINCREMENT,

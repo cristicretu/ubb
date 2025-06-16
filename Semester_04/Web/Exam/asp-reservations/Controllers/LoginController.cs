@@ -15,10 +15,10 @@ namespace ProjectManagement.Controllers
         {
             if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(date) && !string.IsNullOrEmpty(city))
             {
-                HttpContext.Session.SetString("Username", name);
+                HttpContext.Session.SetString("name", name);
                 HttpContext.Session.SetString("date", date);
                 HttpContext.Session.SetString("city", city);
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Flights");
             }
             
             return View();

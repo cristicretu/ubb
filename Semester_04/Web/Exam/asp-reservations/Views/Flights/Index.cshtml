@@ -1,10 +1,27 @@
 @{
     ViewData["Title"] = "Project Management";
-    
+    var flights = ViewBag.Flights as List<ProjectManagement.Models.Flights>;
 }
 
 <div class="mb-6">
     <h1 class="text-3xl font-bold text-neutral-800 mb-4">Flights</h1>
-  
+    <table class="w-full border-collapse border border-gray-300">
+        <thead>
+            <tr>
+                <th class="border border-gray-300 p-2">Date</th>
+                <th class="border border-gray-300 p-2">Destination City</th>
+                <th class="border border-gray-300 p-2">Available Seats</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var flight in flights)
+            {
+                <tr>
+                    <td class="border border-gray-300 p-2">@flight.Date</td>
+                    <td class="border border-gray-300 p-2">@flight.DestinationCity</td>
+                    <td class="border border-gray-300 p-2">@flight.AvailableSeats</td>
+                </tr>
+            }
+        </tbody>
     </div>
 </div>
