@@ -51,20 +51,25 @@
                     java.util.List documentsAndMovies = (java.util.List)request.getAttribute("documentsAndMovies");
                     if (documentsAndMovies != null) {
                         for (int i = 0; i < documentsAndMovies.size(); ++i) { 
+                            String item = (String)documentsAndMovies.get(i);
+                            if (item.startsWith("document")) {
                     %>
-                        <% if (i % 2 == 0) { %>
                             <div class="bg-red-100">
                                 <%= documentsAndMovies.get(i) %>
-                                </div>
-
-                        <% } else { %>
-                            <form>
+                            </div>
+                    <% 
+                            } else if (item.startsWith("movie")) { 
+                    %>
+                            <form method="post" action="main">
+                                <input type="hidden" name="movieId" value="<%= item.split("\\.")[1] %>">
                                 <%= documentsAndMovies.get(i) %>
+                                <button type="submit" name="action" value="delete_movie">Delete</button>
                             </form>
-
-                        <%} %>
-                    <% } 
-                    } else { %>
+                    <% 
+                            }
+                        }
+                    } else { 
+                    %>
                         <p class="text-gray-500">No documents or movies found.</p>
                     <% } %>
                 </div>

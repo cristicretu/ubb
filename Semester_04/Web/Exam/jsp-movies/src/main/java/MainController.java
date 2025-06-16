@@ -73,7 +73,7 @@ public class MainController extends HttpServlet {
           while (rs2.next()) {
             String title = rs2.getString("name");
             String contents = rs2.getString("contents");
-            documents.add(title + " " + contents);
+            documents.add("document: " + title + " " + contents + "." + documentId);
           }
         }
       } catch (SQLException e) {
@@ -90,7 +90,7 @@ public class MainController extends HttpServlet {
           while (rs3.next()) {
             String title = rs3.getString("title");
             int duration = rs3.getInt("duration");
-            movies.add(title + " " + duration);
+            movies.add("movie: " + title + " " + duration + "." + movieId);
           }
         }
       } catch (SQLException e) {
@@ -166,49 +166,45 @@ public class MainController extends HttpServlet {
       return;
     }
 
-    // String action = request.getParameter("action");
-    // String successMessage = "";
-    // String errorMessage = "";
+    String action = request.getParameter("action");
+    String successMessage = "";
+    String errorMessage = "";
 
-    // try (Connection conn = getConnection()) {
-    // if ("assign_project".equals(action)) {
-    // String projectName = request.getParameter("project_name");
-    // String projectManagerName = request.getParameter("project_manager_name");
+    try (Connection conn = getConnection()) {
+      if ("delete_movie".equals(action)) {
+        String movieId = request.getParameter("movieId");
+        String query = "DELETE FROM Movies WHERE id = ?";
+        String movieList = "";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+          stmt.setInt(1, Integer.parseInt(movieId));
+          stmt.executeUpdate();
+        }
 
-    // if (projectName != null && !projectName.trim().isEmpty() &&
-    // projectManagerName != null && !projectManagerName.trim().isEmpty()) {
+        String query2 = "SELECT movieList FROM Authors WHERE name = ?";
+        try (PreparedStatement stmt2 = conn.prepareStatement(query2)) {
+          stmt2.setString(1, currentUser);
+          try (ResultSet rs = stmt2.executeQuery()) {
+            while (rs.next()) {
+              movieList = rs.getString("movieList");
+            }
+          }
+        }
 
-    // projectName = projectName.trim();
-    // projectManagerName = projectManagerName.trim();
+        String newMovieList = movieList.replace(movieId, "");
 
-    // Integer managerId = findDeveloperByName(conn, projectManagerName);
-    // if (managerId != null) {
-    // boolean success = assignProject(conn, projectName, managerId);
-    // if (success) {
-    // successMessage = "Project '" + projectName + "' assigned to '" +
-    // projectManagerName + "' successfully!";
-    // } else {
-    // errorMessage = "Failed to assign project.";
-    // }
-    // } else {
-    // errorMessage = "Developer '" + projectManagerName + "' not found!";
-    // }
-    // } else {
-    // errorMessage = "Please fill in all fields.";
-    // }
-    // }
-    // } catch (SQLException e) {
-    // errorMessage = "Database error: " + e.getMessage();
-    // }
+        String query1 = "UPDATE Authors SET movieList = ? WHERE name = ?";
+        try (PreparedStatement stmt1 = conn.prepareStatement(query1)) {
+          stmt1.setString(1, newMovieList);
+          stmt1.setString(2, currentUser);
+          stmt1.executeUpdate();
+        }
+        successMessage = "Movie deleted successfully!";
+      }
+    } catch (SQLException e) {
+      errorMessage = "Database error: " + e.getMessage();
+    }
 
-    // // Set messages in session to persist across redirect
-    // if (!successMessage.isEmpty()) {
-    // session.setAttribute("success_message", successMessage);
-    // }
-    // if (!errorMessage.isEmpty()) {
-    // session.setAttribute("error_message", errorMessage);
-    // }
-
+    //
     response.sendRedirect("main");
   }
 
