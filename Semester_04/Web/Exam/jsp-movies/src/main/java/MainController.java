@@ -41,13 +41,26 @@ public class MainController extends HttpServlet {
         while (rs.next()) {
           String documentList = rs.getString("documentList");
           String movieList = rs.getString("movieList");
-          documentIds = (ArrayList<Integer>) Arrays.asList(documentList.split(",")).stream().map(Integer::parseInt)
-              .collect(Collectors.toList());
-          movieIds = (ArrayList<Integer>) Arrays.asList(movieList.split(",")).stream().map(Integer::parseInt)
-              .collect(Collectors.toList());
+
+          if (documentList != null && !documentList.trim().isEmpty()) {
+            documentIds = (ArrayList<Integer>) Arrays.asList(documentList.split(",")).stream()
+                .filter(s -> !s.trim().isEmpty())
+                .map(Integer::parseInt)
+                .collect(Collectors.toList());
+          }
+
+          if (movieList != null && !movieList.trim().isEmpty()) {
+            movieIds = (ArrayList<Integer>) Arrays.asList(movieList.split(",")).stream()
+                .filter(s -> !s.trim().isEmpty())
+                .map(Integer::parseInt)
+                .collect(Collectors.toList());
+          }
         }
       }
     }
+
+    System.out.println("DEBUG:" + movieIds);
+    System.out.println("DEBUGGG" + documentIds);
 
     ArrayList<Object> documents = new ArrayList<>();
     ArrayList<Object> movies = new ArrayList<>();
@@ -58,37 +71,55 @@ public class MainController extends HttpServlet {
         stmt2.setInt(1, documentId);
         try (ResultSet rs2 = stmt2.executeQuery()) {
           while (rs2.next()) {
-            documents.add(rs2.getString("title"));
-            documents.add(rs2.getString("contents"));
+            String title = rs2.getString("name");
+            String contents = rs2.getString("contents");
+            documents.add(title + " " + contents);
           }
         }
+      } catch (SQLException e) {
+        throw e;
       }
     }
 
     for (Integer movieId : movieIds) {
+      System.out.println("DEBUG: Querying movie with ID: " + movieId);
       String query3 = "SELECT * FROM Movies WHERE id = ?";
       try (PreparedStatement stmt3 = conn.prepareStatement(query3)) {
         stmt3.setInt(1, movieId);
         try (ResultSet rs3 = stmt3.executeQuery()) {
           while (rs3.next()) {
-            movies.add(rs3.getString("title"));
-            movies.add(rs3.getInt("duration"));
+            String title = rs3.getString("title");
+            int duration = rs3.getInt("duration");
+            movies.add(title + " " + duration);
           }
         }
+      } catch (SQLException e) {
+        throw e;
       }
     }
 
-    var fullLength = movies.size() + documents.size();
+    // Interleave documents and movies
+    int docIndex = 0;
+    int movieIndex = 0;
 
-    for (int i = 0; i < fullLength; i++) {
-      if (i % 2 == 0) {
-        var document = documents.get(documents.size() - 1);
-        documents.remove(documents.size() - 1);
-        documentsAndMovies.add(document);
-      } else {
-        var movie = movies.get(movies.size() - 1);
-        movies.remove(movies.size() - 1);
-        documentsAndMovies.add(movie);
+    while (docIndex < documents.size() || movieIndex < movies.size()) {
+      // Add document if available and it's even index
+      if (docIndex < documents.size() && documentsAndMovies.size() % 2 == 0) {
+        documentsAndMovies.add(documents.get(docIndex));
+        docIndex++;
+      }
+      // Add movie if available and it's odd index
+      else if (movieIndex < movies.size() && documentsAndMovies.size() % 2 == 1) {
+        documentsAndMovies.add(movies.get(movieIndex));
+        movieIndex++;
+      }
+      // If one list is exhausted, add from the other
+      else if (docIndex < documents.size()) {
+        documentsAndMovies.add(documents.get(docIndex));
+        docIndex++;
+      } else if (movieIndex < movies.size()) {
+        documentsAndMovies.add(movies.get(movieIndex));
+        movieIndex++;
       }
     }
 
@@ -110,12 +141,17 @@ public class MainController extends HttpServlet {
       ArrayList<Object> documentsAndMovies = getDocumentsAndMovies(conn, currentUser);
       request.setAttribute("documentsAndMovies", documentsAndMovies);
 
-      request.getRequestDispatcher("main.jsp").forward(request, response);
-
     } catch (SQLException e) {
       request.setAttribute("error_message", "Database error: " + e.getMessage());
-      request.getRequestDispatcher("main.jsp").forward(request, response);
+      // Set empty list to avoid null pointer exception in JSP
+      request.setAttribute("documentsAndMovies", new ArrayList<Object>());
+    } catch (Exception e) {
+      request.setAttribute("error_message", "Unexpected error: " + e.getMessage());
+      // Set empty list to avoid null pointer exception in JSP
+      request.setAttribute("documentsAndMovies", new ArrayList<Object>());
     }
+
+    request.getRequestDispatcher("main.jsp").forward(request, response);
   }
 
   @Override

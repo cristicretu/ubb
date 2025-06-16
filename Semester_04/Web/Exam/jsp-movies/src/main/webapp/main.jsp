@@ -47,18 +47,25 @@
                 <h2>All your authored movies and documents</h2>
 
                 <div>
-                    <% for (int i = 0; i < request.getAttribute("documentsAndMovies").size(); ++i) { %>
+                    <% 
+                    java.util.List documentsAndMovies = (java.util.List)request.getAttribute("documentsAndMovies");
+                    if (documentsAndMovies != null) {
+                        for (int i = 0; i < documentsAndMovies.size(); ++i) { 
+                    %>
                         <% if (i % 2 == 0) { %>
                             <div class="bg-red-100">
-                                <%= ((java.util.List)request.getAttribute("documentsAndMovies")).get(i) %>
+                                <%= documentsAndMovies.get(i) %>
                                 </div>
 
                         <% } else { %>
                             <form>
-                                <%= ((java.util.List)request.getAttribute("documentsAndMovies")).get(i) %>
+                                <%= documentsAndMovies.get(i) %>
                             </form>
 
                         <%} %>
+                    <% } 
+                    } else { %>
+                        <p class="text-gray-500">No documents or movies found.</p>
                     <% } %>
                 </div>
             </div>
