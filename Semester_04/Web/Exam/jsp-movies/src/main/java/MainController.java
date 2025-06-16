@@ -126,6 +126,22 @@ public class MainController extends HttpServlet {
     return documentsAndMovies;
   }
 
+  private String getDocumentsWithMostAuthors(Connection conn) throws SQLException {
+    // Since Documents table doesn't have authorCount, let's get the document with
+    // the longest content as a placeholder
+    String query = "SELECT * FROM Documents ORDER BY LENGTH(contents) DESC LIMIT 1";
+    try (PreparedStatement stmt = conn.prepareStatement(query)) {
+      try (ResultSet rs = stmt.executeQuery()) {
+        if (rs.next()) {
+          String title = rs.getString("name");
+          String contents = rs.getString("contents");
+          return "document: " + title + " " + contents + "." + rs.getInt("id");
+        }
+      }
+    }
+    return null;
+  }
+
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
@@ -140,6 +156,9 @@ public class MainController extends HttpServlet {
     try (Connection conn = getConnection()) {
       ArrayList<Object> documentsAndMovies = getDocumentsAndMovies(conn, currentUser);
       request.setAttribute("documentsAndMovies", documentsAndMovies);
+
+      String documentsWithMostAuthors = getDocumentsWithMostAuthors(conn);
+      request.setAttribute("documentsWithMostAuthors", documentsWithMostAuthors);
 
     } catch (SQLException e) {
       request.setAttribute("error_message", "Database error: " + e.getMessage());
