@@ -42,6 +42,16 @@ namespace ProjectManagement.Controllers
             };
             _context.Reservations.Add(reservation);
 
+            var operation = "flight:" + flightId + "." + HttpContext.Session.GetString("name") + ";";
+            var oldOperation = HttpContext.Session.GetString("operation");
+            if (oldOperation != null)
+            {
+                operation = oldOperation + operation;
+            } else {
+                operation = operation;
+            }
+            HttpContext.Session.SetString("operation", operation);
+
             flight.AvailableSeats--;
             _context.SaveChanges();
 
