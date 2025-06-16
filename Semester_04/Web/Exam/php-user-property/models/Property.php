@@ -21,6 +21,18 @@ class Property {
         return $stmt;
     }
 
+    public function findOne($id) {
+        $query = "SELECT id, address, description FROM " . $this->table_name . " WHERE id = ?";
+        
+        $stmt = $this->conn->prepare($query);
+        
+        $stmt->bindParam(1, $id);
+
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function searchAll($description) {
       $query = "SELECT id, address, description FROM " . $this->table_name . " WHERE description LIKE ?";
       $stmt = $this->conn->prepare($query);
