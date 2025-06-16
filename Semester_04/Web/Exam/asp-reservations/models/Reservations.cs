@@ -11,7 +11,8 @@ namespace ProjectManagement.Models
         [MaxLength(100)]
         public string? Person { get; set; }
 
-        public int? Type { get; set; }
+        [MaxLength(100)]
+        public string? Type { get; set; }
 
         public int? IdReservedResource { get; set; }
     }
