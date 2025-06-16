@@ -44,7 +44,7 @@
         
         <div class="bg-white p-4 rounded shadow-md mb-6">
             <div class="overflow-x-auto">
-                <h2>All your authored movies and documents</h2>
+                <h2 class="text-lg font-bold text-neutral-800 mb-4">All your authored movies and documents</h2>
 
                 <div>
                     <% 
@@ -74,6 +74,21 @@
                     <% } %>
                 </div>
             </div>
+        </div>
+
+        <div class="bg-white p-4 rounded shadow-md mb-6">
+            <h2 class="text-lg font-bold text-neutral-800 mb-4">Add a new document</h2>
+
+            <form method="post" action="main" class="space-y-4">
+                <input type="text" name="document_name" placeholder="Document Name" 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                <input type="text" name="document_content" placeholder="Document Content" 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                <button type="submit" name="action" value="add_document" 
+                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Add Document
+                </button>
+            </form>
         </div>
     </div>
 </div>

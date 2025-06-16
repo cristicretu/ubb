@@ -199,12 +199,61 @@ public class MainController extends HttpServlet {
           stmt1.executeUpdate();
         }
         successMessage = "Movie deleted successfully!";
+      } else if ("add_document".equals(action)) {
+        System.out.println("DEBUG: Adding document");
+        String documentName = request.getParameter("document_name");
+        String documentList = "";
+        int documentId = 0;
+        String documentContent = request.getParameter("document_content");
+        String query = "INSERT INTO Documents (name, contents) VALUES (?, ?)";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+          stmt.setString(1, documentName);
+          stmt.setString(2, documentContent);
+          stmt.executeUpdate();
+        }
+
+        // Get the last inserted row ID using SQLite's built-in function
+        String getIdQuery = "SELECT LAST_INSERT_ROWID()";
+        try (PreparedStatement idStmt = conn.prepareStatement(getIdQuery);
+            ResultSet rs = idStmt.executeQuery()) {
+          if (rs.next()) {
+            documentId = rs.getInt(1);
+          }
+        }
+        System.out.println("DEBUG: Document added");
+        String query2 = "SELECT documentList FROM Authors WHERE name = ?";
+        try (PreparedStatement stmt2 = conn.prepareStatement(query2)) {
+          stmt2.setString(1, currentUser);
+          try (ResultSet rs = stmt2.executeQuery()) {
+            while (rs.next()) {
+              documentList = rs.getString("documentList");
+            }
+          }
+        }
+        System.out.println("DEBUG: Document list: " + documentList);
+        String newDocumentList = documentList + "," + documentId;
+        System.out.println("DEBUG: New document list: " + newDocumentList);
+        String query1 = "UPDATE Authors SET documentList = ? WHERE name = ?";
+        try (PreparedStatement stmt1 = conn.prepareStatement(query1)) {
+          stmt1.setString(1, newDocumentList);
+          stmt1.setString(2, currentUser);
+          stmt1.executeUpdate();
+        }
+        System.out.println("DEBUG: Document updated");
+        successMessage = "Document added successfully!";
       }
     } catch (SQLException e) {
       errorMessage = "Database error: " + e.getMessage();
     }
 
-    //
+    // Store messages in session before redirect
+    if (!successMessage.isEmpty()) {
+      session.setAttribute("success_message", successMessage);
+    }
+    if (!errorMessage.isEmpty()) {
+      session.setAttribute("error_message", errorMessage);
+    }
+
     response.sendRedirect("main");
   }
 
