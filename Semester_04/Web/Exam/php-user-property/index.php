@@ -38,6 +38,20 @@ if ($properties_with_more_than_one_owner_stmt) {
     }
 }
 
+function getMostPopularSearchedProperties($property) {
+    if (!isset($_SESSION['returnedProperties'])) {
+        return;
+    }
+    $scores = array_count_values($_SESSION['returnedProperties']);
+    arsort($scores);
+    $mostPopularSearchedProperties = array_slice($scores, 0, 1, true); // preserve keys
+    $mostPopularPropertyId = array_key_first($mostPopularSearchedProperties); // get the property ID (key)
+    $mostPopularSearchedProperty = $property->findOne($mostPopularPropertyId);
+    return $mostPopularSearchedProperty;
+}
+
+$mostPopularSearchedProperties = getMostPopularSearchedProperties($property);
+
 if ($_POST) {
     if (isset($_POST['description']) && !empty(trim($_POST['description']))) {
         $stmt = $property->searchAll($_POST['description']);
@@ -45,6 +59,7 @@ if ($_POST) {
         if ($stmt) {
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $filteredProperties[] = $row;
+                $_SESSION['returnedProperties'][] = $row['id'];
             }
             if (count($filteredProperties) > 0) {
                 $success_message = "Found " . count($filteredProperties) . " properties.";
@@ -186,6 +201,16 @@ if ($_POST) {
                     </div>
                 <?php endforeach; ?>
             <?php endif; ?>
+
+            <?php if ($mostPopularSearchedProperties): ?>
+                <h2 class="text-xl font-bold text-neutral-800 mb-4">Most popular searched properties</h2>
+                <div class="flex flex-row gap-2 items-center justify-between p-2 border border-gray-300 rounded-md">
+                    <p>ID: <?php echo htmlspecialchars($mostPopularSearchedProperties['id']); ?></p>
+                    <h3 class="font-semibold"><?php echo htmlspecialchars($mostPopularSearchedProperties['address']); ?></h3>
+                    <p><?php echo htmlspecialchars($mostPopularSearchedProperties['description'] ?: 'No description'); ?></p>
+                </div>
+            <?php endif; ?>
+            
 
             <h2 class="text-xl font-bold text-neutral-800 mb-4">Add a property to self</h2>
             <form method="post" action="index.php" class="flex flex-col space-y-2 mb-6">
