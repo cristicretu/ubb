@@ -30,6 +30,7 @@ if ($_POST && isset($_POST['username']) && isset($_POST['secretAnswer']) && !emp
             
             if ($secretAnswer == $row['secretAnswer']) {
                 $_SESSION['currentUser'] = $username;
+                $_SESSION['userId'] = $row['id'];
                 header('Location: index.php');
                 exit();
             } else {

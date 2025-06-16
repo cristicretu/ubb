@@ -43,14 +43,14 @@ class Property {
 
         $stmt = $this->conn->prepare($query);
         
-        $cleanName = htmlspecialchars(strip_tags($address));
-        $cleanSecretQuestion = htmlspecialchars(strip_tags($description));
+        $cleanAddress = htmlspecialchars(strip_tags($address));
+        $cleanDescription = htmlspecialchars(strip_tags($description));
         
-        $stmt->bindParam(1, $cleanName);
-        $stmt->bindParam(2, $cleanSecretQuestion);
+        $stmt->bindParam(1, $cleanAddress);
+        $stmt->bindParam(2, $cleanDescription);
 
         if($stmt->execute()) {
-            return true;
+            return $this->conn->lastInsertId();
         }
 
         return false;
