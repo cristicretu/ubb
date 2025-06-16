@@ -55,18 +55,25 @@ namespace ProjectManagement.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(string action, string project_name, string project_manager_name)
+        public IActionResult Index(string action, string name)
         {
+            var sessionName = HttpContext.Session.GetString("name");
+            if (string.IsNullOrEmpty(sessionName))
+            {
+                return Redirect("/Login/Index");
+            }
+
+            if (action == "search")
+            {
+                var channels = _context.Channels
+                    .Where(c => c.Owner.Name.ToLower().Contains(name.ToLower()))
+                    .ToList();
+                System.Console.WriteLine("Debug:" + channels.Count);
+                ViewBag.Channels = channels;
+                return View();
+            }
+
             return View();
-            // var username = HttpContext.Session.GetString("Username");
-            // if (string.IsNullOrEmpty(username))
-            // {
-            //     return Redirect("/Login/Index");
-            // }
-
-            // string successMessage = "";
-            // string errorMessage = "";
-
             // if (action == "assign_project")
             // {
             //     if (!string.IsNullOrEmpty(project_name) && !string.IsNullOrEmpty(project_manager_name))

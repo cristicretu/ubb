@@ -29,12 +29,12 @@ create table Channels (
   foreign key (ownerId) references Persons(id)
 );
 
-insert into Channels (ownerId, name, description, subscribers) values (1, 'Channel 1', 'Description 1', 'Subscribers 1');
-insert into Channels (ownerId, name, description, subscribers) values (2, 'Channel 2', 'Description 2', 'Subscribers 2');
-insert into Channels (ownerId, name, description, subscribers) values (3, 'Channel 3', 'Description 3', 'Subscribers 3');
-insert into Channels (ownerId, name, description, subscribers) values (4, 'Channel 4', 'Description 4', 'Subscribers 4');
-insert into Channels (ownerId, name, description, subscribers) values (5, 'Channel 5', 'Description 5', 'Subscribers 5');
-insert into Channels (ownerId, name, description, subscribers) values (6, 'Channel 6', 'Description 6', 'Subscribers 6');
+insert into Channels (ownerId, name, description, subscribers) values (1, 'Channel 1', 'Description 1', '2|10.10.2025;3|09.09.2025;4|15.08.2025');
+insert into Channels (ownerId, name, description, subscribers) values (2, 'Channel 2', 'Description 2', '1|12.11.2025;5|20.07.2025');
+insert into Channels (ownerId, name, description, subscribers) values (3, 'Channel 3', 'Description 3', '1|05.12.2025;2|18.06.2025;6|22.09.2025');
+insert into Channels (ownerId, name, description, subscribers) values (4, 'Channel 4', 'Description 4', '3|08.01.2025;7|14.03.2025');
+insert into Channels (ownerId, name, description, subscribers) values (5, 'Channel 5', 'Description 5', '1|25.02.2025;4|30.05.2025;6|11.04.2025');
+insert into Channels (ownerId, name, description, subscribers) values (6, 'Channel 6', 'Description 6', '2|17.10.2025;5|03.08.2025;7|28.12.2025');
 
 
 create table Flights (

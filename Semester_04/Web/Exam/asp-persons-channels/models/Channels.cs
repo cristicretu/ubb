@@ -14,7 +14,17 @@ namespace ProjectManagement.Models
         [MaxLength(100)]
         public string? Description { get; set; }
 
-        public int? Subscribers { get; set; }
+        [MaxLength(500)]
+        public string? Subscribers { get; set; }
+
+        public int SubscriberCount 
+        { 
+            get 
+            {
+                if (string.IsNullOrEmpty(Subscribers)) return 0;
+                return Subscribers.Split(';', StringSplitOptions.RemoveEmptyEntries).Length;
+            }
+        }
 
         public int? OwnerId { get; set; }
 
