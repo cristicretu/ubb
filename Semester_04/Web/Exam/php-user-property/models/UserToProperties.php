@@ -36,6 +36,16 @@ class UserToProperties {
         return $stmt;
     }
 
+    public function getPropertiesWithMoreThanOneOwner() {
+        $query = "SELECT p.id, p.address, p.description, COUNT(*) as owner_count FROM " . $this->table_name . " utp JOIN Property p ON utp.idProperty = p.id GROUP BY p.id HAVING COUNT(*) > 1";
+        
+        $stmt = $this->conn->prepare($query);
+        
+        $stmt->execute();
+
+        return $stmt;
+    }
+
     public function getNumberOfOwners($idProperty) {
         $query = "SELECT COUNT(*) FROM " . $this->table_name . " WHERE idProperty = ?";
         
