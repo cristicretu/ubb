@@ -42,6 +42,16 @@ namespace ProjectManagement.Controllers
             };
             _context.Reservations.Add(reservation);
 
+            var operation = "hotel:" + hotelId + "." + HttpContext.Session.GetString("name") + ";";
+            var oldOperation = HttpContext.Session.GetString("operation");
+            if (oldOperation != null)
+            {
+                operation = oldOperation + operation;
+            } else {
+                operation = operation;
+            }
+            HttpContext.Session.SetString("operation", operation);
+
             hotel.AvailableRooms--;
             _context.SaveChanges();
 

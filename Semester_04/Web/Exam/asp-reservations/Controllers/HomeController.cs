@@ -13,6 +13,66 @@ namespace ProjectManagement.Controllers
             _context = context;
         }
 
+        public IActionResult CancelReservations()
+        {
+            var operations = HttpContext.Session.GetString("operation");
+            if (operations == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            // Remove from session after getting the value
+            HttpContext.Session.Remove("operation");
+            
+            var operationsArr = operations.Split(";", StringSplitOptions.RemoveEmptyEntries);
+            foreach (var operation in operationsArr)
+            {
+                if (string.IsNullOrEmpty(operation)) continue;
+                
+                // Parse format: "type:id.name"
+                var colonIndex = operation.IndexOf(':');
+                var dotIndex = operation.IndexOf('.');
+                
+                if (colonIndex == -1 || dotIndex == -1) continue;
+                
+                var type = operation.Substring(0, colonIndex);
+                var id = operation.Substring(colonIndex + 1, dotIndex - colonIndex - 1);
+                var person = operation.Substring(dotIndex + 1);
+                
+                if (!int.TryParse(id, out int resourceId)) continue;
+                
+                if (type == "flight")
+                {
+                    var flight = _context.Flights.Find(resourceId);
+                    if (flight != null)
+                    {
+                        flight.AvailableSeats++;
+                    }
+                }
+                else if (type == "hotel")
+                {
+                    var hotel = _context.Hotels.Find(resourceId);
+                    if (hotel != null)
+                    {
+                        hotel.AvailableRooms++;
+                    }
+                }
+                
+                var reservation = _context.Reservations.FirstOrDefault(r => 
+                    r.IdReservedResource == resourceId && 
+                    r.Type == type && 
+                    r.Person == person);
+                    
+                if (reservation != null)
+                {
+                    _context.Reservations.Remove(reservation);
+                }
+            }
+            
+            _context.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
         public IActionResult Index()
         {
             return View();
