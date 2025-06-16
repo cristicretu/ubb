@@ -30,6 +30,14 @@ if ($my_properties_stmt) {
     }
 }
 
+$properties_with_more_than_one_owner = [];
+$properties_with_more_than_one_owner_stmt = $userToProperties->getPropertiesWithMoreThanOneOwner();
+if ($properties_with_more_than_one_owner_stmt) {
+    while ($row = $properties_with_more_than_one_owner_stmt->fetch(PDO::FETCH_ASSOC)) {
+        $properties_with_more_than_one_owner[] = $row;
+    }
+}
+
 if ($_POST) {
     if (isset($_POST['description']) && !empty(trim($_POST['description']))) {
         $stmt = $property->searchAll($_POST['description']);
@@ -209,6 +217,21 @@ if ($_POST) {
                 <?php endforeach; ?>
             <?php else: ?>
                 <p class="text-gray-600 italic">You don't have any properties yet.</p>
+            <?php endif; ?>
+
+            <h2 class="text-xl font-bold text-neutral-800 mb-4">Properties that have more than one owner</h2>
+            <?php if (!empty($properties_with_more_than_one_owner)): ?>
+                <?php foreach ($properties_with_more_than_one_owner as $property): ?>
+                    <div class="flex flex-row gap-2 items-center justify-between p-4 border border-gray-300 rounded-md mb-2 bg-gray-50">
+                        <div class="flex-grow">
+                            <p class="text-sm text-gray-600">Property ID: <?php echo htmlspecialchars($property['id']); ?></p>
+                            <h3 class="font-semibold text-lg"><?php echo htmlspecialchars($property['address']); ?></h3>
+                            <p class="text-gray-700"><?php echo htmlspecialchars($property['description'] ?: 'No description'); ?></p>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p class="text-gray-600 italic">No properties have more than one owner.</p>
             <?php endif; ?>
 
 
