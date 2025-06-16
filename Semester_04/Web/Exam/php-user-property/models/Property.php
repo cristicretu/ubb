@@ -56,12 +56,12 @@ class Property {
         return false;
     }
 
-    public function delete() {
+    public function deleteById($id) {
         $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
 
         $stmt = $this->conn->prepare($query);
         
-        $stmt->bindParam(1, $this->id);
+        $stmt->bindParam(1, $id);
 
         if($stmt->execute()) {
             return true;

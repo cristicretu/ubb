@@ -21,6 +21,33 @@ class UserToProperties {
         return $stmt;
     }
 
+    public function readAllByUserID($userId) {
+        $query = "SELECT utp.id, utp.idUser, utp.idProperty, p.address, p.description 
+                  FROM " . $this->table_name . " utp 
+                  JOIN Property p ON utp.idProperty = p.id 
+                  WHERE utp.idUser = ?";
+        
+        $stmt = $this->conn->prepare($query);
+
+        $stmt->bindParam(1, $userId);
+        
+        $stmt->execute();
+        
+        return $stmt;
+    }
+
+    public function getNumberOfOwners($idProperty) {
+        $query = "SELECT COUNT(*) FROM " . $this->table_name . " WHERE idProperty = ?";
+        
+        $stmt = $this->conn->prepare($query);
+        
+        $stmt->bindParam(1, $idProperty);
+
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);   
+    }
+
 
     public function create($idUser, $idProperty) {
         $query = "INSERT INTO " . $this->table_name . " (idUser, idProperty) VALUES (?, ?)";
@@ -40,12 +67,12 @@ class UserToProperties {
         return false;
     }
 
-    public function delete() {
+    public function deleteById($id) {
         $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
 
         $stmt = $this->conn->prepare($query);
         
-        $stmt->bindParam(1, $this->id);
+        $stmt->bindParam(1, $id);
 
         if($stmt->execute()) {
             return true;

@@ -16,11 +16,19 @@ $database = new Database();
 $db = $database->getConnection();
 $property = new Property($db);
 $userToProperties = new UserToProperties($db);
+$user = new User($db);
 
 $success_message = '';
 $error_message = '';
 
 $filteredProperties = [];
+$my_properties_stmt = $userToProperties->readAllByUserID($_SESSION['userId']);
+$my_properties = [];
+if ($my_properties_stmt) {
+    while ($row = $my_properties_stmt->fetch(PDO::FETCH_ASSOC)) {
+        $my_properties[] = $row;
+    }
+}
 
 if ($_POST) {
     if (isset($_POST['description']) && !empty(trim($_POST['description']))) {
@@ -44,6 +52,13 @@ if ($_POST) {
 
         if ($stmt) {
             $success_message = "Added property!";
+            $my_properties_stmt = $userToProperties->readAllByUserID($_SESSION['userId']);
+            $my_properties = [];
+            if ($my_properties_stmt) {
+                while ($row = $my_properties_stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $my_properties[] = $row;
+                }
+            }
         } else {
             $error_message = "Did not add property";
         }
@@ -59,10 +74,65 @@ if ($_POST) {
 
         if ($stmt) {
             $success_message = "Added property!";
+            $my_properties_stmt = $userToProperties->readAllByUserID($_SESSION['userId']);
+                $my_properties = [];
+                if ($my_properties_stmt) {
+                    while ($row = $my_properties_stmt->fetch(PDO::FETCH_ASSOC)) {
+                        $my_properties[] = $row;
+                    }
+                }
         } else {
             $error_message = "Did not add property";
         }
 
+    } else if (isset($_POST['delete_property_id']) && !empty(trim($_POST['delete_property_id']))) {
+        // First, get the property ID from the UserToProperties record
+        $userToPropertyId = $_POST['delete_property_id'];
+        
+        // Get the actual property ID before deleting
+        $query = "SELECT idProperty FROM UserToProperties WHERE id = ?";
+        $stmt_get_prop = $db->prepare($query);
+        $stmt_get_prop->bindParam(1, $userToPropertyId);
+        $stmt_get_prop->execute();
+        $result = $stmt_get_prop->fetch(PDO::FETCH_ASSOC);
+        
+        if ($result) {
+            $actualPropertyId = $result['idProperty'];
+            
+            // Check number of owners BEFORE deleting from UserToProperties
+            $stmt2 = $userToProperties->getNumberOfOwners($actualPropertyId);
+            $numberOfOwners = $stmt2['COUNT(*)'];
+            
+            // Delete from UserToProperties table
+            $stmt = $userToProperties->deleteById($userToPropertyId);
+            
+            if ($stmt) {
+                // If this was the only owner, also delete from Property table
+                if ($numberOfOwners == 1) {
+                    $stmt3 = $property->deleteById($actualPropertyId);
+                    if ($stmt3) {
+                        $success_message = "Property and its association removed successfully!";
+                    } else {
+                        $success_message = "Property association removed, but failed to delete property record.";
+                    }
+                } else {
+                    $success_message = "Property removed from your list successfully!";
+                }
+                
+                // Refresh the properties list after deletion
+                $my_properties_stmt = $userToProperties->readAllByUserID($_SESSION['userId']);
+                $my_properties = [];
+                if ($my_properties_stmt) {
+                    while ($row = $my_properties_stmt->fetch(PDO::FETCH_ASSOC)) {
+                        $my_properties[] = $row;
+                    }
+                }
+            } else {
+                $error_message = "Failed to remove property";
+            }
+        } else {
+            $error_message = "Property not found";
+        }
     }
     else {
         $error_message = "Error occured.";
@@ -121,6 +191,29 @@ if ($_POST) {
                 <input type="text" name="propDescr" placeholder="Description" class="p-2 border border-gray-300 rounded" required>
                 <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">Add</button>
             </form>
+
+            <h2 class="text-xl font-bold text-neutral-800 mb-4">My properties</h2>
+            <?php if (!empty($my_properties)): ?>
+                <?php foreach ($my_properties as $my_property): ?>
+                    <div class="flex flex-row gap-2 items-center justify-between p-4 border border-gray-300 rounded-md mb-2 bg-gray-50">
+                        <div class="flex-grow">
+                            <p class="text-sm text-gray-600">Property ID: <?php echo htmlspecialchars($my_property['idProperty']); ?></p>
+                            <h3 class="font-semibold text-lg"><?php echo htmlspecialchars($my_property['address']); ?></h3>
+                            <p class="text-gray-700"><?php echo htmlspecialchars($my_property['description'] ?: 'No description'); ?></p>
+                        </div>
+                        <form method="post" action="index.php" class="flex-shrink-0">
+                            <input type="hidden" name="delete_property_id" value="<?php echo htmlspecialchars($my_property['id']); ?>">
+                            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md" onclick="return confirm('Are you sure you want to remove this property from your list?')">Remove</button>
+                        </form>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p class="text-gray-600 italic">You don't have any properties yet.</p>
+            <?php endif; ?>
+
+
+
+
 
 
         </div>
