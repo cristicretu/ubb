@@ -11,14 +11,13 @@ namespace ProjectManagement.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(string name, string date, string city)
+        public IActionResult Index(string name)
         {
-            if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(date) && !string.IsNullOrEmpty(city))
+            if (!string.IsNullOrEmpty(name))
             {
                 HttpContext.Session.SetString("name", name);
-                HttpContext.Session.SetString("date", date);
-                HttpContext.Session.SetString("city", city);
-                return RedirectToAction("Index", "Flights");
+                return RedirectToAction("Index", "Home");
+            
             }
             
             return View();
