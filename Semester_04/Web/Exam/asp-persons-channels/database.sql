@@ -5,6 +5,37 @@ DROP TABLE IF EXISTS SoftwareDeveloper;
 DROP TABLE IF EXISTS cars;
 DROP TABLE IF EXISTS categories;
 
+create table Persons (
+  id integer primary key autoincrement,
+  name varchar(100),
+  age int,
+  gender varchar(100)
+);
+
+insert into Persons (name, age, gender) values ('John Doe', 30, 'male');
+insert into Persons (name, age, gender) values ('Jane Smith', 25, 'female');
+insert into Persons (name, age, gender) values ('Mike Johnson', 35, 'male');
+insert into Persons (name, age, gender) values ('Emily Brown', 28, 'female');
+insert into Persons (name, age, gender) values ('David Wilson', 40, 'male');
+insert into Persons (name, age, gender) values ('Sarah Davis', 27, 'female');
+insert into Persons (name, age, gender) values ('Robert Miller', 32, 'male');
+
+create table Channels (
+  id integer primary key autoincrement,
+  ownerId int,
+  name varchar(100),
+  description varchar(100),
+  subscribers varchar(100),
+  foreign key (ownerId) references Persons(id)
+);
+
+insert into Channels (ownerId, name, description, subscribers) values (1, 'Channel 1', 'Description 1', 'Subscribers 1');
+insert into Channels (ownerId, name, description, subscribers) values (2, 'Channel 2', 'Description 2', 'Subscribers 2');
+insert into Channels (ownerId, name, description, subscribers) values (3, 'Channel 3', 'Description 3', 'Subscribers 3');
+insert into Channels (ownerId, name, description, subscribers) values (4, 'Channel 4', 'Description 4', 'Subscribers 4');
+insert into Channels (ownerId, name, description, subscribers) values (5, 'Channel 5', 'Description 5', 'Subscribers 5');
+insert into Channels (ownerId, name, description, subscribers) values (6, 'Channel 6', 'Description 6', 'Subscribers 6');
+
 
 create table Flights (
   id integer primary key autoincrement,
