@@ -2,10 +2,30 @@
     ViewData["Title"] = "Project Management";
 
     var name = Context.Session.GetString("name");
+    var channels = ViewBag.Channels as List<ProjectManagement.Models.Channels>;
 }
 
 <div class="mb-6">
-    <h1 class="text-3xl font-bold text-neutral-800 mb-4">Project Management</h1>
-  
-    hello @name
+    <span class="mb-4">Hello @name</span>
+
+    <div class="flex justify-between items-center flex-col w-full">
+        <h2 class="text-2xl font-bold text-neutral-800 mb-4 w-full">Find Channels by person</h2>
+        <form method="post" action="/Home/Index" class="w-full flex flex-col gap-4">
+            <input type="text" name="name" placeholder="Enter the name" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <button type="submit" name="action" value="search" action="search" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition duration-200">Search</button>
+        </form>
+        @if (channels != null)
+        {
+            <div class="flex flex-col gap-4 bg-white shadow-md w-full rounded-md p-4">
+                @foreach (var channel in channels)
+                {
+                    <div class="flex flex-row justify-between items-center gap-2 border border-gray-300 rounded-md p-4">
+                        <span class="text-lg font-bold text-neutral-800">@channel.Name</span>
+                        <span class="text-sm text-neutral-500">@channel.Description</span>
+                        <span class="text-sm text-neutral-500">@channel.SubscriberCount</span>
+                    </div>
+                }
+            </div>
+        }
+    </div>
 </div>
