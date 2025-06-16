@@ -90,5 +90,26 @@
                 </button>
             </form>
         </div>
+
+        <div class="bg-white p-4 rounded shadow-md mb-6">
+            <h2 class="text-lg font-bold text-neutral-800 mb-4">Document with the largest number of authors</h2>
+
+            <div>
+                <% 
+                String documentsWithMostAuthors = (String) request.getAttribute("documentsWithMostAuthors");
+                if (documentsWithMostAuthors != null) {
+                    String[] parts = documentsWithMostAuthors.split("\\.");
+                    %>
+                    <div class="bg-blue-100 p-3 rounded">
+                        <strong>Title:</strong> <%= parts[0] %><br>
+                        <% if (parts.length > 1) { %>
+                            <strong>ID:</strong> <%= parts[1] %>
+                        <% } %>
+                    </div>
+                <% } else { %>
+                    <p class="text-gray-500">No documents with the largest number of authors found.</p>
+                <% } %>
+            </div>
+        </div>
     </div>
 </div>
