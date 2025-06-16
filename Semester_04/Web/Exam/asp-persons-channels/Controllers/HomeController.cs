@@ -13,16 +13,20 @@ namespace ProjectManagement.Controllers
             _context = context;
         }
 
-      
-
+        [HttpGet]
         public IActionResult Index()
         {
+            var name = HttpContext.Session.GetString("name");
+            if (string.IsNullOrEmpty(name))
+            {
+                return Redirect("/Login/Index");
+            }
+
+            var subscribedChannels = _context.Channels
+                .Where(c => c.Subscribers.Contains(name))
+                .ToList();
+            ViewBag.SubscribedChannels = subscribedChannels;
             return View();
-            // var username = HttpContext.Session.GetString("Username");
-            // if (string.IsNullOrEmpty(username))
-            // {
-            //     return Redirect("/Login/Index");
-            // }
 
             // // Get current user
             // var currentUser = _context.SoftwareDevelopers.FirstOrDefault(u => u.Name == username);
@@ -62,6 +66,12 @@ namespace ProjectManagement.Controllers
             {
                 return Redirect("/Login/Index");
             }
+
+            // Always get subscribed channels for display
+            var subscribedChannels = _context.Channels
+                .Where(c => c.Subscribers.Contains(sessionName))
+                .ToList();
+            ViewBag.SubscribedChannels = subscribedChannels;
 
             if (action == "search")
             {
@@ -148,7 +158,6 @@ namespace ProjectManagement.Controllers
         {
             return View();
         }
-
 
     }
 } 
