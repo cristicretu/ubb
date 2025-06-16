@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ProjectManagement.Data;
+using ProjectManagement.Models;
 
 namespace ProjectManagement.Controllers
 {
@@ -24,6 +25,27 @@ namespace ProjectManagement.Controllers
             return View();
         }
 
+        [HttpPost]
+        public IActionResult Reserve(int flightId)
+        {
+            var flight = _context.Flights.Find(flightId);
+            if (flight == null)
+            {
+                return NotFound();
+            }
 
+            var reservation = new Reservations
+            {
+                IdReservedResource = flightId,
+                Type = "flight",
+                Person = HttpContext.Session.GetString("name")
+            };
+            _context.Reservations.Add(reservation);
+
+            flight.AvailableSeats--;
+            _context.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
     }
 } 

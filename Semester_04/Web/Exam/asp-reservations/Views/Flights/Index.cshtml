@@ -11,16 +11,23 @@
                 <th class="border border-gray-300 p-2">Date</th>
                 <th class="border border-gray-300 p-2">Destination City</th>
                 <th class="border border-gray-300 p-2">Available Seats</th>
+                <th class="border border-gray-300 p-2">Reserve</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var flight in flights)
             {
-                <tr>
+                <form method="post" action="/Flights/Reserve">
+                    <input type="hidden" name="flightId" value="@flight.Id">
+                    <tr>
                     <td class="border border-gray-300 p-2">@flight.Date</td>
                     <td class="border border-gray-300 p-2">@flight.DestinationCity</td>
                     <td class="border border-gray-300 p-2">@flight.AvailableSeats</td>
+                    <td class="border border-gray-300 p-2">
+                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Reserve</button>
+                    </td>
                 </tr>
+                </form>
             }
         </tbody>
     </div>

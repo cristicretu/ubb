@@ -24,7 +24,7 @@ create table Hotels (
 create table Reservations (
   id integer primary key autoincrement,
   person varchar(100),
-  type int, -- 1: flight, 2: hotel
+  type varchar(100), 
   idReservedResource int
 );
 
