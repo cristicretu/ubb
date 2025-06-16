@@ -119,12 +119,14 @@ public class LoginController extends HttpServlet {
 
         // Check if the user actually authored the found document or movie
         if (!isUserAuthorOfSearchParam(conn, userId, searchedDocumentId, searchedMovieId)) {
+          System.out.println("DEBUG: User is not author of the document/movie");
           errorMessage = "You are not the author of the specified document or movie. Please enter a document or movie you have authored.";
           request.setAttribute("error_message", errorMessage);
           request.getRequestDispatcher("login.jsp").forward(request, response);
           return;
         }
 
+        System.out.println("DEBUG: All validations passed - setting session and redirecting");
         // Set session attributes - using "currentUser" to match MainController
         // expectations
         session.setAttribute("userId", Integer.toString(userId));
@@ -132,8 +134,11 @@ public class LoginController extends HttpServlet {
         session.setAttribute("searchParam", searchParam.trim());
 
         // Redirect to main page
+        System.out.println("DEBUG: Redirecting to main page");
         response.sendRedirect("main");
       } catch (Exception e) {
+        System.out.println("DEBUG: Exception occurred: " + e.getMessage());
+        e.printStackTrace();
         errorMessage = "Database error: " + e.getMessage();
         request.setAttribute("error_message", errorMessage);
         request.getRequestDispatcher("login.jsp").forward(request, response);
@@ -143,28 +148,38 @@ public class LoginController extends HttpServlet {
 
   private boolean isUserAuthorOfSearchParam(Connection conn, int userId, String searchedDocumentId,
       String searchedMovieId) throws SQLException {
-    String query = "select * from Authors where documentList like ?";
-    try (PreparedStatement stmt = conn.prepareStatement(query)) {
-      stmt.setString(1, "%" + searchedDocumentId + "%");
-      try (ResultSet rs = stmt.executeQuery()) {
-        if (rs.next()) {
-          return true;
+
+    if (searchedDocumentId != null) {
+      String query = "SELECT * FROM Authors WHERE id = ? AND documentList LIKE ?";
+      try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        stmt.setInt(1, userId);
+        stmt.setString(2, "%" + searchedDocumentId + "%");
+        try (ResultSet rs = stmt.executeQuery()) {
+          if (rs.next()) {
+            return true;
+          } else {
+          }
         }
       }
     }
 
-    String query2 = "select * from Authors where movieList like ?";
-    try (PreparedStatement stmt = conn.prepareStatement(query2)) {
-      stmt.setString(1, "%" + searchedMovieId + "%");
-      try (ResultSet rs = stmt.executeQuery()) {
-        if (rs.next()) {
-          return true;
+    if (searchedMovieId != null) {
+      String query2 = "SELECT * FROM Authors WHERE id = ? AND movieList LIKE ?";
+      try (PreparedStatement stmt = conn.prepareStatement(query2)) {
+        stmt.setInt(1, userId);
+        stmt.setString(2, "%" + searchedMovieId + "%");
+        try (ResultSet rs = stmt.executeQuery()) {
+          if (rs.next()) {
+            return true;
+          } else {
+          }
         }
       }
     }
 
     return false;
   }
+}
 
 @WebServlet("/logout")
 class LogoutController extends HttpServlet {
