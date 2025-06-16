@@ -58,8 +58,16 @@ namespace ProjectManagement.Controllers
             // return View(allProjects);
         }
 
+        private void GetSubscribedChannels(string sessionName)
+        {
+            var subscribedChannels = _context.Channels
+                .Where(c => c.Subscribers.Contains(sessionName))
+                .ToList();
+            ViewBag.SubscribedChannels = subscribedChannels;
+        }
+
         [HttpPost]
-        public IActionResult Index(string action, string name)
+        public IActionResult Index(string action, string name, string channel_name)
         {
             var sessionName = HttpContext.Session.GetString("name");
             if (string.IsNullOrEmpty(sessionName))
@@ -68,10 +76,7 @@ namespace ProjectManagement.Controllers
             }
 
             // Always get subscribed channels for display
-            var subscribedChannels = _context.Channels
-                .Where(c => c.Subscribers.Contains(sessionName))
-                .ToList();
-            ViewBag.SubscribedChannels = subscribedChannels;
+            GetSubscribedChannels(sessionName);
 
             if (action == "search")
             {
@@ -81,75 +86,34 @@ namespace ProjectManagement.Controllers
                 System.Console.WriteLine("Debug:" + channels.Count);
                 ViewBag.Channels = channels;
                 return View();
+            } else if (action == "subscribe") {
+                var channel = _context.Channels.FirstOrDefault(c => c.Name.ToLower() == channel_name.ToLower());
+
+                var isAlreadySubscribed = channel.Subscribers.Contains(sessionName);
+                if (channel != null && !isAlreadySubscribed) {
+                    channel.AddSubscriber(sessionName);
+                    var result = _context.SaveChanges();
+                    GetSubscribedChannels(sessionName);
+                    if (result > 0) {
+                        ViewBag.SuccessMessage = "You have successfully subscribed to the channel.";
+                    } else {
+                        ViewBag.ErrorMessage = "Failed to subscribe to the channel.";
+                    }
+                } else if (isAlreadySubscribed) {
+                    channel.UpdateSubscriber(sessionName);
+                    var result = _context.SaveChanges();
+                    GetSubscribedChannels(sessionName);
+                    if (result > 0) {
+                        ViewBag.SuccessMessage = "You have successfully updated your subscription to the channel.";
+                    } else {
+                        ViewBag.ErrorMessage = "Failed to update your subscription to the channel.";
+                    }
+                } else {
+                    ViewBag.ErrorMessage = "Channel not found.";
+                }
             }
 
             return View();
-            // if (action == "assign_project")
-            // {
-            //     if (!string.IsNullOrEmpty(project_name) && !string.IsNullOrEmpty(project_manager_name))
-            //     {
-            //         var projectManager = _context.SoftwareDevelopers.FirstOrDefault(s => s.Name == project_manager_name);
-            //         if (projectManager != null)
-            //         {
-            //             var newProject = new Project
-            //             {
-            //                 Name = project_name,
-            //                 ProjectManagerID = projectManager.Id,
-            //                 Description = "",
-            //                 Members = ""
-            //             };
-
-            //             _context.Projects.Add(newProject);
-            //             var result = _context.SaveChanges();
-                        
-            //             if (result > 0)
-            //             {
-            //                 successMessage = $"Project '{project_name}' assigned to '{project_manager_name}' successfully!";
-            //             }
-            //             else
-            //             {
-            //                 errorMessage = "Failed to assign project.";
-            //             }
-            //         }
-            //         else
-            //         {
-            //             errorMessage = $"Developer '{project_manager_name}' not found!";
-            //         }
-            //     }
-            //     else
-            //     {
-            //         errorMessage = "Please fill in all fields.";
-            //     }
-            // }
-
-            // // Get current user
-            // var currentUser = _context.SoftwareDevelopers.FirstOrDefault(u => u.Name == username);
-            // int? currentUserID = currentUser?.Id;
-
-            // // Get all projects
-            // var allProjects = _context.Projects.ToList();
-
-            // // Get projects managed by current user
-            // var yourProjects = currentUserID.HasValue 
-            //     ? _context.Projects.Where(p => p.ProjectManagerID == currentUserID.Value).ToList() 
-            //     : new List<Project>();
-
-            // // Get projects where current user is a member
-            // var memberProjects = allProjects.Where(p => 
-            //     !string.IsNullOrEmpty(p.Members) && p.Members.Contains(username)).ToList();
-
-            // // Get all developers
-            // var allDevelopers = _context.SoftwareDevelopers.ToList();
-
-            // // Pass data to view
-            // ViewBag.Username = username;
-            // ViewBag.UserID = currentUserID;
-            // ViewBag.AllProjects = allProjects;
-            // ViewBag.YourProjects = yourProjects;
-            // ViewBag.MemberProjects = memberProjects;
-            // ViewBag.AllDevelopers = allDevelopers;
-            // ViewBag.SuccessMessage = successMessage;
-            // ViewBag.ErrorMessage = errorMessage;
 
             // return View(allProjects);
         }
