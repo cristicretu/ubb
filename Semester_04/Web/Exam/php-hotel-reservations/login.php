@@ -18,7 +18,7 @@ if ($_POST) {
     }
 
     $stmt = $user->findOne($username);
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $row = $stmt->fetch();
 
     if (!$row) {
         $error_message = 'User not found';
