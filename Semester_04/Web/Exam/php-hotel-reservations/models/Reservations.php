@@ -74,6 +74,22 @@ class Reservation {
         return $stmt;  
     }
 
+    public function isReservedUserId($roomId, $starDate, $endDate, $userId) {
+        $query = "select * from " . $this->table_name . " where ? < checkOutDate and checkInDate < ? and userId = ?";
+
+        $stmt = $this->conn->prepare($query);
+
+        $stmt->bindParam(1, $starDate);
+        $stmt->bindParam(2, $endDate);
+        $stmt->bindParam(3, $userId);
+
+        $stmt->execute();
+
+        return $stmt->fetch();
+    } 
+
+
+
     public function isReserved($roomId, $starDate, $endDate) {
         $query = "select * from " . $this->table_name . " where ? < checkOutDate and checkInDate < ?";
 
