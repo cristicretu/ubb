@@ -123,6 +123,67 @@ public class MainController extends HttpServlet {
           stmt3.executeUpdate();
           successMessage = "Post added successfully!";
         }
+      } else if ("update_post".equals(action)) {
+        String postId = request.getParameter("post_id");
+        String postText = request.getParameter("post_text");
+        String topicText = request.getParameter("topic_text");
+        Integer topicExists = 0;
+        Integer postExists = 0;
+
+        if (postId.isEmpty() || postText.isEmpty() || topicText.isEmpty()) {
+          errorMessage = "Post ID, post text, and topic text cannot be empty";
+        }
+
+        // Validate that postId is a valid integer
+        if (errorMessage.isEmpty()) {
+          try {
+            Integer.parseInt(postId);
+          } catch (NumberFormatException e) {
+            errorMessage = "Post ID must be a valid number";
+          }
+        }
+
+        String query = "SELECT * FROM Topics WHERE tipicname = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+          stmt.setString(1, topicText);
+          try (ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+              topicExists = rs.getInt("id");
+            } else {
+              errorMessage = "Topic does not exist";
+            }
+          }
+        }
+
+        if (topicExists == 0) {
+          errorMessage = "Topic does not exist";
+        }
+
+        String query2 = "SELECT * FROM Posts WHERE id = ?";
+        try (PreparedStatement stmt2 = conn.prepareStatement(query2)) {
+          stmt2.setInt(1, Integer.parseInt(postId));
+          try (ResultSet rs = stmt2.executeQuery()) {
+            if (rs.next()) {
+              postExists = rs.getInt("id");
+            }
+          }
+        }
+
+        if (postExists == 0) {
+          errorMessage = "Post does not exist";
+        }
+
+        if (errorMessage.isEmpty()) {
+          String query3 = "UPDATE Posts SET text = ?, topicid = ? WHERE id = ?";
+          try (PreparedStatement stmt3 = conn.prepareStatement(query3)) {
+            stmt3.setString(1, postText);
+            stmt3.setInt(2, topicExists);
+            stmt3.setInt(3, postExists);
+            stmt3.executeUpdate();
+            successMessage = "Post updated successfully!";
+          }
+        }
+
       }
     } catch (SQLException e) {
       errorMessage = "Database error: " + e.getMessage();
