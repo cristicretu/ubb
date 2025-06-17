@@ -47,7 +47,12 @@ if ($_POST) {
         $start_date = $_POST['start_date'];
         $end_date = $_POST['end_date'];
 
-        $hotelRoom->bookRoom($userId, $room_id, $start_date, $end_date);
+        $booked = $hotelRoom->bookRoom($userId, $room_id, $start_date, $end_date);
+        if ($booked) {
+            $success_message = 'Room booked successfully';
+        } else {
+            $error_message = 'Room already booked or not available';
+        }
     } else if (isset($_POST['total_guests'])) {
         $date = $_POST['date'];
         $totalGuests = $reservation->getTotalGuests($date);

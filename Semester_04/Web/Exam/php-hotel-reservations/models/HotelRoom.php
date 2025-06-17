@@ -96,6 +96,11 @@ class HotelRoom {
         $allRooms = $allRoomsStmt->fetchAll();
         $base_price = $this->getBasePrice($room_id);
 
+        $isReserved = $reservation->isReservedUserId($room_id, $start_date, $end_date, $userId);
+        if ($isReserved) {
+            return false;
+        }
+
         $numberOfRooms = count($allRooms);
         $bookedRooms = 0;
 

@@ -28,6 +28,8 @@ create table Reservation (
 insert into User (username, password) values ('cristi', 1), ('luca', 1), ('alex', 1);
 insert into HotelRoom (roomNumber, capacity, basePrice) values ('101', 2, 100), ('102', 2, 100), ('103', 2, 100);
 
+insert into HotelRoom (roomNumber, capacity, basePrice) values ('104', 2, 100);
+
 insert into Reservation (userId, roomId, checkInDate, checkOutDate, numberOfGuests, totalPrice) values (1, 1, '2025-06-17', '2025-06-18', 2, 200);
 insert into Reservation (userId, roomId, checkInDate, checkOutDate, numberOfGuests, totalPrice) values (2, 2, '2025-06-17', '2025-06-25', 2, 200);
 insert into Reservation (userId, roomId, checkInDate, checkOutDate, numberOfGuests, totalPrice) values (3, 2, '2025-06-27', '2025-06-29', 2, 200); 
