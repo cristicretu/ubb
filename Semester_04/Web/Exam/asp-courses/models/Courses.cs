@@ -3,21 +3,24 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectManagement.Models
 {
-    public class Hotels
+    public class Courses 
     {
         [Key]
         public int Id { get; set; }
 
         [MaxLength(100)]
-        public string? HotelName { get; set; }
+        public string? ProfessorId { get; set; }
 
         [MaxLength(100)]
-        public string? Date { get; set; }
+        public string? CourseName { get; set; }
 
         [MaxLength(100)]
-        public string? City { get; set; }
+        public string? Participants { get; set; }
 
         [MaxLength(100)]
-        public int? AvailableRooms { get; set; }
+        public string? Grades { get; set; }
+
+        [ForeignKey("ProfessorId")]
+        public Persons? Professor { get; set; }
     }
 } 
