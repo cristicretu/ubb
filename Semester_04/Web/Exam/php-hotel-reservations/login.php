@@ -9,50 +9,27 @@ $database = new Database();
 $db = $database->getConnection();
 $user = new User($db);
 
-$username = "";
-$secretQuestion = "";
-$showSecretQuestion = false;
+if ($_POST) {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
 
-if ($_POST && isset($_POST['username']) && isset($_POST['secretAnswer']) && !empty($_POST['secretAnswer'])) {
-    $username = trim($_POST['username']);
-    $secretAnswer = trim($_POST['secretAnswer']);
-
-    if (empty($username) || empty($secretAnswer)) {
-        $error_message = 'Please enter a username and secret answer';
-    } else {
-        $stmt = $user->findOne($username);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$row) {
-            $error_message = 'User not found';
-        } else {
-            $secretQuestion = $row['secretQuestion'];
-            
-            if ($secretAnswer == $row['secretAnswer']) {
-                $_SESSION['currentUser'] = $username;
-                $_SESSION['userId'] = $row['id'];
-                header('Location: index.php');
-                exit();
-            } else {
-                $error_message = 'Invalid secret answer';
-            }
-        }
+    if (empty($username) || empty($password)) {
+        $error_message = 'pls input username and pass';
     }
-}
-else if ($_POST && isset($_POST['username']) && !isset($_POST['secretAnswer'])) {
-    $username = trim($_POST['username']);
-    
-    if (empty($username)) {
-        $error_message = 'Please enter a username';
-    } else {
-        $stmt = $user->findOne($username);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if (!$row) {
-            $error_message = 'User not found';
+    $stmt = $user->findOne($username);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$row) {
+        $error_message = 'User not found';
+    } else {
+        if ($password == $row['password']) {
+            $_SESSION['currentUser'] = $username;
+            $_SESSION['userId'] = $row['id'];
+            header('Location: index.php');
+            exit();
         } else {
-            $secretQuestion = $row['secretQuestion'];
-            $showSecretQuestion = true;
+            $error_message = 'Invalid password';
         }
     }
 }
@@ -67,53 +44,15 @@ else if ($_POST && isset($_POST['username']) && !isset($_POST['secretAnswer'])) 
                 <?php echo htmlspecialchars($error_message); ?>
             </div>
         <?php endif; ?>
+
+        <form method="post" action="login.php" class="flex flex-col gap-2">
+            <input type="text" name="username" placeholder="Username" required class="border border-gray-300 rounded-md p-2" />
+            <input type="number" name="password" placeholder="*******" required class="border border-gray-300 rounded-md p-2" />
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">
+                Login
+            </button>
+        </form>
         
-        <?php if (!$showSecretQuestion): ?>
-            <!-- Step 1: Enter Username -->
-            <form method="post" action="login.php">
-                <div class="mb-4">
-                    <label for="username" class="block text-sm font-medium text-gray-700 mb-2">Username</label>
-                    <input type="text" name="username" id="username" placeholder="Enter your username" 
-                           class="w-full p-2 border border-gray-300 rounded" 
-                           value="<?php echo htmlspecialchars($username); ?>" required>
-                </div>
-                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">
-                    Show Secret Question
-                </button>
-            </form>
-        <?php else: ?>
-            <!-- Step 2: Show Secret Question and Answer Input -->
-            <form method="post" action="login.php">
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
-                    <input type="text" value="<?php echo htmlspecialchars($username); ?>" 
-                           class="w-full p-2 border border-gray-300 rounded bg-gray-100" readonly>
-                    <input type="hidden" name="username" value="<?php echo htmlspecialchars($username); ?>">
-                </div>
-                
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Secret Question</label>
-                    <div class="w-full p-2 border border-gray-300 rounded bg-gray-50 text-gray-700">
-                        <?php echo htmlspecialchars($secretQuestion); ?>
-                    </div>
-                </div>
-                
-                <div class="mb-4">
-                    <label for="secretAnswer" class="block text-sm font-medium text-gray-700 mb-2">Secret Answer</label>
-                    <input type="text" name="secretAnswer" id="secretAnswer" placeholder="Enter your secret answer" 
-                           class="w-full p-2 border border-gray-300 rounded" required>
-                </div>
-                
-                <div class="flex gap-2">
-                    <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md">
-                        Login
-                    </button>
-                    <a href="login.php" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md text-decoration-none">
-                        Back
-                    </a>
-                </div>
-            </form>
-        <?php endif; ?>
     </div>
 </div>
 
