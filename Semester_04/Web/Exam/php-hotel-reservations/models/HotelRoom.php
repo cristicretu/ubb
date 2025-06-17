@@ -82,6 +82,46 @@ class HotelRoom {
         return $availableRooms;
     }
 
+    public function getBasePrice($roomId) {
+        $query = "SELECT basePrice FROM " . $this->table_name . " WHERE id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(1, $roomId);
+        $stmt->execute();
+        return $stmt->fetch()['basePrice'];
+    }
+
+    public function bookRoom($userId, $room_id, $start_date, $end_date) {
+        $reservation = new Reservation($this->conn);
+        $allRoomsStmt = $this->readAll();
+        $allRooms = $allRoomsStmt->fetchAll();
+        $base_price = $this->getBasePrice($room_id);
+
+        $numberOfRooms = count($allRooms);
+        $bookedRooms = 0;
+
+        foreach ($allRooms as $room) {
+            $roomId = $room['id'];
+            $isReserved = $reservation->isReserved($roomId, $start_date, $end_date);
+            
+            if ($isReserved) {
+                $bookedRooms = $bookedRooms + 1;
+            }
+        }
+
+        if ($bookedRooms <= $numberOfRooms * 0.5) {
+            $base_price = $base_price * 1;
+        } else if ($bookedRooms > $numberOfRooms * 0.5 && $bookedRooms <= $numberOfRooms * 0.8) {
+            $base_price = $base_price + (20/100) * $base_price;
+        } else if ($bookedRooms > $numberOfRooms * 0.8) {
+            $base_price = $base_price + (50/100) * $base_price;
+        }
+
+        $reservation->create($userId, $room_id, $start_date, $end_date, $base_price);
+
+
+
+    }
+
 
 }
 ?>

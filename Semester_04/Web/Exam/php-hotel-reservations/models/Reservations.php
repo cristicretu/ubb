@@ -48,8 +48,37 @@ class Reservation {
 
         return $stmt;
     }
-    
 
+    public function isReserved($roomId, $starDate, $endDate) {
+        $query = "select * from " . $this->table_name . " where ? < checkOutDate and checkInDate < ?";
+
+        $stmt = $this->conn->prepare($query);
+
+        $stmt->bindParam(1, $starDate);
+        $stmt->bindParam(2, $endDate);
+
+        $stmt->execute();
+
+        return $stmt->fetch();
+    } 
+
+
+    public function create($userId, $roomId, $checkInDate, $checkOutDate, $totalPrice) {
+        $query = "INSERT INTO " . $this->table_name . " (userId, roomId, checkInDate, checkOutDate, numberOfGuests, totalPrice) VALUES (?, ?, ?, ?, ?, ?)";
+        
+        $stmt = $this->conn->prepare($query);
+
+        $numberOfGuests = 1;
+        
+        $stmt->bindParam(1, $userId);
+        $stmt->bindParam(2, $roomId);
+        $stmt->bindParam(3, $checkInDate);
+        $stmt->bindParam(4, $checkOutDate);
+        $stmt->bindParam(5, $numberOfGuests);
+        $stmt->bindParam(6, $totalPrice);
+
+        $stmt->execute();
+    }
 
     // public function create($address, $description) {
     //     $query = "INSERT INTO " . $this->table_name . " (address, description) VALUES (?, ?)";
