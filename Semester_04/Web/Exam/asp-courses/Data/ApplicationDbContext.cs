@@ -16,11 +16,6 @@ namespace ProjectManagement.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Persons>()
-                .HasMany(p => p.Courses)
-                .WithOne(c => c.Professor)
-                .HasForeignKey(c => c.ProfessorId)
-                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 } 
