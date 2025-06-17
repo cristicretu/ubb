@@ -24,8 +24,6 @@
                 <div class="mb-4">
                     <input type="text" name="name" placeholder="name" 
                            class="w-full p-2 border border-gray-300 rounded" required>
-                    <input type="text" name="searchParam" placeholder="Document or Movie (name or id)" 
-                           class="w-full p-2 border border-gray-300 rounded" required>
                 </div>
                 <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">Login</button>
             </form>

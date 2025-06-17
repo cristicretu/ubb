@@ -12,10 +12,9 @@
 
 <div class="container mx-auto px-4 py-8">
     <div class="mb-6">
-        <h1 class="text-3xl font-bold text-neutral-800 mb-4">Document and Movie Management</h1>
+        <h1 class="text-3xl font-bold text-neutral-800 mb-4">Posts and topics</h1>
         <p class="text-gray-600 mb-4">
             Welcome, <strong><%= session.getAttribute("currentUser") %></strong>! 
-            <a href="logout" class="text-blue-500 hover:underline">Logout</a>
         </p>
         
         <%
@@ -44,72 +43,16 @@
         
         <div class="bg-white p-4 rounded shadow-md mb-6">
             <div class="overflow-x-auto">
-                <h2 class="text-lg font-bold text-neutral-800 mb-4">All your authored movies and documents</h2>
 
-                <div>
-                    <% 
-                    java.util.List documentsAndMovies = (java.util.List)request.getAttribute("documentsAndMovies");
-                    if (documentsAndMovies != null) {
-                        for (int i = 0; i < documentsAndMovies.size(); ++i) { 
-                            String item = (String)documentsAndMovies.get(i);
-                            if (item.startsWith("document")) {
-                    %>
-                            <div class="bg-red-100">
-                                <%= documentsAndMovies.get(i) %>
-                            </div>
-                    <% 
-                            } else if (item.startsWith("movie")) { 
-                    %>
-                            <form method="post" action="main">
-                                <input type="hidden" name="movieId" value="<%= item.split("\\.")[1] %>">
-                                <%= documentsAndMovies.get(i) %>
-                                <button type="submit" name="action" value="delete_movie">Delete</button>
-                            </form>
-                    <% 
-                            }
-                        }
-                    } else { 
-                    %>
-                        <p class="text-gray-500">No documents or movies found.</p>
-                    <% } %>
-                </div>
+                <h2 class="text-lg font-bold text-neutral-800 mb-4">Add a new post</h2>
+                <form method="post" action="main" class="space-y-4 flex flex-col">
+                    <input type="text" name="post_text" placeholder="Post text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <input type="text" name="topic_text" placeholder="Topic text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <button type="submit" name="action" value="add_post" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add Post</button>
+                </form>
+              
             </div>
         </div>
 
-        <div class="bg-white p-4 rounded shadow-md mb-6">
-            <h2 class="text-lg font-bold text-neutral-800 mb-4">Add a new document</h2>
-
-            <form method="post" action="main" class="space-y-4">
-                <input type="text" name="document_name" placeholder="Document Name" 
-                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                <input type="text" name="document_content" placeholder="Document Content" 
-                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                <button type="submit" name="action" value="add_document" 
-                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                    Add Document
-                </button>
-            </form>
-        </div>
-
-        <div class="bg-white p-4 rounded shadow-md mb-6">
-            <h2 class="text-lg font-bold text-neutral-800 mb-4">Document with the largest number of authors</h2>
-
-            <div>
-                <% 
-                String documentsWithMostAuthors = (String) request.getAttribute("documentsWithMostAuthors");
-                if (documentsWithMostAuthors != null) {
-                    String[] parts = documentsWithMostAuthors.split("\\.");
-                    %>
-                    <div class="bg-blue-100 p-3 rounded">
-                        <strong>Title:</strong> <%= parts[0] %><br>
-                        <% if (parts.length > 1) { %>
-                            <strong>ID:</strong> <%= parts[1] %>
-                        <% } %>
-                    </div>
-                <% } else { %>
-                    <p class="text-gray-500">No documents with the largest number of authors found.</p>
-                <% } %>
-            </div>
-        </div>
     </div>
 </div>
