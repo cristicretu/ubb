@@ -11,6 +11,7 @@ if (!isset($_SESSION['currentUser'])) {
 }
 
 $currentUser = $_SESSION['currentUser'];
+$userId = $_SESSION['userId'];
 $database = new Database();
 $db = $database->getConnection();
 $hotelRoom = new HotelRoom($db);
@@ -33,6 +34,12 @@ if ($_POST) {
         } else {
             $error_message = 'No available rooms';
         }
+    } else if (isset($_POST['book_room'])) {
+        $room_id = $_POST['room_id'];
+        $start_date = $_POST['start_date'];
+        $end_date = $_POST['end_date'];
+
+        $hotelRoom->bookRoom($userId, $room_id, $start_date, $end_date);
     }
 }
 
@@ -95,12 +102,17 @@ if ($_POST) {
                 <tbody>
                     <?php foreach ($availableRooms as $room): ?>
                         <tr>
-                            <td><input disabled name="room_id" value="<?php echo $room['id']; ?>"></td>
-                            <td><input disabled name="start_date" value="<?php echo $room['capacity']; ?>"></td>
-                            <td><input disabled name="end_date" value="<?php echo $room['basePrice']; ?>"></td>
+                            <form method="post" action="index.php">
+                                <input type="hidden" name="room_id" value="<?php echo $room['id']; ?>">
+                                <input type="hidden" name="start_date" value="<?php echo $start_date; ?>">
+                                <input type="hidden" name="end_date" value="<?php echo $end_date; ?>">
+                                <td><input disabled name="room_id" value="<?php echo $room['roomNumber']; ?>"></td>
+                                <td><input disabled name="start_date" value="<?php echo $room['capacity']; ?>"></td>
+                                <td><input disabled name="end_date" value="<?php echo $room['basePrice']; ?>"></td>
                             <td><button type="submit" name="book_room" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md">
                                 Book
                             </button></td>
+                            </form>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
