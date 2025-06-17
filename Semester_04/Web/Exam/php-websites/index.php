@@ -26,6 +26,8 @@ if ($websites_stmt) {
     }
 }
 
+$search_results = [];
+
 if ($_POST) {
     if (isset($_POST['action']) && $_POST['action'] == 'update_keywords') {
         $website_id = $_POST['website_id'];
@@ -41,6 +43,18 @@ if ($_POST) {
             }
             else {
                 $error_message = 'Failed to update keywords';
+            }
+        }
+    } else if (isset($_POST['action']) && $_POST['action'] == 'search_by_keywords') {
+        $keywords = $_POST['keywords'];
+        $keywords_array = explode(',', $keywords);
+        if (empty($keywords_array)) {
+            $error_message = 'Please enter keywords';
+        }
+        else {
+            $result = $documents->searchByKeywords($keywords_array);
+            if ($result) {
+                $search_results = $result->fetchAll(PDO::FETCH_ASSOC);
             }
         }
     }
@@ -77,9 +91,9 @@ if ($_POST) {
                 </tr>
                 <?php foreach ($websites_array as $website) : ?>
                     <tr>
-                        <td><?php echo $website['id']; ?></td>
-                        <td><?php echo $website['URL']; ?></td>
-                        <td><?php echo $website['document_count']; ?></td>
+                        <td><?php echo isset($website['id']) ? htmlspecialchars($website['id']) : 'N/A'; ?></td>
+                        <td><?php echo isset($website['URL']) ? htmlspecialchars($website['URL']) : 'N/A'; ?></td>
+                        <td><?php echo isset($website['document_count']) ? htmlspecialchars($website['document_count']) : '0'; ?></td>
                     </tr>
                 <?php endforeach; ?>
             </table>
@@ -91,6 +105,39 @@ if ($_POST) {
                 <button type="submit" name="action" value="update_keywords" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">Update Keywords</button>
             </form>
 
+            <h2 class="font-bold text-lg mt-4"> Search by 3 keywords </h2> 
+            <form action="index.php" method="post" class="flex flex-col gap-2 my-4">
+                <input type="text" name="keywords" placeholder="Keywords (separated by comma)" class="w-full p-2 border border-gray-300 rounded">
+                <button type="submit" name="action" value="search_by_keywords" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">Search</button>
+            </form>
+
+            <?php if (!empty($search_results)): ?>
+                <h2 class="font-bold text-lg mt-4"> Search Results </h2> 
+                <table class="text-center w-full">
+                    <tr>
+                        <th>Document ID</th>
+                        <th>Website ID</th>
+                        <th>Document Name</th>
+                        <th>Keyword 1</th>
+                        <th>Keyword 2</th>
+                        <th>Keyword 3</th>
+                        <th>Keyword 4</th>
+                        <th>Keyword 5</th>
+                    </tr>
+                    <?php foreach ($search_results as $result) : ?>
+                        <tr>
+                            <td><?php echo isset($result['id']) ? htmlspecialchars($result['id']) : 'N/A'; ?></td>
+                            <td><?php echo isset($result['idWebsite']) ? htmlspecialchars($result['idWebsite']) : 'N/A'; ?></td>
+                            <td><?php echo isset($result['name']) ? htmlspecialchars($result['name']) : 'N/A'; ?></td>
+                            <td><?php echo isset($result['keyword1']) ? htmlspecialchars($result['keyword1']) : 'N/A'; ?></td>
+                            <td><?php echo isset($result['keyword2']) ? htmlspecialchars($result['keyword2']) : 'N/A'; ?></td>
+                            <td><?php echo isset($result['keyword3']) ? htmlspecialchars($result['keyword3']) : 'N/A'; ?></td>
+                            <td><?php echo isset($result['keyword4']) ? htmlspecialchars($result['keyword4']) : 'N/A'; ?></td>
+                            <td><?php echo isset($result['keyword5']) ? htmlspecialchars($result['keyword5']) : 'N/A'; ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </table>
+            <?php endif; ?>
 
 
 
