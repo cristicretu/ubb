@@ -9,13 +9,18 @@ namespace ProjectManagement.Data
         {
         }
 
-        public DbSet<Flights> Flights { get; set; }
-        public DbSet<Hotels> Hotels { get; set; }
-        public DbSet<Reservations> Reservations { get; set; }
+        public DbSet<Persons> Persons { get; set; }
+        public DbSet<Courses> Courses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Persons>()
+                .HasMany(p => p.Courses)
+                .WithOne(c => c.Professor)
+                .HasForeignKey(c => c.ProfessorId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 } 
