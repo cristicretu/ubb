@@ -15,11 +15,19 @@ $userId = $_SESSION['userId'];
 $database = new Database();
 $db = $database->getConnection();
 $hotelRoom = new HotelRoom($db);
-
+$reservation = new Reservation($db);
 $success_message = '';
 $error_message = '';
 
 $availableRooms = [];
+$reservations = [];
+$totalGuests = 0;
+
+$reservationsStmt = $reservation->readAllByUserId($userId);
+
+while ($reservationRow = $reservationsStmt->fetch()) {
+    $reservations[] = $reservationRow;
+}
 
 
 if ($_POST) {
@@ -40,6 +48,10 @@ if ($_POST) {
         $end_date = $_POST['end_date'];
 
         $hotelRoom->bookRoom($userId, $room_id, $start_date, $end_date);
+    } else if (isset($_POST['total_guests'])) {
+        $date = $_POST['date'];
+        $totalGuests = $reservation->getTotalGuests($date);
+        $success_message = 'Total number of guests in a day: ' . $totalGuests;
     }
 }
 
@@ -118,9 +130,39 @@ if ($_POST) {
                 </tbody>
             </table>
         <?php endif; ?>
+
+        <h2 class="text-2xl font-bold">Total number of guests in a day</h2>
+        <form method="post" action="index.php" class="flex flex-col gap-2">
+            <input type="date" name="date" class="border border-gray-300 rounded-md p-2">
+            <button type="submit" name="total_guests" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">
+                Calculate
+            </button>
+        </form>
+
+        <?php if ($totalGuests != 0): ?>
+            <p>Total number of guests in a day: <?php echo $totalGuests; ?></p>
+        <?php endif; ?>
         
         
-         
+         <h2 class="text-2xl font-bold">My reservations</h2>
+         <table class="w">
+            <thead>
+                <tr>
+                    <th>Check In Date</th>
+                    <th>Check Out Date</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($reservations as $reservation): ?>
+                    <tr>
+                        <td><?php echo $reservation['checkInDate']; ?></td>
+                        <td><?php echo $reservation['checkOutDate']; ?></td>
+                        <td><?php echo $reservation['totalPrice']; ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+         </table>
 
 
 

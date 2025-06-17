@@ -49,6 +49,31 @@ class Reservation {
         return $stmt;
     }
 
+    public function getTotalGuests($date) {
+        $query = "SELECT SUM(numberOfGuests) FROM " . $this->table_name . " WHERE checkInDate <= ? AND checkOutDate >= ?";
+        
+        $stmt = $this->conn->prepare($query);
+        
+        $stmt->bindParam(1, $date);
+        $stmt->bindParam(2, $date);
+
+        $stmt->execute();
+
+        return $stmt->fetchColumn();
+    }
+
+    public function readAllByUserId($userId) {
+        $query = "SELECT id, userId, roomId, checkInDate, checkOutDate, numberOfGuests, totalPrice FROM " . $this->table_name . " WHERE userId = ?";
+        
+        $stmt = $this->conn->prepare($query);
+        
+        $stmt->bindParam(1, $userId);
+
+        $stmt->execute();
+
+        return $stmt;  
+    }
+
     public function isReserved($roomId, $starDate, $endDate) {
         $query = "select * from " . $this->table_name . " where ? < checkOutDate and checkInDate < ?";
 
