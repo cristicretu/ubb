@@ -31,6 +31,76 @@ public class MainController extends HttpServlet {
     }
   }
 
+  private ArrayList<Object> getPosts(Connection conn, String currentUser) throws SQLException {
+    String query = "SELECT * FROM Posts WHERE user = ?";
+    ArrayList<Object> posts = new ArrayList<>();
+    try (PreparedStatement stmt = conn.prepareStatement(query)) {
+      stmt.setString(1, currentUser);
+      try (ResultSet rs = stmt.executeQuery()) {
+        while (rs.next()) {
+          int postId = rs.getInt("id");
+          String user = rs.getString("user");
+          posts.add(new Object[] { postId, user });
+        }
+      }
+    }
+
+    return posts;
+  }
+
+  // The original logic is flawed: it only checks for new posts for the *current
+  // user*,
+  // so if you add a post as a different user, it won't show up for this user.
+  // If you want to detect *any* new post (from any user), you need to fetch all
+  // posts, not just the current user's.
+  // Here is a rewrite that checks for new posts globally (across all users):
+
+  // Helper to get all posts (not just for current user)
+  private ArrayList<Object> getAllPosts(Connection conn) throws SQLException {
+    String query = "SELECT * FROM Posts";
+    ArrayList<Object> posts = new ArrayList<>();
+    try (PreparedStatement stmt = conn.prepareStatement(query)) {
+      try (ResultSet rs = stmt.executeQuery()) {
+        while (rs.next()) {
+          int postId = rs.getInt("id");
+          String user = rs.getString("user");
+          posts.add(new Object[] { postId, user });
+        }
+      }
+    }
+    return posts;
+  }
+
+  private boolean isNewPost(Connection conn, String currentUser, HttpSession session) throws SQLException {
+    var oldPosts = (ArrayList<Object>) session.getAttribute("allPosts");
+    if (oldPosts == null)
+      oldPosts = new ArrayList<>();
+
+    var newPosts = getAllPosts(conn);
+    session.setAttribute("allPosts", newPosts);
+
+    // Get list of old post IDs for comparison
+    List<Integer> oldIds = oldPosts.stream()
+        .map(o -> ((Object[]) o)[0])
+        .map(id -> (Integer) id)
+        .collect(Collectors.toList());
+
+    // Check for new posts that are NOT from the current user
+    for (Object obj : newPosts) {
+      Object[] arr = (Object[]) obj;
+      Integer id = (Integer) arr[0];
+      String postUser = (String) arr[1];
+
+      // Only consider it a "new post" if:
+      // 1. It's a new post (not in oldIds)
+      // 2. It's NOT from the current user
+      if (!oldIds.contains(id) && !currentUser.equals(postUser)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
@@ -43,12 +113,9 @@ public class MainController extends HttpServlet {
     }
 
     try (Connection conn = getConnection()) {
-      // ArrayList<Object> documentsAndMovies = getDocumentsAndMovies(conn,
-      // currentUser);
-      // request.setAttribute("documentsAndMovies", documentsAndMovies);
-
-      // String documentsWithMostAuthors = getDocumentsWithMostAuthors(conn);
-      // request.setAttribute("documentsWithMostAuthors", documentsWithMostAuthors);
+      if (isNewPost(conn, currentUser, session)) {
+        session.setAttribute("success_message", "New posts available!");
+      }
 
     } catch (SQLException e) {
       request.setAttribute("error_message", "Database error: " + e.getMessage());
