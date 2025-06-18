@@ -44,26 +44,87 @@ namespace ProjectManagement.Controllers
 
             if (action == "add_to_cart" && !string.IsNullOrEmpty(productId))
             {
-                var cartString = HttpContext.Session.GetString("cart");
+                var cartt = HttpContext.Session.GetString("cart");
                 
                 List<string> cart;
-                if (string.IsNullOrEmpty(cartString))
+                if (string.IsNullOrEmpty(cartt))
                 {
                     cart = new List<string>();
                 }
                 else
                 {
-                    cart = cartString.Split(',', System.StringSplitOptions.RemoveEmptyEntries).ToList();
+                    cart = cartt.Split(',', System.StringSplitOptions.RemoveEmptyEntries).ToList();
                 }
-
-                // Add product ID to cart
                 cart.Add(productId);
 
-                // Save updated cart back to session
                 var updatedCartString = string.Join(",", cart);
                 HttpContext.Session.SetString("cart", updatedCartString);
 
                 ViewBag.SuccessMessage = "Product added to cart!";
+            } else if (action == "confirm_order") {
+
+                var cartt = HttpContext.Session.GetString("cart");
+
+                List<string> cart;
+                if (string.IsNullOrEmpty(cartt))
+                {
+                    cart = new List<string>();
+                }
+                else
+                {
+                    cart = cartt.Split(',', System.StringSplitOptions.RemoveEmptyEntries).ToList();
+                }
+
+                var uzarid = _context.Users.Where(u => u.Username == sessionName).Select(u => u.Id).SingleOrDefault();        
+
+
+                var productIds = cart.Select(idStr => int.Parse(idStr)).ToList();
+                var productsInCart = _context.Products.Where(p => productIds.Contains(p.Id)).ToList();
+
+                double price = productsInCart.Sum(p => p.price);
+
+                var categoryPrefixes = productsInCart
+                    .Select(p => p.name?.Split('-')[0])
+                    .Where(c => !string.IsNullOrEmpty(c))
+                    .ToList();
+
+                bool twoOfSameCategories = categoryPrefixes
+                    .GroupBy(c => c)
+                    .Any(g => g.Count() >= 2);
+
+                if (cart.Count >= 3)
+                {
+                    price -= 0.10 * price; 
+                }
+
+                if (twoOfSameCategories)
+                {
+                    price -= 0.05 * price; 
+                }
+
+                var order = new Orders
+                {
+                    userId = uzarid,
+                    totalPrice = price
+                };
+
+                _context.Orders.Add(order);
+                _context.SaveChanges();
+
+                foreach (var product in productsInCart)
+                {
+                    var orderItem = new OrderItem
+                    {
+                        orderId = order.Id,
+                        productId = product.Id
+                    };
+                    _context.OrderItems.Add(orderItem);
+                }
+
+                _context.SaveChanges();
+
+                HttpContext.Session.Remove("cart");
+                                
             }
             else
             {
