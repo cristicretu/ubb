@@ -31,7 +31,7 @@
            <div class="flex flex-col space-y-4">
                 @foreach (var file in files) {
                     <div class="flex flex-row justify-between items-center gap-2 border border-gray-300 rounded-md p-4">
-                        <span class="text-lg font-bold text-neutral-800">@file.Filename</span>
+                        <span id="file-name" class="text-lg font-bold text-neutral-800 pisu">@file.Filename</span>
                         <span class="text-sm text-neutral-500">@file.Size</span>
                     </div>
                 }
@@ -50,6 +50,9 @@
                     <button type="submit" name="action" value="next" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition duration-200">Load More</button>
                  }
            </form>
+
+        <h2 class="text-2xl font-bold text-neutral-800 mb-4 w-full">Largest number of occurences is the file:</h2>
+        <span id="most-frequent-file" class="text-2xl font-bold text-neutral-800 mb-4 w-full bg-red-500 w-4"></span>
       
 
 
@@ -57,3 +60,29 @@
 
     </div>
 </div>
+
+<script>
+const spany = document.getElementById('most-frequent-file');
+const files = document.getElementsByClassName('pisu');
+const filenames = Array.from(files).map(file => file.textContent);
+const oldFiles = localStorage.getItem('files');
+let newFiles = oldFiles ? JSON.parse(oldFiles).concat(filenames) : filenames;
+localStorage.setItem('files', JSON.stringify(newFiles));
+
+const array = newFiles;
+
+const frequency = {};
+let mostFrequent = '';
+let maxCount = 0;
+
+array.forEach(item => {
+    frequency[item] = (frequency[item] || 0) + 1;
+    if (frequency[item] > maxCount) {
+        maxCount = frequency[item];
+        mostFrequent = item;
+    }
+});
+
+console.log('Most frequent file:', mostFrequent, 'appears', maxCount, 'times');
+spany.innerText = mostFrequent;
+</script>
