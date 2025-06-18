@@ -1,11 +1,11 @@
 -- SQLite compatible database schema
 
-create table User (
+create table Users (
   id integer primary key autoincrement,
   username varchar(100)
 );
 
-create table Product (
+create table Products (
   id integer primary key autoincrement,
   name varchar(100),
   price decimal(10,2) 
@@ -19,14 +19,7 @@ create table Orders (
   foreign key (userId) references User(id)
 );
 
-create table Order (
-  id integer primary key autoincrement,
-  userId integer,
-  totalPrice decimal(10,2),
-  foreign key (userId) references User(id)
-);
-
-create table OrderItem (
+create table OrderItems (
   id integer primary key autoincrement,
   orderId integer,
   productId integer,
@@ -34,6 +27,6 @@ create table OrderItem (
       foreign key (productId) references Product(id)
 );
 
-insert into User (username) values ('admin', 'user');
+insert into Users (username) values ('admin'), ('user');
 
-insert into Product (name, price) values ('BOOK-Math', 10.5), ('TOY-Car', 4.9);
+insert into Products (name, price) values ('BOOK-Math', 10.5), ('TOY-Car', 4.9);
