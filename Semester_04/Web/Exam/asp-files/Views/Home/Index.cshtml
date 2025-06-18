@@ -65,9 +65,9 @@
 const spany = document.getElementById('most-frequent-file');
 const files = document.getElementsByClassName('pisu');
 const filenames = Array.from(files).map(file => file.textContent);
-const oldFiles = localStorage.getItem('files');
+const oldFiles = sessionStorage.getItem('files');
 let newFiles = oldFiles ? JSON.parse(oldFiles).concat(filenames) : filenames;
-localStorage.setItem('files', JSON.stringify(newFiles));
+sessionStorage.setItem('files', JSON.stringify(newFiles));
 
 const array = newFiles;
 
