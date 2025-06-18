@@ -107,10 +107,38 @@ class ProjectManagementApp {
 
       if (response.ok) {
         this.currentUser = { username: data.username, userId: data.userId };
-        console.log("Login successful, checking auth status...");
+        console.log("Login successful, showing dashboard...");
 
-        // Immediately check auth status to verify session
-        await this.checkAuthStatus();
+        // Show dashboard first
+        this.showDashboard();
+
+        // Check auth status first, then load projects
+        setTimeout(async () => {
+          console.log("Checking auth status before loading projects...");
+          try {
+            const authResponse = await fetch(
+              `${this.baseUrl}/api/auth/status`,
+              {
+                credentials: "include",
+              }
+            );
+            const authData = await authResponse.json();
+            console.log("Auth status before loading projects:", authData);
+
+            if (authData.isAuthenticated) {
+              this.loadProjects();
+            } else {
+              this.showError(
+                "Session not established. Please try logging in again."
+              );
+            }
+          } catch (error) {
+            console.error("Error checking auth status:", error);
+            this.showError(
+              "Could not verify authentication. Please try again."
+            );
+          }
+        }, 500);
       } else {
         this.showError(data.message || "Login failed", "login-error");
       }
@@ -145,16 +173,25 @@ class ProjectManagementApp {
     ]);
 
     try {
+      console.log(`Loading projects from: ${this.baseUrl}/api/projects`);
       const response = await fetch(`${this.baseUrl}/api/projects`, {
         credentials: "include",
       });
 
+      console.log("Load projects response status:", response.status);
+
       if (response.ok) {
         const data = await response.json();
+        console.log("Projects loaded successfully:", data);
         this.renderProjects(data);
       } else if (response.status === 401) {
-        this.showLogin();
+        console.log(
+          "Unauthorized when loading projects - session not ready yet"
+        );
+        // Just show a message, don't redirect back to login
+        this.showError("Loading your projects... Session initializing.");
       } else {
+        console.log("Failed to load projects, status:", response.status);
         this.showError("Failed to load projects");
       }
     } catch (error) {

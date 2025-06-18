@@ -15,8 +15,7 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromMinutes(10000);
     options.Cookie.HttpOnly = false; // Allow JavaScript access for CORS
     options.Cookie.IsEssential = true;
-    options.Cookie.SameSite = SameSiteMode.None; // Required for cross-origin
-    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest; // Allow HTTP in development
+    options.Cookie.SameSite = SameSiteMode.Lax; // Changed from None to Lax for development
     options.Cookie.Name = "ProjectManagement.Session"; // Explicit cookie name
 });
 
