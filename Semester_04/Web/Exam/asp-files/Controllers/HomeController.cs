@@ -22,10 +22,7 @@ namespace ProjectManagement.Controllers
                 return Redirect("/Login/Index");
             }
 
-            var subscribedChannels = _context.Channels
-                .Where(c => c.Subscribers.Contains(name))
-                .ToList();
-            ViewBag.SubscribedChannels = subscribedChannels;
+          
             return View();
 
             // // Get current user
@@ -58,13 +55,6 @@ namespace ProjectManagement.Controllers
             // return View(allProjects);
         }
 
-        private void GetSubscribedChannels(string sessionName)
-        {
-            var subscribedChannels = _context.Channels
-                .Where(c => c.Subscribers.Contains(sessionName))
-                .ToList();
-            ViewBag.SubscribedChannels = subscribedChannels;
-        }
 
         [HttpPost]
         public IActionResult Index(string action, string name, string channel_name)
@@ -73,44 +63,6 @@ namespace ProjectManagement.Controllers
             if (string.IsNullOrEmpty(sessionName))
             {
                 return Redirect("/Login/Index");
-            }
-
-            // Always get subscribed channels for display
-            GetSubscribedChannels(sessionName);
-
-            if (action == "search")
-            {
-                var channels = _context.Channels
-                    .Where(c => c.Owner.Name.ToLower().Contains(name.ToLower()))
-                    .ToList();
-                System.Console.WriteLine("Debug:" + channels.Count);
-                ViewBag.Channels = channels;
-                return View();
-            } else if (action == "subscribe") {
-                var channel = _context.Channels.FirstOrDefault(c => c.Name.ToLower() == channel_name.ToLower());
-
-                var isAlreadySubscribed = channel.Subscribers.Contains(sessionName);
-                if (channel != null && !isAlreadySubscribed) {
-                    channel.AddSubscriber(sessionName);
-                    var result = _context.SaveChanges();
-                    GetSubscribedChannels(sessionName);
-                    if (result > 0) {
-                        ViewBag.SuccessMessage = "You have successfully subscribed to the channel.";
-                    } else {
-                        ViewBag.ErrorMessage = "Failed to subscribe to the channel.";
-                    }
-                } else if (isAlreadySubscribed) {
-                    channel.UpdateSubscriber(sessionName);
-                    var result = _context.SaveChanges();
-                    GetSubscribedChannels(sessionName);
-                    if (result > 0) {
-                        ViewBag.SuccessMessage = "You have successfully updated your subscription to the channel.";
-                    } else {
-                        ViewBag.ErrorMessage = "Failed to update your subscription to the channel.";
-                    }
-                } else {
-                    ViewBag.ErrorMessage = "Channel not found.";
-                }
             }
 
             return View();

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectManagement.Models
 {
-    public class Files
+    public class File 
     {
         [Key]
         public int Id { get; set; }
