@@ -1,0 +1,32 @@
+RewriteEngine On
+
+# Redirect /login to login.php
+RewriteRule ^login/?$ login.php [L]
+
+# Redirect /main to main.php
+RewriteRule ^main/?$ main.php [L]
+
+# Redirect /project to project.php
+RewriteRule ^project/?$ project.php [L]
+
+# Redirect /softwareDeveloper to softwareDeveloper.php
+RewriteRule ^softwareDeveloper/?$ softwareDeveloper.php [L]
+
+# Hide .php extension
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([^\.]+)$ $1.php [NC,L]
+
+# Security settings
+Options -Indexes
+
+# Prevent access to sensitive files
+<Files "*.php~">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files "*.sql">
+    Order allow,deny
+    Deny from all
+</Files> 
