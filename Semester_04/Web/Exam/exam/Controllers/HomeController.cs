@@ -60,39 +60,39 @@ namespace ProjectManagement.Controllers
                     
                     var uzarid = _context.Users.Where(u => u.Username == sessionName).Select(u => u.Id).SingleOrDefault();        
                     
-                    var lastThreeOrders = _context.Orders
+                    var ultimele3 = _context.Orders
                         .Where(o => o.userId == uzarid)
                         .OrderByDescending(o => o.Id)
                         .Take(3)
                         .ToList();
                     
-                    if (lastThreeOrders.Count == 3)
+                    if (ultimele3.Count == 3)
                     {
                         bool categoryInAllThreeOrders = true;
                         
-                        foreach (var order in lastThreeOrders)
+                        foreach (var order in ultimele3)
                         {
-                            var productsInOrder = _context.OrderItems
-                                .Where(oi => oi.orderId == order.Id)
-                                .Join(_context.Products, oi => oi.productId, p => p.Id, (oi, p) => p)
-                                .ToList();
+                            // var productsInOrder = _context.OrderItems
+                            //     .Where(oi => oi.orderId == order.Id)
+                            //     .Join(_context.Products, oi => oi.productId, p => p.Id, (oi, p) => p)
+                            //     .ToList();
                             
-                            var categoriesInOrder = productsInOrder
-                                .Select(p => p.name?.Split('-')[0])
-                                .Where(c => !string.IsNullOrEmpty(c))
-                                .Distinct()
-                                .ToList();
+                            // var categoriesInOrder = productsInOrder
+                            //     .Select(p => p.name?.Split('-')[0])
+                            //     .Where(c => !string.IsNullOrEmpty(c))
+                            //     .Distinct()
+                            //     .ToList();
                             
-                            if (!categoriesInOrder.Contains(categoryToAdd))
-                            {
-                                categoryInAllThreeOrders = false;
-                                break;
-                            }
+                            // if (!categoriesInOrder.Contains(categoryToAdd))
+                            // {
+                            //     categoryInAllThreeOrders = false;
+                            //     break;
+                            // }
                         }
                         
                         if (categoryInAllThreeOrders)
                         {
-                            ViewBag.ErrorMessage = $"Cannot add product from category '{categoryToAdd}' - this category exists in your last 3 orders!";
+                            ViewBag.ErrorMessage = "coaie diversify";
                         }
                         else
                         {
