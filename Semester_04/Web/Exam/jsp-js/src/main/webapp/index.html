@@ -323,21 +323,41 @@
 
     <script>
         let currentUser = null;
-        const API_BASE_URL = 'http://localhost:8081';
+        const API_BASE_URL = 'http://localhost:8080';
 
         // Login functionality
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const formData = new FormData(e.target);
-            formData.append('name', formData.get('username'));
+            
+            const username = document.getElementById('username').value.trim();
+            
+            if (!username) {
+                showMessage('loginMessage', 'Please enter a username', 'error');
+                return;
+            }
+            
+            const formData = new URLSearchParams();
+            formData.append('name', username);
+            
+            console.log('Sending login request with username:', username);
             
             try {
                 const response = await fetch(`${API_BASE_URL}/login`, {
                     method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
                     body: formData
                 });
                 
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
                 const result = await response.json();
+                console.log('Login response:', result);
                 
                 if (result.success) {
                     currentUser = result.user;
@@ -351,6 +371,7 @@
                     showMessage('loginMessage', result.error || 'Login failed', 'error');
                 }
             } catch (error) {
+                console.error('Login error:', error);
                 showMessage('loginMessage', 'Network error: ' + error.message, 'error');
             }
         });
@@ -390,12 +411,20 @@
         // Projects functionality
         document.getElementById('projectForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const formData = new FormData(e.target);
+            const form = e.target;
+            const formData = new URLSearchParams();
             formData.append('action', 'create');
+            formData.append('name', form.name.value);
+            formData.append('projectManagerId', form.projectManagerId.value);
+            formData.append('description', form.description.value);
+            formData.append('members', form.members.value);
             
             try {
                 const response = await fetch(`${API_BASE_URL}/project`, {
                     method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
                     body: formData
                 });
                 
@@ -465,11 +494,18 @@
         // Developers functionality
         document.getElementById('developerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const formData = new FormData(e.target);
+            const form = e.target;
+            const formData = new URLSearchParams();
+            formData.append('name', form.name.value);
+            formData.append('age', form.age.value);
+            formData.append('skills', form.skills.value);
             
             try {
                 const response = await fetch(`${API_BASE_URL}/softwareDeveloper`, {
                     method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
                     body: formData
                 });
                 
@@ -538,16 +574,22 @@
         // Products functionality
         document.getElementById('productForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const formData = new FormData(e.target);
+            const form = e.target;
+            const formData = new URLSearchParams();
             formData.append('action', 'add_product');
+            formData.append('product_name', form.product_name.value);
+            formData.append('product_description', form.product_description.value);
             
             try {
-                const response = await fetch('/main', {
+                const response = await fetch(`${API_BASE_URL}/main`, {
                     method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
                     body: formData
                 });
                 
-                if (response.redirected) {
+                if (response.redirected || response.ok) {
                     showMessage('productMessage', 'Product added successfully!', 'success');
                     e.target.reset();
                 } else {
@@ -565,13 +607,16 @@
                 return;
             }
 
-            const formData = new FormData();
+            const formData = new URLSearchParams();
             formData.append('action', 'search_product');
             formData.append('name', searchTerm);
             
             try {
-                const response = await fetch('/main', {
+                const response = await fetch(`${API_BASE_URL}/main`, {
                     method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
                     body: formData
                 });
                 
