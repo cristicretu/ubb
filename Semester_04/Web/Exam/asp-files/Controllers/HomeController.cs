@@ -17,57 +17,53 @@ namespace ProjectManagement.Controllers
         public IActionResult Index()
         {
             var username = HttpContext.Session.GetString("username");
-            if (string.IsNullOrEmpty(username))
+             if (string.IsNullOrEmpty(username))
             {
                 return Redirect("/Login/Index");
             }
+            var userId = HttpContext.Session.GetString("id"); 
+            int id = int.Parse(userId);
 
+            var files = getPaginatedFiles(0, id);
+            ViewBag.Files = files;
+            ViewBag.offset = 0;
           
             return View();
+        }
 
-            // // Get current user
-            // var currentUser = _context.SoftwareDevelopers.FirstOrDefault(u => u.Name == username);
-            // int? currentUserID = currentUser?.Id;
+        public List<ProjectManagement.Models.File> getPaginatedFiles(int offset, int userId) {
+            var files = _context.Files.Where(f => f.UserId == userId)
+            .Skip(offset).Take(5).ToList();
 
-            // // Get all projects
-            // var allProjects = _context.Projects.ToList();
-
-            // // Get projects managed by current user
-            // var yourProjects = currentUserID.HasValue 
-            //     ? _context.Projects.Where(p => p.ProjectManagerID == currentUserID.Value).ToList() 
-            //     : new List<Project>();
-
-            // // Get projects where current user is a member
-            // var memberProjects = allProjects.Where(p => 
-            //     !string.IsNullOrEmpty(p.Members) && p.Members.Contains(username)).ToList();
-
-            // // Get all developers
-            // var allDevelopers = _context.SoftwareDevelopers.ToList();
-
-            // // Pass data to view
-            // ViewBag.Username = username;
-            // ViewBag.UserID = currentUserID;
-            // ViewBag.AllProjects = allProjects;
-            // ViewBag.YourProjects = yourProjects;
-            // ViewBag.MemberProjects = memberProjects;
-            // ViewBag.AllDevelopers = allDevelopers;
-
-            // return View(allProjects);
+            return files;
         }
 
 
         [HttpPost]
-        public IActionResult Index(string action, string name, string channel_name)
+        public IActionResult Index(string action, int offset)
         {
             var sessionName = HttpContext.Session.GetString("username");
+            var userId = HttpContext.Session.GetString("id"); 
+            int id = int.Parse(userId);
+
             if (string.IsNullOrEmpty(sessionName))
             {
                 return Redirect("/Login/Index");
             }
+             
+             int newOffset = offset;
+
+            if (action == "back") {
+                newOffset -= 5;
+            } else if (action == "next") {
+                newOffset += 5;
+            }
+
+            var files = getPaginatedFiles(newOffset, id);
+            ViewBag.Files = files;
+            ViewBag.offset = newOffset;
 
             return View();
-
-            // return View(allProjects);
         }
 
         public IActionResult Error()
