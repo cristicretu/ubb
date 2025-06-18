@@ -1,0 +1,88 @@
+@{
+    ViewData["Title"] = "Project Management";
+
+    var name = Context.Session.GetString("username");
+    var successMessage = ViewBag.SuccessMessage as string;
+    var errorMessage = ViewBag.ErrorMessage as string;
+    var files = ViewBag.Files as List<File>;
+    var offset = ViewBag.offset;
+}
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+        <span class="block sm:inline">@successMessage</span>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+        <span class="block sm:inline">@errorMessage</span>
+    </div>
+}
+
+<div class="mb-6">
+    <span class="mb-4">Hello @name</span>
+
+    <div class="flex justify-between items-center flex-col w-full">
+       
+       <h2 class="text-2xl font-bold text-neutral-800 mb-4 w-full">My Files</h2>
+       @if (files != null) {
+           <div class="flex flex-col space-y-4">
+                @foreach (var file in files) {
+                    <div class="flex flex-row justify-between items-center gap-2 border border-gray-300 rounded-md p-4">
+                        <span id="file-name" class="text-lg font-bold text-neutral-800 pisu">@file.Filename</span>
+                        <span class="text-sm text-neutral-500">@file.Size</span>
+                    </div>
+                }
+           </div>
+
+         
+       }
+       @offset and @files.Count
+
+         <form method="post" action="/Home/Index">
+                 <input type="hidden" name="offset" value="@offset">
+                 @if (@offset > 0) {
+                    <button type="submit" name="action" value="back" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition duration-200">Back</button>
+                 }
+                 @if (@files.Count == 5) {
+                    <button type="submit" name="action" value="next" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition duration-200">Load More</button>
+                 }
+           </form>
+
+        <h2 class="text-2xl font-bold text-neutral-800 mb-4 w-full">Largest number of occurences is the file:</h2>
+        <span id="most-frequent-file" class="text-2xl font-bold text-neutral-800 mb-4 w-full bg-red-500 w-4"></span>
+      
+
+
+
+
+    </div>
+</div>
+
+<script>
+const spany = document.getElementById('most-frequent-file');
+const files = document.getElementsByClassName('pisu');
+const filenames = Array.from(files).map(file => file.textContent);
+const oldFiles = sessionStorage.getItem('files');
+let newFiles = oldFiles ? JSON.parse(oldFiles).concat(filenames) : filenames;
+sessionStorage.setItem('files', JSON.stringify(newFiles));
+
+const array = newFiles;
+
+const frequency = {};
+let mostFrequent = '';
+let maxCount = 0;
+
+array.forEach(item => {
+    frequency[item] = (frequency[item] || 0) + 1;
+    if (frequency[item] > maxCount) {
+        maxCount = frequency[item];
+        mostFrequent = item;
+    }
+});
+
+console.log('Most frequent file:', mostFrequent, 'appears', maxCount, 'times');
+spany.innerText = mostFrequent;
+</script>
