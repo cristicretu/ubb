@@ -29,4 +29,4 @@ create table OrderItems (
 
 insert into Users (username) values ('admin'), ('user');
 
-insert into Products (name, price) values ('BOOK-Math', 10.5), ('TOY-Car', 4.9);
+insert into Products (name, price) values ('BOOK-History', 10.5), ('TOY-messi', 4.9);
