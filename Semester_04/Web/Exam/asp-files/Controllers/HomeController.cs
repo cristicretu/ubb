@@ -16,8 +16,8 @@ namespace ProjectManagement.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var name = HttpContext.Session.GetString("name");
-            if (string.IsNullOrEmpty(name))
+            var username = HttpContext.Session.GetString("username");
+            if (string.IsNullOrEmpty(username))
             {
                 return Redirect("/Login/Index");
             }
@@ -59,7 +59,7 @@ namespace ProjectManagement.Controllers
         [HttpPost]
         public IActionResult Index(string action, string name, string channel_name)
         {
-            var sessionName = HttpContext.Session.GetString("name");
+            var sessionName = HttpContext.Session.GetString("username");
             if (string.IsNullOrEmpty(sessionName))
             {
                 return Redirect("/Login/Index");
