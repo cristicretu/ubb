@@ -10,12 +10,16 @@ namespace ProjectManagement.Data
         }
 
         public DbSet<Persons> Persons { get; set; }
-        public DbSet<Courses> Courses { get; set; }
+        public DbSet<Channels> Channels { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Persons>()
+                .HasMany(p => p.Channels)
+                .WithOne(c => c.Owner)
+                .HasForeignKey(c => c.OwnerId);
         }
     }
 } 

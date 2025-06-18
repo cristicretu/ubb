@@ -37,8 +37,10 @@ namespace ProjectManagement.Controllers.Api
                 })
                 .ToList();
 
-            var yourProjects = currentUserID.HasValue 
-                ? _context.Projects
+            List<object> yourProjects;
+            if (currentUserID.HasValue)
+            {
+                yourProjects = _context.Projects
                     .Where(p => p.ProjectManagerID == currentUserID.Value)
                     .Select(p => new
                     {
@@ -47,8 +49,13 @@ namespace ProjectManagement.Controllers.Api
                         managerId = p.ProjectManagerID,
                         managerName = p.ProjectManager != null ? p.ProjectManager.Name : "Unknown"
                     })
-                    .ToList()
-                : new List<object>();
+                    .Cast<object>()
+                    .ToList();
+            }
+            else
+            {
+                yourProjects = new List<object>();
+            }
 
             var memberProjects = _context.Projects
                 .Where(p => !string.IsNullOrEmpty(p.Members) && p.Members.Contains(username))

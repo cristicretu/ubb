@@ -17,6 +17,7 @@ namespace ProjectManagement.Controllers
             {
                 HttpContext.Session.SetString("name", name);
                 return RedirectToAction("Index", "Home");
+            
             }
             
             return View();
