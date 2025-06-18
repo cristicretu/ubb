@@ -4,6 +4,7 @@
     var name = Context.Session.GetString("name");
     var successMessage = ViewBag.SuccessMessage as string;
     var errorMessage = ViewBag.ErrorMessage as string;
+    var products = ViewBag.products;
 }
 
 @if (!string.IsNullOrEmpty(successMessage))
@@ -24,7 +25,7 @@
     <span class="mb-4">Hello @name</span>
 
     <div class="flex justify-between items-center flex-col w-full">
-      
+      <h2 class="font-bold text-2xl">All products</h2>
 
     </div>
 </div>

@@ -21,6 +21,9 @@ namespace ProjectManagement.Controllers
             {
                 return Redirect("/Login/Index");
             }
+            
+            var products = _context.Products.ToList();
+            ViewBag.products = products;
 
             // var subscribedChannels = _context.Channels
             //     .Where(c => c.Subscribers.Contains(name))
