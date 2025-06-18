@@ -3,17 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectManagement.Models
 {
-    public class Reservations
+    public class User 
     {
         [Key]
         public int Id { get; set; }
 
         [MaxLength(100)]
-        public string? Person { get; set; }
-
-        [MaxLength(100)]
-        public string? Type { get; set; }
-
-        public int? IdReservedResource { get; set; }
+        public string? Username { get; set; }
     }
 } 

@@ -3,18 +3,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectManagement.Models
 {
-    public class Flights
+    public class Product 
     {
         [Key]
         public int Id { get; set; }
 
         [MaxLength(100)]
-        public string? Date { get; set; }
+        public string name { get; set; }
 
         [MaxLength(100)]
-        public string? DestinationCity { get; set; }
-
-        [MaxLength(100)]
-        public int? AvailableSeats { get; set; }
+        public double price { get; set; }
     }
 } 
