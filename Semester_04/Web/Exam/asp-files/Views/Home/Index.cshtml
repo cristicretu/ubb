@@ -1,7 +1,7 @@
 @{
     ViewData["Title"] = "Project Management";
 
-    var name = Context.Session.GetString("name");
+    var name = Context.Session.GetString("username");
     var successMessage = ViewBag.SuccessMessage as string;
     var errorMessage = ViewBag.ErrorMessage as string;
 }
