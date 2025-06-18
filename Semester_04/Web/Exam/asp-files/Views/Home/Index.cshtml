@@ -2,12 +2,9 @@
     ViewData["Title"] = "Project Management";
 
     var name = Context.Session.GetString("name");
-    var channels = ViewBag.Channels as List<ProjectManagement.Models.Channels>;
-    var subscribedChannels = ViewBag.SubscribedChannels as List<ProjectManagement.Models.Channels>;
     var successMessage = ViewBag.SuccessMessage as string;
     var errorMessage = ViewBag.ErrorMessage as string;
 }
-
 @if (!string.IsNullOrEmpty(successMessage))
 {
     <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
@@ -31,39 +28,10 @@
             <input type="text" name="name" placeholder="Enter the name" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
             <button type="submit" name="action" value="search" action="search" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition duration-200">Search</button>
         </form>
-        @if (channels != null)
-        {
-            <div class="flex flex-col gap-4 bg-white shadow-md w-full rounded-md p-4">
-                @foreach (var channel in channels)
-                {
-                    <div class="flex flex-row justify-between items-center gap-2 border border-gray-300 rounded-md p-4">
-                        <span class="text-lg font-bold text-neutral-800">@channel.Name</span>
-                        <span class="text-sm text-neutral-500">@channel.Description</span>
-                        <span class="text-sm text-neutral-500">@channel.SubscriberCount</span>
-                    </div>
-                }
-            </div>
-        }
+      
 
-        <h2 class="text-2xl font-bold text-neutral-800 my-4 w-full">All of my subscribed channels</h2>
-         @if (subscribedChannels != null)
-        {
-            <div class="flex flex-col gap-4 bg-white shadow-md w-full rounded-md p-4">
-                @foreach (var channel in subscribedChannels)
-                {
-                    <div class="flex flex-row justify-between items-center gap-2 border border-gray-300 rounded-md p-4">
-                        <span class="text-lg font-bold text-neutral-800">@channel.Name</span>
-                        <span class="text-sm text-neutral-500">@channel.Description</span>
-                    </div>
-                }
-            </div>
-        }
 
-        <h2 class="text-2xl font-bold text-neutral-800 mb-4 w-full my-4">Subscribe to a channel</h2>
-        <form method="post" action="/Home/Index" class="w-full flex flex-col gap-4">
-            <input type="text" name="channel_name" placeholder="Enter the channel name" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
-            <button type="submit" name="action" value="subscribe" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition duration-200">Subscribe</button>
-        </form>
+
 
     </div>
 </div>
