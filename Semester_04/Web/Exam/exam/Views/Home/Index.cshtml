@@ -26,6 +26,62 @@
 
     <div class="flex justify-between items-center flex-col w-full">
       <h2 class="font-bold text-2xl">All products</h2>
+      <table class="w-full text-left table-auto min-w-max">
+    <thead>
+      <tr>
+        <th class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
+          <p class="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+           Category 
+          </p>
+        </th>
+        <th class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
+          <p class="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+           Name 
+          </p>
+        </th>
+        <th class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
+          <p class="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+           Price 
+          </p>
+        </th>
+        <th class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
+          <p class="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+           Buy 
+          </p>
+        </th>
+        
+      </tr>
+    </thead>
+    <tbody>
+     @foreach (var product in products)
+        {
+      <tr>
+        <form asp-action="Index" asp-controller="Home" method="post">
+        <td class="p-4 border-b border-blue-gray-50">
+          <p class="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+            @product.name.Split(new char[]{'-'},2)[0]
+          </p>
+        </td>
+        <td class="p-4 border-b border-blue-gray-50">
+          <p class="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+            @product.name.Split(new char[]{'-'},2)[1]
+          </p>
+        </td>
+        <td class="p-4 border-b border-blue-gray-50">
+          <p class="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+            @product.price lei
+          </p>
+        </td>
+        <td class="p-4 border-b border-blue-gray-50">
+                            <input type="hidden" name="productId" value="@product.Id">
+                    <button type="submit" name="action" value="add_to_cart" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold p-4 rounded transition duration-200">Add to cart</button>
+        </td>
+        </form>
+      </tr>
+        }
+    </tbody>
+  </table>
+
 
     </div>
 </div>

@@ -29,7 +29,6 @@ else
 }
 app.UseStaticFiles();
 
-app.UseRouting();
 
 // Add session middleware
 app.UseSession();
