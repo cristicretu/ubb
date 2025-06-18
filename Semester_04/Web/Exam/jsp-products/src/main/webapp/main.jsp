@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.Map" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,6 +29,8 @@
             if (errorMessage != null) {
                 session.removeAttribute("error_message");
             }
+
+            Map<Integer, String> products = (Map<Integer, String>) request.getAttribute("products");
         %>
         
         <% if (successMessage != null && !successMessage.isEmpty()) { %>
@@ -44,20 +48,46 @@
         <div class="bg-white p-4 rounded shadow-md mb-6">
             <div class="overflow-x-auto">
 
-                <h2 class="text-lg font-bold text-neutral-800 mb-4">Add a new post</h2>
+                <h2 class="text-lg font-bold text-neutral-800 mb-4">Add a new product</h2>
                 <form method="post" action="main" class="space-y-4 flex flex-col">
-                    <input type="text" name="post_text" placeholder="Post text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                    <input type="text" name="topic_text" placeholder="Topic text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                    <button type="submit" name="action" value="add_post" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add Post</button>
+                    <input type="text" name="product_name" placeholder="Product name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <input type="text" name="product_description" placeholder="Product description" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <button type="submit" name="action" value="add_product" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add Product</button>
+                </form>
+
+                <h2 class="text-lg font-bold text-neutral-800 mb-4">Products</h2>
+                <form method="post" action="main" class="space-y-4 flex flex-col">
+                    <input type="text" name="name" placeholder="Product name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <button type="submit" name="action" value="search_product" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Search</button>
+                </form>
+
+                <% if (products != null && !products.isEmpty()) { %>
+                    <ul>
+                        <% for (Map.Entry<Integer, String> entry : products.entrySet()) { %>
+                            <li>
+                                <form method="post" action="main" class="space-y-4 flex flex-row items-center w-full my-8">
+                                    <%= entry.getValue() %>
+                                    <input type="hidden" name="product_id" value="<%= entry.getKey() %>">
+                                    <input type="number" name="quantity" value="1" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <button type="submit" name="action" value="add_to_cart" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add to cart</button>
+                                </form>
+                            </li>
+                        <% } %>
+                    </ul>
+                <% } %>
+            
+                <h2 class="text-lg font-bold text-neutral-800 my-4">Finalize order</h2>
+                <form method="post" action="main" class="space-y-4 flex flex-col">
+                    <button type="submit" name="action" value="finalize_order" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Finalize order</button>
                 </form>
               
-                <h2 class="text-lg font-bold text-neutral-800 my-4">Update a post</h2>
+                <!-- <h2 class="text-lg font-bold text-neutral-800 my-4">Update a post</h2>
                 <form method="post" action="main" class="space-y-4 flex flex-col">
                     <input type="text" name="post_id" placeholder="Post ID" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                     <input type="text" name="post_text" placeholder="Post text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                     <input type="text" name="topic_text" placeholder="Topic text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                     <button type="submit" name="action" value="update_post" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Update Post</button>
-                </form>
+                </form> -->
             </div>
         </div>
 
