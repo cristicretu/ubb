@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using ProjectManagement.Data;
 using ProjectManagement.Models;
+using System.Linq; 
+
+
 
 namespace ProjectManagement.Controllers
 {
@@ -25,45 +28,13 @@ namespace ProjectManagement.Controllers
             var products = _context.Products.ToList();
             ViewBag.products = products;
 
-            // var subscribedChannels = _context.Channels
-            //     .Where(c => c.Subscribers.Contains(name))
-            //     .ToList();
-            // ViewBag.SubscribedChannels = subscribedChannels;
             return View();
-
-            // // Get current user
-            // var currentUser = _context.SoftwareDevelopers.FirstOrDefault(u => u.Name == username);
-            // int? currentUserID = currentUser?.Id;
-
-            // // Get all projects
-            // var allProjects = _context.Projects.ToList();
-
-            // // Get projects managed by current user
-            // var yourProjects = currentUserID.HasValue 
-            //     ? _context.Projects.Where(p => p.ProjectManagerID == currentUserID.Value).ToList() 
-            //     : new List<Project>();
-
-            // // Get projects where current user is a member
-            // var memberProjects = allProjects.Where(p => 
-            //     !string.IsNullOrEmpty(p.Members) && p.Members.Contains(username)).ToList();
-
-            // // Get all developers
-            // var allDevelopers = _context.SoftwareDevelopers.ToList();
-
-            // // Pass data to view
-            // ViewBag.Username = username;
-            // ViewBag.UserID = currentUserID;
-            // ViewBag.AllProjects = allProjects;
-            // ViewBag.YourProjects = yourProjects;
-            // ViewBag.MemberProjects = memberProjects;
-            // ViewBag.AllDevelopers = allDevelopers;
-
-            // return View(allProjects);
         }
 
 
         [HttpPost]
-        public IActionResult Index(string action, string name, string channel_name)
+        [ActionName("Index")]
+        public IActionResult IndexPost(string action, string productId, string messi)
         {
             var sessionName = HttpContext.Session.GetString("name");
             if (string.IsNullOrEmpty(sessionName))
@@ -71,48 +42,41 @@ namespace ProjectManagement.Controllers
                 return Redirect("/Login/Index");
             }
 
-            // // Always get subscribed channels for display
-            // GetSubscribedChannels(sessionName);
+            if (action == "add_to_cart" && !string.IsNullOrEmpty(productId))
+            {
+                var cartString = HttpContext.Session.GetString("cart");
+                
+                List<string> cart;
+                if (string.IsNullOrEmpty(cartString))
+                {
+                    cart = new List<string>();
+                }
+                else
+                {
+                    cart = cartString.Split(',', System.StringSplitOptions.RemoveEmptyEntries).ToList();
+                }
 
-            // if (action == "search")
-            // {
-            //     var channels = _context.Channels
-            //         .Where(c => c.Owner.Name.ToLower().Contains(name.ToLower()))
-            //         .ToList();
-            //     System.Console.WriteLine("Debug:" + channels.Count);
-            //     ViewBag.Channels = channels;
-            //     return View();
-            // } else if (action == "subscribe") {
-            //     var channel = _context.Channels.FirstOrDefault(c => c.Name.ToLower() == channel_name.ToLower());
+                // Add product ID to cart
+                cart.Add(productId);
 
-            //     var isAlreadySubscribed = channel.Subscribers.Contains(sessionName);
-            //     if (channel != null && !isAlreadySubscribed) {
-            //         channel.AddSubscriber(sessionName);
-            //         var result = _context.SaveChanges();
-            //         GetSubscribedChannels(sessionName);
-            //         if (result > 0) {
-            //             ViewBag.SuccessMessage = "You have successfully subscribed to the channel.";
-            //         } else {
-            //             ViewBag.ErrorMessage = "Failed to subscribe to the channel.";
-            //         }
-            //     } else if (isAlreadySubscribed) {
-            //         channel.UpdateSubscriber(sessionName);
-            //         var result = _context.SaveChanges();
-            //         GetSubscribedChannels(sessionName);
-            //         if (result > 0) {
-            //             ViewBag.SuccessMessage = "You have successfully updated your subscription to the channel.";
-            //         } else {
-            //             ViewBag.ErrorMessage = "Failed to update your subscription to the channel.";
-            //         }
-            //     } else {
-            //         ViewBag.ErrorMessage = "Channel not found.";
-            //     }
-            // }
+                // Save updated cart back to session
+                var updatedCartString = string.Join(",", cart);
+                HttpContext.Session.SetString("cart", updatedCartString);
 
-            return View();
+                ViewBag.SuccessMessage = "Product added to cart!";
+            }
+            else
+            {
+                ViewBag.ErrorMessage = "Failed to add product to cart.";
+            }
 
-            // return View(allProjects);
+            // Reload products for the view
+            var products = _context.Products.ToList();
+            ViewBag.products = products;
+
+            return View("Index");
         }
+
 
         public IActionResult Error()
         {
@@ -121,3 +85,6 @@ namespace ProjectManagement.Controllers
 
     }
 } 
+
+
+
