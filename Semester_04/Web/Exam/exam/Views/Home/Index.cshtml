@@ -5,6 +5,7 @@
     var successMessage = ViewBag.SuccessMessage as string;
     var errorMessage = ViewBag.ErrorMessage as string;
     var products = ViewBag.products;
+    var myorders = ViewBag.myorders;
 }
 
 @if (!string.IsNullOrEmpty(successMessage))
@@ -86,6 +87,13 @@
 <form asp-action="Index" asp-controller="Home" method="post">
                     <button type="submit" name="action" value="confirm_order" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold p-4 rounded transition duration-200">Add to cart</button>
         </form>
+
+
+        <h2>my orders</h2>
+         @foreach (var ord in myorders)
+        {
+            <div> @ord.totalPrice </div>
+        }
 
 
 
