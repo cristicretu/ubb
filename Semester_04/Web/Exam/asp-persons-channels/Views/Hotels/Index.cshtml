@@ -1,0 +1,36 @@
+@{
+    ViewData["Title"] = "Project Management";
+    var hotels = ViewBag.Hotels as List<ProjectManagement.Models.Hotels>;
+}
+
+<div class="mb-6">
+    <h1 class="text-3xl font-bold text-neutral-800 mb-4">Hotels</h1>
+    <table class="w-full border-collapse border border-gray-300">
+        <thead>
+            <tr>
+                <th class="border border-gray-300 p-2">Hotel Name</th>
+                <th class="border border-gray-300 p-2">Date</th>
+                <th class="border border-gray-300 p-2">City</th>
+                <th class="border border-gray-300 p-2">Available Rooms</th>
+                <th class="border border-gray-300 p-2">Reserve</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var hotel in hotels)
+            {
+                <form method="post" action="/Hotels/Reserve">
+                    <input type="hidden" name="hotelId" value="@hotel.Id">
+                    <tr>
+                    <td class="border border-gray-300 p-2">@hotel.HotelName</td>
+                    <td class="border border-gray-300 p-2">@hotel.Date</td>
+                    <td class="border border-gray-300 p-2">@hotel.City</td>
+                    <td class="border border-gray-300 p-2">@hotel.AvailableRooms</td>
+                    <td class="border border-gray-300 p-2">
+                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Reserve</button>
+                    </td>
+                </tr>
+                </form>
+            }
+        </tbody>
+    </div>
+</div>
