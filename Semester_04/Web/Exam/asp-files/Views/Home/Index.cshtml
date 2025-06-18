@@ -4,6 +4,8 @@
     var name = Context.Session.GetString("username");
     var successMessage = ViewBag.SuccessMessage as string;
     var errorMessage = ViewBag.ErrorMessage as string;
+    var files = ViewBag.Files as List<File>;
+    var offset = ViewBag.offset;
 }
 @if (!string.IsNullOrEmpty(successMessage))
 {
@@ -23,11 +25,31 @@
     <span class="mb-4">Hello @name</span>
 
     <div class="flex justify-between items-center flex-col w-full">
-        <h2 class="text-2xl font-bold text-neutral-800 mb-4 w-full">Find Channels by person</h2>
-        <form method="post" action="/Home/Index" class="w-full flex flex-col gap-4">
-            <input type="text" name="name" placeholder="Enter the name" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
-            <button type="submit" name="action" value="search" action="search" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition duration-200">Search</button>
-        </form>
+       
+       <h2 class="text-2xl font-bold text-neutral-800 mb-4 w-full">My Files</h2>
+       @if (files != null) {
+           <div class="flex flex-col space-y-4">
+                @foreach (var file in files) {
+                    <div class="flex flex-row justify-between items-center gap-2 border border-gray-300 rounded-md p-4">
+                        <span class="text-lg font-bold text-neutral-800">@file.Filename</span>
+                        <span class="text-sm text-neutral-500">@file.Size</span>
+                    </div>
+                }
+           </div>
+
+         
+       }
+       @offset and @files.Count
+
+         <form method="post" action="/Home/Index">
+                 <input type="hidden" name="offset" value="@offset">
+                 @if (@offset > 0) {
+                    <button type="submit" name="action" value="back" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition duration-200">Back</button>
+                 }
+                 @if (@files.Count == 5) {
+                    <button type="submit" name="action" value="next" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition duration-200">Load More</button>
+                 }
+           </form>
       
 
 
