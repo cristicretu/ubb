@@ -3,18 +3,19 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectManagement.Models
 {
-    public class Flights
+    public class Files
     {
         [Key]
         public int Id { get; set; }
 
-        [MaxLength(100)]
-        public string? Date { get; set; }
+        public int UserId { get; set; }
 
         [MaxLength(100)]
-        public string? DestinationCity { get; set; }
+        public string? Filename { get; set; }
 
         [MaxLength(100)]
-        public int? AvailableSeats { get; set; }
+        public string? Filepath { get; set; }
+
+        public int Size { get; set; }
     }
 } 
