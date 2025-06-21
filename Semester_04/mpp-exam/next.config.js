@@ -5,6 +5,10 @@
 import "./src/env.js";
 
 /** @type {import("next").NextConfig} */
-const config = {};
+const config = {
+  images: {
+    domains: ["upload.wikimedia.org", "via.placeholder.com", "placehold.co"],
+  },
+};
 
 export default config;
