@@ -1,7 +1,56 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
+import { Button } from "~/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
+import { Input } from "~/components/ui/input";
+import { Textarea } from "~/components/ui/textarea";
+import { Badge } from "~/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
+import { Alert, AlertDescription } from "~/components/ui/alert";
+import type { ChartConfig } from "~/components/ui/chart";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "~/components/ui/chart";
+import {
+  Search,
+  Plus,
+  Eye,
+  Edit2,
+  Trash2,
+  Users,
+  Building2,
+  UserCheck,
+  BarChart3,
+  Play,
+  Square,
+} from "lucide-react";
+import {
+  BarChart,
+  Bar,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  ResponsiveContainer,
+  Cell,
+} from "recharts";
 
 // Candidate interface
 interface Candidate {
@@ -17,6 +66,12 @@ interface CandidateFormData {
   image: string;
   party: string;
   description: string;
+}
+
+interface ChartDataPoint {
+  party: string;
+  count: number;
+  color: string;
 }
 
 const initialCandidates: Candidate[] = [
@@ -86,6 +141,99 @@ const initialCandidates: Candidate[] = [
   },
 ];
 
+// Random name generators
+const firstNames = [
+  "Alexandru",
+  "Andrei",
+  "Adrian",
+  "Bogdan",
+  "Cristian",
+  "Dan",
+  "Emil",
+  "Florin",
+  "Gabriel",
+  "Ion",
+  "Lucian",
+  "Marius",
+  "Mihai",
+  "Nicolae",
+  "Paul",
+  "Radu",
+  "Stefan",
+  "Victor",
+  "Vlad",
+  "Gheorghe",
+  "Ana",
+  "Elena",
+  "Maria",
+  "Ioana",
+  "Cristina",
+  "Diana",
+  "Laura",
+  "Monica",
+  "Andreea",
+  "Raluca",
+];
+
+const lastNames = [
+  "Popescu",
+  "Ionescu",
+  "Popa",
+  "Stoica",
+  "Dumitrescu",
+  "Georgescu",
+  "Stanciu",
+  "Munteanu",
+  "Rusu",
+  "Preda",
+  "Constantinescu",
+  "Moldovan",
+  "Petrescu",
+  "Nicolae",
+  "Barbu",
+  "Cristea",
+  "Florea",
+  "Vasile",
+  "Tudor",
+  "Matei",
+];
+
+const parties = [
+  "PSD (Social Democratic Party)",
+  "USR (Save Romania Union)",
+  "AUR (Alliance for the Union of Romanians)",
+  "PNL (National Liberal Party)",
+  "Independent",
+];
+
+const descriptions = [
+  "Experienced politician with a background in public administration and economic development.",
+  "Former mayor known for transparency initiatives and urban development projects.",
+  "Academic turned politician, advocating for educational reform and digital transformation.",
+  "Business leader focusing on entrepreneurship and economic growth policies.",
+  "Civil rights activist promoting social justice and anti-corruption measures.",
+  "Former diplomat with extensive experience in international relations and EU affairs.",
+  "Young politician advocating for climate action and sustainable development.",
+  "Legal expert specializing in constitutional law and judicial reform.",
+  "Healthcare professional promoting public health initiatives and medical system reform.",
+  "Technology entrepreneur focused on digital innovation and startup ecosystem development.",
+];
+
+const partyColors = {
+  PSD: "#dc2626", // Red
+  USR: "#2563eb", // Blue
+  AUR: "#ea580c", // Orange
+  PNL: "#facc15", // Yellow
+  Independent: "#6b7280", // Gray
+};
+
+const chartConfig = {
+  count: {
+    label: "Candidates",
+    color: "hsl(var(--chart-1))",
+  },
+} satisfies ChartConfig;
+
 export default function Home() {
   const [candidates, setCandidates] = useState<Candidate[]>(initialCandidates);
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(
@@ -111,6 +259,95 @@ export default function Home() {
   });
 
   const [formErrors, setFormErrors] = useState<Partial<CandidateFormData>>({});
+
+  // Chart and generation state
+  const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Helper function to get party counts
+  const getPartyCounts = (candidateList: Candidate[]): ChartDataPoint[] => {
+    const counts: Record<string, number> = {
+      PSD: 0,
+      USR: 0,
+      AUR: 0,
+      PNL: 0,
+      Independent: 0,
+    };
+
+    candidateList.forEach((candidate) => {
+      if (candidate.party.includes("PSD")) counts.PSD++;
+      else if (candidate.party.includes("USR")) counts.USR++;
+      else if (candidate.party.includes("AUR")) counts.AUR++;
+      else if (candidate.party.includes("PNL")) counts.PNL++;
+      else counts.Independent++;
+    });
+
+    return Object.entries(counts).map(([party, count]) => ({
+      party: party === "Independent" ? "Independent" : party,
+      count,
+      color: partyColors[party as keyof typeof partyColors],
+    }));
+  };
+
+  // Initialize chart data
+  useEffect(() => {
+    setChartData(getPartyCounts(candidates));
+  }, []);
+
+  // Generate random candidate
+  const generateRandomCandidate = (): Candidate => {
+    const firstName =
+      firstNames[Math.floor(Math.random() * firstNames.length)]!;
+    const lastName = lastNames[Math.floor(Math.random() * lastNames.length)]!;
+    const party = parties[Math.floor(Math.random() * parties.length)]!;
+    const description =
+      descriptions[Math.floor(Math.random() * descriptions.length)]!;
+
+    const initials = firstName.charAt(0) + lastName.charAt(0);
+
+    return {
+      id: Date.now() + Math.random(),
+      name: `${firstName} ${lastName}`,
+      image: `https://placehold.co/600x400/000000/FFFFFF.png?text=${initials}`,
+      party,
+      description,
+    };
+  };
+
+  // Start generation
+  const startGeneration = () => {
+    if (intervalRef.current) return;
+
+    setIsGenerating(true);
+    intervalRef.current = setInterval(() => {
+      const newCandidate = generateRandomCandidate();
+      setCandidates((prev) => {
+        const updated = [...prev, newCandidate];
+        // Update chart data
+        setChartData(getPartyCounts(updated));
+        return updated;
+      });
+    }, 2000); // Add new candidate every 2 seconds
+  };
+
+  // Stop generation
+  const stopGeneration = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+      setIsGenerating(false);
+    }
+  };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
 
   const filteredCandidates = candidates.filter(
     (candidate) =>
@@ -181,7 +418,12 @@ export default function Home() {
       ...formData,
     };
 
-    setCandidates((prev) => [...prev, newCandidate]);
+    setCandidates((prev) => {
+      const updated = [...prev, newCandidate];
+      // Update chart data
+      setChartData(getPartyCounts(updated));
+      return updated;
+    });
     resetForm();
     showMessage("success", `${newCandidate.name} has been added successfully!`);
   };
@@ -209,20 +451,28 @@ export default function Home() {
       return;
     }
 
-    setCandidates((prev) =>
-      prev.map((candidate) =>
+    setCandidates((prev) => {
+      const updated = prev.map((candidate) =>
         candidate.id === editingCandidate.id
           ? { ...candidate, ...formData }
           : candidate,
-      ),
-    );
+      );
+      // Update chart data
+      setChartData(getPartyCounts(updated));
+      return updated;
+    });
 
     resetForm();
     showMessage("success", `${formData.name} has been updated successfully!`);
   };
 
   const handleDelete = (candidate: Candidate) => {
-    setCandidates((prev) => prev.filter((c) => c.id !== candidate.id));
+    setCandidates((prev) => {
+      const updated = prev.filter((c) => c.id !== candidate.id);
+      // Update chart data
+      setChartData(getPartyCounts(updated));
+      return updated;
+    });
     setDeleteConfirmation(null);
     setSelectedCandidate(null);
     showMessage("success", `${candidate.name} has been deleted successfully!`);
@@ -263,17 +513,143 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-red-50 p-4">
-      <div className="container mx-auto max-w-6xl">
+    <main className="min-h-screen bg-slate-50 py-8">
+      <div className="container mx-auto max-w-7xl px-4">
         {/* Header */}
-        <div className="mb-8 text-center">
-          <h1 className="mb-4 text-4xl font-bold text-gray-800">
-            🇷🇴 Romanian Political Candidates
+        <div className="mb-8">
+          <h1 className="mb-2 text-3xl font-bold text-slate-900">
+            Romanian Political Candidates
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-slate-600">
             Explore and manage profiles of prominent Romanian political figures
           </p>
         </div>
+
+        {/* Real-time Chart */}
+        <Card className="mb-8 border-0 bg-gradient-to-br from-slate-50 to-white shadow-lg">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-3 text-2xl font-bold text-slate-800">
+                  <div className="rounded-lg bg-blue-100 p-2">
+                    <BarChart3 className="h-6 w-6 text-blue-600" />
+                  </div>
+                  Candidate Distribution by Party
+                </CardTitle>
+                <CardDescription className="mt-2 text-base text-slate-600">
+                  Live tracking of candidates across political parties
+                  {isGenerating && (
+                    <span className="ml-2 inline-flex items-center gap-1 text-green-600">
+                      <div className="h-2 w-2 animate-pulse rounded-full bg-green-500"></div>
+                      Auto-generating
+                    </span>
+                  )}
+                </CardDescription>
+              </div>
+              <div className="flex gap-3">
+                <Button
+                  onClick={startGeneration}
+                  disabled={isGenerating}
+                  className="flex items-center gap-2 bg-green-600 shadow-md hover:bg-green-700"
+                  size="lg"
+                >
+                  <Play className="h-4 w-4" />
+                  {isGenerating ? "Generating..." : "Start Auto-Gen"}
+                </Button>
+                <Button
+                  onClick={stopGeneration}
+                  disabled={!isGenerating}
+                  variant="destructive"
+                  className="flex items-center gap-2 shadow-md"
+                  size="lg"
+                >
+                  <Square className="h-4 w-4" />
+                  Stop
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="rounded-xl bg-white p-6 shadow-inner">
+              <ChartContainer
+                config={chartConfig}
+                className="min-h-[400px] w-full"
+              >
+                <ResponsiveContainer width="100%" height={400}>
+                  <BarChart
+                    data={chartData}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+                    barCategoryGap="20%"
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                    <XAxis
+                      dataKey="party"
+                      tick={{ fontSize: 12, fontWeight: 600 }}
+                      angle={-45}
+                      textAnchor="end"
+                      height={60}
+                      interval={0}
+                    />
+                    <YAxis
+                      tick={{ fontSize: 12 }}
+                      label={{
+                        value: "Number of Candidates",
+                        angle: -90,
+                        position: "insideLeft",
+                      }}
+                    />
+                    <ChartTooltip
+                      content={({ active, payload, label }) => {
+                        if (active && payload && payload.length) {
+                          return (
+                            <div className="rounded-lg border border-slate-200 bg-white p-3 shadow-lg">
+                              <p className="font-semibold text-slate-800">
+                                {label}
+                              </p>
+                              <p className="text-blue-600">
+                                Candidates:{" "}
+                                <span className="font-bold">
+                                  {payload[0]?.value}
+                                </span>
+                              </p>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                    <Bar dataKey="count" radius={[4, 4, 0, 0]}>
+                      {chartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </ChartContainer>
+            </div>
+
+            {/* Party Legend */}
+            <div className="mt-6 flex flex-wrap justify-center gap-4">
+              {chartData.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-2 rounded-lg bg-slate-50 px-3 py-2"
+                >
+                  <div
+                    className="h-3 w-3 rounded-full"
+                    style={{ backgroundColor: item.color }}
+                  ></div>
+                  <span className="text-sm font-medium text-slate-700">
+                    {item.party === "Independent" ? "Independent" : item.party}
+                  </span>
+                  <span className="text-sm font-bold text-slate-900">
+                    ({item.count})
+                  </span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Success/Error Message */}
         {message && (
