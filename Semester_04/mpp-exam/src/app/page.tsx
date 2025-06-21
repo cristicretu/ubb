@@ -12,7 +12,13 @@ interface Candidate {
   description: string;
 }
 
-// In-memory data of popular Romanian political candidates
+interface CandidateFormData {
+  name: string;
+  image: string;
+  party: string;
+  description: string;
+}
+
 const initialCandidates: Candidate[] = [
   {
     id: 1,
@@ -86,13 +92,175 @@ export default function Home() {
     null,
   );
   const [searchTerm, setSearchTerm] = useState("");
+  const [showForm, setShowForm] = useState(false);
+  const [editingCandidate, setEditingCandidate] = useState<Candidate | null>(
+    null,
+  );
+  const [deleteConfirmation, setDeleteConfirmation] =
+    useState<Candidate | null>(null);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
-  // Filter candidates based on search term
+  const [formData, setFormData] = useState<CandidateFormData>({
+    name: "",
+    image: "",
+    party: "",
+    description: "",
+  });
+
+  const [formErrors, setFormErrors] = useState<Partial<CandidateFormData>>({});
+
   const filteredCandidates = candidates.filter(
     (candidate) =>
       candidate.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       candidate.party.toLowerCase().includes(searchTerm.toLowerCase()),
   );
+
+  const validateForm = (
+    data: CandidateFormData,
+  ): Partial<CandidateFormData> => {
+    const errors: Partial<CandidateFormData> = {};
+
+    if (!data.name.trim()) {
+      errors.name = "Name is required";
+    } else if (data.name.trim().length < 2) {
+      errors.name = "Name must be at least 2 characters";
+    }
+
+    if (!data.party.trim()) {
+      errors.party = "Party is required";
+    }
+
+    if (!data.description.trim()) {
+      errors.description = "Description is required";
+    } else if (data.description.trim().length < 10) {
+      errors.description = "Description must be at least 10 characters";
+    }
+
+    if (!data.image.trim()) {
+      errors.image = "Image URL is required";
+    } else {
+      try {
+        new URL(data.image);
+      } catch {
+        errors.image = "Please enter a valid URL";
+      }
+    }
+
+    return errors;
+  };
+
+  const showMessage = (type: "success" | "error", text: string) => {
+    setMessage({ type, text });
+    setTimeout(() => setMessage(null), 3000);
+  };
+
+  const handleCreate = () => {
+    const errors = validateForm(formData);
+    setFormErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
+      showMessage("error", "Please fix the validation errors");
+      return;
+    }
+
+    if (
+      candidates.some(
+        (c) => c.name.toLowerCase() === formData.name.toLowerCase(),
+      )
+    ) {
+      setFormErrors({ name: "A candidate with this name already exists" });
+      showMessage("error", "Candidate name already exists");
+      return;
+    }
+
+    const newCandidate: Candidate = {
+      id: Math.max(...candidates.map((c) => c.id), 0) + 1,
+      ...formData,
+    };
+
+    setCandidates((prev) => [...prev, newCandidate]);
+    resetForm();
+    showMessage("success", `${newCandidate.name} has been added successfully!`);
+  };
+
+  const handleUpdate = () => {
+    if (!editingCandidate) return;
+
+    const errors = validateForm(formData);
+    setFormErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
+      showMessage("error", "Please fix the validation errors");
+      return;
+    }
+
+    if (
+      candidates.some(
+        (c) =>
+          c.id !== editingCandidate.id &&
+          c.name.toLowerCase() === formData.name.toLowerCase(),
+      )
+    ) {
+      setFormErrors({ name: "A candidate with this name already exists" });
+      showMessage("error", "Candidate name already exists");
+      return;
+    }
+
+    setCandidates((prev) =>
+      prev.map((candidate) =>
+        candidate.id === editingCandidate.id
+          ? { ...candidate, ...formData }
+          : candidate,
+      ),
+    );
+
+    resetForm();
+    showMessage("success", `${formData.name} has been updated successfully!`);
+  };
+
+  const handleDelete = (candidate: Candidate) => {
+    setCandidates((prev) => prev.filter((c) => c.id !== candidate.id));
+    setDeleteConfirmation(null);
+    setSelectedCandidate(null);
+    showMessage("success", `${candidate.name} has been deleted successfully!`);
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      image: "",
+      party: "",
+      description: "",
+    });
+    setFormErrors({});
+    setShowForm(false);
+    setEditingCandidate(null);
+  };
+
+  const startEdit = (candidate: Candidate) => {
+    setEditingCandidate(candidate);
+    setFormData({
+      name: candidate.name,
+      image: candidate.image,
+      party: candidate.party,
+      description: candidate.description,
+    });
+    setFormErrors({});
+    setShowForm(true);
+    setSelectedCandidate(null);
+  };
+
+  // Handle form input changes
+  const handleInputChange = (field: keyof CandidateFormData, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    // Clear error for this field when user starts typing
+    if (formErrors[field]) {
+      setFormErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
+  };
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 to-red-50 p-4">
@@ -103,19 +271,48 @@ export default function Home() {
             🇷🇴 Romanian Political Candidates
           </h1>
           <p className="text-lg text-gray-600">
-            Explore the profiles of prominent Romanian political figures
+            Explore and manage profiles of prominent Romanian political figures
           </p>
         </div>
 
-        {/* Search Bar */}
-        <div className="mb-8">
+        {/* Success/Error Message */}
+        {message && (
+          <div
+            className={`mb-6 rounded-lg p-4 text-center ${
+              message.type === "success"
+                ? "border border-green-400 bg-green-100 text-green-700"
+                : "border border-red-400 bg-red-100 text-red-700"
+            }`}
+          >
+            {message.text}
+          </div>
+        )}
+
+        {/* Search Bar and Add Button */}
+        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <input
             type="text"
             placeholder="Search by name or party..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="mx-auto block w-full max-w-md rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
+            className="w-full max-w-md rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
           />
+          <button
+            onClick={() => {
+              setEditingCandidate(null);
+              setFormData({
+                name: "",
+                image: "",
+                party: "",
+                description: "",
+              });
+              setFormErrors({});
+              setShowForm(true);
+            }}
+            className="min-w-fit transform rounded-lg bg-gradient-to-r from-green-500 to-green-600 px-8 py-3 font-semibold text-white shadow-lg transition-all duration-200 hover:scale-105 hover:from-green-600 hover:to-green-700 hover:shadow-xl"
+          >
+            ✨ Add New Candidate
+          </button>
         </div>
 
         {/* Candidates Grid */}
@@ -123,8 +320,7 @@ export default function Home() {
           {filteredCandidates.map((candidate) => (
             <div
               key={candidate.id}
-              className="cursor-pointer rounded-lg border border-gray-200 bg-white shadow-md transition-shadow hover:shadow-lg"
-              onClick={() => setSelectedCandidate(candidate)}
+              className="rounded-lg border border-gray-200 bg-white shadow-md transition-shadow hover:shadow-lg"
             >
               <div className="p-6">
                 {/* Candidate image */}
@@ -146,9 +342,30 @@ export default function Home() {
                 <p className="line-clamp-3 text-sm text-gray-600">
                   {candidate.description.slice(0, 100)}...
                 </p>
-                <button className="mt-4 w-full rounded bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-600">
-                  View Details
-                </button>
+
+                {/* Action buttons */}
+                <div className="mt-6 space-y-2">
+                  <button
+                    onClick={() => setSelectedCandidate(candidate)}
+                    className="w-full rounded-lg bg-blue-500 px-4 py-2.5 text-sm font-medium text-white transition-all duration-200 hover:bg-blue-600 hover:shadow-md"
+                  >
+                    👁️ View Details
+                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => startEdit(candidate)}
+                      className="flex-1 rounded-lg bg-orange-500 px-3 py-2 text-sm font-medium text-white transition-all duration-200 hover:bg-orange-600 hover:shadow-md"
+                    >
+                      ✏️ Edit
+                    </button>
+                    <button
+                      onClick={() => setDeleteConfirmation(candidate)}
+                      className="flex-1 rounded-lg bg-red-500 px-3 py-2 text-sm font-medium text-white transition-all duration-200 hover:bg-red-600 hover:shadow-md"
+                    >
+                      🗑️ Delete
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           ))}
@@ -163,56 +380,261 @@ export default function Home() {
           </div>
         )}
 
-        {/* Modal for candidate details */}
-        {selectedCandidate && (
-          <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4">
-            <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white">
+        {/* Create/Edit Form Modal */}
+        {showForm && (
+          <div className="bg-opacity-60 fixed inset-0 z-50 flex items-center justify-center bg-black p-4 backdrop-blur-sm">
+            <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-white shadow-2xl">
               <div className="p-6">
-                <div className="mb-4 flex items-start justify-between">
-                  <h2 className="text-2xl font-bold text-gray-800">
-                    {selectedCandidate.name}
+                <div className="mb-6 flex items-start justify-between">
+                  <h2 className="text-3xl font-bold text-gray-800">
+                    {editingCandidate
+                      ? "✏️ Edit Candidate"
+                      : "✨ Add New Candidate"}
                   </h2>
                   <button
-                    onClick={() => setSelectedCandidate(null)}
-                    className="text-2xl text-gray-500 hover:text-gray-700"
+                    onClick={resetForm}
+                    className="rounded-full p-2 text-2xl text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
                   >
                     ×
                   </button>
                 </div>
 
-                <div className="mb-6">
+                <form
+                  className="space-y-5"
+                  onSubmit={(e) => e.preventDefault()}
+                >
+                  {/* Name field */}
+                  <div>
+                    <label className="mb-2 block text-sm font-semibold text-gray-700">
+                      Full Name *
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) =>
+                        handleInputChange("name", e.target.value)
+                      }
+                      className={`w-full rounded-lg border-2 px-4 py-3 shadow-sm transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-200 ${
+                        formErrors.name
+                          ? "border-red-500 bg-red-50"
+                          : "border-gray-300"
+                      }`}
+                      placeholder="Enter candidate's full name"
+                    />
+                    {formErrors.name && (
+                      <p className="mt-2 text-sm font-medium text-red-600">
+                        ⚠️ {formErrors.name}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Party field */}
+                  <div>
+                    <label className="mb-2 block text-sm font-semibold text-gray-700">
+                      Political Party *
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.party}
+                      onChange={(e) =>
+                        handleInputChange("party", e.target.value)
+                      }
+                      className={`w-full rounded-lg border-2 px-4 py-3 shadow-sm transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-200 ${
+                        formErrors.party
+                          ? "border-red-500 bg-red-50"
+                          : "border-gray-300"
+                      }`}
+                      placeholder="Enter party name or Independent"
+                    />
+                    {formErrors.party && (
+                      <p className="mt-2 text-sm font-medium text-red-600">
+                        ⚠️ {formErrors.party}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Image URL field */}
+                  <div>
+                    <label className="mb-2 block text-sm font-semibold text-gray-700">
+                      Profile Image URL *
+                    </label>
+                    <input
+                      type="url"
+                      value={formData.image}
+                      onChange={(e) =>
+                        handleInputChange("image", e.target.value)
+                      }
+                      className={`w-full rounded-lg border-2 px-4 py-3 shadow-sm transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-200 ${
+                        formErrors.image
+                          ? "border-red-500 bg-red-50"
+                          : "border-gray-300"
+                      }`}
+                      placeholder="https://example.com/image.jpg"
+                    />
+                    {formErrors.image && (
+                      <p className="mt-2 text-sm font-medium text-red-600">
+                        ⚠️ {formErrors.image}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Description field */}
+                  <div>
+                    <label className="mb-2 block text-sm font-semibold text-gray-700">
+                      Biography & Description *
+                    </label>
+                    <textarea
+                      value={formData.description}
+                      onChange={(e) =>
+                        handleInputChange("description", e.target.value)
+                      }
+                      rows={5}
+                      className={`w-full resize-none rounded-lg border-2 px-4 py-3 shadow-sm transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-200 ${
+                        formErrors.description
+                          ? "border-red-500 bg-red-50"
+                          : "border-gray-300"
+                      }`}
+                      placeholder="Enter detailed description about the candidate's background, achievements, and political positions..."
+                    />
+                    {formErrors.description && (
+                      <p className="mt-2 text-sm font-medium text-red-600">
+                        ⚠️ {formErrors.description}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Form actions */}
+                  <div className="flex justify-end gap-4 border-t pt-6">
+                    <button
+                      type="button"
+                      onClick={resetForm}
+                      className="rounded-lg bg-gray-500 px-8 py-3 font-semibold text-white transition-all duration-200 hover:bg-gray-600 hover:shadow-md"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={editingCandidate ? handleUpdate : handleCreate}
+                      className="rounded-lg bg-blue-500 px-8 py-3 font-semibold text-white transition-all duration-200 hover:bg-blue-600 hover:shadow-md"
+                    >
+                      {editingCandidate
+                        ? "💾 Update Candidate"
+                        : "✨ Create Candidate"}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Delete Confirmation Modal */}
+        {deleteConfirmation && (
+          <div className="bg-opacity-60 fixed inset-0 z-50 flex items-center justify-center bg-black p-4 backdrop-blur-sm">
+            <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-2xl">
+              <div className="text-center">
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+                  <span className="text-2xl">🗑️</span>
+                </div>
+                <h2 className="mb-4 text-2xl font-bold text-gray-800">
+                  Confirm Delete
+                </h2>
+                <p className="mb-8 leading-relaxed text-gray-600">
+                  Are you sure you want to permanently delete{" "}
+                  <strong className="text-red-600">
+                    {deleteConfirmation.name}
+                  </strong>
+                  ?
+                  <br />
+                  <span className="text-sm">This action cannot be undone.</span>
+                </p>
+              </div>
+              <div className="flex justify-center gap-4">
+                <button
+                  onClick={() => setDeleteConfirmation(null)}
+                  className="rounded-lg bg-gray-500 px-6 py-3 font-semibold text-white transition-all duration-200 hover:bg-gray-600 hover:shadow-md"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => handleDelete(deleteConfirmation)}
+                  className="rounded-lg bg-red-500 px-6 py-3 font-semibold text-white transition-all duration-200 hover:bg-red-600 hover:shadow-md"
+                >
+                  🗑️ Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* View Details Modal */}
+        {selectedCandidate && (
+          <div className="bg-opacity-60 fixed inset-0 z-50 flex items-center justify-center bg-black p-4 backdrop-blur-sm">
+            <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-white shadow-2xl">
+              <div className="p-8">
+                <div className="mb-6 flex items-start justify-between">
+                  <h2 className="text-3xl font-bold text-gray-800">
+                    👤 {selectedCandidate.name}
+                  </h2>
+                  <button
+                    onClick={() => setSelectedCandidate(null)}
+                    className="rounded-full p-2 text-2xl text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
+                  >
+                    ×
+                  </button>
+                </div>
+
+                <div className="mb-8">
                   {/* Candidate image */}
-                  <div className="mx-auto mb-4 h-32 w-32 overflow-hidden rounded-full">
+                  <div className="mx-auto mb-6 h-40 w-40 overflow-hidden rounded-full border-4 border-blue-200">
                     <Image
                       src={selectedCandidate.image}
                       alt={selectedCandidate.name}
-                      width={128}
-                      height={128}
+                      width={160}
+                      height={160}
                       className="h-full w-full object-cover"
                     />
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="font-semibold text-gray-800">Party:</h3>
-                    <p className="text-blue-600">{selectedCandidate.party}</p>
+                <div className="space-y-6">
+                  <div className="rounded-lg bg-blue-50 p-4">
+                    <h3 className="mb-2 text-lg font-bold text-gray-800">
+                      🏛️ Political Party
+                    </h3>
+                    <p className="text-lg font-semibold text-blue-700">
+                      {selectedCandidate.party}
+                    </p>
                   </div>
 
-                  <div>
-                    <h3 className="font-semibold text-gray-800">
-                      Description:
+                  <div className="rounded-lg bg-gray-50 p-4">
+                    <h3 className="mb-3 text-lg font-bold text-gray-800">
+                      📝 Biography & Background
                     </h3>
-                    <p className="leading-relaxed text-gray-600">
+                    <p className="leading-relaxed text-gray-700">
                       {selectedCandidate.description}
                     </p>
                   </div>
                 </div>
 
-                <div className="mt-6 flex justify-end">
+                <div className="mt-8 flex justify-between border-t pt-6">
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => startEdit(selectedCandidate)}
+                      className="rounded-lg bg-orange-500 px-6 py-3 font-semibold text-white transition-all duration-200 hover:bg-orange-600 hover:shadow-md"
+                    >
+                      ✏️ Edit
+                    </button>
+                    <button
+                      onClick={() => setDeleteConfirmation(selectedCandidate)}
+                      className="rounded-lg bg-red-500 px-6 py-3 font-semibold text-white transition-all duration-200 hover:bg-red-600 hover:shadow-md"
+                    >
+                      🗑️ Delete
+                    </button>
+                  </div>
                   <button
                     onClick={() => setSelectedCandidate(null)}
-                    className="rounded bg-gray-500 px-6 py-2 text-white transition-colors hover:bg-gray-600"
+                    className="rounded-lg bg-gray-500 px-8 py-3 font-semibold text-white transition-all duration-200 hover:bg-gray-600 hover:shadow-md"
                   >
                     Close
                   </button>
