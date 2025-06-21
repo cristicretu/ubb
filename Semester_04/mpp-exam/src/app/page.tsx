@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { Button } from "~/components/ui/button";
 import {
@@ -74,151 +74,6 @@ interface ChartDataPoint {
   color: string;
 }
 
-const initialCandidates: Candidate[] = [
-  {
-    id: 1,
-    name: "Nicușor Dan",
-    image: "https://placehold.co/600x400/000000/FFFFFF.png?text=ND",
-    party: "Independent",
-    description:
-      "Current Mayor of Bucharest and the new President of Romania. Mathematics PhD, civic activist turned politician. Founded 'Save Bucharest' Association and later Save Romania Union (USR). Known for anti-corruption stance and pro-European policies.",
-  },
-  {
-    id: 2,
-    name: "Marcel Ciolacu",
-    image: "https://placehold.co/600x400/000000/FFFFFF.png?text=MC",
-    party: "PSD (Social Democratic Party)",
-    description:
-      "Former Prime Minister of Romania and current President of PSD. Previously served as President of the Chamber of Deputies. Known for his pragmatic approach and social democratic policies.",
-  },
-  {
-    id: 3,
-    name: "Elena Lasconi",
-    image: "https://placehold.co/600x400/000000/FFFFFF.png?text=EL",
-    party: "USR (Save Romania Union)",
-    description:
-      "Mayor of Câmpulung and former USR presidential candidate. Economist and journalist by background. Advocates for reformist policies, European integration, and anti-corruption measures.",
-  },
-  {
-    id: 4,
-    name: "George Simion",
-    image: "https://placehold.co/600x400/000000/FFFFFF.png?text=GS",
-    party: "AUR (Alliance for the Union of Romanians)",
-    description:
-      "Leader of the nationalist AUR party and Deputy in the Romanian Parliament. Civic activist and politician known for his nationalist and traditionalist positions.",
-  },
-  {
-    id: 5,
-    name: "Nicolae Ciucă",
-    image: "https://placehold.co/600x400/000000/FFFFFF.png?text=NC",
-    party: "PNL (National Liberal Party)",
-    description:
-      "Former Prime Minister and current President of the Senate. Former Chief of the Romanian General Staff and military officer. Represents center-right liberal politics.",
-  },
-  {
-    id: 6,
-    name: "Mircea Geoană",
-    image: "https://placehold.co/600x400/000000/FFFFFF.png?text=MG",
-    party: "Independent",
-    description:
-      "Former Deputy Secretary General of NATO and former President of PSD. Previously served as Minister of Foreign Affairs and Senator. Experienced diplomat with international relations background.",
-  },
-  {
-    id: 7,
-    name: "Călin Georgescu",
-    image: "https://placehold.co/600x400/000000/FFFFFF.png?text=CG",
-    party: "Independent",
-    description:
-      "Former UN executive director and agronomist. Surprised in the 2024 presidential elections before they were annulled. Known for nationalist positions and social media campaigning.",
-  },
-  {
-    id: 8,
-    name: "Klaus Iohannis",
-    image: "https://placehold.co/600x400/000000/FFFFFF.png?text=KI",
-    party: "Independent (formerly PNL)",
-    description:
-      "Former President of Romania (2014-2025). Former mayor of Sibiu and physics teacher. Known for his pro-European stance and institutional reforms during his presidency.",
-  },
-];
-
-// Random name generators
-const firstNames = [
-  "Alexandru",
-  "Andrei",
-  "Adrian",
-  "Bogdan",
-  "Cristian",
-  "Dan",
-  "Emil",
-  "Florin",
-  "Gabriel",
-  "Ion",
-  "Lucian",
-  "Marius",
-  "Mihai",
-  "Nicolae",
-  "Paul",
-  "Radu",
-  "Stefan",
-  "Victor",
-  "Vlad",
-  "Gheorghe",
-  "Ana",
-  "Elena",
-  "Maria",
-  "Ioana",
-  "Cristina",
-  "Diana",
-  "Laura",
-  "Monica",
-  "Andreea",
-  "Raluca",
-];
-
-const lastNames = [
-  "Popescu",
-  "Ionescu",
-  "Popa",
-  "Stoica",
-  "Dumitrescu",
-  "Georgescu",
-  "Stanciu",
-  "Munteanu",
-  "Rusu",
-  "Preda",
-  "Constantinescu",
-  "Moldovan",
-  "Petrescu",
-  "Nicolae",
-  "Barbu",
-  "Cristea",
-  "Florea",
-  "Vasile",
-  "Tudor",
-  "Matei",
-];
-
-const parties = [
-  "PSD (Social Democratic Party)",
-  "USR (Save Romania Union)",
-  "AUR (Alliance for the Union of Romanians)",
-  "PNL (National Liberal Party)",
-  "Independent",
-];
-
-const descriptions = [
-  "Experienced politician with a background in public administration and economic development.",
-  "Former mayor known for transparency initiatives and urban development projects.",
-  "Academic turned politician, advocating for educational reform and digital transformation.",
-  "Business leader focusing on entrepreneurship and economic growth policies.",
-  "Civil rights activist promoting social justice and anti-corruption measures.",
-  "Former diplomat with extensive experience in international relations and EU affairs.",
-  "Young politician advocating for climate action and sustainable development.",
-  "Legal expert specializing in constitutional law and judicial reform.",
-  "Healthcare professional promoting public health initiatives and medical system reform.",
-  "Technology entrepreneur focused on digital innovation and startup ecosystem development.",
-];
-
 const partyColors = {
   PSD: "#dc2626", // Red
   USR: "#2563eb", // Blue
@@ -235,7 +90,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export default function Home() {
-  const [candidates, setCandidates] = useState<Candidate[]>(initialCandidates);
+  const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(
     null,
   );
@@ -263,7 +118,8 @@ export default function Home() {
   // Chart and generation state
   const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
+  const eventSourceRef = useRef<EventSource | null>(null);
 
   // Helper function to get party counts
   const getPartyCounts = (candidateList: Candidate[]): ChartDataPoint[] => {
@@ -276,11 +132,11 @@ export default function Home() {
     };
 
     candidateList.forEach((candidate) => {
-      if (candidate.party.includes("PSD")) counts.PSD++;
-      else if (candidate.party.includes("USR")) counts.USR++;
-      else if (candidate.party.includes("AUR")) counts.AUR++;
-      else if (candidate.party.includes("PNL")) counts.PNL++;
-      else counts.Independent++;
+      if (candidate.party?.includes("PSD")) counts["PSD"]++;
+      else if (candidate.party?.includes("USR")) counts["USR"]++;
+      else if (candidate.party?.includes("AUR")) counts["AUR"]++;
+      else if (candidate.party?.includes("PNL")) counts["PNL"]++;
+      else counts["Independent"]++;
     });
 
     return Object.entries(counts).map(([party, count]) => ({
@@ -290,64 +146,149 @@ export default function Home() {
     }));
   };
 
-  // Initialize chart data
-  useEffect(() => {
-    setChartData(getPartyCounts(candidates));
+  // Update chart data when candidates change
+  const updateChartData = useCallback((candidateList: Candidate[]) => {
+    setChartData(getPartyCounts(candidateList));
   }, []);
 
-  // Generate random candidate
-  const generateRandomCandidate = (): Candidate => {
-    const firstName =
-      firstNames[Math.floor(Math.random() * firstNames.length)]!;
-    const lastName = lastNames[Math.floor(Math.random() * lastNames.length)]!;
-    const party = parties[Math.floor(Math.random() * parties.length)]!;
-    const description =
-      descriptions[Math.floor(Math.random() * descriptions.length)]!;
-
-    const initials = firstName.charAt(0) + lastName.charAt(0);
-
-    return {
-      id: Date.now() + Math.random(),
-      name: `${firstName} ${lastName}`,
-      image: `https://placehold.co/600x400/000000/FFFFFF.png?text=${initials}`,
-      party,
-      description,
-    };
-  };
-
-  // Start generation
-  const startGeneration = () => {
-    if (intervalRef.current) return;
-
-    setIsGenerating(true);
-    intervalRef.current = setInterval(() => {
-      const newCandidate = generateRandomCandidate();
-      setCandidates((prev) => {
-        const updated = [...prev, newCandidate];
-        // Update chart data
-        setChartData(getPartyCounts(updated));
-        return updated;
-      });
-    }, 2000); // Add new candidate every 2 seconds
-  };
-
-  // Stop generation
-  const stopGeneration = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-      setIsGenerating(false);
+  // Fetch candidates from API
+  const fetchCandidates = useCallback(async () => {
+    try {
+      const response = await fetch("/api/candidates");
+      if (response.ok) {
+        const result = await response.json();
+        setCandidates(result.data);
+        updateChartData(result.data);
+      }
+    } catch (error) {
+      console.error("Error fetching candidates:", error);
+      showMessage("error", "Failed to fetch candidates");
     }
-  };
+  }, [updateChartData]);
 
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
+  // Connect to real-time updates
+  const connectToRealTimeUpdates = useCallback(() => {
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close();
+    }
+
+    const eventSource = new EventSource("/api/candidates/ws");
+    eventSourceRef.current = eventSource;
+
+    eventSource.onopen = () => {
+      console.log("Real-time connection established");
+      setIsConnected(true);
+    };
+
+    eventSource.onmessage = (event) => {
+      try {
+        console.log("Raw SSE event data:", event.data);
+        const data = JSON.parse(event.data);
+        console.log("Parsed real-time update:", data);
+
+        switch (data.type) {
+          case "connected":
+            console.log("Connected to real-time updates");
+            break;
+
+          case "candidate_created":
+          case "candidate_updated":
+          case "candidate_deleted":
+          case "candidate_generated":
+            console.log("Updating candidates with:", data.data.candidates);
+            setCandidates(data.data.candidates);
+            updateChartData(data.data.candidates);
+            if (data.type === "candidate_created") {
+              showMessage(
+                "success",
+                `${data.data.candidate.name} has been added successfully!`,
+              );
+            } else if (data.type === "candidate_updated") {
+              showMessage(
+                "success",
+                `${data.data.candidate.name} has been updated successfully!`,
+              );
+            } else if (data.type === "candidate_deleted") {
+              showMessage(
+                "success",
+                `${data.data.candidate.name} has been deleted successfully!`,
+              );
+            }
+            break;
+
+          case "generation_started":
+            setIsGenerating(true);
+            break;
+
+          case "generation_stopped":
+            setIsGenerating(false);
+            break;
+
+          default:
+            console.log("Unknown event type:", data.type);
+        }
+      } catch (error) {
+        console.error(
+          "Error parsing real-time message:",
+          error,
+          "Raw data:",
+          event.data,
+        );
       }
     };
+
+    eventSource.onerror = (error) => {
+      console.error("Real-time connection error:", error);
+      console.log("EventSource readyState:", eventSource.readyState);
+      setIsConnected(false);
+
+      // Show user that real-time connection is down
+      if (eventSource.readyState === EventSource.CLOSED) {
+        console.log("Connection closed, attempting to reconnect...");
+        showMessage(
+          "error",
+          "Real-time connection lost. Data will be refreshed manually.",
+        );
+      }
+
+      // Attempt to reconnect after 3 seconds
+      setTimeout(() => {
+        if (
+          !eventSourceRef.current ||
+          eventSourceRef.current.readyState === EventSource.CLOSED
+        ) {
+          console.log("Attempting to reconnect to real-time updates...");
+          connectToRealTimeUpdates();
+        }
+      }, 3000);
+    };
+  }, [updateChartData]);
+
+  // Check generation status
+  const checkGenerationStatus = useCallback(async () => {
+    try {
+      const response = await fetch("/api/candidates/generate");
+      if (response.ok) {
+        const result = await response.json();
+        setIsGenerating(result.isGenerating);
+      }
+    } catch (error) {
+      console.error("Error checking generation status:", error);
+    }
   }, []);
+
+  // Initialize data and connections
+  useEffect(() => {
+    fetchCandidates();
+    checkGenerationStatus();
+    connectToRealTimeUpdates();
+
+    return () => {
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+      }
+    };
+  }, [fetchCandidates, checkGenerationStatus, connectToRealTimeUpdates]);
 
   const filteredCandidates = candidates.filter(
     (candidate) =>
@@ -394,7 +335,8 @@ export default function Home() {
     setTimeout(() => setMessage(null), 3000);
   };
 
-  const handleCreate = () => {
+  // API call functions
+  const handleCreate = async () => {
     const errors = validateForm(formData);
     setFormErrors(errors);
 
@@ -403,32 +345,42 @@ export default function Home() {
       return;
     }
 
-    if (
-      candidates.some(
-        (c) => c.name.toLowerCase() === formData.name.toLowerCase(),
-      )
-    ) {
-      setFormErrors({ name: "A candidate with this name already exists" });
-      showMessage("error", "Candidate name already exists");
-      return;
+    try {
+      const response = await fetch("/api/candidates", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        resetForm();
+        // If real-time connection is not working, manually refresh the data
+        if (!isConnected) {
+          console.log("Real-time connection down, manually refreshing data");
+          await fetchCandidates();
+          showMessage(
+            "success",
+            `${result.data.name} has been added successfully!`,
+          );
+        }
+        // Success message will come via real-time update if connected
+      } else {
+        if (result.error.includes("already exists")) {
+          setFormErrors({ name: result.error });
+        }
+        showMessage("error", result.error);
+      }
+    } catch (error) {
+      console.error("Error creating candidate:", error);
+      showMessage("error", "Failed to create candidate");
     }
-
-    const newCandidate: Candidate = {
-      id: Math.max(...candidates.map((c) => c.id), 0) + 1,
-      ...formData,
-    };
-
-    setCandidates((prev) => {
-      const updated = [...prev, newCandidate];
-      // Update chart data
-      setChartData(getPartyCounts(updated));
-      return updated;
-    });
-    resetForm();
-    showMessage("success", `${newCandidate.name} has been added successfully!`);
   };
 
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
     if (!editingCandidate) return;
 
     const errors = validateForm(formData);
@@ -439,43 +391,106 @@ export default function Home() {
       return;
     }
 
-    if (
-      candidates.some(
-        (c) =>
-          c.id !== editingCandidate.id &&
-          c.name.toLowerCase() === formData.name.toLowerCase(),
-      )
-    ) {
-      setFormErrors({ name: "A candidate with this name already exists" });
-      showMessage("error", "Candidate name already exists");
-      return;
+    try {
+      const response = await fetch("/api/candidates", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...formData, id: editingCandidate.id }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        resetForm();
+        // If real-time connection is not working, manually refresh the data
+        if (!isConnected) {
+          console.log("Real-time connection down, manually refreshing data");
+          await fetchCandidates();
+          showMessage(
+            "success",
+            `${result.data.name} has been updated successfully!`,
+          );
+        }
+        // Success message will come via real-time update if connected
+      } else {
+        if (result.error.includes("already exists")) {
+          setFormErrors({ name: result.error });
+        }
+        showMessage("error", result.error);
+      }
+    } catch (error) {
+      console.error("Error updating candidate:", error);
+      showMessage("error", "Failed to update candidate");
     }
-
-    setCandidates((prev) => {
-      const updated = prev.map((candidate) =>
-        candidate.id === editingCandidate.id
-          ? { ...candidate, ...formData }
-          : candidate,
-      );
-      // Update chart data
-      setChartData(getPartyCounts(updated));
-      return updated;
-    });
-
-    resetForm();
-    showMessage("success", `${formData.name} has been updated successfully!`);
   };
 
-  const handleDelete = (candidate: Candidate) => {
-    setCandidates((prev) => {
-      const updated = prev.filter((c) => c.id !== candidate.id);
-      // Update chart data
-      setChartData(getPartyCounts(updated));
-      return updated;
-    });
-    setDeleteConfirmation(null);
-    setSelectedCandidate(null);
-    showMessage("success", `${candidate.name} has been deleted successfully!`);
+  const handleDelete = async (candidate: Candidate) => {
+    try {
+      const response = await fetch(`/api/candidates?id=${candidate.id}`, {
+        method: "DELETE",
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setDeleteConfirmation(null);
+        setSelectedCandidate(null);
+        // If real-time connection is not working, manually refresh the data
+        if (!isConnected) {
+          console.log("Real-time connection down, manually refreshing data");
+          await fetchCandidates();
+          showMessage(
+            "success",
+            `${result.data.name} has been deleted successfully!`,
+          );
+        }
+        // Success message will come via real-time update if connected
+      } else {
+        showMessage("error", result.error);
+      }
+    } catch (error) {
+      console.error("Error deleting candidate:", error);
+      showMessage("error", "Failed to delete candidate");
+    }
+  };
+
+  // Generation control functions
+  const startGeneration = async () => {
+    try {
+      const response = await fetch("/api/candidates/generate", {
+        method: "POST",
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        showMessage("error", result.error);
+      }
+      // Status update will come via real-time update
+    } catch (error) {
+      console.error("Error starting generation:", error);
+      showMessage("error", "Failed to start generation");
+    }
+  };
+
+  const stopGeneration = async () => {
+    try {
+      const response = await fetch("/api/candidates/generate", {
+        method: "DELETE",
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        showMessage("error", result.error);
+      }
+      // Status update will come via real-time update
+    } catch (error) {
+      console.error("Error stopping generation:", error);
+      showMessage("error", "Failed to stop generation");
+    }
   };
 
   const resetForm = () => {
@@ -517,12 +532,25 @@ export default function Home() {
       <div className="container mx-auto max-w-7xl px-4">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="mb-2 text-3xl font-bold text-slate-900">
-            Romanian Political Candidates
-          </h1>
-          <p className="text-lg text-slate-600">
-            Explore and manage profiles of prominent Romanian political figures
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="mb-2 text-3xl font-bold text-slate-900">
+                Romanian Political Candidates
+              </h1>
+              <p className="text-lg text-slate-600">
+                Explore and manage profiles of prominent Romanian political
+                figures
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <div
+                className={`h-3 w-3 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`}
+              ></div>
+              <span className="text-sm text-slate-600">
+                {isConnected ? "Connected" : "Disconnected"}
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* Real-time Chart */}
