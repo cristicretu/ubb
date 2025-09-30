@@ -1,5 +1,7 @@
 ### Babeș-Bolyai University - Computer Science
 
+> If you want to add your schedule to your calendar use [my tool](https://ubb-schedule.vercel.app/)
+
 ## 📕 Semester 1
 <details open>
 <summary>Courses</summary>
