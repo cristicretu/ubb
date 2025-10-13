@@ -54,9 +54,9 @@ partial order relation:
 - unlock in reverse order
 */
 
-const int num_threads = 16;
-const int num_warehouses = 10;
-const int num_products = 200;
+const int num_threads = 4;
+const int num_warehouses = 2;
+const int num_products = 4;
 
 volatile int running = 1;
 int total_ops = 0;
