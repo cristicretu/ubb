@@ -8,7 +8,7 @@
 #include <queue>
 #include <vector>
 
-int VECTOR_SIZE = 100;
+int VECTOR_SIZE = 101;
 int QUEUE_MAX_SIZE = 100;
 int MAX_VALUE = 5;
 int MIN_VALUE = 1;
@@ -61,8 +61,10 @@ int main() {
   vector1.resize(VECTOR_SIZE);
   vector2.resize(VECTOR_SIZE);
   for (int i = 0; i < VECTOR_SIZE; ++i) {
-    vector1[i] = rand() % (MAX_VALUE - MIN_VALUE + 1) + MIN_VALUE;
-    vector2[i] = rand() % (MAX_VALUE - MIN_VALUE + 1) + MIN_VALUE;
+    // vector1[i] = rand() % (MAX_VALUE - MIN_VALUE + 1) + MIN_VALUE;
+    // vector2[i] = rand() % (MAX_VALUE - MIN_VALUE + 1) + MIN_VALUE;
+    vector1[i] = 1;
+    vector2[i] = i;
     std::cout << "vector1[" << i << "] = " << vector1[i] << ", vector2[" << i
               << "] = " << vector2[i] << std::endl;
   }
