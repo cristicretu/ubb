@@ -13,8 +13,8 @@ const int COL_SPLIT = 1;
 const int KTH_SPLIT = 2;
 
 const int NUM_SIZE = 1000;
-const int NUM_THREADS = 4;
-const int STRATEGY = ROW_SPLIT;
+const int NUM_THREADS = 12;
+const int STRATEGY = COL_SPLIT;
 
 double compute_element(const Matrix &A, const Matrix &B, int row, int col) {
   double result = 0;
@@ -118,9 +118,9 @@ void printMatrix(const Matrix &A) {
 }
 
 void solve(int rows_a, int cols_a, int cols_b, int nthreads, int strategy) {
-  Matrix A(rows_a, vector<double>(cols_a, 1.5));
-  Matrix B(cols_a, vector<double>(cols_b, 2.0));
-  Matrix C(rows_a, vector<double>(cols_b, 0.0));
+  Matrix A(rows_a, vector<double>(cols_a, 1.0));
+  Matrix B(cols_a, vector<double>(cols_b, 1.0));
+  Matrix C(rows_a, vector<double>(cols_b, 1.0));
 
   auto start = chrono::high_resolution_clock::now();
 
