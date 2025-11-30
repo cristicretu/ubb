@@ -46,7 +46,6 @@ namespace HttpDownloaderLab
             Console.WriteLine("all done!");
         }
 
-        // impl 3: async/await with task wrappers
         static async Task DownloadFileAsync(string url, string outputPath)
         {
             Socket socket = null;
@@ -90,7 +89,6 @@ namespace HttpDownloaderLab
             }
         }
 
-        // wrap BeginConnect/EndConnect into a task
         static Task ConnectAsync(Socket socket, EndPoint endpoint)
         {
             var tcs = new TaskCompletionSource<bool>();
@@ -111,7 +109,6 @@ namespace HttpDownloaderLab
             return tcs.Task;
         }
 
-        // wrap BeginSend/EndSend into a task
         static Task SendAsync(Socket socket, byte[] data)
         {
             var tcs = new TaskCompletionSource<int>();
@@ -132,7 +129,6 @@ namespace HttpDownloaderLab
             return tcs.Task;
         }
 
-        // read headers byte by byte until \r\n\r\n
         static async Task<string> ReceiveHeadersAsync(Socket socket)
         {
             var buffer = new byte[1];
@@ -158,7 +154,6 @@ namespace HttpDownloaderLab
             return headers.ToString();
         }
 
-        // wrap BeginReceive/EndReceive into a task
         static Task<int> ReceiveAsync(Socket socket, byte[] buffer, int offset, int count)
         {
             var tcs = new TaskCompletionSource<int>();
@@ -206,7 +201,6 @@ namespace HttpDownloaderLab
             throw new Exception("Content-Length header not found");
         }
 
-        // impl 2: continuewith chaining (bonus)
         static Task DownloadWithContinueWith(string url, string outputPath)
         {
             var uri = new Uri(url);
@@ -281,7 +275,6 @@ namespace HttpDownloaderLab
                 });
         }
 
-        // impl 1: event-driven callbacks
         class DownloadState
         {
             public Socket Socket;
