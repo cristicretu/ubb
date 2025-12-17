@@ -1,32 +1,29 @@
-import numpy as np
-from numpy.random import default_rng
-import sys
+import random, json, sys
+from itertools import combinations
 
 ALPHA = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-rng = default_rng()
 
-def gf2_mul(a, b): return np.mod(a @ b, 2).astype(np.int8)
+def mul(a, b): return [[sum(a[i][k]*b[k][j] for k in range(len(b)))%2 for j in range(len(b[0]))] for i in range(len(a))]
 
 def txt2bits(txt):
     txt = txt.upper()
-    assert all(c in ALPHA for c in txt), f"invalid chars, use: {ALPHA}"
-    return np.array([int(b) for c in txt for b in f'{ALPHA.index(c):05b}'], dtype=np.int8)
+    assert all(c in ALPHA for c in txt), f"bad char, use: {ALPHA}"
+    return [int(b) for c in txt for b in f'{ALPHA.index(c):05b}']
 
-pub = np.load('public.npz')
-G_pub, t = pub['G_pub'], int(pub['t'])
-k, n = G_pub.shape
+pub = json.load(open('public.json'))
+G_pub, t = pub['G_pub'], pub['t']
+k, n = len(G_pub), len(G_pub[0])
 
 plaintext = sys.argv[1] if len(sys.argv) > 1 else input("plaintext: ")
 bits = txt2bits(plaintext)
 
 ct = []
 for i in range(0, len(bits), k):
-    m = np.pad(bits[i:i+k], (0, max(0, k-len(bits[i:i+k]))))
-    c = gf2_mul(m.reshape(1, -1), G_pub).flatten()
-    e = np.zeros(n, dtype=np.int8)
-    e[rng.choice(n, t, replace=False)] = 1
-    ct.append((c + e) % 2)
+    m = bits[i:i+k] + [0]*(k - len(bits[i:i+k]))
+    c = mul([m], G_pub)[0]
+    err_pos = random.sample(range(n), t)
+    for p in err_pos: c[p] ^= 1
+    ct.append(c)
 
-ct = np.array(ct, dtype=np.int8)
-np.save('ciphertext.npy', ct)
-print(f"encrypted {len(plaintext)} chars -> ciphertext.npy")
+json.dump(ct, open('ciphertext.json', 'w'))
+print(f"encrypted {len(plaintext)} chars -> ciphertext.json")
