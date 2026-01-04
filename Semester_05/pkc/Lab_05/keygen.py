@@ -1,3 +1,4 @@
+# macelice
 import random, json
 from itertools import combinations
 
@@ -21,6 +22,7 @@ def inv(m):
 def weight(v): return sum(v)
 
 def min_dist(G):
+    # d-1 errors
     k, n = len(G), len(G[0])
     best = n + 1
     for r in range(1, k+1):
@@ -39,6 +41,7 @@ def gen_good_code(n, k, t):
             H = hstack(transpose(P), eye(n-k))
             return G, H
 
+# codeword, msg
 n, k, t = 20, 8, 2
 print(f"generating code with d >= {2*t+1}...")
 G, H = gen_good_code(n, k, t)
