@@ -1,0 +1,122 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+
+\lstset{
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    breaklines=true
+}
+
+\title{Graph N-Coloring: Parallel Implementations}
+\author{Cretu Cristian, Vasile Draguta; 933}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Algorithm}
+
+Given graph $G = (V, E)$ and $k$ colors, assign each vertex a color such that no adjacent vertices share the same color.
+
+We use backtracking: try colors 0 to $k-1$ for each vertex. If a color conflicts with a neighbor, skip it. If no color works, backtrack.
+
+\begin{lstlisting}[language=C++]
+bool backtrack(int node) {
+    if (node == n) return true;
+    for (int c = 0; c < k; c++) {
+        if (is_safe(node, c)) {
+            colors[node] = c;
+            if (backtrack(node + 1)) return true;
+            colors[node] = -1;
+        }
+    }
+    return false;
+}
+\end{lstlisting}
+
+Complexity: $O(k^n)$ worst case.
+
+\section{Synchronization}
+
+\subsection{Threaded (C++)}
+
+Expand first few levels of search tree, then spawn threads for each subtree.
+
+\begin{itemize}
+    \item \texttt{std::atomic<bool> found} -- signals solution found, checked with relaxed ordering
+    \item \texttt{std::mutex} -- protects result, acquired once when done
+\end{itemize}
+
+Each thread has its own colors array. No shared mutable state during search.
+
+\subsection{Distributed (MPI)}
+
+Rank 0 generates partial colorings, scatters to all ranks.
+
+\begin{itemize}
+    \item \texttt{MPI\_Scatter} -- distribute work
+    \item \texttt{MPI\_Gather} -- collect results
+    \item \texttt{MPI\_Iprobe} -- check for early termination
+\end{itemize}
+
+\subsection{GPU (Metal)}
+
+CPU generates partial colorings, uploads batch to GPU. Each GPU thread completes one partial coloring.
+
+\begin{itemize}
+    \item \texttt{MTLCommandBuffer} -- sequence GPU work
+    \item \texttt{waitUntilCompleted} -- CPU waits for GPU
+\end{itemize}
+
+\section{Performance}
+
+Test machine: Apple M3, 14 hardware threads.
+
+\subsection{Threaded}
+
+\begin{center}
+\begin{tabular}{lrrr}
+\toprule
+Test Case & Sequential & Parallel (4T) & Speedup \\
+\midrule
+Petersen (n=10, k=3) & 0.002 ms & 0.45 ms & 0.004x \\
+Random (n=20, k=4) & 0.01 ms & 0.37 ms & 0.03x \\
+Random (n=25, k=5) & 385.8 ms & 51.8 ms & 7.45x \\
+Dense (n=22, k=6) & 14.6 ms & 3.35 ms & 4.35x \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{MPI (Expected)}
+
+\begin{center}
+\begin{tabular}{lrrr}
+\toprule
+Test Case & Sequential & MPI (4 ranks) & Speedup \\
+\midrule
+Random (n=25, k=5) & 385 ms & ~120 ms & ~3.2x \\
+Random (n=30, k=5) & ~10 s & ~3 s & ~3.3x \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Metal (Expected)}
+
+\begin{center}
+\begin{tabular}{lrrr}
+\toprule
+Test Case & Sequential & Metal & Speedup \\
+\midrule
+Batch 1000 partials & 100 ms & ~15 ms & ~6.6x \\
+Deep tree (n=30) & 10 s & ~8 s & ~1.25x \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Small graphs: thread overhead dominates. Large search spaces: good speedup.
+
+\end{document}
