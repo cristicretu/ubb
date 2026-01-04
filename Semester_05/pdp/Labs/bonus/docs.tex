@@ -1,0 +1,119 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+
+\lstset{
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    breaklines=true
+}
+
+\title{Polynomial Multiplication: Metal GPU Implementation}
+\author{Cretu Cristian, Vasile Draguta; 933}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Algorithm}
+
+Multiply two polynomials $P(x) = \sum_{i=0}^{n-1} a_i x^i$ and $Q(x) = \sum_{j=0}^{m-1} b_j x^j$.
+
+\subsection{Regular $O(n^2)$}
+
+For each coefficient $k$ in the result: $c_k = \sum_{i+j=k} a_i \cdot b_j$
+
+\begin{lstlisting}[language=C++]
+for (int i = 0; i < n; i++)
+    for (int j = 0; j < m; j++)
+        result[i + j] += p1[i] * p2[j];
+\end{lstlisting}
+
+\subsection{Karatsuba $O(n^{1.58})$}
+
+Split polynomials at midpoint: $P = P_{low} + x^{mid} \cdot P_{high}$
+
+Compute three products instead of four:
+\begin{align*}
+z_0 &= P_{low} \cdot Q_{low} \\
+z_2 &= P_{high} \cdot Q_{high} \\
+z_1 &= (P_{low} + P_{high}) \cdot (Q_{low} + Q_{high}) - z_0 - z_2
+\end{align*}
+
+Result: $z_0 + x^{mid} \cdot z_1 + x^{2 \cdot mid} \cdot z_2$
+
+\section{Synchronization}
+
+\subsection{Metal Regular Kernel}
+
+One GPU thread per output coefficient. Each thread computes its coefficient independently.
+
+\begin{lstlisting}[language=C++]
+kernel void poly_multiply_regular(
+    device const int* p1,
+    device const int* p2,
+    device atomic_int* result,
+    constant int& n, constant int& m,
+    uint tid [[thread_position_in_grid]]
+) {
+    int k = tid;
+    int sum = 0;
+    for (int i = max(0, k-m+1); i < min(k+1, n); i++)
+        sum += p1[i] * p2[k - i];
+    atomic_fetch_add_explicit(&result[k], sum, memory_order_relaxed);
+}
+\end{lstlisting}
+
+\begin{itemize}
+    \item \texttt{atomic\_int} -- result buffer uses atomics for thread-safe writes
+    \item \texttt{memory\_order\_relaxed} -- no ordering guarantees needed between threads
+    \item \texttt{MTLCommandBuffer} -- sequences GPU commands
+    \item \texttt{waitUntilCompleted} -- CPU blocks until GPU finishes
+\end{itemize}
+
+\subsection{Metal Tiled Kernel}
+
+2D grid: one thread per $(i, j)$ pair. Each thread does one multiply-add.
+
+\begin{lstlisting}[language=C++]
+kernel void poly_multiply_tiled(
+    device const int* p1,
+    device const int* p2,
+    device atomic_int* result,
+    constant int& n, constant int& m,
+    uint2 tid [[thread_position_in_grid]]
+) {
+    int i = tid.x, j = tid.y;
+    if (i >= n || j >= m) return;
+    atomic_fetch_add_explicit(&result[i+j], p1[i]*p2[j], memory_order_relaxed);
+}
+\end{lstlisting}
+
+More parallelism but more atomic contention. Better for small polynomials.
+
+\section{Performance}
+
+Test machine: Apple M3.
+
+\begin{center}
+\begin{tabular}{lrrrr}
+\toprule
+Size & CPU $O(n^2)$ & Karatsuba & Metal Regular & Metal Tiled \\
+\midrule
+5,000 & 2.65 ms & 2.22 ms (1.2x) & 4.79 ms (0.6x) & 1.29 ms (2.1x) \\
+10,000 & 6.61 ms & 4.40 ms (1.5x) & 6.54 ms (1.0x) & 4.38 ms (1.5x) \\
+50,000 & 241.4 ms & 37.9 ms (6.4x) & 18.5 ms (13.0x) & 22.6 ms (10.7x) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Small sizes: GPU overhead dominates, CPU wins.
+
+Large sizes: Metal regular kernel gets 13x speedup over CPU.
+
+Karatsuba beats GPU on medium sizes due to better complexity ($O(n^{1.58})$ vs $O(n^2)$).
+
+\end{document}
