@@ -8,6 +8,24 @@ typedef vector<int> BigNum;
 
 const int BASE = 10;
 
+BigNum from_int(long long x) {
+  BigNum n;
+  while (x > 0) {
+    n.push_back(x % BASE);
+    x /= BASE;
+  }
+  if (n.empty())
+    n.push_back(0);
+  return n;
+}
+
+string bignum_str(const BigNum &n) {
+  string s;
+  for (int i = n.size() - 1; i >= 0; i--)
+    s += ('0' + n[i]);
+  return s;
+}
+
 BigNum normalize(BigNum n) {
   int carry = 0;
   for (size_t i = 0; i < n.size(); i++) {
@@ -243,23 +261,30 @@ int main(int argc, char **argv) {
            (t1 - t0) / (t4 - t3));
   }
 
-  int digits = sz / 2;
-  BigNum a(digits, 9), b(digits, 9);
+  BigNum a = from_int(999999), b = from_int(99999);
+  if (rank == 0) {
+    BigNum result = bignum_mul_seq(a, b);
+    printf("\n%s * %s = %s\n", bignum_str(a).c_str(), bignum_str(b).c_str(),
+           bignum_str(result).c_str());
+  }
+
+  int digits = 5000;
+  BigNum big_a(digits, 9), big_b(digits, 9);
 
   double t5 = MPI_Wtime();
-  BigNum br1 = rank == 0 ? bignum_mul_seq(a, b) : BigNum();
+  BigNum br1 = rank == 0 ? bignum_mul_seq(big_a, big_b) : BigNum();
   double t6 = MPI_Wtime();
-  BigNum br2 = bignum_mul_mpi(a, b, rank, nprocs);
+  BigNum br2 = bignum_mul_mpi(big_a, big_b, rank, nprocs);
   double t7 = MPI_Wtime();
-  BigNum br3 = rank == 0 ? bignum_karatsuba(a, b) : BigNum();
+  BigNum br3 = rank == 0 ? bignum_karatsuba(big_a, big_b) : BigNum();
   double t8 = MPI_Wtime();
-  BigNum br4 = bignum_karatsuba_mpi(a, b, rank, nprocs);
+  BigNum br4 = bignum_karatsuba_mpi(big_a, big_b, rank, nprocs);
   double t9 = MPI_Wtime();
 
   if (rank == 0) {
     bool ok = br1 == br2 && br2 == br3 && br3 == br4;
-    printf("\n BIGNUM (%d digits, procs=%d) %sn", digits, nprocs,
-           ok ? "bine boss" : "nu e bine");
+    printf("\nBIGNUM (%d digits, procs=%d) %s\n", digits, nprocs,
+           ok ? "bun" : "varza");
     printf("seq O(n²):     %.2fms\n", (t6 - t5) * 1000);
     printf("mpi O(n²):     %.2fms (%.1fx)\n", (t7 - t6) * 1000,
            (t6 - t5) / (t7 - t6));
@@ -270,24 +295,5 @@ int main(int argc, char **argv) {
   }
 
   MPI_Finalize();
-
-  // if (rank == 0) {
-  //   cout << "r1: ";
-  //   for (int i = 0; i < r1.size(); i++)
-  //     cout << r1[i] << " ";
-  //   cout << endl;
-  //   cout << "r2: ";
-  //   for (int i = 0; i < r2.size(); i++)
-  //     cout << r2[i] << " ";
-  //   cout << endl;
-  //   cout << "r3: ";
-  //   for (int i = 0; i < r3.size(); i++)
-  //     cout << r3[i] << " ";
-  //   cout << endl;
-  //   cout << "r4: ";
-  //   for (int i = 0; i < r4.size(); i++)
-  //     cout << r4[i] << " ";
-  //   cout << endl;
-  // }
   return 0;
 }

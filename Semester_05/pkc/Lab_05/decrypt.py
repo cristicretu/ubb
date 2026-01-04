@@ -13,7 +13,6 @@ def bits2txt(bits):
         if idx < len(ALPHA): out.append(ALPHA[idx])
     return ''.join(out).rstrip()
 
-def syndrome(r, H): return mul(H, transpose([r]))[0] if isinstance(H[0], list) else [sum(H[i]*r[i] for i in range(len(r)))%2]
 def syn(r, H): return [sum(H[i][j]*r[j] for j in range(len(r)))%2 for i in range(len(H))]
 
 def decode(r, H, t):
