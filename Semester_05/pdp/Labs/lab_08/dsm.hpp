@@ -12,7 +12,7 @@
 #include <unistd.h>
 #include <vector>
 
-constexpr int BASE_PORT = 5000;
+constexpr int BASE_PORT = 8000;
 
 enum MsgType : uint8_t { WRITE = 1, CAS_REQ = 2, CAS_RESP = 3 };
 
@@ -32,8 +32,8 @@ class DSM {
   int srv_fd = -1;
   std::vector<std::thread> workers;
   std::atomic<bool> alive{true};
-  std::mutex mtx;
-  std::condition_variable cv;
+  std::recursive_mutex mtx;
+  std::condition_variable_any cv;
   std::map<int, std::pair<bool, int>> cas_res;
   std::atomic<int> req_cnt{0};
 
@@ -48,7 +48,7 @@ class DSM {
   }
 
   void handle(Msg &m) {
-    std::lock_guard<std::mutex> lk(mtx);
+    std::lock_guard<std::recursive_mutex> lk(mtx);
     if (m.type == WRITE) {
       if (m.seq > seqs[m.var]) {
         int old = vars[m.var];
@@ -61,10 +61,15 @@ class DSM {
       Msg r{CAS_RESP, m.var, vars[m.var], 0, 0, m.src, m.req_id, false};
       if (vars[m.var] == m.expected) {
         r.ok = true;
+        int old = vars[m.var];
+        vars[m.var] = m.val;
         int s = ++seqs[m.var];
+        if (on_change)
+          on_change(m.var, old, m.val);
         Msg w{WRITE, m.var, m.val, 0, s, rank, 0, false};
         for (int p : subs[m.var])
-          send_msg(p, w);
+          if (p != rank)
+            send_msg(p, w);
       }
       send_msg(m.src, r);
     } else if (m.type == CAS_RESP) {
@@ -152,39 +157,49 @@ public:
   }
 
   int read(int var) {
-    std::lock_guard<std::mutex> lk(mtx);
+    std::lock_guard<std::recursive_mutex> lk(mtx);
     return vars[var];
   }
 
   void write(int var, int val) {
     if (!subscribed(var))
       return;
-    std::lock_guard<std::mutex> lk(mtx);
+    std::lock_guard<std::recursive_mutex> lk(mtx);
+    int old = vars[var];
+    vars[var] = val;
     int s = ++seqs[var];
+    if (on_change)
+      on_change(var, old, val);
     Msg m{WRITE, var, val, 0, s, rank, 0, false};
     for (int p : subs[var])
-      send_msg(p, m);
+      if (p != rank)
+        send_msg(p, m);
   }
 
   bool cas(int var, int expected, int newval, int *oldval = nullptr) {
     if (!subscribed(var))
       return false;
     if (coord(var) == rank) {
-      std::lock_guard<std::mutex> lk(mtx);
+      std::lock_guard<std::recursive_mutex> lk(mtx);
       if (oldval)
         *oldval = vars[var];
       if (vars[var] != expected)
         return false;
+      int old = vars[var];
+      vars[var] = newval;
       int s = ++seqs[var];
+      if (on_change)
+        on_change(var, old, newval);
       Msg m{WRITE, var, newval, 0, s, rank, 0, false};
       for (int p : subs[var])
-        send_msg(p, m);
+        if (p != rank)
+          send_msg(p, m);
       return true;
     }
     int id = req_cnt++;
     Msg m{CAS_REQ, var, newval, expected, 0, rank, id, false};
     send_msg(coord(var), m);
-    std::unique_lock<std::mutex> lk(mtx);
+    std::unique_lock<std::recursive_mutex> lk(mtx);
     cv.wait(lk, [&] { return cas_res.count(id); });
     auto [ok, old] = cas_res[id];
     cas_res.erase(id);
@@ -193,6 +208,5 @@ public:
     return ok;
   }
 
-  void sync() { std::this_thread::sleep_for(std::chrono::milliseconds(50)); }
+  void sync() { std::this_thread::sleep_for(std::chrono::milliseconds(100)); }
 };
-
