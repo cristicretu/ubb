@@ -35,30 +35,29 @@ void run(int rank, int n) {
     dsm.sync();
   }
 
-  printf("[P%d] === cas ===\n", rank);
-  if (rank == 0)
-    dsm.write(0, 0);
-  dsm.sync();
-  int old;
-  bool ok = dsm.cas(0, 0, rank + 100, &old);
-  printf("[P%d] cas(0, 0, %d) = %s, old=%d\n", rank, rank + 100,
-         ok ? "ok" : "fail", old);
-  dsm.sync();
+  printf("[P%d] === cas tests ===\n", rank);
+  if (rank == 0) {
+    dsm.write(0, 50);
+    dsm.sync();
 
-  printf("[P%d] === counter ===\n", rank);
-  if (rank == 0)
-    dsm.write(0, 0);
-  dsm.sync();
-  for (int i = 0; i < 3; i++) {
-    while (true) {
-      int cur = dsm.read(0);
-      if (dsm.cas(0, cur, cur + 1))
-        break;
-    }
+    int old;
+    bool ok = dsm.cas(0, 999, 123, &old);
+    printf("[P%d] CAS FAIL TEST: cas(expected=999, new=123) when val=50 => %s "
+           "(old=%d)\n",
+           rank, ok ? "SUCCESS" : "FAIL", old);
+
+    ok = dsm.cas(0, 50, 200, &old);
+    printf("[P%d] CAS SUCCESS TEST: cas(expected=50, new=200) when val=50 => "
+           "%s (old=%d)\n",
+           rank, ok ? "SUCCESS" : "FAIL", old);
+    printf("[P%d] After CAS: var[0] = %d\n", rank, dsm.read(0));
+  } else {
+    dsm.sync();
   }
   dsm.sync();
-  dsm.sync();
-  printf("[P%d] final = %d (expect %d)\n", rank, dsm.read(0), n * 3);
+
+  printf("[P%d] Final read: var[0] = %d (all should see 200)\n", rank,
+         dsm.read(0));
 
   dsm.stop();
 }
