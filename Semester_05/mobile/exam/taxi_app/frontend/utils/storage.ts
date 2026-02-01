@@ -1,51 +1,52 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FileItem } from '../types/file';
+import { Cab } from '../types/cab';
 import { log } from './logger';
 
 const KEYS = {
-  FILES: '@files_catalog:files',
-  PENDING: '@files_catalog:pending',
+  CABS: '@taxi_app:cabs',
+  PENDING: '@taxi_app:pending',
+  DRIVER_NAME: '@taxi_app:driver_name',
 };
 
-export async function saveFiles(files: FileItem[]): Promise<void> {
+export async function saveCabs(cabs: Cab[]): Promise<void> {
   try {
-    await AsyncStorage.setItem(KEYS.FILES, JSON.stringify(files));
-    log(`Saved ${files.length} files`, 'success');
+    await AsyncStorage.setItem(KEYS.CABS, JSON.stringify(cabs));
+    log(`Saved ${cabs.length} cabs`, 'success');
   } catch (error) {
-    log(`Error saving files: ${error}`, 'error');
+    log(`Error saving cabs: ${error}`, 'error');
     throw error;
   }
 }
 
-export async function getLocalFiles(): Promise<FileItem[]> {
+export async function getLocalCabs(): Promise<Cab[]> {
   try {
-    const json = await AsyncStorage.getItem(KEYS.FILES);
+    const json = await AsyncStorage.getItem(KEYS.CABS);
     if (json) {
-      const files = JSON.parse(json) as FileItem[];
-      log(`Loaded ${files.length} cached files`, 'success');
-      return files;
+      const cabs = JSON.parse(json) as Cab[];
+      log(`Loaded ${cabs.length} cached cabs`, 'success');
+      return cabs;
     }
-    log('No cached files', 'info');
+    log('No cached cabs', 'info');
     return [];
   } catch (error) {
-    log(`Error loading files: ${error}`, 'error');
+    log(`Error loading cabs: ${error}`, 'error');
     return [];
   }
 }
 
-export async function savePendingFile(file: FileItem): Promise<void> {
+export async function savePendingCab(cab: Cab): Promise<void> {
   try {
-    const pending = await getPendingFiles();
-    pending.push(file);
+    const pending = await getPendingCabs();
+    pending.push(cab);
     await AsyncStorage.setItem(KEYS.PENDING, JSON.stringify(pending));
-    log(`Saved pending: ${file.name}`, 'success');
+    log(`Saved pending: ${cab.name}`, 'success');
   } catch (error) {
     log(`Error saving pending: ${error}`, 'error');
     throw error;
   }
 }
 
-export async function getPendingFiles(): Promise<FileItem[]> {
+export async function getPendingCabs(): Promise<Cab[]> {
   try {
     const json = await AsyncStorage.getItem(KEYS.PENDING);
     return json ? JSON.parse(json) : [];
@@ -55,12 +56,31 @@ export async function getPendingFiles(): Promise<FileItem[]> {
   }
 }
 
-export async function clearPendingFiles(): Promise<void> {
+export async function clearPendingCabs(): Promise<void> {
   try {
     await AsyncStorage.removeItem(KEYS.PENDING);
-    log('Cleared pending files', 'success');
+    log('Cleared pending cabs', 'success');
   } catch (error) {
     log(`Error clearing pending: ${error}`, 'error');
     throw error;
+  }
+}
+
+export async function saveDriverName(name: string): Promise<void> {
+  try {
+    await AsyncStorage.setItem(KEYS.DRIVER_NAME, name);
+    log(`Saved driver name: ${name}`, 'success');
+  } catch (error) {
+    log(`Error saving driver name: ${error}`, 'error');
+    throw error;
+  }
+}
+
+export async function getDriverName(): Promise<string | null> {
+  try {
+    return await AsyncStorage.getItem(KEYS.DRIVER_NAME);
+  } catch (error) {
+    log(`Error loading driver name: ${error}`, 'error');
+    return null;
   }
 }

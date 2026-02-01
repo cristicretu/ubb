@@ -7,17 +7,33 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Record',
-          headerTitle: 'Record Section',
-          tabBarIcon: ({ color, size }) => <Ionicons name="document-text" size={size} color={color} />,
+          title: 'Register',
+          headerTitle: 'Registration Section',
+          tabBarIcon: ({ color, size }) => <Ionicons name="car" size={size} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="manage"
         options={{
           title: 'Manage',
           headerTitle: 'Manage Section',
-          tabBarIcon: ({ color, size }) => <Ionicons name="folder" size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => <Ionicons name="settings" size={size} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="reports"
+        options={{
+          title: 'Reports',
+          headerTitle: 'Reports Section',
+          tabBarIcon: ({ color, size }) => <Ionicons name="stats-chart" size={size} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="driver"
+        options={{
+          title: 'Driver',
+          headerTitle: 'Driver Section',
+          tabBarIcon: ({ color, size }) => <Ionicons name="person" size={size} color={color} />,
         }}
       />
     </Tabs>
