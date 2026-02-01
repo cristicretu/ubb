@@ -17,6 +17,7 @@ import { getAllFiles, getLocations, getFilesByLocation, deleteFile } from '@/uti
 import { getLocalFiles, saveFiles } from '@/utils/storage';
 import { log } from '@/utils/logger';
 import { FileItem } from '@/types/file';
+import { useWebSocket } from '@/hooks/useWebSocket';
 
 export default function ManageScreen() {
   const [isOnline, setIsOnline] = useState(false);
@@ -51,6 +52,22 @@ export default function ManageScreen() {
     if (selectedLocation && isOnline) fetchFilesForLocation(selectedLocation);
     else if (selectedLocation && !isOnline) setLocationFiles([]);
   }, [selectedLocation, isOnline]);
+
+  useWebSocket({
+    onMessage: (message: any) => {
+      if (message.name && message.size && message.location) {
+        Alert.alert(
+          'New File',
+          `Name: ${message.name}\nSize: ${message.size}KB\nLocation: ${message.location}`
+        );
+        if (isOnline) {
+          fetchLocations();
+          fetchTopFiles();
+          if (selectedLocation) fetchFilesForLocation(selectedLocation);
+        }
+      }
+    },
+  });
 
   const showToast = (title: string, message: string, type: 'success' | 'error') => {
     log(`${title}: ${message}`, type);

@@ -4,6 +4,7 @@ import {
   StyleSheet,
   ScrollView,
   FlatList,
+  Alert,
 } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import { getAllCabs } from '@/utils/api';
@@ -13,6 +14,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { Cab } from '@/types/cab';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { useWebSocket } from '@/hooks/useWebSocket';
 
 export default function ReportsSection() {
   const [cabs, setCabs] = useState<Cab[]>([]);
@@ -33,6 +35,18 @@ export default function ReportsSection() {
   useEffect(() => {
     loadCabs();
   }, []);
+
+  useWebSocket({
+    onMessage: (message: any) => {
+      if (message.name && message.size && message.driver) {
+        Alert.alert(
+          'New Cab',
+          `Name: ${message.name}\nSize: ${message.size}\nDriver: ${message.driver}`
+        );
+        loadCabs();
+      }
+    },
+  });
 
   const loadCabs = async () => {
     setIsLoading(true);
