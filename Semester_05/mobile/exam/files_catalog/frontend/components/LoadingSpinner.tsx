@@ -1,15 +1,13 @@
 import React from 'react';
 import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
 
-interface LoadingSpinnerProps {
+interface Props {
   visible: boolean;
   message?: string;
 }
 
-export default function LoadingSpinner({ visible, message }: LoadingSpinnerProps) {
-  if (!visible) {
-    return null;
-  }
+export default function LoadingSpinner({ visible, message }: Props) {
+  if (!visible) return null;
 
   return (
     <View style={styles.container}>
