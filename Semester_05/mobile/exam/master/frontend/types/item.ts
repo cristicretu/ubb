@@ -1,8 +1,8 @@
-export interface Document {
+export interface Item {
   id: number;
   name: string;
   status: string;
   owner: string;
-  size: number;
-  usage: number;
+  value1: number;
+  value2: number;
 }

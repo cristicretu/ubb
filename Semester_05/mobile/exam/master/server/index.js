@@ -11,34 +11,29 @@ const wss = new WebSocket.Server({ server });
 app.use(cors());
 app.use(bodyParser.json());
 
-const documents = [];
+const items = [];
 let nextId = 1;
 
 const seedData = [
-  { name: 'Annual Report 2024', status: 'shared', owner: 'John', size: 1250, usage: 45 },
-  { name: 'Project Proposal', status: 'draft', owner: 'Maria', size: 350, usage: 8 },
-  { name: 'Financial Analysis', status: 'secret', owner: 'David', size: 890, usage: 3 },
-  { name: 'Meeting Notes', status: 'open', owner: 'Sarah', size: 120, usage: 67 },
-  { name: 'User Manual', status: 'shared', owner: 'Michael', size: 2100, usage: 156 },
-  { name: 'Budget Planning', status: 'draft', owner: 'John', size: 450, usage: 12 },
-  { name: 'Client Contract', status: 'secret', owner: 'Maria', size: 680, usage: 5 },
-  { name: 'Marketing Strategy', status: 'open', owner: 'David', size: 950, usage: 89 },
-  { name: 'Technical Documentation', status: 'shared', owner: 'Sarah', size: 3200, usage: 234 },
-  { name: 'Quarterly Review', status: 'open', owner: 'Michael', size: 750, usage: 45 },
-  { name: 'Research Paper', status: 'draft', owner: 'John', size: 1800, usage: 23 },
-  { name: 'Product Specs', status: 'shared', owner: 'Maria', size: 1100, usage: 78 },
-  { name: 'Confidential Memo', status: 'secret', owner: 'David', size: 250, usage: 2 },
-  { name: 'Training Guide', status: 'open', owner: 'Sarah', size: 1450, usage: 112 },
-  { name: 'Code Review', status: 'draft', owner: 'Michael', size: 520, usage: 15 },
-  { name: 'Sales Report', status: 'shared', owner: 'John', size: 980, usage: 67 },
-  { name: 'Design Mockups', status: 'open', owner: 'Maria', size: 4200, usage: 189 },
-  { name: 'Legal Agreement', status: 'secret', owner: 'David', size: 650, usage: 4 },
-  { name: 'Team Handbook', status: 'shared', owner: 'Sarah', size: 2800, usage: 201 },
-  { name: 'Performance Metrics', status: 'open', owner: 'Michael', size: 380, usage: 34 },
+  { name: 'Item Alpha', status: 'available', owner: '', value1: 500, value2: 12 },
+  { name: 'Item Beta', status: 'pending', owner: 'Alice', value1: 1200, value2: 28 },
+  { name: 'Item Gamma', status: 'available', owner: '', value1: 320, value2: 5 },
+  { name: 'Item Delta', status: 'done', owner: 'Bob', value1: 1800, value2: 35 },
+  { name: 'Item Epsilon', status: 'available', owner: '', value1: 650, value2: 8 },
+  { name: 'Item Zeta', status: 'pending', owner: 'Carol', value1: 980, value2: 42 },
+  { name: 'Item Eta', status: 'canceled', owner: '', value1: 750, value2: 3 },
+  { name: 'Item Theta', status: 'available', owner: '', value1: 1100, value2: 19 },
+  { name: 'Item Iota', status: 'done', owner: 'David', value1: 420, value2: 22 },
+  { name: 'Item Kappa', status: 'available', owner: '', value1: 550, value2: 15 },
+  { name: 'Item Lambda', status: 'pending', owner: 'Alice', value1: 1350, value2: 50 },
+  { name: 'Item Mu', status: 'canceled', owner: '', value1: 280, value2: 7 },
+  { name: 'Item Nu', status: 'available', owner: '', value1: 890, value2: 31 },
+  { name: 'Item Xi', status: 'done', owner: 'Bob', value1: 1650, value2: 18 },
+  { name: 'Item Omicron', status: 'available', owner: '', value1: 720, value2: 11 },
 ];
 
-seedData.forEach(doc => documents.push({ id: nextId++, ...doc }));
-console.log(`[Server] Initialized with ${documents.length} documents`);
+seedData.forEach(item => items.push({ id: nextId++, ...item }));
+console.log(`[Server] Initialized with ${items.length} items`);
 
 const broadcast = (data) => {
   wss.clients.forEach(client => {
@@ -53,83 +48,113 @@ wss.on('connection', (ws) => {
   ws.on('close', () => console.log('[WS] Client disconnected'));
 });
 
-app.post('/document', (req, res) => {
-  const { name, status, owner, size } = req.body;
+app.post('/item', (req, res) => {
+  const { name, status, owner, value1 } = req.body;
 
-  if (!name || !status || !owner || size === undefined) {
-    console.log('[POST /document] Error: Missing required fields');
-    return res.status(400).json({ error: 'Missing required fields: name, status, owner, size' });
+  if (!name || !status || value1 === undefined) {
+    console.log('[POST /item] Error: Missing required fields');
+    return res.status(400).json({ error: 'Missing required fields: name, status, value1' });
   }
 
-  const sizeInt = parseInt(size);
-  if (isNaN(sizeInt) || sizeInt <= 0) {
-    console.log('[POST /document] Error: Invalid size');
-    return res.status(400).json({ error: 'Invalid size: must be a positive integer' });
+  const value1Int = parseInt(value1);
+  if (isNaN(value1Int) || value1Int < 0) {
+    console.log('[POST /item] Error: Invalid value1');
+    return res.status(400).json({ error: 'Invalid value1: must be a non-negative integer' });
   }
 
-  const validStatuses = ['shared', 'open', 'draft', 'secret'];
-  if (!validStatuses.includes(status)) {
-    console.log('[POST /document] Error: Invalid status');
-    return res.status(400).json({ error: `Invalid status: must be one of ${validStatuses.join(', ')}` });
-  }
-
-  const newDocument = {
+  const newItem = {
     id: nextId++,
     name: String(name),
     status: String(status),
-    owner: String(owner),
-    size: sizeInt,
-    usage: 0
+    owner: owner ? String(owner) : '',
+    value1: value1Int,
+    value2: 0
   };
 
-  documents.push(newDocument);
-  console.log(`[POST /document] Created document: ${newDocument.name} (ID: ${newDocument.id}, Owner: ${newDocument.owner})`);
+  items.push(newItem);
+  console.log(`[POST /item] Created: ${newItem.name} (ID: ${newItem.id})`);
 
-  broadcast(newDocument);
-  res.json(newDocument);
+  broadcast(newItem);
+  res.json(newItem);
 });
 
 app.get('/all', (req, res) => {
-  console.log(`[GET /all] Returning ${documents.length} documents`);
-  res.json(documents);
+  console.log(`[GET /all] Returning ${items.length} items`);
+  res.json(items);
 });
 
-app.get('/documents/:owner', (req, res) => {
+app.get('/items/:owner', (req, res) => {
   const ownerParam = req.params.owner;
-  const filtered = documents.filter(doc => 
-    doc.owner.toLowerCase() === ownerParam.toLowerCase()
+  const filtered = items.filter(item => 
+    item.owner.toLowerCase() === ownerParam.toLowerCase()
   );
-  console.log(`[GET /documents/${ownerParam}] Found ${filtered.length} documents`);
+  console.log(`[GET /items/${ownerParam}] Found ${filtered.length} items`);
   res.json(filtered);
 });
 
-app.delete('/document/:id', (req, res) => {
+app.get('/available', (req, res) => {
+  const available = items.filter(item => item.status === 'available');
+  console.log(`[GET /available] Found ${available.length} items`);
+  res.json(available);
+});
+
+app.delete('/item/:id', (req, res) => {
   const id = parseInt(req.params.id);
-  
+
   if (isNaN(id) || id <= 0) {
-    console.log(`[DELETE /document/${req.params.id}] Error: Invalid ID`);
-    return res.status(400).json({ error: 'Invalid ID: must be a positive integer' });
+    console.log(`[DELETE /item] Error: Invalid ID`);
+    return res.status(400).json({ error: 'Invalid ID' });
   }
 
-  const index = documents.findIndex(doc => doc.id === id);
+  const index = items.findIndex(item => item.id === id);
   if (index === -1) {
-    console.log(`[DELETE /document/${id}] Error: Document not found`);
-    return res.status(404).json({ error: 'Document not found' });
+    console.log(`[DELETE /item/${id}] Error: Item not found`);
+    return res.status(404).json({ error: 'Item not found' });
   }
 
-  const deleted = documents.splice(index, 1)[0];
-  console.log(`[DELETE /document/${id}] Deleted document: ${deleted.name} (Owner: ${deleted.owner})`);
+  const deleted = items.splice(index, 1)[0];
+  console.log(`[DELETE /item/${id}] Deleted: ${deleted.name}`);
 
-  broadcast({ type: 'deleted', id: deleted.id });
   res.json({ success: true, deleted });
+});
+
+app.post('/action', (req, res) => {
+  const { itemId, status, owner } = req.body;
+
+  if (!itemId) {
+    console.log('[POST /action] Error: Missing itemId');
+    return res.status(400).json({ error: 'Missing required field: itemId' });
+  }
+
+  const id = parseInt(itemId);
+  if (isNaN(id) || id <= 0) {
+    console.log('[POST /action] Error: Invalid itemId');
+    return res.status(400).json({ error: 'Invalid itemId' });
+  }
+
+  const item = items.find(i => i.id === id);
+  if (!item) {
+    console.log(`[POST /action] Error: Item not found (ID: ${id})`);
+    return res.status(404).json({ error: 'Item not found' });
+  }
+
+  if (status) item.status = String(status);
+  if (owner !== undefined) item.owner = String(owner);
+  item.value2 = (item.value2 || 0) + 1;
+
+  console.log(`[POST /action] Updated: ${item.name} (Status: ${item.status}, Owner: ${item.owner})`);
+
+  res.json(item);
 });
 
 const PORT = 3001;
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`[Server] Running on port ${PORT}`);
-  console.log(`[Server] Available endpoints:`);
-  console.log(`  POST   /document - Create a new document`);
-  console.log(`  GET    /all - Get all documents`);
-  console.log(`  GET    /documents/:owner - Get documents by owner`);
-  console.log(`  DELETE /document/:id - Delete a document by ID`);
+  console.log(`[Server] Endpoints:`);
+  console.log(`  POST   /item - Create item`);
+  console.log(`  GET    /all - Get all items`);
+  console.log(`  GET    /items/:owner - Get items by owner`);
+  console.log(`  GET    /available - Get available items`);
+  console.log(`  DELETE /item/:id - Delete item`);
+  console.log(`  POST   /action - Update item status/owner`);
 });

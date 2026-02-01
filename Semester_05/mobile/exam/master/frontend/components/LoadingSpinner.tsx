@@ -1,33 +1,32 @@
 import React from 'react';
-import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
+import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { ThemedText } from './themed-text';
 
-interface Props {
+interface LoadingSpinnerProps {
   visible: boolean;
   message?: string;
 }
 
-export default function LoadingSpinner({ visible, message }: Props) {
+export default function LoadingSpinner({ visible, message }: LoadingSpinnerProps) {
   if (!visible) return null;
 
   return (
     <View style={styles.container}>
       <ActivityIndicator size="large" color="#007AFF" />
-      {message && <Text style={styles.message}>{message}</Text>}
+      {message && <ThemedText style={styles.message}>{message}</ThemedText>}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     padding: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   message: {
     marginTop: 12,
-    fontSize: 16,
+    fontSize: 14,
     color: '#666',
-    textAlign: 'center',
   },
 });

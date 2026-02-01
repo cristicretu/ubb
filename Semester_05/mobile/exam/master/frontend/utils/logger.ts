@@ -1,12 +1,6 @@
-type LogType = 'info' | 'error' | 'success';
+type LogLevel = 'info' | 'success' | 'error';
 
-export const log = (message: string, type: LogType = 'info'): void => {
-  const ts = new Date().toISOString();
-  const tag = type.toUpperCase();
-  
-  if (type === 'error') {
-    console.error(`[${ts}] [${tag}] ${message}`);
-  } else {
-    console.log(`[${ts}] [${tag}] ${message}`);
-  }
+export const log = (message: string, level: LogLevel = 'info') => {
+  const timestamp = new Date().toISOString();
+  console.log(`[${timestamp}] [${level.toUpperCase()}] ${message}`);
 };

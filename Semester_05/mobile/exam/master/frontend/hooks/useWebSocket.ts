@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { WS_URL } from '../config';
 
 interface UseWebSocketOptions {
