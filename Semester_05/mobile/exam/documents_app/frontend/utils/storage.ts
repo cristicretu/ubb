@@ -1,51 +1,52 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FileItem } from '../types/file';
+import { Document } from '../types/document';
 import { log } from './logger';
 
 const KEYS = {
-  FILES: '@files_catalog:files',
-  PENDING: '@files_catalog:pending',
+  DOCS: '@documents_app:docs',
+  PENDING: '@documents_app:pending',
+  OWNER: '@documents_app:owner',
 };
 
-export async function saveFiles(files: FileItem[]): Promise<void> {
+export async function saveDocs(docs: Document[]): Promise<void> {
   try {
-    await AsyncStorage.setItem(KEYS.FILES, JSON.stringify(files));
-    log(`Saved ${files.length} files`, 'success');
+    await AsyncStorage.setItem(KEYS.DOCS, JSON.stringify(docs));
+    log(`Saved ${docs.length} docs`, 'success');
   } catch (error) {
-    log(`Error saving files: ${error}`, 'error');
+    log(`Error saving docs: ${error}`, 'error');
     throw error;
   }
 }
 
-export async function getLocalFiles(): Promise<FileItem[]> {
+export async function getLocalDocs(): Promise<Document[]> {
   try {
-    const json = await AsyncStorage.getItem(KEYS.FILES);
+    const json = await AsyncStorage.getItem(KEYS.DOCS);
     if (json) {
-      const files = JSON.parse(json) as FileItem[];
-      log(`Loaded ${files.length} cached files`, 'success');
-      return files;
+      const docs = JSON.parse(json) as Document[];
+      log(`Loaded ${docs.length} cached docs`, 'success');
+      return docs;
     }
-    log('No cached files', 'info');
+    log('No cached docs', 'info');
     return [];
   } catch (error) {
-    log(`Error loading files: ${error}`, 'error');
+    log(`Error loading docs: ${error}`, 'error');
     return [];
   }
 }
 
-export async function savePendingFile(file: FileItem): Promise<void> {
+export async function savePendingDoc(doc: Document): Promise<void> {
   try {
-    const pending = await getPendingFiles();
-    pending.push(file);
+    const pending = await getPendingDocs();
+    pending.push(doc);
     await AsyncStorage.setItem(KEYS.PENDING, JSON.stringify(pending));
-    log(`Saved pending: ${file.name}`, 'success');
+    log(`Saved pending: ${doc.name}`, 'success');
   } catch (error) {
     log(`Error saving pending: ${error}`, 'error');
     throw error;
   }
 }
 
-export async function getPendingFiles(): Promise<FileItem[]> {
+export async function getPendingDocs(): Promise<Document[]> {
   try {
     const json = await AsyncStorage.getItem(KEYS.PENDING);
     return json ? JSON.parse(json) : [];
@@ -55,12 +56,22 @@ export async function getPendingFiles(): Promise<FileItem[]> {
   }
 }
 
-export async function clearPendingFiles(): Promise<void> {
+export async function saveOwnerName(owner: string): Promise<void> {
   try {
-    await AsyncStorage.removeItem(KEYS.PENDING);
-    log('Cleared pending files', 'success');
+    await AsyncStorage.setItem(KEYS.OWNER, owner);
+    log(`Saved owner: ${owner}`, 'success');
   } catch (error) {
-    log(`Error clearing pending: ${error}`, 'error');
+    log(`Error saving owner: ${error}`, 'error');
     throw error;
+  }
+}
+
+export async function getOwnerName(): Promise<string | null> {
+  try {
+    const owner = await AsyncStorage.getItem(KEYS.OWNER);
+    return owner;
+  } catch (error) {
+    log(`Error loading owner: ${error}`, 'error');
+    return null;
   }
 }

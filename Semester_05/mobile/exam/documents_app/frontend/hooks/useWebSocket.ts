@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { WS_URL } from '../config';
 
 interface UseWebSocketOptions {
@@ -9,6 +9,11 @@ export function useWebSocket({ onMessage }: UseWebSocketOptions = {}) {
   const [isConnected, setIsConnected] = useState(false);
   const [lastMessage, setLastMessage] = useState<any>(null);
   const wsRef = useRef<WebSocket | null>(null);
+  const onMessageRef = useRef(onMessage);
+
+  useEffect(() => {
+    onMessageRef.current = onMessage;
+  }, [onMessage]);
 
   useEffect(() => {
     const ws = new WebSocket(WS_URL);
@@ -21,10 +26,10 @@ export function useWebSocket({ onMessage }: UseWebSocketOptions = {}) {
       try {
         const data = JSON.parse(event.data);
         setLastMessage(data);
-        onMessage?.(data);
+        onMessageRef.current?.(data);
       } catch {
         setLastMessage(event.data);
-        onMessage?.(event.data);
+        onMessageRef.current?.(event.data);
       }
     };
 
@@ -34,7 +39,7 @@ export function useWebSocket({ onMessage }: UseWebSocketOptions = {}) {
       wsRef.current?.close();
       wsRef.current = null;
     };
-  }, [onMessage]);
+  }, []);
 
   return { isConnected, lastMessage };
 }

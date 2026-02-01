@@ -1,283 +1,406 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
-  TextInput,
   StyleSheet,
   ScrollView,
-  FlatList,
-  Alert,
+  TextInput,
   TouchableOpacity,
-  RefreshControl,
+  Alert,
+  FlatList,
   ActivityIndicator,
 } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
-import { createFile, getAllFiles } from '@/utils/api';
-import { saveFiles, getLocalFiles, savePendingFile } from '@/utils/storage';
-import { log } from '@/utils/logger';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import { useWebSocket } from '@/hooks/useWebSocket';
-import { FileItem } from '@/types/file';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import { createDocument, getDocumentsByOwner } from '@/utils/api';
+import { saveDocs, getLocalDocs, savePendingDoc, saveOwnerName, getOwnerName } from '@/utils/storage';
+import { Document } from '@/types/document';
+import { useWebSocket } from '@/hooks/useWebSocket';
+import { log } from '@/utils/logger';
 
-export default function RecordSection() {
-  const [name, setName] = useState('');
-  const [status, setStatus] = useState('');
-  const [size, setSize] = useState('');
-  const [location, setLocation] = useState('');
-  const [files, setFiles] = useState<FileItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isOnline, setIsOnline] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-
-  const handleWebSocketMessage = useCallback((message: any) => {
-    log('WebSocket message received', 'info');
-    
-    if (message?.name && message?.size !== undefined && message?.location) {
-      const newFile: FileItem = {
-        id: message.id || Date.now(),
-        name: message.name,
-        status: message.status || '',
-        size: message.size,
-        location: message.location,
-        usage: message.usage || 0,
-      };
-
-      Alert.alert(
-        'New File Added',
-        `Name: ${newFile.name}\nSize: ${newFile.size}KB\nLocation: ${newFile.location}`
-      );
-
-      setFiles((prev) => {
-        if (prev.some((f) => f.id === newFile.id)) return prev;
-        return [newFile, ...prev];
-      });
-
-      log(`New file via WebSocket: ${newFile.name}`, 'success');
-    }
-  }, []);
-
-  useWebSocket({ onMessage: handleWebSocketMessage });
+export default function OwnerSection() {
+  const [isOnline, setIsOnline] = useState(false);
+  const [ownerName, setOwnerName] = useState('');
+  const [savedOwner, setSavedOwner] = useState<string | null>(null);
+  const [documents, setDocuments] = useState<Document[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  
+  // Document form fields
+  const [docName, setDocName] = useState('');
+  const [docStatus, setDocStatus] = useState('');
+  const [docSize, setDocSize] = useState('');
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
       const online = state.isConnected ?? false;
       setIsOnline(online);
-      log(`Network: ${online ? 'online' : 'offline'}`, 'info');
+      log(`Network: ${online ? 'Online' : 'Offline'}`, 'info');
     });
-
     NetInfo.fetch().then((state) => setIsOnline(state.isConnected ?? false));
     return () => unsubscribe();
   }, []);
 
   useEffect(() => {
-    loadFiles();
+    loadSavedOwner();
   }, []);
 
-  const loadFiles = async () => {
-    setIsLoading(true);
-    log('Loading files...', 'info');
+  useEffect(() => {
+    if (savedOwner) {
+      loadDocuments();
+    }
+  }, [savedOwner, isOnline]);
 
-    try {
-      if (isOnline) {
-        const response = await getAllFiles();
-        if (response.error) {
-          log(`Error: ${response.error}`, 'error');
-          const localFiles = await getLocalFiles();
-          setFiles(localFiles);
-          Alert.alert('Error', response.error);
-        } else if (response.data) {
-          setFiles(response.data);
-          await saveFiles(response.data);
-          log(`Loaded ${response.data.length} files`, 'success');
+  useWebSocket({
+    onMessage: (message: any) => {
+      if (message.name && message.size && message.owner) {
+        Alert.alert(
+          'New Document',
+          `New Document: ${message.name}, Size: ${message.size}KB, Owner: ${message.owner}`
+        );
+        // Refresh documents if it's for the current owner
+        if (savedOwner && message.owner.toLowerCase() === savedOwner.toLowerCase()) {
+          loadDocuments();
         }
-      } else {
-        const localFiles = await getLocalFiles();
-        setFiles(localFiles);
-        log(`Loaded ${localFiles.length} cached files`, 'info');
       }
-    } catch (error) {
-      const msg = error instanceof Error ? error.message : 'Unknown error';
-      log(`Error: ${msg}`, 'error');
-      Alert.alert('Error', msg);
-    } finally {
-      setIsLoading(false);
+    },
+  });
+
+  const loadSavedOwner = async () => {
+    const owner = await getOwnerName();
+    if (owner) {
+      setSavedOwner(owner);
+      setOwnerName(owner);
     }
   };
 
-  const onRefresh = useCallback(async () => {
-    setRefreshing(true);
-    await loadFiles();
-    setRefreshing(false);
-  }, [isOnline]);
+  const handleSaveOwner = async () => {
+    const trimmed = ownerName.trim();
+    if (!trimmed) {
+      Alert.alert('Error', 'Owner name cannot be empty');
+      return;
+    }
+    await saveOwnerName(trimmed);
+    setSavedOwner(trimmed);
+    Alert.alert('Success', 'Owner name saved');
+  };
 
-  const handleSubmit = async () => {
-    if (!name.trim()) return Alert.alert('Error', 'Enter file name');
-    if (!status.trim()) return Alert.alert('Error', 'Enter status');
-    if (!size.trim() || isNaN(Number(size))) return Alert.alert('Error', 'Enter valid size');
-    if (!location.trim()) return Alert.alert('Error', 'Enter location');
+  const loadDocuments = async () => {
+    if (!savedOwner) return;
 
-    setIsSubmitting(true);
-    log(`Submitting: ${name}`, 'info');
+    // Try to load from cache first
+    const cachedDocs = await getLocalDocs();
+    const ownerDocs = cachedDocs.filter(
+      (doc) => doc.owner.toLowerCase() === savedOwner.toLowerCase()
+    );
+    
+    if (ownerDocs.length > 0) {
+      setDocuments(ownerDocs);
+    }
 
-    const fileData = {
-      name: name.trim(),
-      status: status.trim(),
-      size: Number(size),
-      location: location.trim(),
+    if (!isOnline) {
+      return;
+    }
+
+    setLoading(true);
+    const response = await getDocumentsByOwner(savedOwner);
+    setLoading(false);
+
+    if (response.error) {
+      Alert.alert('Error', response.error);
+      return;
+    }
+
+    if (response.data) {
+      setDocuments(response.data);
+      // Cache all documents (merge with existing)
+      const allCached = await getLocalDocs();
+      const updatedDocs = [...allCached];
+      response.data.forEach((doc) => {
+        const index = updatedDocs.findIndex((d) => d.id === doc.id);
+        if (index >= 0) {
+          updatedDocs[index] = doc;
+        } else {
+          updatedDocs.push(doc);
+        }
+      });
+      await saveDocs(updatedDocs);
+    }
+  };
+
+  const handleSubmitDocument = async () => {
+    if (!savedOwner) {
+      Alert.alert('Error', 'Please save owner name first');
+      return;
+    }
+
+    const trimmedName = docName.trim();
+    const trimmedStatus = docStatus.trim();
+    const sizeNum = parseInt(docSize);
+
+    if (!trimmedName) {
+      Alert.alert('Error', 'Document name is required');
+      return;
+    }
+    if (!trimmedStatus) {
+      Alert.alert('Error', 'Status is required');
+      return;
+    }
+    if (isNaN(sizeNum) || sizeNum <= 0) {
+      Alert.alert('Error', 'Size must be a positive number');
+      return;
+    }
+
+    const newDoc: Omit<Document, 'id' | 'usage'> = {
+      name: trimmedName,
+      status: trimmedStatus,
+      owner: savedOwner,
+      size: sizeNum,
     };
 
-    try {
-      if (isOnline) {
-        const response = await createFile(fileData);
-        if (response.error) {
-          log(`Error: ${response.error}`, 'error');
-          Alert.alert('Error', response.error);
-        } else if (response.data) {
-          setFiles((prev) => [response.data!, ...prev]);
-          await saveFiles([response.data, ...files]);
-          Alert.alert('Success', 'File created!');
-          log(`Created: ${response.data.name}`, 'success');
-          setName(''); setStatus(''); setSize(''); setLocation('');
-        }
-      } else {
-        const pendingFile: FileItem = { id: Date.now(), ...fileData, usage: 0 };
-        await savePendingFile(pendingFile);
-        setFiles((prev) => [pendingFile, ...prev]);
-        Alert.alert('Saved Offline', 'Will sync when online.');
-        log(`Saved offline: ${pendingFile.name}`, 'success');
-        setName(''); setStatus(''); setSize(''); setLocation('');
-      }
-    } catch (error) {
-      const msg = error instanceof Error ? error.message : 'Unknown error';
-      log(`Error: ${msg}`, 'error');
-      Alert.alert('Error', msg);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleRetry = async () => {
     if (isOnline) {
-      await loadFiles();
+      setSubmitting(true);
+      const response = await createDocument(newDoc);
+      setSubmitting(false);
+
+      if (response.error) {
+        Alert.alert('Error', response.error);
+        // Save as pending on error
+        await savePendingDoc({ ...newDoc, id: Date.now(), usage: 0 });
+        return;
+      }
+
+      if (response.data) {
+        Alert.alert('Success', 'Document created');
+        setDocName('');
+        setDocStatus('');
+        setDocSize('');
+        await loadDocuments();
+      }
     } else {
-      Alert.alert('Offline', 'Check your connection.');
+      // Offline: save as pending
+      await savePendingDoc({ ...newDoc, id: Date.now(), usage: 0 });
+      Alert.alert('Offline', 'Document saved offline. It will be synced when online.');
+      setDocName('');
+      setDocStatus('');
+      setDocSize('');
     }
   };
 
-  const renderFileItem = ({ item }: { item: FileItem }) => (
-    <ThemedView style={styles.fileItem}>
-      <ThemedText type="defaultSemiBold" style={styles.fileName}>{item.name}</ThemedText>
-      <ThemedText style={styles.fileDetail}>ID: {item.id}</ThemedText>
-      <ThemedText style={styles.fileDetail}>Status: {item.status}</ThemedText>
-      <ThemedText style={styles.fileDetail}>Size: {item.size}KB</ThemedText>
-      <ThemedText style={styles.fileDetail}>Location: {item.location}</ThemedText>
-      <ThemedText style={styles.fileDetail}>Usage: {item.usage}</ThemedText>
+  const renderDocumentItem = ({ item }: { item: Document }) => (
+    <ThemedView style={styles.documentItem}>
+      <ThemedText type="defaultSemiBold" style={styles.documentName}>
+        {item.name}
+      </ThemedText>
+      <ThemedText style={styles.documentInfo}>
+        Status: {item.status} | Size: {item.size}KB | Usage: {item.usage}
+      </ThemedText>
     </ThemedView>
   );
 
   return (
-    <ThemedView style={styles.container}>
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-        
+    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+      {/* Owner Settings Section */}
+      <ThemedView style={styles.section}>
+        <ThemedText type="subtitle" style={styles.sectionTitle}>
+          Owner Settings
+        </ThemedText>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter owner name"
+          value={ownerName}
+          onChangeText={setOwnerName}
+          autoCapitalize="none"
+        />
+        <TouchableOpacity style={styles.saveButton} onPress={handleSaveOwner}>
+          <ThemedText style={styles.saveButtonText}>Save</ThemedText>
+        </TouchableOpacity>
+        {savedOwner && (
+          <ThemedText style={styles.savedOwnerText}>Saved owner: {savedOwner}</ThemedText>
+        )}
+      </ThemedView>
+
+      {/* Document Form Section - Only show if owner saved */}
+      {savedOwner && (
         <ThemedView style={styles.section}>
-          <ThemedText type="title" style={styles.sectionTitle}>Record New File</ThemedText>
-
-          <ThemedText style={styles.label}>Name</ThemedText>
-          <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="File name" placeholderTextColor="#999" editable={!isSubmitting} />
-
-          <ThemedText style={styles.label}>Status</ThemedText>
-          <TextInput style={styles.input} value={status} onChangeText={setStatus} placeholder="shared, open, draft, secret" placeholderTextColor="#999" editable={!isSubmitting} />
-
-          <ThemedText style={styles.label}>Size (KB)</ThemedText>
-          <TextInput style={styles.input} value={size} onChangeText={setSize} placeholder="Size in KB" placeholderTextColor="#999" keyboardType="numeric" editable={!isSubmitting} />
-
-          <ThemedText style={styles.label}>Location</ThemedText>
-          <TextInput style={styles.input} value={location} onChangeText={setLocation} placeholder="File location" placeholderTextColor="#999" editable={!isSubmitting} />
-
-          <TouchableOpacity style={[styles.submitButton, isSubmitting && styles.submitButtonDisabled]} onPress={handleSubmit} disabled={isSubmitting}>
-            {isSubmitting ? (
-              <View style={styles.submitButtonLoading}>
-                <ActivityIndicator size="small" color="#fff" />
-                <ThemedText style={styles.submitButtonText}>Submitting...</ThemedText>
-              </View>
+          <ThemedText type="subtitle" style={styles.sectionTitle}>
+            Record Document
+          </ThemedText>
+          <TextInput
+            style={styles.input}
+            placeholder="Document name"
+            value={docName}
+            onChangeText={setDocName}
+            autoCapitalize="none"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Status (shared, open, draft, secret)"
+            value={docStatus}
+            onChangeText={setDocStatus}
+            autoCapitalize="none"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Size (KB)"
+            value={docSize}
+            onChangeText={setDocSize}
+            keyboardType="numeric"
+            autoCapitalize="none"
+          />
+          <ThemedText style={styles.ownerInfo}>Owner: {savedOwner}</ThemedText>
+          <TouchableOpacity
+            style={[styles.submitButton, submitting && styles.submitButtonDisabled]}
+            onPress={handleSubmitDocument}
+            disabled={submitting}>
+            {submitting ? (
+              <ActivityIndicator size="small" color="#fff" />
             ) : (
-              <ThemedText style={styles.submitButtonText}>{isOnline ? 'Submit' : 'Save Offline'}</ThemedText>
+              <ThemedText style={styles.submitButtonText}>Submit</ThemedText>
             )}
           </TouchableOpacity>
-
-          {!isOnline && <ThemedText style={styles.offlineIndicator}>You are offline. File will be saved locally.</ThemedText>}
         </ThemedView>
+      )}
 
+      {/* Documents List Section */}
+      {savedOwner && (
         <ThemedView style={styles.section}>
-          <ThemedText type="title" style={styles.sectionTitle}>All Files</ThemedText>
-
-          {isLoading ? (
-            <LoadingSpinner visible={true} message="Loading files..." />
-          ) : !isOnline && files.length === 0 ? (
-            <ThemedView style={styles.offlineContainer}>
-              <ThemedText style={styles.offlineMessage}>You are offline. No cached files.</ThemedText>
-              <TouchableOpacity style={styles.retryButton} onPress={handleRetry}>
+          <ThemedText type="subtitle" style={styles.sectionTitle}>
+            My Documents
+          </ThemedText>
+          {!isOnline ? (
+            <View style={styles.offlineContainer}>
+              <ThemedText style={styles.offlineMessage}>Offline - Showing cached data</ThemedText>
+              <TouchableOpacity style={styles.retryButton} onPress={loadDocuments}>
                 <ThemedText style={styles.retryButtonText}>Retry</ThemedText>
               </TouchableOpacity>
-            </ThemedView>
-          ) : files.length === 0 ? (
-            <ThemedView style={styles.emptyContainer}>
-              <ThemedText style={styles.emptyText}>No files found</ThemedText>
-            </ThemedView>
+            </View>
+          ) : null}
+          {loading ? (
+            <LoadingSpinner visible={true} message="Loading documents..." />
+          ) : documents.length === 0 ? (
+            <ThemedText style={styles.emptyMessage}>No documents found</ThemedText>
           ) : (
-            <>
-              {!isOnline && (
-                <ThemedView style={styles.offlineBanner}>
-                  <ThemedText style={styles.offlineBannerText}>Showing cached files. You are offline.</ThemedText>
-                  <TouchableOpacity style={styles.retryButtonSmall} onPress={handleRetry}>
-                    <ThemedText style={styles.retryButtonText}>Retry</ThemedText>
-                  </TouchableOpacity>
-                </ThemedView>
-              )}
-              <FlatList
-                data={files}
-                renderItem={renderFileItem}
-                keyExtractor={(item, index) => `${item.id}-${index}`}
-                scrollEnabled={false}
-                contentContainerStyle={styles.listContent}
-              />
-            </>
+            <FlatList
+              data={documents}
+              renderItem={renderDocumentItem}
+              keyExtractor={(item) => item.id.toString()}
+              scrollEnabled={false}
+              ItemSeparatorComponent={() => <View style={styles.separator} />}
+            />
           )}
         </ThemedView>
-      </ScrollView>
-    </ThemedView>
+      )}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  scrollView: { flex: 1 },
-  scrollContent: { padding: 16 },
-  section: { marginBottom: 24 },
-  sectionTitle: { marginBottom: 16, fontSize: 24 },
-  label: { fontSize: 14, fontWeight: '600', marginBottom: 8, marginTop: 12 },
-  input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 12, fontSize: 16, backgroundColor: '#fff', color: '#000' },
-  submitButton: { backgroundColor: '#007AFF', borderRadius: 8, padding: 16, alignItems: 'center', justifyContent: 'center', marginTop: 20, minHeight: 50 },
-  submitButtonDisabled: { opacity: 0.6 },
-  submitButtonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
-  submitButtonLoading: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  offlineIndicator: { marginTop: 12, fontSize: 14, color: '#FF9500', textAlign: 'center' },
-  offlineContainer: { padding: 20, alignItems: 'center', backgroundColor: '#FFF3CD', borderRadius: 8, borderWidth: 1, borderColor: '#FFE69C' },
-  offlineMessage: { fontSize: 16, marginBottom: 16, textAlign: 'center', color: '#856404' },
-  offlineBanner: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 12, backgroundColor: '#FFF3CD', borderRadius: 8, marginBottom: 12, borderWidth: 1, borderColor: '#FFE69C' },
-  offlineBannerText: { flex: 1, fontSize: 14, color: '#856404' },
-  retryButton: { backgroundColor: '#007AFF', borderRadius: 8, paddingHorizontal: 24, paddingVertical: 12 },
-  retryButtonSmall: { backgroundColor: '#007AFF', borderRadius: 6, paddingHorizontal: 16, paddingVertical: 8, marginLeft: 12 },
-  retryButtonText: { color: '#fff', fontSize: 14, fontWeight: '600' },
-  emptyContainer: { padding: 40, alignItems: 'center' },
-  emptyText: { fontSize: 16, color: '#999' },
-  listContent: { paddingBottom: 16 },
-  fileItem: { padding: 16, marginBottom: 12, borderRadius: 8, borderWidth: 1, borderColor: '#ddd', backgroundColor: '#f9f9f9' },
-  fileName: { fontSize: 18, marginBottom: 8 },
-  fileDetail: { fontSize: 14, marginBottom: 4, color: '#666' },
+  container: {
+    flex: 1,
+  },
+  contentContainer: {
+    padding: 16,
+  },
+  section: {
+    marginBottom: 32,
+  },
+  sectionTitle: {
+    marginBottom: 16,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    marginBottom: 12,
+    backgroundColor: '#fff',
+  },
+  saveButton: {
+    backgroundColor: '#007AFF',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  saveButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  savedOwnerText: {
+    fontSize: 14,
+    color: '#666',
+    fontStyle: 'italic',
+  },
+  ownerInfo: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 12,
+  },
+  submitButton: {
+    backgroundColor: '#34C759',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  submitButtonDisabled: {
+    opacity: 0.6,
+  },
+  submitButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  offlineContainer: {
+    padding: 16,
+    backgroundColor: '#FFF3CD',
+    borderRadius: 8,
+    marginBottom: 16,
+    alignItems: 'center',
+  },
+  offlineMessage: {
+    fontSize: 14,
+    color: '#856404',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  retryButton: {
+    backgroundColor: '#FFC107',
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    borderRadius: 6,
+  },
+  retryButtonText: {
+    color: '#000',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  documentItem: {
+    padding: 16,
+    borderRadius: 8,
+    backgroundColor: '#F5F5F5',
+  },
+  documentName: {
+    fontSize: 16,
+    marginBottom: 4,
+  },
+  documentInfo: {
+    fontSize: 14,
+    color: '#666',
+  },
+  emptyMessage: {
+    fontSize: 14,
+    color: '#666',
+    fontStyle: 'italic',
+    textAlign: 'center',
+    padding: 16,
+  },
+  separator: {
+    height: 8,
+  },
 });

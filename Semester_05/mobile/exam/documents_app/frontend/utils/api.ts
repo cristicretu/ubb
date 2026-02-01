@@ -1,17 +1,10 @@
-import { FileItem } from '../types/file';
+import { Document } from '../types/document';
 import { log } from './logger';
 import { API_URL } from '../config';
 
 interface ApiResponse<T> {
   data: T | null;
   error: string | null;
-}
-
-interface CreateFileInput {
-  name: string;
-  status: string;
-  size: number;
-  location: string;
 }
 
 async function fetchWithErrorHandling<T>(
@@ -46,27 +39,23 @@ async function fetchWithErrorHandling<T>(
   }
 }
 
-export async function createFile(file: CreateFileInput): Promise<ApiResponse<FileItem>> {
-  return fetchWithErrorHandling<FileItem>(`${API_URL}/file`, {
+export async function createDocument(doc: Omit<Document, 'id' | 'usage'>): Promise<ApiResponse<Document>> {
+  return fetchWithErrorHandling<Document>(`${API_URL}/document`, {
     method: 'POST',
-    body: JSON.stringify(file),
+    body: JSON.stringify(doc),
   });
 }
 
-export async function getAllFiles(): Promise<ApiResponse<FileItem[]>> {
-  return fetchWithErrorHandling<FileItem[]>(`${API_URL}/all`);
+export async function getAllDocuments(): Promise<ApiResponse<Document[]>> {
+  return fetchWithErrorHandling<Document[]>(`${API_URL}/all`);
 }
 
-export async function getLocations(): Promise<ApiResponse<string[]>> {
-  return fetchWithErrorHandling<string[]>(`${API_URL}/locations`);
+export async function getDocumentsByOwner(owner: string): Promise<ApiResponse<Document[]>> {
+  return fetchWithErrorHandling<Document[]>(`${API_URL}/documents/${encodeURIComponent(owner)}`);
 }
 
-export async function getFilesByLocation(location: string): Promise<ApiResponse<FileItem[]>> {
-  return fetchWithErrorHandling<FileItem[]>(`${API_URL}/files/${encodeURIComponent(location)}`);
-}
-
-export async function deleteFile(id: number): Promise<ApiResponse<void>> {
-  return fetchWithErrorHandling<void>(`${API_URL}/file/${id}`, {
+export async function deleteDocument(id: number): Promise<ApiResponse<void>> {
+  return fetchWithErrorHandling<void>(`${API_URL}/document/${id}`, {
     method: 'DELETE',
   });
 }
