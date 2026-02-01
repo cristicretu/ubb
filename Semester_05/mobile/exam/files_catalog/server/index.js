@@ -43,20 +43,20 @@ wss.on('connection', (ws) => {
 
 app.post('/file', (req, res) => {
   const { name, status, size, location } = req.body;
-  
+
   if (!name || !status || size === undefined || !location) {
     return res.status(400).json({ error: 'Missing fields' });
   }
-  
+
   const sizeInt = parseInt(size);
   if (isNaN(sizeInt) || sizeInt <= 0) {
     return res.status(400).json({ error: 'Invalid size' });
   }
-  
+
   const newFile = { id: nextId++, name: String(name), status: String(status), size: sizeInt, location: String(location), usage: 0 };
   files.push(newFile);
   console.log(`[POST /file] ${newFile.name}`);
-  
+
   broadcast(newFile);
   res.json(newFile);
 });
@@ -81,10 +81,10 @@ app.get('/files/:location', (req, res) => {
 app.delete('/file/:id', (req, res) => {
   const id = parseInt(req.params.id);
   if (isNaN(id) || id <= 0) return res.status(400).json({ error: 'Invalid ID' });
-  
+
   const index = files.findIndex(f => f.id === id);
   if (index === -1) return res.status(404).json({ error: 'Not found' });
-  
+
   const deleted = files.splice(index, 1)[0];
   console.log(`[DELETE /file/${id}] ${deleted.name}`);
   res.json({ success: true, deleted });
