@@ -17,6 +17,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { Cab } from '@/types/cab';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { useWebSocket } from '@/hooks/useWebSocket';
 
 export default function DriverSection() {
   const [driverName, setDriverName] = useState('');
@@ -48,6 +49,20 @@ export default function DriverSection() {
       setCabs([]);
     }
   }, [savedDriverName]);
+
+  useWebSocket({
+    onMessage: (message: any) => {
+      if (message.name && message.size && message.driver) {
+        Alert.alert(
+          'New Cab',
+          `Name: ${message.name}\nSize: ${message.size}\nDriver: ${message.driver}`
+        );
+        if (savedDriverName && message.driver.toLowerCase() === savedDriverName.toLowerCase()) {
+          fetchDriverCabs();
+        }
+      }
+    },
+  });
 
   const loadSavedDriverName = async () => {
     try {

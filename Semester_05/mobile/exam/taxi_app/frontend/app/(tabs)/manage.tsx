@@ -16,6 +16,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { Cab } from '@/types/cab';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { useWebSocket } from '@/hooks/useWebSocket';
 
 export default function ManageSection() {
   const [isOnline, setIsOnline] = useState(false);
@@ -44,6 +45,21 @@ export default function ManageSection() {
     if (selectedColor && isOnline) fetchCabsForColor(selectedColor);
     else if (selectedColor && !isOnline) setCabs([]);
   }, [selectedColor, isOnline]);
+
+  useWebSocket({
+    onMessage: (message: any) => {
+      if (message.name && message.size && message.driver) {
+        Alert.alert(
+          'New Cab',
+          `Name: ${message.name}\nSize: ${message.size}\nDriver: ${message.driver}`
+        );
+        if (isOnline) {
+          fetchColors();
+          if (selectedColor) fetchCabsForColor(selectedColor);
+        }
+      }
+    },
+  });
 
   const showAlert = (title: string, message: string, type: 'success' | 'error') => {
     log(`${title}: ${message}`, type);
