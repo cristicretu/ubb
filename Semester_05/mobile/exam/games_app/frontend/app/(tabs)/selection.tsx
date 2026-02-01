@@ -9,67 +9,69 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
-import { getAllDocuments, deleteDocument } from '@/utils/api';
-import { Document } from '@/types/document';
-import { log } from '@/utils/logger';
+import { getAvailableGames, bookGame } from '@/utils/api';
+import { getUserName } from '@/utils/storage';
+import { Game } from '@/types/game';
+import { useWebSocket } from '@/hooks/useWebSocket';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { useWebSocket } from '@/hooks/useWebSocket';
+import { log } from '@/utils/logger';
 
-export default function ManageSection() {
-  const [documents, setDocuments] = useState<Document[]>([]);
+export default function SelectionSection() {
+  const [games, setGames] = useState<Game[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [borrowingId, setBorrowingId] = useState<number | null>(null);
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
       const online = state.isConnected ?? false;
       setIsOnline(online);
-      log(`Network: ${online ? 'online' : 'offline'}`, 'info');
+      log(`Network: ${online ? 'Online' : 'Offline'}`, 'info');
     });
-
     NetInfo.fetch().then((state) => setIsOnline(state.isConnected ?? false));
     return () => unsubscribe();
   }, []);
 
   useEffect(() => {
     if (isOnline) {
-      loadDocuments();
+      loadGames();
     }
   }, [isOnline]);
 
   useWebSocket({
     onMessage: (message: any) => {
-      if (message.name && message.size && message.owner) {
+      if (message.name && message.size !== undefined) {
         Alert.alert(
-          'New Document',
-          `Name: ${message.name}\nSize: ${message.size}KB\nOwner: ${message.owner}`
+          'New Game Added',
+          `New game available: ${message.name}\nSize: ${message.size}MB\nPopularity Score: ${message.popularityScore || 0}`
         );
-        loadDocuments();
+        // Refresh the list to show the new game
+        if (isOnline) {
+          loadGames();
+        }
       }
     },
   });
 
-  const loadDocuments = async () => {
+  const loadGames = async () => {
     if (!isOnline) {
-      Alert.alert('Offline', 'This section requires internet connection.');
       return;
     }
 
     setIsLoading(true);
-    log('Loading documents...', 'info');
+    log('Loading available games...', 'info');
 
     try {
-      const response = await getAllDocuments();
+      const response = await getAvailableGames();
       if (response.error) {
         log(`Error: ${response.error}`, 'error');
         Alert.alert('Error', response.error);
       } else if (response.data) {
-        setDocuments(response.data);
-        log(`Loaded ${response.data.length} documents`, 'success');
+        setGames(response.data);
+        log(`Loaded ${response.data.length} available games`, 'success');
       }
     } catch (error) {
       const msg = error instanceof Error ? error.message : 'Unknown error';
@@ -86,78 +88,68 @@ export default function ManageSection() {
       return;
     }
     setRefreshing(true);
-    await loadDocuments();
+    await loadGames();
     setRefreshing(false);
   }, [isOnline]);
 
-  const handleDelete = (document: Document) => {
+  const handleBorrow = async (game: Game) => {
     if (!isOnline) {
       Alert.alert('Offline', 'This section requires internet connection.');
       return;
     }
 
-    Alert.alert(
-      'Delete Document',
-      `Are you sure you want to delete "${document.name}"?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: () => performDelete(document.id),
-        },
-      ]
-    );
-  };
-
-  const performDelete = async (id: number) => {
-    if (!isOnline) {
-      Alert.alert('Offline', 'This section requires internet connection.');
+    // Check if user name is saved
+    const userName = await getUserName();
+    if (!userName) {
+      Alert.alert('Error', 'Please save your name in User Section first');
       return;
     }
 
-    setDeletingId(id);
-    log(`Deleting document: ${id}`, 'info');
+    setBorrowingId(game.id);
+    log(`Borrowing game: ${game.name}`, 'info');
 
     try {
-      const response = await deleteDocument(id);
+      const response = await bookGame(game.id, userName);
       if (response.error) {
         log(`Error: ${response.error}`, 'error');
         Alert.alert('Error', response.error);
       } else {
-        log(`Deleted document: ${id}`, 'success');
-        Alert.alert('Success', 'Document deleted successfully');
-        await loadDocuments();
+        log(`Borrowed game: ${game.name}`, 'success');
+        Alert.alert('Success', `Game "${game.name}" borrowed successfully`);
+        // Refresh the list - the game should disappear since it's no longer available
+        await loadGames();
       }
     } catch (error) {
       const msg = error instanceof Error ? error.message : 'Unknown error';
       log(`Error: ${msg}`, 'error');
       Alert.alert('Error', msg);
     } finally {
-      setDeletingId(null);
+      setBorrowingId(null);
     }
   };
 
-  const renderDocumentItem = ({ item }: { item: Document }) => (
-    <ThemedView style={styles.documentItem}>
-      <View style={styles.documentContent}>
-        <ThemedText type="defaultSemiBold" style={styles.documentName}>
+  const renderGameItem = ({ item }: { item: Game }) => (
+    <ThemedView style={styles.gameItem}>
+      <View style={styles.gameContent}>
+        <ThemedText type="defaultSemiBold" style={styles.gameName}>
           {item.name}
         </ThemedText>
-        <ThemedText style={styles.documentDetail}>Size: {item.size}KB</ThemedText>
-        <ThemedText style={styles.documentDetail}>Usage: {item.usage}</ThemedText>
+        <ThemedText style={styles.gameDetail}>Size: {item.size}MB</ThemedText>
+        <ThemedText style={styles.gameDetail}>
+          Popularity Score: {item.popularityScore}
+        </ThemedText>
       </View>
       <TouchableOpacity
         style={[
-          styles.deleteButton,
-          deletingId === item.id && styles.deleteButtonDisabled,
+          styles.borrowButton,
+          borrowingId === item.id && styles.borrowButtonDisabled,
         ]}
-        onPress={() => handleDelete(item)}
-        disabled={deletingId === item.id || !isOnline}>
-        {deletingId === item.id ? (
+        onPress={() => handleBorrow(item)}
+        disabled={borrowingId === item.id || !isOnline}>
+        {borrowingId === item.id ? (
           <ActivityIndicator size="small" color="#fff" />
         ) : (
-          <ThemedText style={styles.deleteButtonText}>Delete</ThemedText>
+          <ThemedText style={styles.borrowButtonText}>Borrow</ThemedText>
         )}
       </TouchableOpacity>
     </ThemedView>
@@ -181,16 +173,16 @@ export default function ManageSection() {
   return (
     <ThemedView style={styles.container}>
       {isLoading && !refreshing ? (
-        <LoadingSpinner visible={true} message="Loading documents..." />
+        <LoadingSpinner visible={true} message="Loading available games..." />
       ) : (
         <FlatList
-          data={documents}
-          renderItem={renderDocumentItem}
+          data={games}
+          renderItem={renderGameItem}
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={styles.listContent}
           ListEmptyComponent={
             <ThemedView style={styles.emptyContainer}>
-              <ThemedText style={styles.emptyText}>No documents found</ThemedText>
+              <ThemedText style={styles.emptyText}>No available games found</ThemedText>
             </ThemedView>
           }
           refreshControl={
@@ -224,7 +216,7 @@ const styles = StyleSheet.create({
   listContent: {
     padding: 16,
   },
-  documentItem: {
+  gameItem: {
     flexDirection: 'row',
     padding: 16,
     marginBottom: 12,
@@ -235,32 +227,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  documentContent: {
+  gameContent: {
     flex: 1,
     marginRight: 12,
   },
-  documentName: {
+  gameName: {
     fontSize: 18,
     marginBottom: 8,
   },
-  documentDetail: {
+  gameDetail: {
     fontSize: 14,
     marginBottom: 4,
     color: '#666',
   },
-  deleteButton: {
-    backgroundColor: '#FF3B30',
+  borrowButton: {
+    backgroundColor: '#007AFF',
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 6,
-    minWidth: 70,
+    minWidth: 80,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  deleteButtonDisabled: {
+  borrowButtonDisabled: {
     opacity: 0.6,
   },
-  deleteButtonText: {
+  borrowButtonText: {
     color: '#fff',
     fontSize: 14,
     fontWeight: '600',

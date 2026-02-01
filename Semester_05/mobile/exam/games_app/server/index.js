@@ -11,34 +11,32 @@ const wss = new WebSocket.Server({ server });
 app.use(cors());
 app.use(bodyParser.json());
 
-const documents = [];
+const games = [];
 let nextId = 1;
 
 const seedData = [
-  { name: 'Annual Report 2024', status: 'shared', owner: 'John', size: 1250, usage: 45 },
-  { name: 'Project Proposal', status: 'draft', owner: 'Maria', size: 350, usage: 8 },
-  { name: 'Financial Analysis', status: 'secret', owner: 'David', size: 890, usage: 3 },
-  { name: 'Meeting Notes', status: 'open', owner: 'Sarah', size: 120, usage: 67 },
-  { name: 'User Manual', status: 'shared', owner: 'Michael', size: 2100, usage: 156 },
-  { name: 'Budget Planning', status: 'draft', owner: 'John', size: 450, usage: 12 },
-  { name: 'Client Contract', status: 'secret', owner: 'Maria', size: 680, usage: 5 },
-  { name: 'Marketing Strategy', status: 'open', owner: 'David', size: 950, usage: 89 },
-  { name: 'Technical Documentation', status: 'shared', owner: 'Sarah', size: 3200, usage: 234 },
-  { name: 'Quarterly Review', status: 'open', owner: 'Michael', size: 750, usage: 45 },
-  { name: 'Research Paper', status: 'draft', owner: 'John', size: 1800, usage: 23 },
-  { name: 'Product Specs', status: 'shared', owner: 'Maria', size: 1100, usage: 78 },
-  { name: 'Confidential Memo', status: 'secret', owner: 'David', size: 250, usage: 2 },
-  { name: 'Training Guide', status: 'open', owner: 'Sarah', size: 1450, usage: 112 },
-  { name: 'Code Review', status: 'draft', owner: 'Michael', size: 520, usage: 15 },
-  { name: 'Sales Report', status: 'shared', owner: 'John', size: 980, usage: 67 },
-  { name: 'Design Mockups', status: 'open', owner: 'Maria', size: 4200, usage: 189 },
-  { name: 'Legal Agreement', status: 'secret', owner: 'David', size: 650, usage: 4 },
-  { name: 'Team Handbook', status: 'shared', owner: 'Sarah', size: 2800, usage: 201 },
-  { name: 'Performance Metrics', status: 'open', owner: 'Michael', size: 380, usage: 34 },
+  { name: 'Chess', status: 'available', user: '', size: 150, popularityScore: 12 },
+  { name: 'Monopoly', status: 'borrowed', user: 'Alex', size: 850, popularityScore: 28 },
+  { name: 'Scrabble', status: 'available', user: '', size: 320, popularityScore: 5 },
+  { name: 'Risk', status: 'borrowed', user: 'Bob', size: 1200, popularityScore: 18 },
+  { name: 'Catan', status: 'available', user: '', size: 650, popularityScore: 35 },
+  { name: 'Ticket to Ride', status: 'borrowed', user: 'Carol', size: 980, popularityScore: 42 },
+  { name: 'Pandemic', status: 'missing', user: '', size: 750, popularityScore: 15 },
+  { name: 'Settlers of Catan', status: 'available', user: '', size: 680, popularityScore: 8 },
+  { name: 'Codenames', status: 'borrowed', user: 'Diana', size: 420, popularityScore: 22 },
+  { name: 'Azul', status: 'available', user: '', size: 550, popularityScore: 3 },
+  { name: 'Wingspan', status: 'borrowed', user: 'Alex', size: 1100, popularityScore: 50 },
+  { name: 'Gloomhaven', status: 'missing', user: '', size: 2800, popularityScore: 7 },
+  { name: 'Terraforming Mars', status: 'available', user: '', size: 1350, popularityScore: 19 },
+  { name: 'Splendor', status: 'borrowed', user: 'Bob', size: 380, popularityScore: 31 },
+  { name: '7 Wonders', status: 'available', user: '', size: 720, popularityScore: 14 },
+  { name: 'Dominion', status: 'borrowed', user: 'Carol', size: 590, popularityScore: 26 },
+  { name: 'Carcassonne', status: 'available', user: '', size: 480, popularityScore: 11 },
+  { name: 'Agricola', status: 'missing', user: '', size: 1650, popularityScore: 9 }
 ];
 
-seedData.forEach(doc => documents.push({ id: nextId++, ...doc }));
-console.log(`[Server] Initialized with ${documents.length} documents`);
+seedData.forEach(game => games.push({ id: nextId++, ...game }));
+console.log(`[Server] Initialized with ${games.length} games`);
 
 const broadcast = (data) => {
   wss.clients.forEach(client => {
@@ -53,83 +51,101 @@ wss.on('connection', (ws) => {
   ws.on('close', () => console.log('[WS] Client disconnected'));
 });
 
-app.post('/document', (req, res) => {
-  const { name, status, owner, size } = req.body;
+app.post('/game', (req, res) => {
+  const { name, status, user, size } = req.body;
 
-  if (!name || !status || !owner || size === undefined) {
-    console.log('[POST /document] Error: Missing required fields');
-    return res.status(400).json({ error: 'Missing required fields: name, status, owner, size' });
+  if (!name || !status || size === undefined) {
+    console.log('[POST /game] Error: Missing required fields');
+    return res.status(400).json({ error: 'Missing required fields: name, status, size' });
   }
 
   const sizeInt = parseInt(size);
   if (isNaN(sizeInt) || sizeInt <= 0) {
-    console.log('[POST /document] Error: Invalid size');
+    console.log('[POST /game] Error: Invalid size');
     return res.status(400).json({ error: 'Invalid size: must be a positive integer' });
   }
 
-  const validStatuses = ['shared', 'open', 'draft', 'secret'];
+  const validStatuses = ['available', 'missing', 'canceled', 'borrowed'];
   if (!validStatuses.includes(status)) {
-    console.log('[POST /document] Error: Invalid status');
+    console.log('[POST /game] Error: Invalid status');
     return res.status(400).json({ error: `Invalid status: must be one of ${validStatuses.join(', ')}` });
   }
 
-  const newDocument = {
+  const newGame = {
     id: nextId++,
     name: String(name),
     status: String(status),
-    owner: String(owner),
+    user: user ? String(user) : '',
     size: sizeInt,
-    usage: 0
+    popularityScore: 0
   };
 
-  documents.push(newDocument);
-  console.log(`[POST /document] Created document: ${newDocument.name} (ID: ${newDocument.id}, Owner: ${newDocument.owner})`);
+  games.push(newGame);
+  console.log(`[POST /game] Created game: ${newGame.name} (ID: ${newGame.id}, Status: ${newGame.status})`);
 
-  broadcast(newDocument);
-  res.json(newDocument);
+  broadcast(newGame);
+  res.json(newGame);
 });
 
-app.get('/all', (req, res) => {
-  console.log(`[GET /all] Returning ${documents.length} documents`);
-  res.json(documents);
+app.get('/allGames', (req, res) => {
+  console.log(`[GET /allGames] Returning ${games.length} games`);
+  res.json(games);
 });
 
-app.get('/documents/:owner', (req, res) => {
-  const ownerParam = req.params.owner;
-  const filtered = documents.filter(doc => 
-    doc.owner.toLowerCase() === ownerParam.toLowerCase()
+app.get('/games/:user', (req, res) => {
+  const userParam = req.params.user;
+  const filtered = games.filter(game => 
+    game.user.toLowerCase() === userParam.toLowerCase()
   );
-  console.log(`[GET /documents/${ownerParam}] Found ${filtered.length} documents`);
+  console.log(`[GET /games/${userParam}] Found ${filtered.length} games`);
   res.json(filtered);
 });
 
-app.delete('/document/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  
+app.get('/ready', (req, res) => {
+  const available = games.filter(game => 
+    game.status === 'available' && game.user === ''
+  );
+  console.log(`[GET /ready] Found ${available.length} available games`);
+  res.json(available);
+});
+
+app.post('/book', (req, res) => {
+  const { gameId, user } = req.body;
+
+  if (!gameId || !user) {
+    console.log('[POST /book] Error: Missing required fields');
+    return res.status(400).json({ error: 'Missing required fields: gameId, user' });
+  }
+
+  const id = parseInt(gameId);
   if (isNaN(id) || id <= 0) {
-    console.log(`[DELETE /document/${req.params.id}] Error: Invalid ID`);
-    return res.status(400).json({ error: 'Invalid ID: must be a positive integer' });
+    console.log('[POST /book] Error: Invalid gameId');
+    return res.status(400).json({ error: 'Invalid gameId: must be a positive integer' });
   }
 
-  const index = documents.findIndex(doc => doc.id === id);
-  if (index === -1) {
-    console.log(`[DELETE /document/${id}] Error: Document not found`);
-    return res.status(404).json({ error: 'Document not found' });
+  const game = games.find(g => g.id === id);
+  if (!game) {
+    console.log(`[POST /book] Error: Game not found (ID: ${id})`);
+    return res.status(404).json({ error: 'Game not found' });
   }
 
-  const deleted = documents.splice(index, 1)[0];
-  console.log(`[DELETE /document/${id}] Deleted document: ${deleted.name} (Owner: ${deleted.owner})`);
+  game.status = 'borrowed';
+  game.user = String(user);
+  game.popularityScore = (game.popularityScore || 0) + 1;
 
-  broadcast({ type: 'deleted', id: deleted.id });
-  res.json({ success: true, deleted });
+  console.log(`[POST /book] Booked game: ${game.name} (ID: ${game.id}) by ${game.user} (Popularity: ${game.popularityScore})`);
+
+  broadcast(game);
+  res.json(game);
 });
 
 const PORT = 3001;
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`[Server] Running on port ${PORT}`);
   console.log(`[Server] Available endpoints:`);
-  console.log(`  POST   /document - Create a new document`);
-  console.log(`  GET    /all - Get all documents`);
-  console.log(`  GET    /documents/:owner - Get documents by owner`);
-  console.log(`  DELETE /document/:id - Delete a document by ID`);
+  console.log(`  POST   /game - Create a new game`);
+  console.log(`  GET    /allGames - Get all games`);
+  console.log(`  GET    /games/:user - Get games borrowed by user`);
+  console.log(`  GET    /ready - Get available games`);
+  console.log(`  POST   /book - Borrow a game`);
 });

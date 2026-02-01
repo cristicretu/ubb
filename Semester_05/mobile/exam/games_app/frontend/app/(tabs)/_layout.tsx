@@ -7,17 +7,17 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Owner',
-          headerTitle: 'Owner Section',
+          title: 'User',
+          headerTitle: 'User Section',
           tabBarIcon: ({ color, size }) => <Ionicons name="person" size={size} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="manage"
+        name="selection"
         options={{
-          title: 'Manage',
-          headerTitle: 'Manage Section',
-          tabBarIcon: ({ color, size }) => <Ionicons name="list" size={size} color={color} />,
+          title: 'Selection',
+          headerTitle: 'Selection Section',
+          tabBarIcon: ({ color, size }) => <Ionicons name="game-controller" size={size} color={color} />,
         }}
       />
       <Tabs.Screen

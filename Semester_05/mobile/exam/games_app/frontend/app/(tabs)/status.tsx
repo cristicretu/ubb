@@ -1,22 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  StyleSheet,
-  FlatList,
-  Alert,
-} from 'react-native';
+import { View, StyleSheet, FlatList, Alert } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
-import { getAllDocuments } from '@/utils/api';
-import { getLocalDocs, saveDocs } from '@/utils/storage';
-import { Document } from '@/types/document';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import { getAllGames } from '@/utils/api';
+import { getLocalGames, saveGames } from '@/utils/storage';
+import { Game } from '@/types/game';
+import { useWebSocket } from '@/hooks/useWebSocket';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { useWebSocket } from '@/hooks/useWebSocket';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { log } from '@/utils/logger';
 
 export default function StatusSection() {
-  const [documents, setDocuments] = useState<Document[]>([]);
+  const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(false);
   const [isOnline, setIsOnline] = useState(false);
 
@@ -31,27 +26,26 @@ export default function StatusSection() {
   }, []);
 
   useEffect(() => {
-    loadDocuments();
+    loadGames();
   }, [isOnline]);
 
   useWebSocket({
     onMessage: (message: any) => {
-      if (message.name && message.size && message.owner) {
-        Alert.alert(
-          'New Document',
-          `Name: ${message.name}\nSize: ${message.size}KB\nOwner: ${message.owner}`
-        );
-        loadDocuments();
+      if (message.name || message.id) {
+        Alert.alert('New Game Added', `A new game has been added to the system.`);
+        loadGames();
       }
     },
   });
 
-  const loadDocuments = async () => {
-    // Try to load from cache first
-    const cachedDocs = await getLocalDocs();
-    if (cachedDocs.length > 0) {
-      const top10 = getTop10ByUsage(cachedDocs);
-      setDocuments(top10);
+  const loadGames = async () => {
+    const cachedGames = await getLocalGames();
+    const topCached = cachedGames
+      .sort((a, b) => b.popularityScore - a.popularityScore)
+      .slice(0, 10);
+    
+    if (topCached.length > 0) {
+      setGames(topCached);
     }
 
     if (!isOnline) {
@@ -59,68 +53,56 @@ export default function StatusSection() {
     }
 
     setLoading(true);
-    const response = await getAllDocuments();
+    const response = await getAllGames();
     setLoading(false);
 
     if (response.error) {
-      log(`Error loading documents: ${response.error}`, 'error');
+      Alert.alert('Error', response.error);
       return;
     }
 
     if (response.data) {
-      // Cache the data after fetch
-      await saveDocs(response.data);
-      
-      // Get top 10 by usage
-      const top10 = getTop10ByUsage(response.data);
-      setDocuments(top10);
+      const sorted = response.data
+        .sort((a, b) => b.popularityScore - a.popularityScore)
+        .slice(0, 10);
+      setGames(sorted);
+      await saveGames(response.data);
     }
   };
 
-  const getTop10ByUsage = (docs: Document[]): Document[] => {
-    return [...docs]
-      .sort((a, b) => b.usage - a.usage)
-      .slice(0, 10);
-  };
-
-  const renderDocumentItem = ({ item }: { item: Document }) => (
-    <ThemedView style={styles.documentItem}>
-      <ThemedText type="defaultSemiBold" style={styles.documentName}>
+  const renderGameItem = ({ item }: { item: Game }) => (
+    <ThemedView style={styles.gameItem}>
+      <ThemedText type="defaultSemiBold" style={styles.gameName}>
         {item.name}
       </ThemedText>
-      <ThemedText style={styles.documentInfo}>
-        Status: {item.status} | Usage: {item.usage} | Owner: {item.owner}
+      <ThemedText style={styles.gameScore}>
+        Popularity Score: {item.popularityScore}
       </ThemedText>
     </ThemedView>
   );
 
   return (
     <ThemedView style={styles.container}>
+      {!isOnline && (
+        <View style={styles.offlineContainer}>
+          <ThemedText style={styles.offlineMessage}>
+            Offline - Showing cached data
+          </ThemedText>
+        </View>
+      )}
       {loading ? (
-        <LoadingSpinner visible={true} message="Loading documents..." />
+        <LoadingSpinner visible={true} message="Loading games..." />
+      ) : games.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <ThemedText style={styles.emptyMessage}>No games found</ThemedText>
+        </View>
       ) : (
-        <>
-          {!isOnline && (
-            <View style={styles.offlineContainer}>
-              <ThemedText style={styles.offlineMessage}>
-                Offline - Showing cached data
-              </ThemedText>
-            </View>
-          )}
-          {documents.length === 0 ? (
-            <View style={styles.emptyContainer}>
-              <ThemedText style={styles.emptyMessage}>No documents found</ThemedText>
-            </View>
-          ) : (
-            <FlatList
-              data={documents}
-              renderItem={renderDocumentItem}
-              keyExtractor={(item) => item.id.toString()}
-              contentContainerStyle={styles.listContent}
-              ItemSeparatorComponent={() => <View style={styles.separator} />}
-            />
-          )}
-        </>
+        <FlatList
+          data={games}
+          renderItem={renderGameItem}
+          keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={styles.listContent}
+        />
       )}
     </ThemedView>
   );
@@ -145,21 +127,19 @@ const styles = StyleSheet.create({
   listContent: {
     padding: 16,
   },
-  documentItem: {
+  gameItem: {
     padding: 16,
     borderRadius: 8,
     backgroundColor: '#F5F5F5',
+    marginBottom: 12,
   },
-  documentName: {
-    fontSize: 16,
-    marginBottom: 4,
+  gameName: {
+    fontSize: 18,
+    marginBottom: 8,
   },
-  documentInfo: {
+  gameScore: {
     fontSize: 14,
     color: '#666',
-  },
-  separator: {
-    height: 8,
   },
   emptyContainer: {
     flex: 1,
