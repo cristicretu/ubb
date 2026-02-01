@@ -7,8 +7,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Owner',
-          headerTitle: 'Owner Section',
+          title: 'My',
+          headerTitle: 'My Section',
           tabBarIcon: ({ color, size }) => <Ionicons name="person" size={size} color={color} />,
         }}
       />
@@ -21,10 +21,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="status"
+        name="reports"
         options={{
-          title: 'Status',
-          headerTitle: 'Status Section',
+          title: 'Reports',
+          headerTitle: 'Reports Section',
           tabBarIcon: ({ color, size }) => <Ionicons name="stats-chart" size={size} color={color} />,
         }}
       />

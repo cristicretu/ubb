@@ -1,61 +1,44 @@
-import { Document } from '../types/document';
-import { log } from './logger';
 import { API_URL } from '../config';
+import { Item } from '../types/item';
+import { log } from './logger';
 
 interface ApiResponse<T> {
-  data: T | null;
-  error: string | null;
+  data?: T;
+  error?: string;
 }
 
-async function fetchWithErrorHandling<T>(
-  url: string,
-  options?: RequestInit
-): Promise<ApiResponse<T>> {
+async function request<T>(endpoint: string, options?: RequestInit): Promise<ApiResponse<T>> {
   try {
-    log(`${options?.method || 'GET'} ${url}`, 'info');
-    
-    const response = await fetch(url, {
+    log(`API ${options?.method || 'GET'} ${endpoint}`, 'info');
+    const response = await fetch(`${API_URL}${endpoint}`, {
+      headers: { 'Content-Type': 'application/json' },
       ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        ...options?.headers,
-      },
     });
-
     if (!response.ok) {
-      const errorText = await response.text();
-      const errorMessage = `HTTP ${response.status}: ${errorText || response.statusText}`;
-      log(errorMessage, 'error');
-      return { data: null, error: errorMessage };
+      const err = await response.json();
+      log(`API Error: ${err.error || response.statusText}`, 'error');
+      return { error: err.error || response.statusText };
     }
-
     const data = await response.json();
-    log(`Response OK from ${url}`, 'success');
-    return { data, error: null };
+    log(`API Success: ${endpoint}`, 'success');
+    return { data };
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    log(errorMessage, 'error');
-    return { data: null, error: errorMessage };
+    const message = error instanceof Error ? error.message : 'Network error';
+    log(`API Error: ${message}`, 'error');
+    return { error: message };
   }
 }
 
-export async function createDocument(doc: Omit<Document, 'id' | 'usage'>): Promise<ApiResponse<Document>> {
-  return fetchWithErrorHandling<Document>(`${API_URL}/document`, {
-    method: 'POST',
-    body: JSON.stringify(doc),
-  });
-}
+export const createItem = (item: Omit<Item, 'id' | 'value2'>) =>
+  request<Item>('/item', { method: 'POST', body: JSON.stringify(item) });
 
-export async function getAllDocuments(): Promise<ApiResponse<Document[]>> {
-  return fetchWithErrorHandling<Document[]>(`${API_URL}/all`);
-}
+export const getAllItems = () => request<Item[]>('/all');
 
-export async function getDocumentsByOwner(owner: string): Promise<ApiResponse<Document[]>> {
-  return fetchWithErrorHandling<Document[]>(`${API_URL}/documents/${encodeURIComponent(owner)}`);
-}
+export const getItemsByOwner = (owner: string) => request<Item[]>(`/items/${encodeURIComponent(owner)}`);
 
-export async function deleteDocument(id: number): Promise<ApiResponse<void>> {
-  return fetchWithErrorHandling<void>(`${API_URL}/document/${id}`, {
-    method: 'DELETE',
-  });
-}
+export const getAvailableItems = () => request<Item[]>('/available');
+
+export const deleteItem = (id: number) => request<{ success: boolean }>(`/item/${id}`, { method: 'DELETE' });
+
+export const performAction = (itemId: number, status: string, owner: string) =>
+  request<Item>('/action', { method: 'POST', body: JSON.stringify({ itemId, status, owner }) });

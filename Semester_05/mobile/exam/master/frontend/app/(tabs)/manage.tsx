@@ -1,202 +1,208 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   StyleSheet,
   FlatList,
-  TouchableOpacity,
   Alert,
-  RefreshControl,
+  TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
-import { getAllDocuments, deleteDocument } from '@/utils/api';
-import { Document } from '@/types/document';
+import { getAvailableItems, deleteItem, performAction } from '@/utils/api';
+import { getOwnerName } from '@/utils/storage';
+import { Item } from '@/types/item';
+import { useWebSocket } from '@/hooks/useWebSocket';
 import { log } from '@/utils/logger';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { useWebSocket } from '@/hooks/useWebSocket';
 
 export default function ManageSection() {
-  const [documents, setDocuments] = useState<Document[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isOnline, setIsOnline] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [items, setItems] = useState<Item[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [isOnline, setIsOnline] = useState(false);
+  const [deletingIds, setDeletingIds] = useState<Set<number>>(new Set());
+  const [takingIds, setTakingIds] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
       const online = state.isConnected ?? false;
       setIsOnline(online);
-      log(`Network: ${online ? 'online' : 'offline'}`, 'info');
+      log(`Network: ${online ? 'Online' : 'Offline'}`, 'info');
     });
-
     NetInfo.fetch().then((state) => setIsOnline(state.isConnected ?? false));
     return () => unsubscribe();
   }, []);
 
   useEffect(() => {
     if (isOnline) {
-      loadDocuments();
+      loadItems();
     }
   }, [isOnline]);
 
   useWebSocket({
     onMessage: (message: any) => {
-      if (message.name && message.size && message.owner) {
+      if (message.id && message.name && message.value1 !== undefined) {
         Alert.alert(
-          'New Document',
-          `Name: ${message.name}\nSize: ${message.size}KB\nOwner: ${message.owner}`
+          'New Item Added',
+          `New Item: ${message.name}, Value1: ${message.value1}, Value2: ${message.value2}`
         );
-        loadDocuments();
+        loadItems();
       }
     },
   });
 
-  const loadDocuments = async () => {
+  const loadItems = async () => {
     if (!isOnline) {
-      Alert.alert('Offline', 'This section requires internet connection.');
       return;
     }
 
-    setIsLoading(true);
-    log('Loading documents...', 'info');
+    setLoading(true);
+    const response = await getAvailableItems();
+    setLoading(false);
 
-    try {
-      const response = await getAllDocuments();
-      if (response.error) {
-        log(`Error: ${response.error}`, 'error');
-        Alert.alert('Error', response.error);
-      } else if (response.data) {
-        setDocuments(response.data);
-        log(`Loaded ${response.data.length} documents`, 'success');
-      }
-    } catch (error) {
-      const msg = error instanceof Error ? error.message : 'Unknown error';
-      log(`Error: ${msg}`, 'error');
-      Alert.alert('Error', msg);
-    } finally {
-      setIsLoading(false);
+    if (response.error) {
+      Alert.alert('Error', response.error);
+      return;
+    }
+
+    if (response.data) {
+      setItems(response.data);
     }
   };
 
-  const onRefresh = useCallback(async () => {
+  const handleDelete = async (item: Item) => {
     if (!isOnline) {
-      Alert.alert('Offline', 'This section requires internet connection.');
-      return;
-    }
-    setRefreshing(true);
-    await loadDocuments();
-    setRefreshing(false);
-  }, [isOnline]);
-
-  const handleDelete = (document: Document) => {
-    if (!isOnline) {
-      Alert.alert('Offline', 'This section requires internet connection.');
+      Alert.alert('Offline', 'This operation requires an internet connection');
       return;
     }
 
     Alert.alert(
-      'Delete Document',
-      `Are you sure you want to delete "${document.name}"?`,
+      'Delete Item',
+      `Are you sure you want to delete "${item.name}"?`,
       [
         { text: 'Cancel', style: 'cancel' },
         {
           text: 'Delete',
           style: 'destructive',
-          onPress: () => performDelete(document.id),
+          onPress: async () => {
+            setDeletingIds((prev) => new Set(prev).add(item.id));
+            const response = await deleteItem(item.id);
+            setDeletingIds((prev) => {
+              const next = new Set(prev);
+              next.delete(item.id);
+              return next;
+            });
+
+            if (response.error) {
+              Alert.alert('Error', response.error);
+              return;
+            }
+
+            Alert.alert('Success', 'Item deleted successfully');
+            loadItems();
+          },
         },
       ]
     );
   };
 
-  const performDelete = async (id: number) => {
+  const handleTake = async (item: Item) => {
     if (!isOnline) {
-      Alert.alert('Offline', 'This section requires internet connection.');
+      Alert.alert('Offline', 'This operation requires an internet connection');
       return;
     }
 
-    setDeletingId(id);
-    log(`Deleting document: ${id}`, 'info');
-
-    try {
-      const response = await deleteDocument(id);
-      if (response.error) {
-        log(`Error: ${response.error}`, 'error');
-        Alert.alert('Error', response.error);
-      } else {
-        log(`Deleted document: ${id}`, 'success');
-        Alert.alert('Success', 'Document deleted successfully');
-        await loadDocuments();
-      }
-    } catch (error) {
-      const msg = error instanceof Error ? error.message : 'Unknown error';
-      log(`Error: ${msg}`, 'error');
-      Alert.alert('Error', msg);
-    } finally {
-      setDeletingId(null);
+    const owner = await getOwnerName();
+    if (!owner) {
+      Alert.alert('Error', 'Please save your name in My Section first');
+      return;
     }
+
+    setTakingIds((prev) => new Set(prev).add(item.id));
+    const response = await performAction(item.id, 'taken', owner);
+    setTakingIds((prev) => {
+      const next = new Set(prev);
+      next.delete(item.id);
+      return next;
+    });
+
+    if (response.error) {
+      Alert.alert('Error', response.error);
+      return;
+    }
+
+    Alert.alert('Success', 'Item taken successfully');
+    loadItems();
   };
 
-  const renderDocumentItem = ({ item }: { item: Document }) => (
-    <ThemedView style={styles.documentItem}>
-      <View style={styles.documentContent}>
-        <ThemedText type="defaultSemiBold" style={styles.documentName}>
-          {item.name}
-        </ThemedText>
-        <ThemedText style={styles.documentDetail}>Size: {item.size}KB</ThemedText>
-        <ThemedText style={styles.documentDetail}>Usage: {item.usage}</ThemedText>
-      </View>
-      <TouchableOpacity
-        style={[
-          styles.deleteButton,
-          deletingId === item.id && styles.deleteButtonDisabled,
-        ]}
-        onPress={() => handleDelete(item)}
-        disabled={deletingId === item.id || !isOnline}>
-        {deletingId === item.id ? (
-          <ActivityIndicator size="small" color="#fff" />
-        ) : (
-          <ThemedText style={styles.deleteButtonText}>Delete</ThemedText>
-        )}
-      </TouchableOpacity>
-    </ThemedView>
-  );
+  const renderItem = ({ item }: { item: Item }) => {
+    const isDeleting = deletingIds.has(item.id);
+    const isTaking = takingIds.has(item.id);
 
-  if (!isOnline) {
     return (
-      <ThemedView style={styles.container}>
-        <ThemedView style={styles.offlineContainer}>
-          <ThemedText type="title" style={styles.offlineTitle}>
-            Offline
+      <ThemedView style={styles.itemContainer}>
+        <View style={styles.itemInfo}>
+          <ThemedText type="defaultSemiBold" style={styles.itemName}>
+            {item.name}
           </ThemedText>
-          <ThemedText style={styles.offlineMessage}>
-            This section requires internet connection.
+          <ThemedText style={styles.itemValues}>
+            Value1: {item.value1} | Value2: {item.value2}
           </ThemedText>
-        </ThemedView>
+        </View>
+        <View style={styles.itemActions}>
+          <TouchableOpacity
+            style={[styles.deleteButton, (isDeleting || isTaking) && styles.buttonDisabled]}
+            onPress={() => handleDelete(item)}
+            disabled={isDeleting || isTaking}>
+            {isDeleting ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <ThemedText style={styles.deleteButtonText}>DELETE</ThemedText>
+            )}
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.takeButton, (isDeleting || isTaking) && styles.buttonDisabled]}
+            onPress={() => handleTake(item)}
+            disabled={isDeleting || isTaking}>
+            {isTaking ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <ThemedText style={styles.takeButtonText}>Take</ThemedText>
+            )}
+          </TouchableOpacity>
+        </View>
       </ThemedView>
     );
-  }
+  };
 
   return (
     <ThemedView style={styles.container}>
-      {isLoading && !refreshing ? (
-        <LoadingSpinner visible={true} message="Loading documents..." />
+      {!isOnline && (
+        <View style={styles.offlineContainer}>
+          <ThemedText style={styles.offlineMessage}>
+            Offline - This section requires an internet connection
+          </ThemedText>
+        </View>
+      )}
+      {loading ? (
+        <LoadingSpinner visible={true} message="Loading items..." />
       ) : (
-        <FlatList
-          data={documents}
-          renderItem={renderDocumentItem}
-          keyExtractor={(item) => item.id.toString()}
-          contentContainerStyle={styles.listContent}
-          ListEmptyComponent={
-            <ThemedView style={styles.emptyContainer}>
-              <ThemedText style={styles.emptyText}>No documents found</ThemedText>
-            </ThemedView>
-          }
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-        />
+        <>
+          {items.length === 0 ? (
+            <View style={styles.emptyContainer}>
+              <ThemedText style={styles.emptyMessage}>No available items found</ThemedText>
+            </View>
+          ) : (
+            <FlatList
+              data={items}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.id.toString()}
+              contentContainerStyle={styles.listContent}
+              ItemSeparatorComponent={() => <View style={styles.separator} />}
+            />
+          )}
+        </>
       )}
     </ThemedView>
   );
@@ -207,57 +213,59 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   offlineContainer: {
-    flex: 1,
-    justifyContent: 'center',
+    padding: 16,
+    backgroundColor: '#FFF3CD',
+    borderRadius: 8,
+    margin: 16,
     alignItems: 'center',
-    padding: 32,
-  },
-  offlineTitle: {
-    marginBottom: 16,
-    textAlign: 'center',
   },
   offlineMessage: {
+    fontSize: 14,
+    color: '#856404',
     textAlign: 'center',
-    fontSize: 16,
-    color: '#666',
   },
   listContent: {
     padding: 16,
   },
-  documentItem: {
-    flexDirection: 'row',
+  itemContainer: {
     padding: 16,
-    marginBottom: 12,
     borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    backgroundColor: '#f9f9f9',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    backgroundColor: '#F5F5F5',
   },
-  documentContent: {
-    flex: 1,
-    marginRight: 12,
+  itemInfo: {
+    marginBottom: 12,
   },
-  documentName: {
-    fontSize: 18,
-    marginBottom: 8,
-  },
-  documentDetail: {
-    fontSize: 14,
+  itemName: {
+    fontSize: 16,
     marginBottom: 4,
+  },
+  itemValues: {
+    fontSize: 14,
     color: '#666',
   },
+  itemActions: {
+    flexDirection: 'row',
+    gap: 12,
+  },
   deleteButton: {
+    flex: 1,
     backgroundColor: '#FF3B30',
+    paddingVertical: 10,
     paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 6,
-    minWidth: 70,
+    borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  deleteButtonDisabled: {
+  takeButton: {
+    flex: 1,
+    backgroundColor: '#34C759',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonDisabled: {
     opacity: 0.6,
   },
   deleteButtonText: {
@@ -265,12 +273,23 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
-  emptyContainer: {
-    padding: 40,
-    alignItems: 'center',
+  takeButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
   },
-  emptyText: {
+  separator: {
+    height: 8,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 40,
+  },
+  emptyMessage: {
     fontSize: 16,
     color: '#999',
+    textAlign: 'center',
   },
 });

@@ -13,24 +13,23 @@ import NetInfo from '@react-native-community/netinfo';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { createDocument, getDocumentsByOwner } from '@/utils/api';
-import { saveDocs, getLocalDocs, savePendingDoc, saveOwnerName, getOwnerName } from '@/utils/storage';
-import { Document } from '@/types/document';
+import { createItem, getItemsByOwner } from '@/utils/api';
+import { saveItems, getLocalItems, savePendingItem, saveOwnerName, getOwnerName } from '@/utils/storage';
+import { Item } from '@/types/item';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { log } from '@/utils/logger';
 
-export default function OwnerSection() {
+export default function MySection() {
   const [isOnline, setIsOnline] = useState(false);
   const [ownerName, setOwnerName] = useState('');
   const [savedOwner, setSavedOwner] = useState<string | null>(null);
-  const [documents, setDocuments] = useState<Document[]>([]);
+  const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   
-  // Document form fields
-  const [docName, setDocName] = useState('');
-  const [docStatus, setDocStatus] = useState('');
-  const [docSize, setDocSize] = useState('');
+  const [itemName, setItemName] = useState('');
+  const [itemStatus, setItemStatus] = useState('');
+  const [itemValue1, setItemValue1] = useState('');
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
@@ -48,20 +47,19 @@ export default function OwnerSection() {
 
   useEffect(() => {
     if (savedOwner) {
-      loadDocuments();
+      loadItems();
     }
   }, [savedOwner, isOnline]);
 
   useWebSocket({
     onMessage: (message: any) => {
-      if (message.name && message.size && message.owner) {
+      if (message.name && message.value1 !== undefined && message.owner) {
         Alert.alert(
-          'New Document',
-          `New Document: ${message.name}, Size: ${message.size}KB, Owner: ${message.owner}`
+          'New Item',
+          `New Item: ${message.name}, Value: ${message.value1}, Owner: ${message.owner}`
         );
-        // Refresh documents if it's for the current owner
         if (savedOwner && message.owner.toLowerCase() === savedOwner.toLowerCase()) {
-          loadDocuments();
+          loadItems();
         }
       }
     },
@@ -86,17 +84,16 @@ export default function OwnerSection() {
     Alert.alert('Success', 'Owner name saved');
   };
 
-  const loadDocuments = async () => {
+  const loadItems = async () => {
     if (!savedOwner) return;
 
-    // Try to load from cache first
-    const cachedDocs = await getLocalDocs();
-    const ownerDocs = cachedDocs.filter(
-      (doc) => doc.owner.toLowerCase() === savedOwner.toLowerCase()
+    const cachedItems = await getLocalItems();
+    const ownerItems = cachedItems.filter(
+      (item) => item.owner.toLowerCase() === savedOwner.toLowerCase()
     );
     
-    if (ownerDocs.length > 0) {
-      setDocuments(ownerDocs);
+    if (ownerItems.length > 0) {
+      setItems(ownerItems);
     }
 
     if (!isOnline) {
@@ -104,7 +101,7 @@ export default function OwnerSection() {
     }
 
     setLoading(true);
-    const response = await getDocumentsByOwner(savedOwner);
+    const response = await getItemsByOwner(savedOwner);
     setLoading(false);
 
     if (response.error) {
@@ -113,95 +110,91 @@ export default function OwnerSection() {
     }
 
     if (response.data) {
-      setDocuments(response.data);
-      // Cache all documents (merge with existing)
-      const allCached = await getLocalDocs();
-      const updatedDocs = [...allCached];
-      response.data.forEach((doc) => {
-        const index = updatedDocs.findIndex((d) => d.id === doc.id);
+      setItems(response.data);
+      const allCached = await getLocalItems();
+      const updatedItems = [...allCached];
+      response.data.forEach((item) => {
+        const index = updatedItems.findIndex((i) => i.id === item.id);
         if (index >= 0) {
-          updatedDocs[index] = doc;
+          updatedItems[index] = item;
         } else {
-          updatedDocs.push(doc);
+          updatedItems.push(item);
         }
       });
-      await saveDocs(updatedDocs);
+      await saveItems(updatedItems);
     }
   };
 
-  const handleSubmitDocument = async () => {
+  const handleSubmitItem = async () => {
     if (!savedOwner) {
       Alert.alert('Error', 'Please save owner name first');
       return;
     }
 
-    const trimmedName = docName.trim();
-    const trimmedStatus = docStatus.trim();
-    const sizeNum = parseInt(docSize);
+    const trimmedName = itemName.trim();
+    const trimmedStatus = itemStatus.trim();
+    const value1Num = parseFloat(itemValue1);
 
     if (!trimmedName) {
-      Alert.alert('Error', 'Document name is required');
+      Alert.alert('Error', 'Item name is required');
       return;
     }
     if (!trimmedStatus) {
       Alert.alert('Error', 'Status is required');
       return;
     }
-    if (isNaN(sizeNum) || sizeNum <= 0) {
-      Alert.alert('Error', 'Size must be a positive number');
+    if (isNaN(value1Num)) {
+      Alert.alert('Error', 'Value1 must be a number');
       return;
     }
 
-    const newDoc: Omit<Document, 'id' | 'usage'> = {
+    const newItem: Omit<Item, 'id' | 'value2'> = {
       name: trimmedName,
       status: trimmedStatus,
       owner: savedOwner,
-      size: sizeNum,
+      value1: value1Num,
     };
 
     if (isOnline) {
       setSubmitting(true);
-      const response = await createDocument(newDoc);
+      const response = await createItem(newItem);
       setSubmitting(false);
 
       if (response.error) {
         Alert.alert('Error', response.error);
-        // Save as pending on error
-        await savePendingDoc({ ...newDoc, id: Date.now(), usage: 0 });
+        await savePendingItem({ ...newItem, id: Date.now(), value2: 0 });
         return;
       }
 
       if (response.data) {
-        Alert.alert('Success', 'Document created');
-        setDocName('');
-        setDocStatus('');
-        setDocSize('');
-        await loadDocuments();
+        Alert.alert('Success', 'Item created');
+        setItemName('');
+        setItemStatus('');
+        setItemValue1('');
+        await loadItems();
       }
     } else {
-      // Offline: save as pending
-      await savePendingDoc({ ...newDoc, id: Date.now(), usage: 0 });
-      Alert.alert('Offline', 'Document saved offline. It will be synced when online.');
-      setDocName('');
-      setDocStatus('');
-      setDocSize('');
+      await savePendingItem({ ...newItem, id: Date.now(), value2: 0 });
+      Alert.alert('Offline', 'Item saved offline. It will be synced when online.');
+      setItemName('');
+      setItemStatus('');
+      setItemValue1('');
     }
   };
 
-  const renderDocumentItem = ({ item }: { item: Document }) => (
-    <ThemedView style={styles.documentItem}>
-      <ThemedText type="defaultSemiBold" style={styles.documentName}>
+  const renderItem = ({ item }: { item: Item }) => (
+    <ThemedView style={styles.itemContainer}>
+      <ThemedText type="defaultSemiBold" style={styles.itemName}>
         {item.name}
       </ThemedText>
-      <ThemedText style={styles.documentInfo}>
-        Status: {item.status} | Size: {item.size}KB | Usage: {item.usage}
+      <ThemedText style={styles.itemInfo}>
+        Status: {item.status} | Value1: {item.value1} | Value2: {item.value2}
       </ThemedText>
     </ThemedView>
   );
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-      {/* Owner Settings Section */}
       <ThemedView style={styles.section}>
         <ThemedText type="subtitle" style={styles.sectionTitle}>
           Owner Settings
@@ -221,38 +214,37 @@ export default function OwnerSection() {
         )}
       </ThemedView>
 
-      {/* Document Form Section - Only show if owner saved */}
       {savedOwner && (
         <ThemedView style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
-            Record Document
+            Record Item
           </ThemedText>
           <TextInput
             style={styles.input}
-            placeholder="Document name"
-            value={docName}
-            onChangeText={setDocName}
+            placeholder="Item name"
+            value={itemName}
+            onChangeText={setItemName}
             autoCapitalize="none"
           />
           <TextInput
             style={styles.input}
-            placeholder="Status (shared, open, draft, secret)"
-            value={docStatus}
-            onChangeText={setDocStatus}
+            placeholder="Status"
+            value={itemStatus}
+            onChangeText={setItemStatus}
             autoCapitalize="none"
           />
           <TextInput
             style={styles.input}
-            placeholder="Size (KB)"
-            value={docSize}
-            onChangeText={setDocSize}
+            placeholder="Value1"
+            value={itemValue1}
+            onChangeText={setItemValue1}
             keyboardType="numeric"
             autoCapitalize="none"
           />
           <ThemedText style={styles.ownerInfo}>Owner: {savedOwner}</ThemedText>
           <TouchableOpacity
             style={[styles.submitButton, submitting && styles.submitButtonDisabled]}
-            onPress={handleSubmitDocument}
+            onPress={handleSubmitItem}
             disabled={submitting}>
             {submitting ? (
               <ActivityIndicator size="small" color="#fff" />
@@ -263,28 +255,27 @@ export default function OwnerSection() {
         </ThemedView>
       )}
 
-      {/* Documents List Section */}
       {savedOwner && (
         <ThemedView style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
-            My Documents
+            My Items
           </ThemedText>
           {!isOnline ? (
             <View style={styles.offlineContainer}>
               <ThemedText style={styles.offlineMessage}>Offline - Showing cached data</ThemedText>
-              <TouchableOpacity style={styles.retryButton} onPress={loadDocuments}>
+              <TouchableOpacity style={styles.retryButton} onPress={loadItems}>
                 <ThemedText style={styles.retryButtonText}>Retry</ThemedText>
               </TouchableOpacity>
             </View>
           ) : null}
           {loading ? (
-            <LoadingSpinner visible={true} message="Loading documents..." />
-          ) : documents.length === 0 ? (
-            <ThemedText style={styles.emptyMessage}>No documents found</ThemedText>
+            <LoadingSpinner visible={true} message="Loading items..." />
+          ) : items.length === 0 ? (
+            <ThemedText style={styles.emptyMessage}>No items found</ThemedText>
           ) : (
             <FlatList
-              data={documents}
-              renderItem={renderDocumentItem}
+              data={items}
+              renderItem={renderItem}
               keyExtractor={(item) => item.id.toString()}
               scrollEnabled={false}
               ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -380,16 +371,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
-  documentItem: {
+  itemContainer: {
     padding: 16,
     borderRadius: 8,
     backgroundColor: '#F5F5F5',
   },
-  documentName: {
+  itemName: {
     fontSize: 16,
     marginBottom: 4,
   },
-  documentInfo: {
+  itemInfo: {
     fontSize: 14,
     color: '#666',
   },
