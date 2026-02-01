@@ -1,52 +1,52 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Document } from '../types/document';
+import { Game } from '../types/game';
 import { log } from './logger';
 
 const KEYS = {
-  DOCS: '@documents_app:docs',
-  PENDING: '@documents_app:pending',
-  OWNER: '@documents_app:owner',
+  GAMES: '@games_app:games',
+  PENDING: '@games_app:pending',
+  USER: '@games_app:user',
 };
 
-export async function saveDocs(docs: Document[]): Promise<void> {
+export async function saveGames(games: Game[]): Promise<void> {
   try {
-    await AsyncStorage.setItem(KEYS.DOCS, JSON.stringify(docs));
-    log(`Saved ${docs.length} docs`, 'success');
+    await AsyncStorage.setItem(KEYS.GAMES, JSON.stringify(games));
+    log(`Saved ${games.length} games`, 'success');
   } catch (error) {
-    log(`Error saving docs: ${error}`, 'error');
+    log(`Error saving games: ${error}`, 'error');
     throw error;
   }
 }
 
-export async function getLocalDocs(): Promise<Document[]> {
+export async function getLocalGames(): Promise<Game[]> {
   try {
-    const json = await AsyncStorage.getItem(KEYS.DOCS);
+    const json = await AsyncStorage.getItem(KEYS.GAMES);
     if (json) {
-      const docs = JSON.parse(json) as Document[];
-      log(`Loaded ${docs.length} cached docs`, 'success');
-      return docs;
+      const games = JSON.parse(json) as Game[];
+      log(`Loaded ${games.length} cached games`, 'success');
+      return games;
     }
-    log('No cached docs', 'info');
+    log('No cached games', 'info');
     return [];
   } catch (error) {
-    log(`Error loading docs: ${error}`, 'error');
+    log(`Error loading games: ${error}`, 'error');
     return [];
   }
 }
 
-export async function savePendingDoc(doc: Document): Promise<void> {
+export async function savePendingGame(game: Game): Promise<void> {
   try {
-    const pending = await getPendingDocs();
-    pending.push(doc);
+    const pending = await getPendingGames();
+    pending.push(game);
     await AsyncStorage.setItem(KEYS.PENDING, JSON.stringify(pending));
-    log(`Saved pending: ${doc.name}`, 'success');
+    log(`Saved pending: ${game.name}`, 'success');
   } catch (error) {
     log(`Error saving pending: ${error}`, 'error');
     throw error;
   }
 }
 
-export async function getPendingDocs(): Promise<Document[]> {
+export async function getPendingGames(): Promise<Game[]> {
   try {
     const json = await AsyncStorage.getItem(KEYS.PENDING);
     return json ? JSON.parse(json) : [];
@@ -56,22 +56,22 @@ export async function getPendingDocs(): Promise<Document[]> {
   }
 }
 
-export async function saveOwnerName(owner: string): Promise<void> {
+export async function saveUserName(user: string): Promise<void> {
   try {
-    await AsyncStorage.setItem(KEYS.OWNER, owner);
-    log(`Saved owner: ${owner}`, 'success');
+    await AsyncStorage.setItem(KEYS.USER, user);
+    log(`Saved user: ${user}`, 'success');
   } catch (error) {
-    log(`Error saving owner: ${error}`, 'error');
+    log(`Error saving user: ${error}`, 'error');
     throw error;
   }
 }
 
-export async function getOwnerName(): Promise<string | null> {
+export async function getUserName(): Promise<string | null> {
   try {
-    const owner = await AsyncStorage.getItem(KEYS.OWNER);
-    return owner;
+    const user = await AsyncStorage.getItem(KEYS.USER);
+    return user;
   } catch (error) {
-    log(`Error loading owner: ${error}`, 'error');
+    log(`Error loading user: ${error}`, 'error');
     return null;
   }
 }

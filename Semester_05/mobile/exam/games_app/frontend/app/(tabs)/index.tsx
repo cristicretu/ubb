@@ -13,24 +13,24 @@ import NetInfo from '@react-native-community/netinfo';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { createDocument, getDocumentsByOwner } from '@/utils/api';
-import { saveDocs, getLocalDocs, savePendingDoc, saveOwnerName, getOwnerName } from '@/utils/storage';
-import { Document } from '@/types/document';
+import { createGame, getGamesByUser } from '@/utils/api';
+import { saveGames, getLocalGames, savePendingGame, saveUserName, getUserName } from '@/utils/storage';
+import { Game } from '@/types/game';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { log } from '@/utils/logger';
 
-export default function OwnerSection() {
+export default function UserSection() {
   const [isOnline, setIsOnline] = useState(false);
-  const [ownerName, setOwnerName] = useState('');
-  const [savedOwner, setSavedOwner] = useState<string | null>(null);
-  const [documents, setDocuments] = useState<Document[]>([]);
+  const [userName, setUserName] = useState('');
+  const [savedUser, setSavedUser] = useState<string | null>(null);
+  const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   
-  // Document form fields
-  const [docName, setDocName] = useState('');
-  const [docStatus, setDocStatus] = useState('');
-  const [docSize, setDocSize] = useState('');
+  // Game form fields
+  const [gameName, setGameName] = useState('');
+  const [gameStatus, setGameStatus] = useState('');
+  const [gameSize, setGameSize] = useState('');
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
@@ -43,60 +43,60 @@ export default function OwnerSection() {
   }, []);
 
   useEffect(() => {
-    loadSavedOwner();
+    loadSavedUser();
   }, []);
 
   useEffect(() => {
-    if (savedOwner) {
-      loadDocuments();
+    if (savedUser) {
+      loadGames();
     }
-  }, [savedOwner, isOnline]);
+  }, [savedUser, isOnline]);
 
   useWebSocket({
     onMessage: (message: any) => {
-      if (message.name && message.size && message.owner) {
+      if (message.name && message.size !== undefined && message.popularityScore !== undefined) {
         Alert.alert(
-          'New Document',
-          `New Document: ${message.name}, Size: ${message.size}KB, Owner: ${message.owner}`
+          'New Game',
+          `New Game: ${message.name}, Size: ${message.size}KB, Popularity: ${message.popularityScore}`
         );
-        // Refresh documents if it's for the current owner
-        if (savedOwner && message.owner.toLowerCase() === savedOwner.toLowerCase()) {
-          loadDocuments();
+        // Refresh games if it's for the current user
+        if (savedUser && message.user && message.user.toLowerCase() === savedUser.toLowerCase()) {
+          loadGames();
         }
       }
     },
   });
 
-  const loadSavedOwner = async () => {
-    const owner = await getOwnerName();
-    if (owner) {
-      setSavedOwner(owner);
-      setOwnerName(owner);
+  const loadSavedUser = async () => {
+    const user = await getUserName();
+    if (user) {
+      setSavedUser(user);
+      setUserName(user);
     }
   };
 
-  const handleSaveOwner = async () => {
-    const trimmed = ownerName.trim();
+  const handleSaveUser = async () => {
+    const trimmed = userName.trim();
     if (!trimmed) {
-      Alert.alert('Error', 'Owner name cannot be empty');
+      Alert.alert('Error', 'User name cannot be empty');
       return;
     }
-    await saveOwnerName(trimmed);
-    setSavedOwner(trimmed);
-    Alert.alert('Success', 'Owner name saved');
+    await saveUserName(trimmed);
+    setSavedUser(trimmed);
+    Alert.alert('Success', 'User name saved');
   };
 
-  const loadDocuments = async () => {
-    if (!savedOwner) return;
+  const loadGames = async () => {
+    if (!savedUser) return;
 
     // Try to load from cache first
-    const cachedDocs = await getLocalDocs();
-    const ownerDocs = cachedDocs.filter(
-      (doc) => doc.owner.toLowerCase() === savedOwner.toLowerCase()
+    const cachedGames = await getLocalGames();
+    const userGames = cachedGames.filter(
+      (game) => game.user.toLowerCase() === savedUser.toLowerCase()
     );
     
-    if (ownerDocs.length > 0) {
-      setDocuments(ownerDocs);
+    if (userGames.length > 0) {
+      setGames(userGames);
     }
 
     if (!isOnline) {
@@ -104,7 +104,7 @@ export default function OwnerSection() {
     }
 
     setLoading(true);
-    const response = await getDocumentsByOwner(savedOwner);
+    const response = await getGamesByUser(savedUser);
     setLoading(false);
 
     if (response.error) {
@@ -113,34 +113,34 @@ export default function OwnerSection() {
     }
 
     if (response.data) {
-      setDocuments(response.data);
-      // Cache all documents (merge with existing)
-      const allCached = await getLocalDocs();
-      const updatedDocs = [...allCached];
-      response.data.forEach((doc) => {
-        const index = updatedDocs.findIndex((d) => d.id === doc.id);
+      setGames(response.data);
+      // Cache all games (merge with existing)
+      const allCached = await getLocalGames();
+      const updatedGames = [...allCached];
+      response.data.forEach((game) => {
+        const index = updatedGames.findIndex((g) => g.id === game.id);
         if (index >= 0) {
-          updatedDocs[index] = doc;
+          updatedGames[index] = game;
         } else {
-          updatedDocs.push(doc);
+          updatedGames.push(game);
         }
       });
-      await saveDocs(updatedDocs);
+      await saveGames(updatedGames);
     }
   };
 
-  const handleSubmitDocument = async () => {
-    if (!savedOwner) {
-      Alert.alert('Error', 'Please save owner name first');
+  const handleSubmitGame = async () => {
+    if (!savedUser) {
+      Alert.alert('Error', 'Please save user name first');
       return;
     }
 
-    const trimmedName = docName.trim();
-    const trimmedStatus = docStatus.trim();
-    const sizeNum = parseInt(docSize);
+    const trimmedName = gameName.trim();
+    const trimmedStatus = gameStatus.trim();
+    const sizeNum = parseInt(gameSize);
 
     if (!trimmedName) {
-      Alert.alert('Error', 'Document name is required');
+      Alert.alert('Error', 'Game name is required');
       return;
     }
     if (!trimmedStatus) {
@@ -152,107 +152,107 @@ export default function OwnerSection() {
       return;
     }
 
-    const newDoc: Omit<Document, 'id' | 'usage'> = {
+    const newGame: Omit<Game, 'id' | 'popularityScore'> = {
       name: trimmedName,
       status: trimmedStatus,
-      owner: savedOwner,
+      user: savedUser,
       size: sizeNum,
     };
 
     if (isOnline) {
       setSubmitting(true);
-      const response = await createDocument(newDoc);
+      const response = await createGame(newGame);
       setSubmitting(false);
 
       if (response.error) {
         Alert.alert('Error', response.error);
         // Save as pending on error
-        await savePendingDoc({ ...newDoc, id: Date.now(), usage: 0 });
+        await savePendingGame({ ...newGame, id: Date.now(), popularityScore: 0 });
         return;
       }
 
       if (response.data) {
-        Alert.alert('Success', 'Document created');
-        setDocName('');
-        setDocStatus('');
-        setDocSize('');
-        await loadDocuments();
+        Alert.alert('Success', 'Game created');
+        setGameName('');
+        setGameStatus('');
+        setGameSize('');
+        await loadGames();
       }
     } else {
       // Offline: save as pending
-      await savePendingDoc({ ...newDoc, id: Date.now(), usage: 0 });
-      Alert.alert('Offline', 'Document saved offline. It will be synced when online.');
-      setDocName('');
-      setDocStatus('');
-      setDocSize('');
+      await savePendingGame({ ...newGame, id: Date.now(), popularityScore: 0 });
+      Alert.alert('Offline', 'Game saved offline. It will be synced when online.');
+      setGameName('');
+      setGameStatus('');
+      setGameSize('');
     }
   };
 
-  const renderDocumentItem = ({ item }: { item: Document }) => (
-    <ThemedView style={styles.documentItem}>
-      <ThemedText type="defaultSemiBold" style={styles.documentName}>
+  const renderGameItem = ({ item }: { item: Game }) => (
+    <ThemedView style={styles.gameItem}>
+      <ThemedText type="defaultSemiBold" style={styles.gameName}>
         {item.name}
       </ThemedText>
-      <ThemedText style={styles.documentInfo}>
-        Status: {item.status} | Size: {item.size}KB | Usage: {item.usage}
+      <ThemedText style={styles.gameInfo}>
+        Status: {item.status} | Size: {item.size}KB | Popularity: {item.popularityScore}
       </ThemedText>
     </ThemedView>
   );
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-      {/* Owner Settings Section */}
+      {/* User Settings Section */}
       <ThemedView style={styles.section}>
         <ThemedText type="subtitle" style={styles.sectionTitle}>
-          Owner Settings
+          User Settings
         </ThemedText>
         <TextInput
           style={styles.input}
-          placeholder="Enter owner name"
-          value={ownerName}
-          onChangeText={setOwnerName}
+          placeholder="Enter user name"
+          value={userName}
+          onChangeText={setUserName}
           autoCapitalize="none"
         />
-        <TouchableOpacity style={styles.saveButton} onPress={handleSaveOwner}>
+        <TouchableOpacity style={styles.saveButton} onPress={handleSaveUser}>
           <ThemedText style={styles.saveButtonText}>Save</ThemedText>
         </TouchableOpacity>
-        {savedOwner && (
-          <ThemedText style={styles.savedOwnerText}>Saved owner: {savedOwner}</ThemedText>
+        {savedUser && (
+          <ThemedText style={styles.savedUserText}>Saved user: {savedUser}</ThemedText>
         )}
       </ThemedView>
 
-      {/* Document Form Section - Only show if owner saved */}
-      {savedOwner && (
+      {/* Game Form Section - Only show if user saved */}
+      {savedUser && (
         <ThemedView style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
-            Record Document
+            Record Game
           </ThemedText>
           <TextInput
             style={styles.input}
-            placeholder="Document name"
-            value={docName}
-            onChangeText={setDocName}
+            placeholder="Game name"
+            value={gameName}
+            onChangeText={setGameName}
             autoCapitalize="none"
           />
           <TextInput
             style={styles.input}
-            placeholder="Status (shared, open, draft, secret)"
-            value={docStatus}
-            onChangeText={setDocStatus}
+            placeholder="Status"
+            value={gameStatus}
+            onChangeText={setGameStatus}
             autoCapitalize="none"
           />
           <TextInput
             style={styles.input}
             placeholder="Size (KB)"
-            value={docSize}
-            onChangeText={setDocSize}
+            value={gameSize}
+            onChangeText={setGameSize}
             keyboardType="numeric"
             autoCapitalize="none"
           />
-          <ThemedText style={styles.ownerInfo}>Owner: {savedOwner}</ThemedText>
+          <ThemedText style={styles.userInfo}>User: {savedUser}</ThemedText>
           <TouchableOpacity
             style={[styles.submitButton, submitting && styles.submitButtonDisabled]}
-            onPress={handleSubmitDocument}
+            onPress={handleSubmitGame}
             disabled={submitting}>
             {submitting ? (
               <ActivityIndicator size="small" color="#fff" />
@@ -263,28 +263,28 @@ export default function OwnerSection() {
         </ThemedView>
       )}
 
-      {/* Documents List Section */}
-      {savedOwner && (
+      {/* Games List Section */}
+      {savedUser && (
         <ThemedView style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
-            My Documents
+            My Borrowed Games
           </ThemedText>
           {!isOnline ? (
             <View style={styles.offlineContainer}>
               <ThemedText style={styles.offlineMessage}>Offline - Showing cached data</ThemedText>
-              <TouchableOpacity style={styles.retryButton} onPress={loadDocuments}>
+              <TouchableOpacity style={styles.retryButton} onPress={loadGames}>
                 <ThemedText style={styles.retryButtonText}>Retry</ThemedText>
               </TouchableOpacity>
             </View>
           ) : null}
           {loading ? (
-            <LoadingSpinner visible={true} message="Loading documents..." />
-          ) : documents.length === 0 ? (
-            <ThemedText style={styles.emptyMessage}>No documents found</ThemedText>
+            <LoadingSpinner visible={true} message="Loading games..." />
+          ) : games.length === 0 ? (
+            <ThemedText style={styles.emptyMessage}>No games found</ThemedText>
           ) : (
             <FlatList
-              data={documents}
-              renderItem={renderDocumentItem}
+              data={games}
+              renderItem={renderGameItem}
               keyExtractor={(item) => item.id.toString()}
               scrollEnabled={false}
               ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -331,12 +331,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  savedOwnerText: {
+  savedUserText: {
     fontSize: 14,
     color: '#666',
     fontStyle: 'italic',
   },
-  ownerInfo: {
+  userInfo: {
     fontSize: 14,
     color: '#666',
     marginBottom: 12,
@@ -380,16 +380,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
-  documentItem: {
+  gameItem: {
     padding: 16,
     borderRadius: 8,
     backgroundColor: '#F5F5F5',
   },
-  documentName: {
+  gameName: {
     fontSize: 16,
     marginBottom: 4,
   },
-  documentInfo: {
+  gameInfo: {
     fontSize: 14,
     color: '#666',
   },

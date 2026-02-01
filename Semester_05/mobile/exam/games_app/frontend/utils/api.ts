@@ -1,4 +1,4 @@
-import { Document } from '../types/document';
+import { Game } from '../types/game';
 import { log } from './logger';
 import { API_URL } from '../config';
 
@@ -39,23 +39,28 @@ async function fetchWithErrorHandling<T>(
   }
 }
 
-export async function createDocument(doc: Omit<Document, 'id' | 'usage'>): Promise<ApiResponse<Document>> {
-  return fetchWithErrorHandling<Document>(`${API_URL}/document`, {
+export async function createGame(game: Omit<Game, 'id' | 'popularityScore'>): Promise<ApiResponse<Game>> {
+  return fetchWithErrorHandling<Game>(`${API_URL}/game`, {
     method: 'POST',
-    body: JSON.stringify(doc),
+    body: JSON.stringify(game),
   });
 }
 
-export async function getAllDocuments(): Promise<ApiResponse<Document[]>> {
-  return fetchWithErrorHandling<Document[]>(`${API_URL}/all`);
+export async function getAllGames(): Promise<ApiResponse<Game[]>> {
+  return fetchWithErrorHandling<Game[]>(`${API_URL}/allGames`);
 }
 
-export async function getDocumentsByOwner(owner: string): Promise<ApiResponse<Document[]>> {
-  return fetchWithErrorHandling<Document[]>(`${API_URL}/documents/${encodeURIComponent(owner)}`);
+export async function getGamesByUser(user: string): Promise<ApiResponse<Game[]>> {
+  return fetchWithErrorHandling<Game[]>(`${API_URL}/games/${encodeURIComponent(user)}`);
 }
 
-export async function deleteDocument(id: number): Promise<ApiResponse<void>> {
-  return fetchWithErrorHandling<void>(`${API_URL}/document/${id}`, {
-    method: 'DELETE',
+export async function getAvailableGames(): Promise<ApiResponse<Game[]>> {
+  return fetchWithErrorHandling<Game[]>(`${API_URL}/ready`);
+}
+
+export async function bookGame(gameId: number, user: string): Promise<ApiResponse<Game>> {
+  return fetchWithErrorHandling<Game>(`${API_URL}/book`, {
+    method: 'POST',
+    body: JSON.stringify({ gameId, user }),
   });
 }
