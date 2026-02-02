@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "name": "recipe_app",
+    "slug": "recipe_app",
+    "version": "1.0.0",
+    "scheme": "recipe_app",
+    "platforms": ["ios", "android"],
+    "ios": {
+      "bundleIdentifier": "com.recipe.app"
+    },
+    "android": {
+      "package": "com.recipe.app"
+    }
+  }
+}
