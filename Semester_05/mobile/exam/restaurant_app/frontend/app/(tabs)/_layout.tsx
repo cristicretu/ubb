@@ -7,17 +7,25 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Main',
-          headerTitle: 'Main Section',
+          title: 'Waiter',
+          headerTitle: 'Waiter Section',
+          tabBarIcon: ({ color, size }) => <Ionicons name="person" size={size} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="kitchen"
+        options={{
+          title: 'Kitchen',
+          headerTitle: 'Kitchen Section',
           tabBarIcon: ({ color, size }) => <Ionicons name="restaurant" size={size} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="rate"
+        name="client"
         options={{
-          title: 'Rate',
-          headerTitle: 'Rate Section',
-          tabBarIcon: ({ color, size }) => <Ionicons name="star" size={size} color={color} />,
+          title: 'Client',
+          headerTitle: 'Client Section',
+          tabBarIcon: ({ color, size }) => <Ionicons name="people" size={size} color={color} />,
         }}
       />
     </Tabs>

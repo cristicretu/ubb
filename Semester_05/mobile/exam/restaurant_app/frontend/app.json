@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "recipe_app",
-    "slug": "recipe_app",
+    "name": "restaurant_app",
+    "slug": "restaurant_app",
     "version": "1.0.0",
-    "scheme": "recipe_app",
+    "scheme": "restaurant_app",
     "platforms": ["ios", "android"],
     "ios": {
-      "bundleIdentifier": "com.recipe.app"
+      "bundleIdentifier": "com.restaurant.app"
     },
     "android": {
-      "package": "com.recipe.app"
+      "package": "com.restaurant.app"
     }
   }
 }
