@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { WS_URL } from '../config';
 
 interface UseWebSocketOptions {
@@ -17,9 +17,11 @@ export function useWebSocket({ onMessage }: UseWebSocketOptions = {}) {
 
   useEffect(() => {
     const ws = new WebSocket(WS_URL);
+
     ws.onopen = () => setIsConnected(true);
     ws.onclose = () => setIsConnected(false);
     ws.onerror = () => setIsConnected(false);
+
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
@@ -30,7 +32,9 @@ export function useWebSocket({ onMessage }: UseWebSocketOptions = {}) {
         onMessageRef.current?.(event.data);
       }
     };
+
     wsRef.current = ws;
+
     return () => {
       wsRef.current?.close();
       wsRef.current = null;
