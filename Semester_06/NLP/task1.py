@@ -1,4 +1,5 @@
 import spacy
+from spacy import displacy
 
 eng = [
     "I think Google just laid off like 200 people from their cloud division.",
@@ -57,3 +58,8 @@ out("\n== Romanian ==")
 process(ro, nlp_ro, has_chunks=False)
 
 f.close()
+
+all_en = list(nlp_en.pipe(eng))
+all_ro = list(nlp_ro.pipe(ro))
+
+displacy.serve(all_en + all_ro, style="dep", port=5432)
