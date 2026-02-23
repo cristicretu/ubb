@@ -3,81 +3,470 @@
 [1] I think Google just laid off like 200 people from their cloud division.
   tokens: ['I', 'think', 'Google', 'just', 'laid', 'off', 'like', '200', 'people', 'from', 'their', 'cloud', 'division', '.']
   lemmas: ['I', 'think', 'Google', 'just', 'lay', 'off', 'like', '200', 'people', 'from', 'their', 'cloud', 'division', '.']
+  pos: [('I', 'PRON'), ('think', 'VERB'), ('Google', 'PROPN'), ('just', 'ADV'), ('laid', 'VERB'), ('off', 'ADP'), ('like', 'ADP'), ('200', 'NUM'), ('people', 'NOUN'), ('from', 'ADP'), ('their', 'PRON'), ('cloud', 'NOUN'), ('division', 'NOUN'), ('.', 'PUNCT')]
+  deps: [('I', 'nsubj', 'think'), ('think', 'ROOT', 'think'), ('Google', 'nsubj', 'laid'), ('just', 'advmod', 'laid'), ('laid', 'ccomp', 'think'), ('off', 'prt', 'laid'), ('like', 'prep', 'laid'), ('200', 'nummod', 'people'), ('people', 'pobj', 'like'), ('from', 'prep', 'people'), ('their', 'poss', 'division'), ('cloud', 'compound', 'division'), ('division', 'pobj', 'from'), ('.', 'punct', 'think')]
+  chunks: [('I', 'nsubj'), ('Google', 'nsubj'), ('200 people', 'pobj'), ('their cloud division', 'pobj')]
+  ner: [('Google', 'ORG'), ('200', 'CARDINAL')]
+  dep tree:
+    I --nsubj--> think
+    think --ROOT--> think
+    Google --nsubj--> laid
+    just --advmod--> laid
+    laid --ccomp--> think
+    off --prt--> laid
+    like --prep--> laid
+    200 --nummod--> people
+    people --pobj--> like
+    from --prep--> people
+    their --poss--> division
+    cloud --compound--> division
+    division --pobj--> from
+    . --punct--> think
 
 [2] My friend Sarah moved to London last year and she hates the weather there.
   tokens: ['My', 'friend', 'Sarah', 'moved', 'to', 'London', 'last', 'year', 'and', 'she', 'hates', 'the', 'weather', 'there', '.']
   lemmas: ['my', 'friend', 'Sarah', 'move', 'to', 'London', 'last', 'year', 'and', 'she', 'hat', 'the', 'weather', 'there', '.']
+  pos: [('My', 'PRON'), ('friend', 'NOUN'), ('Sarah', 'PROPN'), ('moved', 'VERB'), ('to', 'ADP'), ('London', 'PROPN'), ('last', 'ADJ'), ('year', 'NOUN'), ('and', 'CCONJ'), ('she', 'PRON'), ('hates', 'VERB'), ('the', 'DET'), ('weather', 'NOUN'), ('there', 'ADV'), ('.', 'PUNCT')]
+  deps: [('My', 'poss', 'friend'), ('friend', 'nsubj', 'moved'), ('Sarah', 'appos', 'friend'), ('moved', 'ROOT', 'moved'), ('to', 'prep', 'moved'), ('London', 'pobj', 'to'), ('last', 'amod', 'year'), ('year', 'npadvmod', 'moved'), ('and', 'cc', 'moved'), ('she', 'nsubj', 'hates'), ('hates', 'conj', 'moved'), ('the', 'det', 'weather'), ('weather', 'dobj', 'hates'), ('there', 'advmod', 'hates'), ('.', 'punct', 'hates')]
+  chunks: [('My friend', 'nsubj'), ('Sarah', 'appos'), ('London', 'pobj'), ('she', 'nsubj'), ('the weather', 'dobj')]
+  ner: [('Sarah', 'PERSON'), ('London', 'GPE'), ('last year', 'DATE')]
+  dep tree:
+    My --poss--> friend
+    friend --nsubj--> moved
+    Sarah --appos--> friend
+    moved --ROOT--> moved
+    to --prep--> moved
+    London --pobj--> to
+    last --amod--> year
+    year --npadvmod--> moved
+    and --cc--> moved
+    she --nsubj--> hates
+    hates --conj--> moved
+    the --det--> weather
+    weather --dobj--> hates
+    there --advmod--> hates
+    . --punct--> hates
 
 [3] The bus was 20 minutes late again so I missed my morning lecture.
   tokens: ['The', 'bus', 'was', '20', 'minutes', 'late', 'again', 'so', 'I', 'missed', 'my', 'morning', 'lecture', '.']
   lemmas: ['the', 'bus', 'be', '20', 'minute', 'late', 'again', 'so', 'I', 'miss', 'my', 'morning', 'lecture', '.']
+  pos: [('The', 'DET'), ('bus', 'NOUN'), ('was', 'AUX'), ('20', 'NUM'), ('minutes', 'NOUN'), ('late', 'ADV'), ('again', 'ADV'), ('so', 'ADV'), ('I', 'PRON'), ('missed', 'VERB'), ('my', 'PRON'), ('morning', 'NOUN'), ('lecture', 'NOUN'), ('.', 'PUNCT')]
+  deps: [('The', 'det', 'bus'), ('bus', 'nsubj', 'was'), ('was', 'ROOT', 'was'), ('20', 'nummod', 'minutes'), ('minutes', 'npadvmod', 'late'), ('late', 'advmod', 'was'), ('again', 'advmod', 'was'), ('so', 'advmod', 'missed'), ('I', 'nsubj', 'missed'), ('missed', 'ROOT', 'missed'), ('my', 'poss', 'lecture'), ('morning', 'compound', 'lecture'), ('lecture', 'dobj', 'missed'), ('.', 'punct', 'missed')]
+  chunks: [('The bus', 'nsubj'), ('I', 'nsubj'), ('my morning lecture', 'dobj')]
+  ner: [('20 minutes', 'TIME')]
+  dep tree:
+    The --det--> bus
+    bus --nsubj--> was
+    was --ROOT--> was
+    20 --nummod--> minutes
+    minutes --npadvmod--> late
+    late --advmod--> was
+    again --advmod--> was
+    so --advmod--> missed
+    I --nsubj--> missed
+    missed --ROOT--> missed
+    my --poss--> lecture
+    morning --compound--> lecture
+    lecture --dobj--> missed
+    . --punct--> missed
 
 [4] Obama gave this really good speech at the UN back in 2015 or something.
   tokens: ['Obama', 'gave', 'this', 'really', 'good', 'speech', 'at', 'the', 'UN', 'back', 'in', '2015', 'or', 'something', '.']
   lemmas: ['Obama', 'give', 'this', 'really', 'good', 'speech', 'at', 'the', 'UN', 'back', 'in', '2015', 'or', 'something', '.']
+  pos: [('Obama', 'PROPN'), ('gave', 'VERB'), ('this', 'DET'), ('really', 'ADV'), ('good', 'ADJ'), ('speech', 'NOUN'), ('at', 'ADP'), ('the', 'DET'), ('UN', 'PROPN'), ('back', 'ADV'), ('in', 'ADP'), ('2015', 'NUM'), ('or', 'CCONJ'), ('something', 'PRON'), ('.', 'PUNCT')]
+  deps: [('Obama', 'nsubj', 'gave'), ('gave', 'ROOT', 'gave'), ('this', 'det', 'speech'), ('really', 'advmod', 'good'), ('good', 'amod', 'speech'), ('speech', 'dobj', 'gave'), ('at', 'prep', 'gave'), ('the', 'det', 'UN'), ('UN', 'pobj', 'at'), ('back', 'advmod', 'gave'), ('in', 'prep', 'back'), ('2015', 'pobj', 'in'), ('or', 'cc', '2015'), ('something', 'conj', '2015'), ('.', 'punct', 'gave')]
+  chunks: [('Obama', 'nsubj'), ('this really good speech', 'dobj'), ('the UN', 'pobj'), ('something', 'conj')]
+  ner: [('Obama', 'PERSON'), ('UN', 'ORG'), ('2015', 'DATE')]
+  dep tree:
+    Obama --nsubj--> gave
+    gave --ROOT--> gave
+    this --det--> speech
+    really --advmod--> good
+    good --amod--> speech
+    speech --dobj--> gave
+    at --prep--> gave
+    the --det--> UN
+    UN --pobj--> at
+    back --advmod--> gave
+    in --prep--> back
+    2015 --pobj--> in
+    or --cc--> 2015
+    something --conj--> 2015
+    . --punct--> gave
 
 [5] We went to that new Thai place on Market Street and the food was mid honestly.
   tokens: ['We', 'went', 'to', 'that', 'new', 'Thai', 'place', 'on', 'Market', 'Street', 'and', 'the', 'food', 'was', 'mid', 'honestly', '.']
   lemmas: ['we', 'go', 'to', 'that', 'new', 'Thai', 'place', 'on', 'Market', 'Street', 'and', 'the', 'food', 'be', 'mid', 'honestly', '.']
+  pos: [('We', 'PRON'), ('went', 'VERB'), ('to', 'ADP'), ('that', 'DET'), ('new', 'ADJ'), ('Thai', 'PROPN'), ('place', 'NOUN'), ('on', 'ADP'), ('Market', 'PROPN'), ('Street', 'PROPN'), ('and', 'CCONJ'), ('the', 'DET'), ('food', 'NOUN'), ('was', 'AUX'), ('mid', 'ADJ'), ('honestly', 'ADV'), ('.', 'PUNCT')]
+  deps: [('We', 'nsubj', 'went'), ('went', 'ROOT', 'went'), ('to', 'prep', 'went'), ('that', 'det', 'place'), ('new', 'amod', 'place'), ('Thai', 'compound', 'place'), ('place', 'pobj', 'to'), ('on', 'prep', 'place'), ('Market', 'compound', 'Street'), ('Street', 'pobj', 'on'), ('and', 'cc', 'place'), ('the', 'det', 'food'), ('food', 'nsubj', 'was'), ('was', 'conj', 'went'), ('mid', 'acomp', 'was'), ('honestly', 'advmod', 'was'), ('.', 'punct', 'was')]
+  chunks: [('We', 'nsubj'), ('that new Thai place', 'pobj'), ('Market Street', 'pobj'), ('the food', 'nsubj')]
+  ner: [('Thai', 'NORP'), ('Market Street', 'FAC')]
+  dep tree:
+    We --nsubj--> went
+    went --ROOT--> went
+    to --prep--> went
+    that --det--> place
+    new --amod--> place
+    Thai --compound--> place
+    place --pobj--> to
+    on --prep--> place
+    Market --compound--> Street
+    Street --pobj--> on
+    and --cc--> place
+    the --det--> food
+    food --nsubj--> was
+    was --conj--> went
+    mid --acomp--> was
+    honestly --advmod--> was
+    . --punct--> was
 
 [6] Tesla stock dropped like 8 percent after Musk tweeted some weird stuff.
   tokens: ['Tesla', 'stock', 'dropped', 'like', '8', 'percent', 'after', 'Musk', 'tweeted', 'some', 'weird', 'stuff', '.']
   lemmas: ['tesla', 'stock', 'drop', 'like', '8', 'percent', 'after', 'Musk', 'tweet', 'some', 'weird', 'stuff', '.']
+  pos: [('Tesla', 'ADJ'), ('stock', 'NOUN'), ('dropped', 'VERB'), ('like', 'ADP'), ('8', 'NUM'), ('percent', 'NOUN'), ('after', 'SCONJ'), ('Musk', 'PROPN'), ('tweeted', 'VERB'), ('some', 'DET'), ('weird', 'ADJ'), ('stuff', 'NOUN'), ('.', 'PUNCT')]
+  deps: [('Tesla', 'compound', 'stock'), ('stock', 'nsubj', 'dropped'), ('dropped', 'ROOT', 'dropped'), ('like', 'prep', 'dropped'), ('8', 'nummod', 'percent'), ('percent', 'pobj', 'like'), ('after', 'mark', 'tweeted'), ('Musk', 'nsubj', 'tweeted'), ('tweeted', 'advcl', 'dropped'), ('some', 'det', 'stuff'), ('weird', 'amod', 'stuff'), ('stuff', 'dobj', 'tweeted'), ('.', 'punct', 'dropped')]
+  chunks: [('Tesla stock', 'nsubj'), ('8 percent', 'pobj'), ('Musk', 'nsubj'), ('some weird stuff', 'dobj')]
+  ner: [('8 percent', 'PERCENT')]
+  dep tree:
+    Tesla --compound--> stock
+    stock --nsubj--> dropped
+    dropped --ROOT--> dropped
+    like --prep--> dropped
+    8 --nummod--> percent
+    percent --pobj--> like
+    after --mark--> tweeted
+    Musk --nsubj--> tweeted
+    tweeted --advcl--> dropped
+    some --det--> stuff
+    weird --amod--> stuff
+    stuff --dobj--> tweeted
+    . --punct--> dropped
 
 [7] I forgot to buy milk at Lidl and now I have to go back tomorrow morning.
   tokens: ['I', 'forgot', 'to', 'buy', 'milk', 'at', 'Lidl', 'and', 'now', 'I', 'have', 'to', 'go', 'back', 'tomorrow', 'morning', '.']
   lemmas: ['I', 'forgot', 'to', 'buy', 'milk', 'at', 'Lidl', 'and', 'now', 'I', 'have', 'to', 'go', 'back', 'tomorrow', 'morning', '.']
+  pos: [('I', 'PRON'), ('forgot', 'VERB'), ('to', 'PART'), ('buy', 'VERB'), ('milk', 'NOUN'), ('at', 'ADP'), ('Lidl', 'PROPN'), ('and', 'CCONJ'), ('now', 'ADV'), ('I', 'PRON'), ('have', 'VERB'), ('to', 'PART'), ('go', 'VERB'), ('back', 'ADV'), ('tomorrow', 'NOUN'), ('morning', 'NOUN'), ('.', 'PUNCT')]
+  deps: [('I', 'nsubj', 'forgot'), ('forgot', 'ROOT', 'forgot'), ('to', 'aux', 'buy'), ('buy', 'xcomp', 'forgot'), ('milk', 'dobj', 'buy'), ('at', 'prep', 'buy'), ('Lidl', 'pobj', 'at'), ('and', 'cc', 'forgot'), ('now', 'advmod', 'have'), ('I', 'nsubj', 'have'), ('have', 'conj', 'forgot'), ('to', 'aux', 'go'), ('go', 'xcomp', 'have'), ('back', 'advmod', 'go'), ('tomorrow', 'compound', 'morning'), ('morning', 'npadvmod', 'go'), ('.', 'punct', 'have')]
+  chunks: [('I', 'nsubj'), ('milk', 'dobj'), ('Lidl', 'pobj'), ('I', 'nsubj')]
+  ner: [('Lidl', 'GPE'), ('tomorrow', 'DATE')]
+  dep tree:
+    I --nsubj--> forgot
+    forgot --ROOT--> forgot
+    to --aux--> buy
+    buy --xcomp--> forgot
+    milk --dobj--> buy
+    at --prep--> buy
+    Lidl --pobj--> at
+    and --cc--> forgot
+    now --advmod--> have
+    I --nsubj--> have
+    have --conj--> forgot
+    to --aux--> go
+    go --xcomp--> have
+    back --advmod--> go
+    tomorrow --compound--> morning
+    morning --npadvmod--> go
+    . --punct--> have
 
 [8] The professor cancelled the exam and gave us a project instead which is worse.
   tokens: ['The', 'professor', 'cancelled', 'the', 'exam', 'and', 'gave', 'us', 'a', 'project', 'instead', 'which', 'is', 'worse', '.']
   lemmas: ['the', 'professor', 'cancel', 'the', 'exam', 'and', 'give', 'we', 'a', 'project', 'instead', 'which', 'be', 'bad', '.']
+  pos: [('The', 'DET'), ('professor', 'NOUN'), ('cancelled', 'VERB'), ('the', 'DET'), ('exam', 'NOUN'), ('and', 'CCONJ'), ('gave', 'VERB'), ('us', 'PRON'), ('a', 'DET'), ('project', 'NOUN'), ('instead', 'ADV'), ('which', 'PRON'), ('is', 'AUX'), ('worse', 'ADJ'), ('.', 'PUNCT')]
+  deps: [('The', 'det', 'professor'), ('professor', 'nsubj', 'cancelled'), ('cancelled', 'ROOT', 'cancelled'), ('the', 'det', 'exam'), ('exam', 'dobj', 'cancelled'), ('and', 'cc', 'cancelled'), ('gave', 'conj', 'cancelled'), ('us', 'dative', 'gave'), ('a', 'det', 'project'), ('project', 'dobj', 'gave'), ('instead', 'advmod', 'is'), ('which', 'nsubj', 'is'), ('is', 'relcl', 'project'), ('worse', 'acomp', 'is'), ('.', 'punct', 'cancelled')]
+  chunks: [('The professor', 'nsubj'), ('the exam', 'dobj'), ('us', 'dative'), ('a project', 'dobj'), ('which', 'nsubj')]
+  ner: []
+  dep tree:
+    The --det--> professor
+    professor --nsubj--> cancelled
+    cancelled --ROOT--> cancelled
+    the --det--> exam
+    exam --dobj--> cancelled
+    and --cc--> cancelled
+    gave --conj--> cancelled
+    us --dative--> gave
+    a --det--> project
+    project --dobj--> gave
+    instead --advmod--> is
+    which --nsubj--> is
+    is --relcl--> project
+    worse --acomp--> is
+    . --punct--> cancelled
 
 [9] Barcelona lost 3-0 to Bayern Munich and everyone at the bar was so mad.
   tokens: ['Barcelona', 'lost', '3', '-', '0', 'to', 'Bayern', 'Munich', 'and', 'everyone', 'at', 'the', 'bar', 'was', 'so', 'mad', '.']
   lemmas: ['Barcelona', 'lose', '3', '-', '0', 'to', 'Bayern', 'Munich', 'and', 'everyone', 'at', 'the', 'bar', 'be', 'so', 'mad', '.']
+  pos: [('Barcelona', 'PROPN'), ('lost', 'VERB'), ('3', 'NUM'), ('-', 'SYM'), ('0', 'NUM'), ('to', 'ADP'), ('Bayern', 'PROPN'), ('Munich', 'PROPN'), ('and', 'CCONJ'), ('everyone', 'PRON'), ('at', 'ADP'), ('the', 'DET'), ('bar', 'NOUN'), ('was', 'AUX'), ('so', 'ADV'), ('mad', 'ADJ'), ('.', 'PUNCT')]
+  deps: [('Barcelona', 'nsubj', 'lost'), ('lost', 'ROOT', 'lost'), ('3', 'npadvmod', 'lost'), ('-', 'punct', '0'), ('0', 'prep', '3'), ('to', 'prep', 'lost'), ('Bayern', 'compound', 'Munich'), ('Munich', 'pobj', 'to'), ('and', 'cc', 'lost'), ('everyone', 'nsubj', 'was'), ('at', 'prep', 'everyone'), ('the', 'det', 'bar'), ('bar', 'pobj', 'at'), ('was', 'conj', 'lost'), ('so', 'advmod', 'mad'), ('mad', 'acomp', 'was'), ('.', 'punct', 'was')]
+  chunks: [('Barcelona', 'nsubj'), ('Bayern Munich', 'pobj'), ('everyone', 'nsubj'), ('the bar', 'pobj')]
+  ner: [('Barcelona', 'GPE'), ('3', 'CARDINAL'), ('Bayern Munich', 'LOC')]
+  dep tree:
+    Barcelona --nsubj--> lost
+    lost --ROOT--> lost
+    3 --npadvmod--> lost
+    - --punct--> 0
+    0 --prep--> 3
+    to --prep--> lost
+    Bayern --compound--> Munich
+    Munich --pobj--> to
+    and --cc--> lost
+    everyone --nsubj--> was
+    at --prep--> everyone
+    the --det--> bar
+    bar --pobj--> at
+    was --conj--> lost
+    so --advmod--> mad
+    mad --acomp--> was
+    . --punct--> was
 
 [10] Netflix raised their prices again and I'm seriously considering cancelling.
   tokens: ['Netflix', 'raised', 'their', 'prices', 'again', 'and', 'I', "'m", 'seriously', 'considering', 'cancelling', '.']
   lemmas: ['Netflix', 'raise', 'their', 'price', 'again', 'and', 'I', 'be', 'seriously', 'consider', 'cancel', '.']
+  pos: [('Netflix', 'PROPN'), ('raised', 'VERB'), ('their', 'PRON'), ('prices', 'NOUN'), ('again', 'ADV'), ('and', 'CCONJ'), ('I', 'PRON'), ("'m", 'AUX'), ('seriously', 'ADV'), ('considering', 'VERB'), ('cancelling', 'VERB'), ('.', 'PUNCT')]
+  deps: [('Netflix', 'nsubj', 'raised'), ('raised', 'ROOT', 'raised'), ('their', 'poss', 'prices'), ('prices', 'dobj', 'raised'), ('again', 'advmod', 'raised'), ('and', 'cc', 'raised'), ('I', 'nsubj', 'considering'), ("'m", 'aux', 'considering'), ('seriously', 'advmod', 'considering'), ('considering', 'conj', 'raised'), ('cancelling', 'xcomp', 'considering'), ('.', 'punct', 'considering')]
+  chunks: [('Netflix', 'nsubj'), ('their prices', 'dobj'), ('I', 'nsubj')]
+  ner: [('Netflix', 'ORG')]
+  dep tree:
+    Netflix --nsubj--> raised
+    raised --ROOT--> raised
+    their --poss--> prices
+    prices --dobj--> raised
+    again --advmod--> raised
+    and --cc--> raised
+    I --nsubj--> considering
+    'm --aux--> considering
+    seriously --advmod--> considering
+    considering --conj--> raised
+    cancelling --xcomp--> considering
+    . --punct--> considering
 
 == Romanian ==
 
 [1] Am uitat sa iau paine de la Kaufland si acum tre sa ma duc iar.
   tokens: ['Am', 'uitat', 'sa', 'iau', 'paine', 'de', 'la', 'Kaufland', 'si', 'acum', 'tre', 'sa', 'ma', 'duc', 'iar', '.']
   lemmas: ['avea', 'uita', 'său', 'lua', 'pain', 'de', 'la', 'Kaufland', 'si', 'acum', 'tre', 'său', 'ma', 'duce', 'iar', '.']
+  pos: [('Am', 'AUX'), ('uitat', 'VERB'), ('sa', 'DET'), ('iau', 'AUX'), ('paine', 'NOUN'), ('de', 'ADP'), ('la', 'ADP'), ('Kaufland', 'PROPN'), ('si', 'INTJ'), ('acum', 'ADV'), ('tre', 'ADP'), ('sa', 'PRON'), ('ma', 'PRON'), ('duc', 'AUX'), ('iar', 'ADV'), ('.', 'PUNCT')]
+  deps: [('Am', 'aux', 'uitat'), ('uitat', 'ROOT', 'uitat'), ('sa', 'obj', 'uitat'), ('iau', 'obj', 'uitat'), ('paine', 'obj', 'iau'), ('de', 'case', 'Kaufland'), ('la', 'fixed', 'de'), ('Kaufland', 'obl', 'iau'), ('si', 'flat', 'Kaufland'), ('acum', 'advmod', 'iau'), ('tre', 'case', 'sa'), ('sa', 'iobj', 'duc'), ('ma', 'nsubj', 'duc'), ('duc', 'conj', 'iau'), ('iar', 'cc', 'uitat'), ('.', 'punct', 'uitat')]
+  ner: [('Kaufland', 'GPE')]
+  dep tree:
+    Am --aux--> uitat
+    uitat --ROOT--> uitat
+    sa --obj--> uitat
+    iau --obj--> uitat
+    paine --obj--> iau
+    de --case--> Kaufland
+    la --fixed--> de
+    Kaufland --obl--> iau
+    si --flat--> Kaufland
+    acum --advmod--> iau
+    tre --case--> sa
+    sa --iobj--> duc
+    ma --nsubj--> duc
+    duc --conj--> iau
+    iar --cc--> uitat
+    . --punct--> uitat
 
 [2] Ieri a plouat toata ziua si n-am putut sa ies din casa deloc.
   tokens: ['Ieri', 'a', 'plouat', 'toata', 'ziua', 'si', 'n-', 'am', 'putut', 'sa', 'ies', 'din', 'casa', 'deloc', '.']
   lemmas: ['Ieri', 'avea', 'ploua', 'toată', 'zi', 'si', 'nu', 'avea', 'putea', 'său', 'ies', 'din', 'casă', 'deloc', '.']
+  pos: [('Ieri', 'ADV'), ('a', 'AUX'), ('plouat', 'VERB'), ('toata', 'NOUN'), ('ziua', 'NOUN'), ('si', 'DET'), ('n-', 'PART'), ('am', 'AUX'), ('putut', 'VERB'), ('sa', 'DET'), ('ies', 'AUX'), ('din', 'ADP'), ('casa', 'NOUN'), ('deloc', 'ADV'), ('.', 'PUNCT')]
+  deps: [('Ieri', 'advmod', 'plouat'), ('a', 'aux', 'plouat'), ('plouat', 'ROOT', 'plouat'), ('toata', 'obj', 'plouat'), ('ziua', 'obl', 'plouat'), ('si', 'det', 'ziua'), ('n-', 'advmod', 'putut'), ('am', 'aux', 'putut'), ('putut', 'advcl', 'plouat'), ('sa', 'obj', 'putut'), ('ies', 'ccomp', 'putut'), ('din', 'case', 'casa'), ('casa', 'obl', 'ies'), ('deloc', 'nummod', 'casa'), ('.', 'punct', 'plouat')]
+  ner: []
+  dep tree:
+    Ieri --advmod--> plouat
+    a --aux--> plouat
+    plouat --ROOT--> plouat
+    toata --obj--> plouat
+    ziua --obl--> plouat
+    si --det--> ziua
+    n- --advmod--> putut
+    am --aux--> putut
+    putut --advcl--> plouat
+    sa --obj--> putut
+    ies --ccomp--> putut
+    din --case--> casa
+    casa --obl--> ies
+    deloc --nummod--> casa
+    . --punct--> plouat
 
 [3] Baietii de la Universitatea Cluj au castigat meciul cu Dinamo pana la urma.
   tokens: ['Baietii', 'de', 'la', 'Universitatea', 'Cluj', 'au', 'castigat', 'meciul', 'cu', 'Dinamo', 'pana', 'la', 'urma', '.']
   lemmas: ['Baietii', 'de', 'la', 'universitate', 'Cluj', 'avea', 'castiga', 'meci', 'cu', 'dinamo', 'pană', 'la', 'urmă', '.']
+  pos: [('Baietii', 'NOUN'), ('de', 'ADP'), ('la', 'ADP'), ('Universitatea', 'NOUN'), ('Cluj', 'PROPN'), ('au', 'AUX'), ('castigat', 'VERB'), ('meciul', 'NOUN'), ('cu', 'ADP'), ('Dinamo', 'PROPN'), ('pana', 'NOUN'), ('la', 'ADP'), ('urma', 'NOUN'), ('.', 'PUNCT')]
+  deps: [('Baietii', 'nsubj', 'castigat'), ('de', 'case', 'Universitatea'), ('la', 'fixed', 'de'), ('Universitatea', 'nmod', 'Baietii'), ('Cluj', 'flat', 'Universitatea'), ('au', 'aux', 'castigat'), ('castigat', 'ROOT', 'castigat'), ('meciul', 'obj', 'castigat'), ('cu', 'case', 'Dinamo'), ('Dinamo', 'nmod', 'meciul'), ('pana', 'nmod', 'Dinamo'), ('la', 'case', 'urma'), ('urma', 'obl', 'castigat'), ('.', 'punct', 'castigat')]
+  ner: [('Baietii', 'PERSON'), ('Universitatea Cluj', 'ORGANIZATION'), ('Dinamo pana', 'ORGANIZATION')]
+  dep tree:
+    Baietii --nsubj--> castigat
+    de --case--> Universitatea
+    la --fixed--> de
+    Universitatea --nmod--> Baietii
+    Cluj --flat--> Universitatea
+    au --aux--> castigat
+    castigat --ROOT--> castigat
+    meciul --obj--> castigat
+    cu --case--> Dinamo
+    Dinamo --nmod--> meciul
+    pana --nmod--> Dinamo
+    la --case--> urma
+    urma --obl--> castigat
+    . --punct--> castigat
 
 [4] Trenul de Bucuresti a avut intarziere doua ore ca de obicei.
   tokens: ['Trenul', 'de', 'Bucuresti', 'a', 'avut', 'intarziere', 'doua', 'ore', 'ca', 'de', 'obicei', '.']
   lemmas: ['tren', 'de', 'Bucuresti', 'avea', 'avea', 'intarziere', 'doi', 'oră', 'ca', 'de', 'obicei', '.']
+  pos: [('Trenul', 'NOUN'), ('de', 'ADP'), ('Bucuresti', 'PROPN'), ('a', 'AUX'), ('avut', 'VERB'), ('intarziere', 'NOUN'), ('doua', 'NUM'), ('ore', 'NOUN'), ('ca', 'ADV'), ('de', 'ADP'), ('obicei', 'NOUN'), ('.', 'PUNCT')]
+  deps: [('Trenul', 'nsubj', 'avut'), ('de', 'case', 'Bucuresti'), ('Bucuresti', 'nmod', 'Trenul'), ('a', 'aux', 'avut'), ('avut', 'ROOT', 'avut'), ('intarziere', 'obj', 'avut'), ('doua', 'nummod', 'ore'), ('ore', 'nmod', 'intarziere'), ('ca', 'advmod', 'de'), ('de', 'advmod', 'avut'), ('obicei', 'fixed', 'de'), ('.', 'punct', 'avut')]
+  ner: [('Trenul de Bucuresti', 'ORGANIZATION'), ('intarziere doua ore', 'DATETIME')]
+  dep tree:
+    Trenul --nsubj--> avut
+    de --case--> Bucuresti
+    Bucuresti --nmod--> Trenul
+    a --aux--> avut
+    avut --ROOT--> avut
+    intarziere --obj--> avut
+    doua --nummod--> ore
+    ore --nmod--> intarziere
+    ca --advmod--> de
+    de --advmod--> avut
+    obicei --fixed--> de
+    . --punct--> avut
 
 [5] Am vazut un film pe HBO Max aseara dar nu mai tin minte cum se numea.
   tokens: ['Am', 'vazut', 'un', 'film', 'pe', 'HBO', 'Max', 'aseara', 'dar', 'nu', 'mai', 'tin', 'minte', 'cum', 'se', 'numea', '.']
   lemmas: ['avea', 'vazu', 'un', 'film', 'pe', 'HBO', 'Max', 'aseara', 'dar', 'nu', 'mai', 'tin', 'minte', 'cum', 'sine', 'numi', '.']
+  pos: [('Am', 'AUX'), ('vazut', 'VERB'), ('un', 'DET'), ('film', 'NOUN'), ('pe', 'ADP'), ('HBO', 'PROPN'), ('Max', 'PROPN'), ('aseara', 'ADV'), ('dar', 'CCONJ'), ('nu', 'PART'), ('mai', 'ADV'), ('tin', 'AUX'), ('minte', 'NOUN'), ('cum', 'ADV'), ('se', 'PRON'), ('numea', 'AUX'), ('.', 'PUNCT')]
+  deps: [('Am', 'aux', 'vazut'), ('vazut', 'ROOT', 'vazut'), ('un', 'det', 'film'), ('film', 'obj', 'vazut'), ('pe', 'case', 'HBO'), ('HBO', 'nmod', 'film'), ('Max', 'flat', 'HBO'), ('aseara', 'obj', 'vazut'), ('dar', 'cc', 'tin'), ('nu', 'advmod', 'tin'), ('mai', 'advmod', 'tin'), ('tin', 'conj', 'vazut'), ('minte', 'fixed', 'tin'), ('cum', 'advmod', 'numea'), ('se', 'expl:pv', 'numea'), ('numea', 'advcl', 'tin'), ('.', 'punct', 'vazut')]
+  ner: []
+  dep tree:
+    Am --aux--> vazut
+    vazut --ROOT--> vazut
+    un --det--> film
+    film --obj--> vazut
+    pe --case--> HBO
+    HBO --nmod--> film
+    Max --flat--> HBO
+    aseara --obj--> vazut
+    dar --cc--> tin
+    nu --advmod--> tin
+    mai --advmod--> tin
+    tin --conj--> vazut
+    minte --fixed--> tin
+    cum --advmod--> numea
+    se --expl:pv--> numea
+    numea --advcl--> tin
+    . --punct--> vazut
 
 [6] La Cluj s-a deschis un restaurant nou langa Piata Unirii si e destul de bun.
   tokens: ['La', 'Cluj', 's-', 'a', 'deschis', 'un', 'restaurant', 'nou', 'langa', 'Piata', 'Unirii', 'si', 'e', 'destul', 'de', 'bun', '.']
   lemmas: ['la', 'Cluj', 'sine', 'avea', 'deschide', 'un', 'restaurant', 'nou', 'langă', 'piată', 'unire', 'si', 'fi', 'destul', 'de', 'bun', '.']
+  pos: [('La', 'ADP'), ('Cluj', 'PROPN'), ('s-', 'PRON'), ('a', 'AUX'), ('deschis', 'VERB'), ('un', 'DET'), ('restaurant', 'NOUN'), ('nou', 'ADJ'), ('langa', 'NOUN'), ('Piata', 'NOUN'), ('Unirii', 'NOUN'), ('si', 'DET'), ('e', 'AUX'), ('destul', 'ADV'), ('de', 'ADP'), ('bun', 'ADJ'), ('.', 'PUNCT')]
+  deps: [('La', 'case', 'Cluj'), ('Cluj', 'obl', 'deschis'), ('s-', 'expl:pv', 'deschis'), ('a', 'aux', 'deschis'), ('deschis', 'ROOT', 'deschis'), ('un', 'det', 'restaurant'), ('restaurant', 'nsubj:pass', 'deschis'), ('nou', 'amod', 'restaurant'), ('langa', 'nsubj', 'deschis'), ('Piata', 'nmod', 'langa'), ('Unirii', 'nmod', 'Piata'), ('si', 'det', 'Unirii'), ('e', 'cop', 'bun'), ('destul', 'advmod', 'bun'), ('de', 'case', 'destul'), ('bun', 'conj', 'deschis'), ('.', 'punct', 'deschis')]
+  ner: [('Cluj', 'GPE'), ('restaurant', 'FACILITY'), ('Piata Unirii', 'ORGANIZATION')]
+  dep tree:
+    La --case--> Cluj
+    Cluj --obl--> deschis
+    s- --expl:pv--> deschis
+    a --aux--> deschis
+    deschis --ROOT--> deschis
+    un --det--> restaurant
+    restaurant --nsubj:pass--> deschis
+    nou --amod--> restaurant
+    langa --nsubj--> deschis
+    Piata --nmod--> langa
+    Unirii --nmod--> Piata
+    si --det--> Unirii
+    e --cop--> bun
+    destul --advmod--> bun
+    de --case--> destul
+    bun --conj--> deschis
+    . --punct--> deschis
 
 [7] Colegul meu de camera a mancat tot ce era in frigider fara sa intrebe.
   tokens: ['Colegul', 'meu', 'de', 'camera', 'a', 'mancat', 'tot', 'ce', 'era', 'in', 'frigider', 'fara', 'sa', 'intrebe', '.']
   lemmas: ['coleg', 'meu', 'de', 'cameră', 'avea', 'manca', 'tot', 'ce', 'fi', 'in', 'frigider', 'fara', 'său', 'intrebe', '.']
+  pos: [('Colegul', 'NOUN'), ('meu', 'DET'), ('de', 'ADP'), ('camera', 'NOUN'), ('a', 'AUX'), ('mancat', 'VERB'), ('tot', 'PRON'), ('ce', 'PRON'), ('era', 'AUX'), ('in', 'ADP'), ('frigider', 'NOUN'), ('fara', 'ADV'), ('sa', 'DET'), ('intrebe', 'NOUN'), ('.', 'PUNCT')]
+  deps: [('Colegul', 'nsubj', 'mancat'), ('meu', 'det', 'Colegul'), ('de', 'case', 'camera'), ('camera', 'nmod', 'Colegul'), ('a', 'aux', 'mancat'), ('mancat', 'ROOT', 'mancat'), ('tot', 'obj', 'mancat'), ('ce', 'nsubj', 'frigider'), ('era', 'cop', 'frigider'), ('in', 'advmod', 'frigider'), ('frigider', 'acl', 'tot'), ('fara', 'amod', 'intrebe'), ('sa', 'det', 'fara'), ('intrebe', 'obj', 'mancat'), ('.', 'punct', 'mancat')]
+  ner: [('frigider', 'PRODUCT')]
+  dep tree:
+    Colegul --nsubj--> mancat
+    meu --det--> Colegul
+    de --case--> camera
+    camera --nmod--> Colegul
+    a --aux--> mancat
+    mancat --ROOT--> mancat
+    tot --obj--> mancat
+    ce --nsubj--> frigider
+    era --cop--> frigider
+    in --advmod--> frigider
+    frigider --acl--> tot
+    fara --amod--> intrebe
+    sa --det--> fara
+    intrebe --obj--> mancat
+    . --punct--> mancat
 
 [8] Profesorul de la mate ne-a dat tema de trei ori mai multa decat saptamana trecuta.
   tokens: ['Profesorul', 'de', 'la', 'mate', 'ne-', 'a', 'dat', 'tema', 'de', 'trei', 'ori', 'mai', 'multa', 'decat', 'saptamana', 'trecuta', '.']
   lemmas: ['profesor', 'de', 'la', 'mat', 'eu', 'avea', 'da', 'temă', 'de', 'trei', 'oară', 'mai', 'Multa', 'decat', 'saptamană', 'trecuta', '.']
+  pos: [('Profesorul', 'NOUN'), ('de', 'ADP'), ('la', 'ADP'), ('mate', 'NOUN'), ('ne-', 'PRON'), ('a', 'AUX'), ('dat', 'VERB'), ('tema', 'NOUN'), ('de', 'ADP'), ('trei', 'NUM'), ('ori', 'NOUN'), ('mai', 'ADV'), ('multa', 'PROPN'), ('decat', 'ADJ'), ('saptamana', 'NOUN'), ('trecuta', 'AUX'), ('.', 'PUNCT')]
+  deps: [('Profesorul', 'nsubj', 'dat'), ('de', 'case', 'mate'), ('la', 'fixed', 'de'), ('mate', 'nmod', 'Profesorul'), ('ne-', 'iobj', 'dat'), ('a', 'aux', 'dat'), ('dat', 'ROOT', 'dat'), ('tema', 'obj', 'dat'), ('de', 'case', 'ori'), ('trei', 'nummod', 'ori'), ('ori', 'nmod', 'tema'), ('mai', 'advmod', 'multa'), ('multa', 'advcl', 'dat'), ('decat', 'amod', 'multa'), ('saptamana', 'nsubj', 'trecuta'), ('trecuta', 'conj', 'dat'), ('.', 'punct', 'dat')]
+  ner: [('Profesorul', 'PERSON'), ('trei', 'NUMERIC_VALUE'), ('saptamana', 'PERSON')]
+  dep tree:
+    Profesorul --nsubj--> dat
+    de --case--> mate
+    la --fixed--> de
+    mate --nmod--> Profesorul
+    ne- --iobj--> dat
+    a --aux--> dat
+    dat --ROOT--> dat
+    tema --obj--> dat
+    de --case--> ori
+    trei --nummod--> ori
+    ori --nmod--> tema
+    mai --advmod--> multa
+    multa --advcl--> dat
+    decat --amod--> multa
+    saptamana --nsubj--> trecuta
+    trecuta --conj--> dat
+    . --punct--> dat
 
 [9] Am ramas fara baterie la telefon fix cand aveam nevoie de GPS.
   tokens: ['Am', 'ramas', 'fara', 'baterie', 'la', 'telefon', 'fix', 'cand', 'aveam', 'nevoie', 'de', 'GPS', '.']
   lemmas: ['avea', 'ramas', 'fara', 'bateriu', 'la', 'telefon', 'fix', 'cand', 'avea', 'nevoie', 'de', 'GPS', '.']
+  pos: [('Am', 'AUX'), ('ramas', 'VERB'), ('fara', 'ADV'), ('baterie', 'NOUN'), ('la', 'ADP'), ('telefon', 'NOUN'), ('fix', 'ADJ'), ('cand', 'NOUN'), ('aveam', 'AUX'), ('nevoie', 'NOUN'), ('de', 'ADP'), ('GPS', 'PROPN'), ('.', 'PUNCT')]
+  deps: [('Am', 'aux', 'ramas'), ('ramas', 'ROOT', 'ramas'), ('fara', 'obj', 'ramas'), ('baterie', 'obj', 'ramas'), ('la', 'case', 'telefon'), ('telefon', 'obl:pmod', 'baterie'), ('fix', 'amod', 'telefon'), ('cand', 'nmod', 'telefon'), ('aveam', 'conj', 'ramas'), ('nevoie', 'fixed', 'aveam'), ('de', 'case', 'GPS'), ('GPS', 'obl:pmod', 'aveam'), ('.', 'punct', 'ramas')]
+  ner: [('aveam', 'PRODUCT')]
+  dep tree:
+    Am --aux--> ramas
+    ramas --ROOT--> ramas
+    fara --obj--> ramas
+    baterie --obj--> ramas
+    la --case--> telefon
+    telefon --obl:pmod--> baterie
+    fix --amod--> telefon
+    cand --nmod--> telefon
+    aveam --conj--> ramas
+    nevoie --fixed--> aveam
+    de --case--> GPS
+    GPS --obl:pmod--> aveam
+    . --punct--> ramas
 
 [10] Preturile la benzina iar au crescut si nu mai am bani de nimic.
   tokens: ['Preturile', 'la', 'benzina', 'iar', 'au', 'crescut', 'si', 'nu', 'mai', 'am', 'bani', 'de', 'nimic', '.']
   lemmas: ['preture', 'la', 'benzină', 'iar', 'avea', 'crește', 'si', 'nu', 'mai', 'avea', 'ban', 'de', 'nimic', '.']
+  pos: [('Preturile', 'NOUN'), ('la', 'ADP'), ('benzina', 'NOUN'), ('iar', 'ADV'), ('au', 'AUX'), ('crescut', 'VERB'), ('si', 'PRON'), ('nu', 'PART'), ('mai', 'ADV'), ('am', 'AUX'), ('bani', 'NOUN'), ('de', 'ADP'), ('nimic', 'PRON'), ('.', 'PUNCT')]
+  deps: [('Preturile', 'nsubj', 'crescut'), ('la', 'case', 'benzina'), ('benzina', 'nmod', 'Preturile'), ('iar', 'cc', 'crescut'), ('au', 'aux', 'crescut'), ('crescut', 'ROOT', 'crescut'), ('si', 'nsubj', 'am'), ('nu', 'advmod', 'am'), ('mai', 'advmod', 'am'), ('am', 'xcomp', 'crescut'), ('bani', 'obj', 'am'), ('de', 'case', 'nimic'), ('nimic', 'nmod', 'bani'), ('.', 'punct', 'crescut')]
+  ner: [('benzina', 'PRODUCT')]
+  dep tree:
+    Preturile --nsubj--> crescut
+    la --case--> benzina
+    benzina --nmod--> Preturile
+    iar --cc--> crescut
+    au --aux--> crescut
+    crescut --ROOT--> crescut
+    si --nsubj--> am
+    nu --advmod--> am
+    mai --advmod--> am
+    am --xcomp--> crescut
+    bani --obj--> am
+    de --case--> nimic
+    nimic --nmod--> bani
+    . --punct--> crescut
