@@ -1,0 +1,83 @@
+== English ==
+
+[1] I think Google just laid off like 200 people from their cloud division.
+  tokens: ['I', 'think', 'Google', 'just', 'laid', 'off', 'like', '200', 'people', 'from', 'their', 'cloud', 'division', '.']
+  lemmas: ['I', 'think', 'Google', 'just', 'lay', 'off', 'like', '200', 'people', 'from', 'their', 'cloud', 'division', '.']
+
+[2] My friend Sarah moved to London last year and she hates the weather there.
+  tokens: ['My', 'friend', 'Sarah', 'moved', 'to', 'London', 'last', 'year', 'and', 'she', 'hates', 'the', 'weather', 'there', '.']
+  lemmas: ['my', 'friend', 'Sarah', 'move', 'to', 'London', 'last', 'year', 'and', 'she', 'hat', 'the', 'weather', 'there', '.']
+
+[3] The bus was 20 minutes late again so I missed my morning lecture.
+  tokens: ['The', 'bus', 'was', '20', 'minutes', 'late', 'again', 'so', 'I', 'missed', 'my', 'morning', 'lecture', '.']
+  lemmas: ['the', 'bus', 'be', '20', 'minute', 'late', 'again', 'so', 'I', 'miss', 'my', 'morning', 'lecture', '.']
+
+[4] Obama gave this really good speech at the UN back in 2015 or something.
+  tokens: ['Obama', 'gave', 'this', 'really', 'good', 'speech', 'at', 'the', 'UN', 'back', 'in', '2015', 'or', 'something', '.']
+  lemmas: ['Obama', 'give', 'this', 'really', 'good', 'speech', 'at', 'the', 'UN', 'back', 'in', '2015', 'or', 'something', '.']
+
+[5] We went to that new Thai place on Market Street and the food was mid honestly.
+  tokens: ['We', 'went', 'to', 'that', 'new', 'Thai', 'place', 'on', 'Market', 'Street', 'and', 'the', 'food', 'was', 'mid', 'honestly', '.']
+  lemmas: ['we', 'go', 'to', 'that', 'new', 'Thai', 'place', 'on', 'Market', 'Street', 'and', 'the', 'food', 'be', 'mid', 'honestly', '.']
+
+[6] Tesla stock dropped like 8 percent after Musk tweeted some weird stuff.
+  tokens: ['Tesla', 'stock', 'dropped', 'like', '8', 'percent', 'after', 'Musk', 'tweeted', 'some', 'weird', 'stuff', '.']
+  lemmas: ['tesla', 'stock', 'drop', 'like', '8', 'percent', 'after', 'Musk', 'tweet', 'some', 'weird', 'stuff', '.']
+
+[7] I forgot to buy milk at Lidl and now I have to go back tomorrow morning.
+  tokens: ['I', 'forgot', 'to', 'buy', 'milk', 'at', 'Lidl', 'and', 'now', 'I', 'have', 'to', 'go', 'back', 'tomorrow', 'morning', '.']
+  lemmas: ['I', 'forgot', 'to', 'buy', 'milk', 'at', 'Lidl', 'and', 'now', 'I', 'have', 'to', 'go', 'back', 'tomorrow', 'morning', '.']
+
+[8] The professor cancelled the exam and gave us a project instead which is worse.
+  tokens: ['The', 'professor', 'cancelled', 'the', 'exam', 'and', 'gave', 'us', 'a', 'project', 'instead', 'which', 'is', 'worse', '.']
+  lemmas: ['the', 'professor', 'cancel', 'the', 'exam', 'and', 'give', 'we', 'a', 'project', 'instead', 'which', 'be', 'bad', '.']
+
+[9] Barcelona lost 3-0 to Bayern Munich and everyone at the bar was so mad.
+  tokens: ['Barcelona', 'lost', '3', '-', '0', 'to', 'Bayern', 'Munich', 'and', 'everyone', 'at', 'the', 'bar', 'was', 'so', 'mad', '.']
+  lemmas: ['Barcelona', 'lose', '3', '-', '0', 'to', 'Bayern', 'Munich', 'and', 'everyone', 'at', 'the', 'bar', 'be', 'so', 'mad', '.']
+
+[10] Netflix raised their prices again and I'm seriously considering cancelling.
+  tokens: ['Netflix', 'raised', 'their', 'prices', 'again', 'and', 'I', "'m", 'seriously', 'considering', 'cancelling', '.']
+  lemmas: ['Netflix', 'raise', 'their', 'price', 'again', 'and', 'I', 'be', 'seriously', 'consider', 'cancel', '.']
+
+== Romanian ==
+
+[1] Am uitat sa iau paine de la Kaufland si acum tre sa ma duc iar.
+  tokens: ['Am', 'uitat', 'sa', 'iau', 'paine', 'de', 'la', 'Kaufland', 'si', 'acum', 'tre', 'sa', 'ma', 'duc', 'iar', '.']
+  lemmas: ['avea', 'uita', 'său', 'lua', 'pain', 'de', 'la', 'Kaufland', 'si', 'acum', 'tre', 'său', 'ma', 'duce', 'iar', '.']
+
+[2] Ieri a plouat toata ziua si n-am putut sa ies din casa deloc.
+  tokens: ['Ieri', 'a', 'plouat', 'toata', 'ziua', 'si', 'n-', 'am', 'putut', 'sa', 'ies', 'din', 'casa', 'deloc', '.']
+  lemmas: ['Ieri', 'avea', 'ploua', 'toată', 'zi', 'si', 'nu', 'avea', 'putea', 'său', 'ies', 'din', 'casă', 'deloc', '.']
+
+[3] Baietii de la Universitatea Cluj au castigat meciul cu Dinamo pana la urma.
+  tokens: ['Baietii', 'de', 'la', 'Universitatea', 'Cluj', 'au', 'castigat', 'meciul', 'cu', 'Dinamo', 'pana', 'la', 'urma', '.']
+  lemmas: ['Baietii', 'de', 'la', 'universitate', 'Cluj', 'avea', 'castiga', 'meci', 'cu', 'dinamo', 'pană', 'la', 'urmă', '.']
+
+[4] Trenul de Bucuresti a avut intarziere doua ore ca de obicei.
+  tokens: ['Trenul', 'de', 'Bucuresti', 'a', 'avut', 'intarziere', 'doua', 'ore', 'ca', 'de', 'obicei', '.']
+  lemmas: ['tren', 'de', 'Bucuresti', 'avea', 'avea', 'intarziere', 'doi', 'oră', 'ca', 'de', 'obicei', '.']
+
+[5] Am vazut un film pe HBO Max aseara dar nu mai tin minte cum se numea.
+  tokens: ['Am', 'vazut', 'un', 'film', 'pe', 'HBO', 'Max', 'aseara', 'dar', 'nu', 'mai', 'tin', 'minte', 'cum', 'se', 'numea', '.']
+  lemmas: ['avea', 'vazu', 'un', 'film', 'pe', 'HBO', 'Max', 'aseara', 'dar', 'nu', 'mai', 'tin', 'minte', 'cum', 'sine', 'numi', '.']
+
+[6] La Cluj s-a deschis un restaurant nou langa Piata Unirii si e destul de bun.
+  tokens: ['La', 'Cluj', 's-', 'a', 'deschis', 'un', 'restaurant', 'nou', 'langa', 'Piata', 'Unirii', 'si', 'e', 'destul', 'de', 'bun', '.']
+  lemmas: ['la', 'Cluj', 'sine', 'avea', 'deschide', 'un', 'restaurant', 'nou', 'langă', 'piată', 'unire', 'si', 'fi', 'destul', 'de', 'bun', '.']
+
+[7] Colegul meu de camera a mancat tot ce era in frigider fara sa intrebe.
+  tokens: ['Colegul', 'meu', 'de', 'camera', 'a', 'mancat', 'tot', 'ce', 'era', 'in', 'frigider', 'fara', 'sa', 'intrebe', '.']
+  lemmas: ['coleg', 'meu', 'de', 'cameră', 'avea', 'manca', 'tot', 'ce', 'fi', 'in', 'frigider', 'fara', 'său', 'intrebe', '.']
+
+[8] Profesorul de la mate ne-a dat tema de trei ori mai multa decat saptamana trecuta.
+  tokens: ['Profesorul', 'de', 'la', 'mate', 'ne-', 'a', 'dat', 'tema', 'de', 'trei', 'ori', 'mai', 'multa', 'decat', 'saptamana', 'trecuta', '.']
+  lemmas: ['profesor', 'de', 'la', 'mat', 'eu', 'avea', 'da', 'temă', 'de', 'trei', 'oară', 'mai', 'Multa', 'decat', 'saptamană', 'trecuta', '.']
+
+[9] Am ramas fara baterie la telefon fix cand aveam nevoie de GPS.
+  tokens: ['Am', 'ramas', 'fara', 'baterie', 'la', 'telefon', 'fix', 'cand', 'aveam', 'nevoie', 'de', 'GPS', '.']
+  lemmas: ['avea', 'ramas', 'fara', 'bateriu', 'la', 'telefon', 'fix', 'cand', 'avea', 'nevoie', 'de', 'GPS', '.']
+
+[10] Preturile la benzina iar au crescut si nu mai am bani de nimic.
+  tokens: ['Preturile', 'la', 'benzina', 'iar', 'au', 'crescut', 'si', 'nu', 'mai', 'am', 'bani', 'de', 'nimic', '.']
+  lemmas: ['preture', 'la', 'benzină', 'iar', 'avea', 'crește', 'si', 'nu', 'mai', 'avea', 'ban', 'de', 'nimic', '.']
