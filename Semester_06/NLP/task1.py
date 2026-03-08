@@ -51,10 +51,10 @@ def process(sentences, nlp, has_chunks=True):
         for t in doc:
             out(f"    {t.text} --{t.dep_}--> {t.head.text}")
 
-out("== English ==")
+out("eng")
 process(eng, nlp_en)
 
-out("\n== Romanian ==")
+out("\nro")
 process(ro, nlp_ro, has_chunks=False)
 
 f.close()

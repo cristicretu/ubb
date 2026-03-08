@@ -1,4 +1,4 @@
-== English ==
+eng
 
 [1] I think Google just laid off like 200 people from their cloud division.
   tokens: ['I', 'think', 'Google', 'just', 'laid', 'off', 'like', '200', 'people', 'from', 'their', 'cloud', 'division', '.']
@@ -239,7 +239,7 @@
     cancelling --xcomp--> considering
     . --punct--> considering
 
-== Romanian ==
+ro
 
 [1] Am uitat sa iau paine de la Kaufland si acum tre sa ma duc iar.
   tokens: ['Am', 'uitat', 'sa', 'iau', 'paine', 'de', 'la', 'Kaufland', 'si', 'acum', 'tre', 'sa', 'ma', 'duc', 'iar', '.']
