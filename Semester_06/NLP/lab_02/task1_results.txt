@@ -1,0 +1,511 @@
+======================================================================
+Task 1: RoWordNet
+======================================================================
+
+== NOUNS ==
+
+'casă' - 62 synsets
+
+  [1] ENG30-08078020-n
+  Definition: Totalitatea celor care locuiesc împreună, (formând o familie
+  Literals: ['casă', 'familie']
+  Literal senses: ['1.10', 'x']
+  Sentiment (P/N/O): 0.0, 0.0, 1.0
+    hypernym -> ['unitate']: organizație văzută ca parte a unui grup social mai mare
+    near_eng_derivat -> []: A găsi (procura) o casă, a trimite la o casă
+    near_eng_derivat -> ['proprietar']: persoană care posedă un imobil
+    hyponym -> ['familie_extinsă']: familie constând din familia nucleu și toate rudele de sânge
+    hyponym -> ['familie_adoptivă']: Familia unui copil adoptat
+    hyponym -> ['școală_de_corecție']: Instituție în care sunt plasați copiii delicvenți
+    hyponym -> ['menage_a_trois']: conviețuire a unui cuplu căsătorit cu amantul (sau amanta) unuia dintre soți
+    near_eng_derivat <- ['proprietar']: persoană care posedă un imobil
+    hyponym <- ['unitate']: organizație văzută ca parte a unui grup social mai mare
+    near_eng_derivat <- []: A găsi (procura) o casă, a trimite la o casă
+    hypernym <- ['familie_extinsă']: familie constând din familia nucleu și toate rudele de sânge
+    hypernym <- ['familie_adoptivă']: Familia unui copil adoptat
+    hypernym <- ['școală_de_corecție']: Instituție în care sunt plasați copiii delicvenți
+    hypernym <- ['menage_a_trois']: conviețuire a unui cuplu căsătorit cu amantul (sau amanta) unuia dintre soți
+  Hypernym path:
+    -> ['casă', 'familie']
+      -> ['unitate']
+        -> ['organizație']
+          -> ['grup_social']
+            -> ['grup', 'grupare']
+              -> ['abstractizare']
+                -> ['entitate']
+
+  [2] ENG30-03953416-n
+  Definition: O clădire în care membrii unei congregații se adună pentru rugăciune
+  Literals: ['casă_de_rugăciune', 'casa_Domnului']
+  Literal senses: ['1', '2']
+  Sentiment (P/N/O): 0.0, 0.0, 1.0
+    hypernym -> ['clădire', 'construcție', 'zidire']: Construcție înălțată la suprafața pământului și care servește la adăpostirea unor oameni, unor animale, unor obiecte și instalații etc.
+    hyponym -> ['capelă']: încăpere într-o clădire, cu un altar, unde se poate oficia slujba religioasă
+    hyponym -> ['capelă', 'paraclis']: Capelă construită alături de o biserică, într-un cimitir, în interiorul unei clădiri etc.
+    hyponym -> ['biserică', 'casa_Domnului']: Clădire destinată celebrării unui cult creștin.
+    hyponym -> ['moschee']: Templu de cult mahomedan
+    hyponym -> ['moschee']: Templu de cult mahomedan, împodobit cu minarete
+    hyponym -> ['altar']: loc de închinăciune, asociat cu un lucru sau cu un personaj sacru
+    hyponym -> ['sinagogă', 'havră']: Clădire destinată celebrării cultului mozaic
+    hyponym -> ['templu']: loc de închinăciune constând dintr-un edificiu pentru venerarea unei zeități
+    hyponym <- ['clădire', 'construcție', 'zidire']: Construcție înălțată la suprafața pământului și care servește la adăpostirea unor oameni, unor animale, unor obiecte și instalații etc.
+    hypernym <- ['capelă']: încăpere într-o clădire, cu un altar, unde se poate oficia slujba religioasă
+    hypernym <- ['capelă', 'paraclis']: Capelă construită alături de o biserică, într-un cimitir, în interiorul unei clădiri etc.
+    hypernym <- ['biserică', 'casa_Domnului']: Clădire destinată celebrării unui cult creștin.
+    hypernym <- ['moschee']: Templu de cult mahomedan
+    hypernym <- ['moschee']: Templu de cult mahomedan, împodobit cu minarete
+    hypernym <- ['altar']: loc de închinăciune, asociat cu un lucru sau cu un personaj sacru
+    hypernym <- ['sinagogă', 'havră']: Clădire destinată celebrării cultului mozaic
+    hypernym <- ['templu']: loc de închinăciune constând dintr-un edificiu pentru venerarea unei zeități
+  Hypernym path:
+    -> ['casă_de_rugăciune', 'casa_Domnului']
+      -> ['clădire', 'construcție', 'zidire']
+        -> ['construcție']
+          -> ['artifact']
+            -> ['ansamblu', 'tot', 'totalitate', 'întreg']
+              -> ['lucru', 'obiect_fizic', 'obiect']
+
+  [3] ENG30-02919792-n
+  Definition: Locuință din lemn sau din împletitură de trestie, fără etaj, înconjurată de verande și vegetație.
+  Literals: ['bungalou', 'casă_cu_verandă']
+  Literal senses: ['1', '1']
+  Sentiment (P/N/O): 0.0, 0.0, 1.0
+    hypernym -> ['casă']: construcție destinată pentru a servi de locuință uneia sau mai multor familii
+    hyponym <- ['casă']: construcție destinată pentru a servi de locuință uneia sau mai multor familii
+  Hypernym path:
+    -> ['bungalou', 'casă_cu_verandă']
+      -> ['casă']
+        -> ['domiciliu', 'locuință', 'sălaș']
+          -> ['imobil']
+            -> ['construcție']
+              -> ['artifact']
+                -> ['ansamblu', 'tot', 'totalitate', 'întreg']
+                  -> ['lucru', 'obiect_fizic', 'obiect']
+
+  [4] ENG30-07487594-n
+  Definition: dorință puternică de a se întoarce acasă, de a-i vedea pe cei de acasă.
+  Literals: ['dor_de-acasă', 'dor_de_casă']
+  Literal senses: ['1', '1']
+  Sentiment (P/N/O): 0.0, 0.0, 1.0
+    hypernym -> ['nostalgie']: Sentiment de tristețe, de melancolie provocat de dorința de a revedea un loc iubit, o persoană apropiată sau de a retrăi un episod din trecut
+    hyponym <- ['nostalgie']: Sentiment de tristețe, de melancolie provocat de dorința de a revedea un loc iubit, o persoană apropiată sau de a retrăi un episod din trecut
+  Hypernym path:
+    -> ['dor_de-acasă', 'dor_de_casă']
+      -> ['nostalgie']
+        -> ['tânjire', 'jinduire', 'jinduială']
+          -> ['dorință', 'poftă']
+            -> ['sentiment', 'trăire']
+              -> ['stare']
+                -> ['însușire', 'atribut', 'calitate', 'caracteristică', 'notă', 'particularitate', 'proprietate', 'trăsătură']
+                  -> ['abstractizare']
+                    -> ['entitate']
+
+  [5] ENG30-10391086-n
+  Definition: (în evul mediu, mai ales în Europa apuseană) tânăr nobil care se afla în serviciul unui senior, al unui rege, al unui principe etc. pentru a învăța meșteșugul armelor și pentru a se deprinde cu manierele de la curte
+  Literals: ['copil_de_casă', 'paj']
+  Literal senses: ['1.8', '1']
+  Sentiment (P/N/O): 0.0, 0.0, 1.0
+    hypernym -> ['îngrijitor', 'asistent']: Persoană care îngrijește pe cineva, care poartă cuiva de grijă.
+    hyponym <- ['îngrijitor', 'asistent']: Persoană care îngrijește pe cineva, care poartă cuiva de grijă.
+  Hypernym path:
+    -> ['copil_de_casă', 'paj']
+      -> ['îngrijitor', 'asistent']
+        -> ['ajutor']
+          -> ['lucrător', 'muncitor']
+            -> ['individ', 'om', 'persoană']
+              -> ['organism', 'ființă']
+                -> ['creatură', 'făptură', 'ființă', 'vietate', 'viețuitoare']
+                  -> ['ansamblu', 'tot', 'totalitate', 'întreg']
+                    -> ['lucru', 'obiect_fizic', 'obiect']
+
+  [6] ENG30-04581595-n
+  Definition: Casă în care se practică prostituția.
+  Literals: ['bordel', 'lupanar', 'casă_de_prostituție', 'casă_de_toleranță']
+  Literal senses: ['1.1', '1', '1', '1']
+  Sentiment (P/N/O): 0.0, 0.0, 1.0
+    hypernym -> ['clădire', 'construcție', 'zidire']: Construcție înălțată la suprafața pământului și care servește la adăpostirea unor oameni, unor animale, unor obiecte și instalații etc.
+    hyponym <- ['clădire', 'construcție', 'zidire']: Construcție înălțată la suprafața pământului și care servește la adăpostirea unor oameni, unor animale, unor obiecte și instalații etc.
+  Hypernym path:
+    -> ['bordel', 'lupanar', 'casă_de_prostituție', 'casă_de_toleranță']
+      -> ['clădire', 'construcție', 'zidire']
+        -> ['construcție']
+          -> ['artifact']
+            -> ['ansamblu', 'tot', 'totalitate', 'întreg']
+              -> ['lucru', 'obiect_fizic', 'obiect']
+
+  [7] ENG30-04581595-n
+  Definition: Casă în care se practică prostituția.
+  Literals: ['bordel', 'lupanar', 'casă_de_prostituție', 'casă_de_toleranță']
+  Literal senses: ['1.1', '1', '1', '1']
+  Sentiment (P/N/O): 0.0, 0.0, 1.0
+    hypernym -> ['clădire', 'construcție', 'zidire']: Construcție înălțată la suprafața pământului și care servește la adăpostirea unor oameni, unor animale, unor obiecte și instalații etc.
+    hyponym <- ['clădire', 'construcție', 'zidire']: Construcție înălțată la suprafața pământului și care servește la adăpostirea unor oameni, unor animale, unor obiecte și instalații etc.
+  Hypernym path:
+    -> ['bordel', 'lupanar', 'casă_de_prostituție', 'casă_de_toleranță']
+      -> ['clădire', 'construcție', 'zidire']
+        -> ['construcție']
+          -> ['artifact']
+            -> ['ansamblu', 'tot', 'totalitate', 'întreg']
+              -> ['lucru', 'obiect_fizic', 'obiect']
+
+  [8] ENG30-03999160-n
+  Definition: casă parohială (catolică)
+  Literals: ['prezbiteriu', 'casă_parohială']
+  Literal senses: ['2', '2']
+  Sentiment (P/N/O): 0.0, 0.0, 1.0
+    hypernym -> ['clădire', 'construcție', 'zidire']: Construcție înălțată la suprafața pământului și care servește la adăpostirea unor oameni, unor animale, unor obiecte și instalații etc.
+    part_holonym -> ['biserică', 'casa_Domnului']: Clădire destinată celebrării unui cult creștin.
+    hyponym <- ['clădire', 'construcție', 'zidire']: Construcție înălțată la suprafața pământului și care servește la adăpostirea unor oameni, unor animale, unor obiecte și instalații etc.
+    part_meronym <- ['biserică', 'casa_Domnului']: Clădire destinată celebrării unui cult creștin.
+  Hypernym path:
+    -> ['prezbiteriu', 'casă_parohială']
+      -> ['clădire', 'construcție', 'zidire']
+        -> ['construcție']
+          -> ['artifact']
+            -> ['ansamblu', 'tot', 'totalitate', 'întreg']
+              -> ['lucru', 'obiect_fizic', 'obiect']
+
+  [9] ENG30-03901974-n
+  Definition: întreprindere de credit specializată în acordarea de credite pe baza amanetării obiectelor de uz personal; casă de lombard
+  Literals: ['amanet', 'casă_de_amanet', 'casă_de_lombard', 'munte', 'munte_de_pietate']
+  Literal senses: ['3', '1', '1', '4', '1']
+  Sentiment (P/N/O): 0.0, 0.0, 1.0
+    hypernym -> ['magazin', 'prăvălie']: Local în care se expun și se vând diferite mărfuri
+    hyponym <- ['magazin', 'prăvălie']: Local în care se expun și se vând diferite mărfuri
+  Hypernym path:
+    -> ['amanet', 'casă_de_amanet', 'casă_de_lombard', 'munte', 'munte_de_pietate']
+      -> ['magazin', 'prăvălie']
+        -> ['piață_de_desfacere']
+          -> ['centru_de_afaceri']
+            -> ['așezămînt', 'stabiliment']
+              -> ['construcție']
+                -> ['artifact']
+                  -> ['ansamblu', 'tot', 'totalitate', 'întreg']
+                    -> ['lucru', 'obiect_fizic', 'obiect']
+
+  [10] ENG30-03901974-n
+  Definition: întreprindere de credit specializată în acordarea de credite pe baza amanetării obiectelor de uz personal; casă de lombard
+  Literals: ['amanet', 'casă_de_amanet', 'casă_de_lombard', 'munte', 'munte_de_pietate']
+  Literal senses: ['3', '1', '1', '4', '1']
+  Sentiment (P/N/O): 0.0, 0.0, 1.0
+    hypernym -> ['magazin', 'prăvălie']: Local în care se expun și se vând diferite mărfuri
+    hyponym <- ['magazin', 'prăvălie']: Local în care se expun și se vând diferite mărfuri
+  Hypernym path:
+    -> ['amanet', 'casă_de_amanet', 'casă_de_lombard', 'munte', 'munte_de_pietate']
+      -> ['magazin', 'prăvălie']
+        -> ['piață_de_desfacere']
+          -> ['centru_de_afaceri']
+            -> ['așezămînt', 'stabiliment']
+              -> ['construcție']
+                -> ['artifact']
+                  -> ['ansamblu', 'tot', 'totalitate', 'întreg']
+                    -> ['lucru', 'obiect_fizic', 'obiect']
+
+  [11] ENG30-02885882-n
+  Definition: Birou la care se vând bilete
+  Literals: ['casă_de_bilete']
+  Literal senses: ['1']
+  Sentiment (P/N/O): 0.0, 0.0, 1.0
+    hypernym -> ['birou']: Local, parte dintr-un local sau încăpere în care lucrează o persoană sau un serviciu.
+    part_holonym -> ['teatru']: Clădire sau loc special amenajat în vederea reprezentării de spectacole.
+    hyponym <- ['birou']: Local, parte dintr-un local sau încăpere în care lucrează o persoană sau un serviciu.
+    part_meronym <- ['teatru']: Clădire sau loc special amenajat în vederea reprezentării de spectacole.
+  Hypernym path:
+    -> ['casă_de_bilete']
+      -> ['birou']
+        -> ['centru_de_afaceri']
+          -> ['așezămînt', 'stabiliment']
+            -> ['construcție']
+              -> ['artifact']
+                -> ['ansamblu', 'tot', 'totalitate', 'întreg']
+                  -> ['lucru', 'obiect_fizic', 'obiect']
+
+  [12] ENG30-02977438-n
+  Definition: Lădiță de fier în care sunt ținuți banii, prevăzută cu un sistem special prin care se calculează sumele încasate și, eventual, suma de restituit, și care tipărește un bon, folosită în magazine.
+  Literals: ['casă_de_bani']
+  Literal senses: ['1']
+  Sentiment (P/N/O): 0.0, 0.0, 1.0
+    hypernym -> ['casetă_pentru_bani', 'casă']: Masă, pupitru sau birou într-un magazin, unde se achită costul cumpărăturilor.
+    part_meronym -> ['adiator', 'aritmometru']: aparat pentru efectuarea operațiilor de adunare și scădere
+    hyponym <- ['casetă_pentru_bani', 'casă']: Masă, pupitru sau birou într-un magazin, unde se achită costul cumpărăturilor.
+    part_holonym <- ['adiator', 'aritmometru']: aparat pentru efectuarea operațiilor de adunare și scădere
+  Hypernym path:
+    -> ['casă_de_bani']
+      -> ['casetă_pentru_bani', 'casă']
+        -> ['seif', 'casă_de_bani']
+          -> ['cutie']
+            -> ['container']
+              -> ['instrument']
+                -> ['artifact']
+                  -> ['ansamblu', 'tot', 'totalitate', 'întreg']
+                    -> ['lucru', 'obiect_fizic', 'obiect']
+
+  [13] ENG30-03892557-n
+  Definition: Rezidență oficială oferită de Biserică preotului paroh.
+  Literals: ['casă_parohială']
+  Literal senses: ['1']
+  Sentiment (P/N/O): 0.0, 0.0, 1.0
+    hypernym -> ['reședință']: Sediul unei autorități sau al unei persoane (oficiale); localitate sau clădire în care se află acest sediu.;
+    hyponym <- ['reședință']: Sediul unei autorități sau al unei persoane (oficiale); localitate sau clădire în care se află acest sediu.;
+  Hypernym path:
+    -> ['casă_parohială']
+      -> ['reședință']
+        -> ['casă']
+          -> ['domiciliu', 'locuință', 'sălaș']
+            -> ['imobil']
+              -> ['construcție']
+                -> ['artifact']
+                  -> ['ansamblu', 'tot', 'totalitate', 'întreg']
+                    -> ['lucru', 'obiect_fizic', 'obiect']
+
+  [14] ENG30-07971449-n
+  Definition: familie aristocrată
+  Literals: ['casă', 'neam', 'familie']
+  Literal senses: ['1.10.2', '9.4', '2.3']
+  Sentiment (P/N/O): 0.0, 0.0, 1.0
+    hypernym -> ['casă', 'familie', 'neam', 'viță']: Totalitatea persoanelor care se trag dintr-un strămoș comun (rude de sânge); neam, descendență.
+    hyponym -> ['casă_regală']: Familia regală
+    hyponym -> ['Medici']: familie aristocrată italiană din care au făcut parte comercianți și bancheri care a condus, în secolul al 15-lea, Florența
+    hypernym <- ['casă_regală']: Familia regală
+    hyponym <- ['casă', 'familie', 'neam', 'viță']: Totalitatea persoanelor care se trag dintr-un strămoș comun (rude de sânge); neam, descendență.
+    hypernym <- ['Medici']: familie aristocrată italiană din care au făcut parte comercianți și bancheri care a condus, în secolul al 15-lea, Florența
+  Hypernym path:
+    -> ['casă', 'neam', 'familie']
+      -> ['casă', 'familie', 'neam', 'viță']
+        -> ['descendență', 'familie']
+          -> ['arbore_genealogic', 'genealogie']
+            -> ['clan']
+              -> ['grup_social']
+                -> ['grup', 'grupare']
+                  -> ['abstractizare']
+                    -> ['entitate']
+
+  [15] ENG30-08153437-n
+  Definition: Familia regală
+  Literals: ['casă_regală']
+  Literal senses: ['1']
+  Sentiment (P/N/O): 0.125, 0.0, 0.875
+    hypernym -> ['casă', 'neam', 'familie']: familie aristocrată
+    hyponym -> ['Lancaster', 'casa_Lancaster']: casă regală engleză care a domnit din 1399 până în 1461; avea drept blazon un trandafir roșu
+    hyponym -> ['Romanov', 'familia_Romanov']: Linie imperială rusă care a domnit între 1613 și 1917
+    hyponym -> ['York', 'Casa_York']: casa regală engleză între 1461 și 1485; emblema ei era un trandafir alb.
+    member_meronym -> ['Mărie']: (Urmat de un adj. pos. sau de un pron. pers.) Termen de reverență la adresa unui monarh, a unui domnitor, a unui boier etc.
+    member_meronym -> ['monarh', 'rege', 'suveran']: conducător de sex masculin al unui regat
+    member_meronym -> ['prinț']: bărbat aparținând familiei regale, de obicei fiul regelui
+    member_meronym -> ['prințesă', 'principesă']: Fiică a unui rege, a unui principe, a unui împărat.
+    member_meronym -> ['regină', 'suverană']: Femeie care deține prerogativele unui rege, fiind suverana unui regat.
+    member_meronym -> ['regină']: Soție de rege
+    member_holonym <- ['monarh', 'rege', 'suveran']: conducător de sex masculin al unui regat
+    member_holonym <- ['prințesă', 'principesă']: Fiică a unui rege, a unui principe, a unui împărat.
+    hypernym <- ['Lancaster', 'casa_Lancaster']: casă regală engleză care a domnit din 1399 până în 1461; avea drept blazon un trandafir roșu
+    hypernym <- ['Romanov', 'familia_Romanov']: Linie imperială rusă care a domnit între 1613 și 1917
+    hypernym <- ['York', 'Casa_York']: casa regală engleză între 1461 și 1485; emblema ei era un trandafir alb.
+    hyponym <- ['casă', 'neam', 'familie']: familie aristocrată
+    member_holonym <- ['Mărie']: (Urmat de un adj. pos. sau de un pron. pers.) Termen de reverență la adresa unui monarh, a unui domnitor, a unui boier etc.
+    member_holonym <- ['prinț']: bărbat aparținând familiei regale, de obicei fiul regelui
+    member_holonym <- ['regină', 'suverană']: Femeie care deține prerogativele unui rege, fiind suverana unui regat.
+    member_holonym <- ['regină']: Soție de rege
+  Hypernym path:
+    -> ['casă_regală']
+      -> ['casă', 'neam', 'familie']
+        -> ['casă', 'familie', 'neam', 'viță']
+          -> ['descendență', 'familie']
+            -> ['arbore_genealogic', 'genealogie']
+              -> ['clan']
+                -> ['grup_social']
+                  -> ['grup', 'grupare']
+                    -> ['abstractizare']
+                      -> ['entitate']
+
+  [16] ENG30-10282672-n
+  Definition: Femeie angajată pentru a munci în familia sau în gospodăria altuia.
+  Literals: ['femeie_în_casă']
+  Literal senses: ['1']
+  Sentiment (P/N/O): 0.0, 0.0, 1.0
+    hypernym -> ['servitor']: persoană pentru treburi casnice
+    hyponym -> ['cameristă']: Femeie de serviciu care face curățenie în camerele unui hotel, motel etc.
+    hypernym <- ['cameristă']: Femeie de serviciu care face curățenie în camerele unui hotel, motel etc.
+    hyponym <- ['servitor']: persoană pentru treburi casnice
+  Hypernym path:
+    -> ['femeie_în_casă']
+      -> ['servitor']
+        -> ['servitor', 'slugă', 'slujitor']
+          -> ['lucrător', 'muncitor']
+            -> ['individ', 'om', 'persoană']
+              -> ['organism', 'ființă']
+                -> ['creatură', 'făptură', 'ființă', 'vietate', 'viețuitoare']
+                  -> ['ansamblu', 'tot', 'totalitate', 'întreg']
+                    -> ['lucru', 'obiect_fizic', 'obiect']
+
+  [17] ENG30-08059870-n
+  Definition: Personalul unei organizații comerciale sau de afaceri.
+  Literals: ['casă', 'companie', 'firmă']
+  Literal senses: ['1.14', '1.4.x', '2']
+  Sentiment (P/N/O): 0.0, 0.0, 1.0
+    hypernym -> ['întreprindere', 'afacere', 'firmă']: Tranzacție financiară, comercială sau industrială
+    hyponym -> ['breaslă', 'corporație']: (în S.U.A. și alte țări) societate pe acțiuni
+    hyponym -> ['firmă_de_contabilitate']: firmă de contabili care prestează servicii de contabilitate și de audit contra unui tarif
+    hyponym -> ['firmă_de_consultanță']: Firmă de experți care dau sfaturi profesioniste contra cost
+    hyponym -> ['editură']: Instituție care editează cărți, publicații periodice etc.
+    hyponym -> ['dealer']: firmă care se ocupă cu vânzări intermediare
+    hyponym -> ['firmă_de_avocatură']: firmă care oferă servicii de avocatură
+    hyponym -> ['casă_de_licitații']: Firmă care organizează licitații
+    hyponym <- ['întreprindere', 'afacere', 'firmă']: Tranzacție financiară, comercială sau industrială
+    hypernym <- ['editură']: Instituție care editează cărți, publicații periodice etc.
+    hypernym <- ['breaslă', 'corporație']: (în S.U.A. și alte țări) societate pe acțiuni
+    hypernym <- ['firmă_de_contabilitate']: firmă de contabili care prestează servicii de contabilitate și de audit contra unui tarif
+    hypernym <- ['firmă_de_consultanță']: Firmă de experți care dau sfaturi profesioniste contra cost
+    hypernym <- ['dealer']: firmă care se ocupă cu vânzări intermediare
+    hypernym <- ['firmă_de_avocatură']: firmă care oferă servicii de avocatură
+    hypernym <- ['casă_de_licitații']: Firmă care organizează licitații
+  Hypernym path:
+    -> ['casă', 'companie', 'firmă']
+      -> ['întreprindere', 'afacere', 'firmă']
+        -> ['întreprindere']
+          -> ['organizație']
+            -> ['grup_social']
+              -> ['grup', 'grupare']
+                -> ['abstractizare']
+                  -> ['entitate']
+
+  [18] ENG30-07989373-n
+  Definition: două persoane căsătorite
+  Literals: ['casă', 'căsătorie', 'căsnicie', 'menaj', 'mariaj']
+  Literal senses: ['1.11', '2.2', '1.2', '3', 'x']
+  Sentiment (P/N/O): 0.0, 0.0, 1.0
+    hypernym -> ['familie']: Formă socială de bază, întemeiată prin căsătorie, și care constă din soț, soție și din descendenții acestora
+    hyponym -> ['mariaj_mixt', 'căsătorie_mixtă']: Căsătorie dintre doi indivizi din rase diferite
+    member_meronym -> ['soț', 'partener']: (La pl.) Cele două persoane de sex opus unite prin căsătorie.
+    hyponym <- ['familie']: Formă socială de bază, întemeiată prin căsătorie, și care constă din soț, soție și din descendenții acestora
+    member_holonym <- ['soț', 'partener']: (La pl.) Cele două persoane de sex opus unite prin căsătorie.
+    hypernym <- ['mariaj_mixt', 'căsătorie_mixtă']: Căsătorie dintre doi indivizi din rase diferite
+  Hypernym path:
+    -> ['casă', 'căsătorie', 'căsnicie', 'menaj', 'mariaj']
+      -> ['familie']
+        -> ['clan']
+          -> ['grup_social']
+            -> ['grup', 'grupare']
+              -> ['abstractizare']
+                -> ['entitate']
+
+  [19] ENG30-07970721-n
+  Definition: Totalitatea persoanelor care se trag dintr-un strămoș comun (rude de sânge); neam, descendență.
+  Literals: ['casă', 'familie', 'neam', 'viță']
+  Literal senses: ['1.12', '3', '4.2', '9']
+  Sentiment (P/N/O): 0.0, 0.0, 1.0
+    hypernym -> ['descendență', 'familie']: familia, neamul din care se trage cineva
+    hyponym -> ['familie', 'neam', 'rudă', 'viță']: Totalitatea persoanelor dintr-o linie de familie
+    hyponym -> ['casă', 'neam', 'familie']: familie aristocrată
+    hyponym -> ['dinastie']: Familie ai cărei membri se succedă la cârma unui stat (ca principi, regi sau împărați); șir de suverani care alcătuiesc o astfel de familie
+    hyponym -> ['nume']: familie bazată pe descendenții masculini.
+    hyponym <- ['descendență', 'familie']: familia, neamul din care se trage cineva
+    hypernym <- ['dinastie']: Familie ai cărei membri se succedă la cârma unui stat (ca principi, regi sau împărați); șir de suverani care alcătuiesc o astfel de familie
+    hypernym <- ['casă', 'neam', 'familie']: familie aristocrată
+    hypernym <- ['familie', 'neam', 'rudă', 'viță']: Totalitatea persoanelor dintr-o linie de familie
+    hypernym <- ['nume']: familie bazată pe descendenții masculini.
+
+  [20] ENG30-08381296-n
+  Definition: Conducerea unui cazinou.
+  Literals: ['casă']
+  Literal senses: ['x']
+  Sentiment (P/N/O): 0.0, 0.0, 1.0
+    hypernym -> ['administrație', 'conducere']: (Concr.) Persoană sau colectiv care conduce
+    hyponym <- ['administrație', 'conducere']: (Concr.) Persoană sau colectiv care conduce
+  Hypernym path:
+    -> ['casă']
+      -> ['administrație', 'conducere']
+        -> ['administrație']
+          -> ['asociație', 'colectivitate', 'tabără']
+            -> ['grup_social']
+              -> ['grup', 'grupare']
+                -> ['abstractizare']
+                  -> ['entitate']
+
+  [21] ENG30-03544360-n
+  Definition: construcție destinată pentru a servi de locuință uneia sau mai multor familii
+  Literals: ['casă']
+  Literal senses: ['1.1.1']
+  Sentiment (P/N/O): 0.0, 0.0, 1.0
+    hypernym -> ['domiciliu', 'locuință', 'sălaș']: locul unde locuiește cineva în mod statornic
+    hypernym -> ['clădire', 'construcție', 'zidire']: Construcție înălțată la suprafața pământului și care servește la adăpostirea unor oameni, unor animale, unor obiecte și instalații etc.
+    near_eng_derivat -> ['găzdui', 'oploși', 'aciua']: A primi pe cineva în casa sa o anumită vreme, dându-i adăpost (și mâncare).
+    hyponym -> ['pensiune']: Casă, restaurant în care se oferă cuiva, în schimbul unei sume de bani, găzduire completă sau numai masă.
+    hyponym -> ['bungalou', 'casă_cu_verandă']: Locuință din lemn sau din împletitură de trestie, fără etaj, înconjurată de verande și vegetație.
+    hyponym -> ['cabană']: Casă ( la munte) construită de obicei, din lemn, care servește pentru adăpostirea turiștilor și a vânătorilor
+    hyponym -> ['chalet']: vilă în stil elvețian
+    hyponym -> []: Casă folosită ca rezidență de o fraternitate
+    hyponym -> ['casă_la_țară']: Casă boierească la țară, pe o moșie.
+    hyponym -> ['casă_simplă']: casă care este clădită ca o singură unitate locativă
+    hyponym -> ['casă_țărănească']: Casa în care trăiește un țăran și familia sa
+    hyponym -> ['gheretă']: Construcție mică (de lemn) în care se poate adăposti o santinelă, un paznic etc
+    hyponym -> ['casa_oaspeților', 'casa_pentru_musafiri']: Locuință separată de cea personală, destinată găzduirii musafirilor
+    hyponym -> ['hacienda']: reședință rurală a unei ferme sau a unei mari proprietăți
+    part_meronym -> ['bibliotecă']: Încăpere, sală în care se păstrează și se citesc cărțile
+    hyponym -> ['cabană_de_vânătoare']: Casă construită de obicei, din lemn, care servește pentru adăpostirea temporară a turiștilor și a vânătorilor
+    hyponym -> ['pensiune']: Casă, restaurant în care se oferă cuiva, în schimbul unei sume de bani, găzduire completă sau numai masă
+    part_meronym -> ['pod']: Spațiul dintre acoperiș și planșeul superior al unei clădiri.
+    hyponym -> ['căscioară', 'căsuță']: Casă mică
+    hyponym -> ['conac', 'curte']: Locuință cu înfățișare elegantă și spațioasă.
+    part_meronym -> ['pridvor']: galerie exterioară deschisă sau închisă, mărginită de stâlpi, așezată în partea din față a unei clădiri
+    hyponym -> ['reședință']: Sediul unei autorități sau al unei persoane (oficiale); localitate sau clădire în care se află acest sediu.;
+    hyponym -> ['casă_tip']: Casă identică cu altele aflate în același complex rezidențial
+    hyponym -> ['casă_conspirativă', 'loc_sigur']: locuință folosită ca ascunzătoare sau refugiu pentru membrii anumitor organizații
+    part_meronym -> ['cameră_de_lucru']: încăpere destinată cititului, scrisului sau studiului
+    hyponym <- ['clădire', 'construcție', 'zidire']: Construcție înălțată la suprafața pământului și care servește la adăpostirea unor oameni, unor animale, unor obiecte și instalații etc.
+    part_holonym <- ['pod']: Spațiul dintre acoperiș și planșeul superior al unei clădiri.
+    hypernym <- ['bungalou', 'casă_cu_verandă']: Locuință din lemn sau din împletitură de trestie, fără etaj, înconjurată de verande și vegetație.
+    hyponym <- ['domiciliu', 'locuință', 'sălaș']: locul unde locuiește cineva în mod statornic
+    hypernym <- ['conac', 'curte']: Locuință cu înfățișare elegantă și spațioasă.
+    near_eng_derivat <- ['găzdui', 'oploși', 'aciua']: A primi pe cineva în casa sa o anumită vreme, dându-i adăpost (și mâncare).
+    hypernym <- ['casa_oaspeților', 'casa_pentru_musafiri']: Locuință separată de cea personală, destinată găzduirii musafirilor
+    hypernym <- ['reședință']: Sediul unei autorități sau al unei persoane (oficiale); localitate sau clădire în care se află acest sediu.;
+    hypernym <- ['căscioară', 'căsuță']: Casă mică
+    hypernym <- ['cabană_de_vânătoare']: Casă construită de obicei, din lemn, care servește pentru adăpostirea temporară a turiștilor și a vânătorilor
+    part_holonym <- ['pridvor']: galerie exterioară deschisă sau închisă, mărginită de stâlpi, așezată în partea din față a unei clădiri
+    part_holonym <- ['bibliotecă']: Încăpere, sală în care se păstrează și se citesc cărțile
+    part_holonym <- ['cameră_de_lucru']: încăpere destinată cititului, scrisului sau studiului
+    hypernym <- ['casă_țărănească']: Casa în care trăiește un țăran și familia sa
+    hypernym <- ['casă_conspirativă', 'loc_sigur']: locuință folosită ca ascunzătoare sau refugiu pentru membrii anumitor organizații
+    hypernym <- ['pensiune']: Casă, restaurant în care se oferă cuiva, în schimbul unei sume de bani, găzduire completă sau numai masă.
+    hypernym <- ['cabană']: Casă ( la munte) construită de obicei, din lemn, care servește pentru adăpostirea turiștilor și a vânătorilor
+    hypernym <- ['chalet']: vilă în stil elvețian
+    hypernym <- []: Casă folosită ca rezidență de o fraternitate
+    hypernym <- ['casă_la_țară']: Casă boierească la țară, pe o moșie.
+    hypernym <- ['casă_simplă']: casă care este clădită ca o singură unitate locativă
+    hypernym <- ['gheretă']: Construcție mică (de lemn) în care se poate adăposti o santinelă, un paznic etc
+    hypernym <- ['hacienda']: reședință rurală a unei ferme sau a unei mari proprietăți
+    hypernym <- ['pensiune']: Casă, restaurant în care se oferă cuiva, în schimbul unei sume de bani, găzduire completă sau numai masă
+    hypernym <- ['casă_tip']: Casă identică cu altele aflate în același complex rezidențial
+  Hypernym path:
+    -> ['casă']
+      -> ['domiciliu', 'locuință', 'sălaș']
+        -> ['imobil']
+          -> ['construcție']
+            -> ['artifact']
+              -> ['ansamblu', 'tot', 'totalitate', 'întreg']
+                -> ['lucru', 'obiect_fizic', 'obiect']
+
+  [22] ENG30-13280008-n
+  Definition: Cazare și masă asigurate în afară de banii pentru un job
+  Literals: ['casă_și_masă']
+  Literal senses: ['x']
+  Sentiment (P/N/O): 0.0, 0.0, 1.0
+    hypernym -> ['leafă', 'remunerație', 'retribuție', 'salariu']: retribuție (în bani) pe care o primește regulat o persoană pentru munca îndeplinită ca angajat permanent
+    hyponym <- ['leafă', 'remunerație', 'retribuție', 'salariu']: retribuție (în bani) pe care o primește regulat o persoană pentru munca îndeplinită ca angajat permanent
+  Hypernym path:
+    -> ['casă_și_masă']
+      -> ['leafă', 'remunerație', 'retribuție', 'salariu']
+        -> ['plată_regulată']
+          -> ['plată']
+            -> ['cost']
+              -> ['cheltuială']
+                -> ['proprietate_transferabilă']
+                  -> ['posesiune', 'proprietate']
+                    -> ['legătură', 'raport', 'relație']
+                      -> ['abstractizare']
+                        -> ['entitate']
+
+  [23] ENG30-08422714-n
+  Definition: instituție de economii căreia i se cere ca un anumit procent din împrumuturi să fie constituit din ipoteci
+  Literals: ['casă_de_ajutor_reciproc']
+  Literal senses: ['x']
