@@ -1,0 +1,8 @@
+4
+John IT developer 3000
+Jane IT manager 4000
+Bob IT developer 6000
+Alice HR developer 3000
+2
+IT 50000
+HR 30000

@@ -1,0 +1,12 @@
+# Maven build output
+target/
+
+# Java compiled artifacts
+*.class
+
+# IntelliJ project files
+.idea/
+*.iml
+
+# OS
+.DS_Store
