@@ -1,164 +1,150 @@
-================================================================================
-Task 2: COROLA Word Embeddings - Nearest Neighbors and Analogies
-Model: corola.300.20.vec (250942 words, 300d)
-================================================================================
 
-============================================================
-  PART 1: 10 Nearest Neighbors for Each Word
-============================================================
+'casă':
+   1. grădină              0.6187
+   2. odaie                0.6122
+   3. casa                 0.6014
+   4. bucătărie            0.5986
+   5. vilă                 0.5842
+   6. cămăruță             0.5833
+   7. sufragerie           0.5777
+   8. nevastă              0.5737
+   9. sufrageria           0.5705
+  10. caserie              0.5705
 
---- Word: 'casă' ---
-   1. grădină                   0.6187
-   2. odaie                     0.6122
-   3. casa                      0.6014
-   4. bucătărie                 0.5986
-   5. vilă                      0.5842
-   6. cămăruță                  0.5833
-   7. sufragerie                0.5777
-   8. nevastă                   0.5737
-   9. sufrageria                0.5705
-  10. caserie                   0.5705
+'carte':
+   1. cartea               0.7809
+   2. cărțile              0.6761
+   3. cărți                0.6596
+   4. cărțulie             0.6471
+   5. cărticică            0.6361
+   6. cărții               0.6284
+   7. cărțulia             0.5980
+   8. librărie             0.5900
+   9. copertă              0.5764
+  10. cărticica            0.5763
 
---- Word: 'carte' ---
-   1. cartea                    0.7809
-   2. cărțile                   0.6761
-   3. cărți                     0.6596
-   4. cărțulie                  0.6471
-   5. cărticică                 0.6361
-   6. cărții                    0.6284
-   7. cărțulia                  0.5980
-   8. librărie                  0.5900
-   9. copertă                   0.5764
-  10. cărticica                 0.5763
+'școală':
+   1. școala               0.8088
+   2. grădiniță            0.7493
+   3. liceu                0.7089
+   4. gimnaziu             0.6947
+   5. școlii               0.6787
+   6. școli                0.6696
+   7. învățătoare          0.6664
+   8. pedagogă             0.6606
+   9. școlă                0.6572
+  10. facultate            0.6565
 
---- Word: 'școală' ---
-   1. școala                    0.8088
-   2. grădiniță                 0.7493
-   3. liceu                     0.7089
-   4. gimnaziu                  0.6947
-   5. școlii                    0.6787
-   6. școli                     0.6696
-   7. învățătoare               0.6664
-   8. pedagogă                  0.6606
-   9. școlă                     0.6572
-  10. facultate                 0.6565
+'om':
+   1. omul                 0.7599
+   2. individ              0.6625
+   3. bărbat               0.6604
+   4. înțelept             0.6574
+   5. iubitor              0.6471
+   6. tânăr                0.6427
+   7. țăran                0.6317
+   8. muritor              0.6269
+   9. băiat                0.6261
+  10. deștept              0.6204
 
---- Word: 'om' ---
-   1. omul                      0.7599
-   2. individ                   0.6625
-   3. bărbat                    0.6604
-   4. înțelept                  0.6574
-   5. iubitor                   0.6471
-   6. tânăr                     0.6427
-   7. țăran                     0.6317
-   8. muritor                   0.6269
-   9. băiat                     0.6261
-  10. deștept                   0.6204
+'frumos':
+   1. frumosă              0.7846
+   2. minunat              0.7483
+   3. plăcut               0.7070
+   4. frumoasă             0.7003
+   5. superb               0.6988
+   6. splendid             0.6936
+   7. adorabil             0.6851
+   8. frumosul             0.6836
+   9. drag                 0.6820
+  10. preafrumos           0.6728
 
---- Word: 'frumos' ---
-   1. frumosă                   0.7846
-   2. minunat                   0.7483
-   3. plăcut                    0.7070
-   4. frumoasă                  0.7003
-   5. superb                    0.6988
-   6. splendid                  0.6936
-   7. adorabil                  0.6851
-   8. frumosul                  0.6836
-   9. drag                      0.6820
-  10. preafrumos                0.6728
+'mare':
+   1. mică                 0.7064
+   2. mic                  0.6596
+   3. dar                  0.5873
+   4. scipomar             0.5651
+   5. mai                  0.5469
+   6. cel                  0.5429
+   7. oarecare             0.5365
+   8. considerabilă        0.5337
+   9. cea                  0.5228
+  10. apreciabilă          0.5188
 
---- Word: 'mare' ---
-   1. mică                      0.7064
-   2. mic                       0.6596
-   3. dar                       0.5873
-   4. scipomar                  0.5651
-   5. mai                       0.5469
-   6. cel                       0.5429
-   7. oarecare                  0.5365
-   8. considerabilă             0.5337
-   9. cea                       0.5228
-  10. apreciabilă               0.5188
+'bun':
+   1. augur                0.6037
+   2. excelent             0.5866
+   3. rău                  0.5747
+   4. înțelept             0.5746
+   5. deștept              0.5720
+   6. bunu                 0.5510
+   7. bunul                0.5473
+   8. valoros              0.5447
+   9. harnic               0.5420
+  10. folositor            0.5377
 
---- Word: 'bun' ---
-   1. augur                     0.6037
-   2. excelent                  0.5866
-   3. rău                       0.5747
-   4. înțelept                  0.5746
-   5. deștept                   0.5720
-   6. bunu                      0.5510
-   7. bunul                     0.5473
-   8. valoros                   0.5447
-   9. harnic                    0.5420
-  10. folositor                 0.5377
+'merge':
+   1. merg                 0.7708
+   2. meargă               0.7613
+   3. pleca                0.7487
+   4. mergi                0.7376
+   5. întoarce             0.7288
+   6. mergem               0.7256
+   7. departe              0.6927
+   8. ajunge               0.6874
+   9. pleacă               0.6814
+  10. mergea               0.6687
 
---- Word: 'merge' ---
-   1. merg                      0.7708
-   2. meargă                    0.7613
-   3. pleca                     0.7487
-   4. mergi                     0.7376
-   5. întoarce                  0.7288
-   6. mergem                    0.7256
-   7. departe                   0.6927
-   8. ajunge                    0.6874
-   9. pleacă                    0.6814
-  10. mergea                    0.6687
+'scrie':
+   1. scria                0.7347
+   2. citește              0.7188
+   3. scriu                0.7154
+   4. scriind              0.7107
+   5. scrii                0.6917
+   6. citească             0.6829
+   7. recitește            0.6804
+   8. spune                0.6703
+   9. scrisese             0.6615
+  10. citit                0.6558
 
---- Word: 'scrie' ---
-   1. scria                     0.7347
-   2. citește                   0.7188
-   3. scriu                     0.7154
-   4. scriind                   0.7107
-   5. scrii                     0.6917
-   6. citească                  0.6829
-   7. recitește                 0.6804
-   8. spune                     0.6703
-   9. scrisese                  0.6615
-  10. citit                     0.6558
+'putere':
+   1. puterea              0.7806
+   2. putereaxe            0.6731
+   3. puterei              0.6677
+   4. puterexe             0.6596
+   5. puterii              0.6567
+   6. supraputere          0.6363
+   7. puteri               0.6335
+   8. dominație            0.6223
+   9. legitimitate         0.6206
+  10. putera               0.6200
 
---- Word: 'putere' ---
-   1. puterea                   0.7806
-   2. putereaxe                 0.6731
-   3. puterei                   0.6677
-   4. puterexe                  0.6596
-   5. puterii                   0.6567
-   6. supraputere               0.6363
-   7. puteri                    0.6335
-   8. dominație                 0.6223
-   9. legitimitate              0.6206
-  10. putera                    0.6200
+Analogies:
 
-============================================================
-  PART 2: Analogies (Vector Arithmetic)
-============================================================
+rege - bărbat + femeie = ?
+  1. regină               0.8015
+  2. regele               0.7429
+  3. regelui              0.7211
+  4. împărăteasă          0.6917
+  5. principesă           0.6892
 
---- king - man + woman = ? ---
-    rege - bărbat + femeie = ?
-  1. regină                    0.8015
-  2. regele                    0.7429
-  3. regelui                   0.7211
-  4. împărăteasă               0.6917
-  5. principesă                0.6892
+berlin - germania + franța = ?
+  1. paris                0.7729
+  2. londra               0.6811
+  3. montpellier          0.6443
+  4. petersburg           0.6372
+  5. parisul              0.6301
 
---- Paris - France + Romania = ? ---
-    paris - franța + românia = ?
-  1. nia                       0.5288
-  2. viena                     0.5260
-  3. geneva                    0.5143
-  4. fcrnberg                  0.5138
-  5. fcnchen                   0.5032
+frate - bărbat + femeie = ?
+  1. soră                 0.7466
+  2. nepoată              0.7087
+  3. mama                 0.6950
+  4. mătușă               0.6895
+  5. sora                 0.6861
 
---- good - bad + beautiful = ? ---
-    bun - rău + frumos = ?
-  1. minunat                   0.5241
-  2. frumosă                   0.5208
-  3. elegant                   0.5051
-  4. modest                    0.5007
-  5. atrăgător                 0.4962
-
---- Bucharest - Romania + France = ? ---
-    bucurești - românia + franța = ?
-  1. paris                     0.5591
-  2. bordeaux                  0.5410
-  3. labonne                   0.5353
-  4. saint-etienne             0.5340
-  5. bucureș                   0.5296
+bucurești - românia + franța = ?
+  1. paris                0.5591
+  2. bordeaux             0.5410
+  3. labonne              0.5353
+  4. saint-etienne        0.5340
+  5. bucureș              0.5296
