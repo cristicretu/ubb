@@ -25,7 +25,7 @@ public class AppTest_LibraryReturnSystem_IsLeapYearStub {
 
     @Before
     public void setup() {
-        library = new LibraryReturnSystem(new DaysBetween(), 0.50);
+        library = new LibraryReturnSystem(new DaysBetween(/* useStub = */ true), 0.50);
     }
 
     @Test

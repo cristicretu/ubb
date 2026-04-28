@@ -21,7 +21,7 @@ public class AppTest_DaysBetween2Dates_IsLeapYearStub {
 
     @Before
     public void setup() {
-        obj = new DaysBetween();
+        obj = new DaysBetween(/* useStub = */ true);
     }
 
     @Test

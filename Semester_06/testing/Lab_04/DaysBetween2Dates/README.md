@@ -30,8 +30,12 @@ years matters a lot here (incorrect penalties are exactly the
 src/main/java/DaysBetween/
     MyDate.java                          plain Year/Month/Day with validation
     MyValueException.java                domain exception (mirrors the example)
-    DaysBetween.java                     real isLeapYear + isLeapYearStub +
-                                         daysBetween2Dates wired against the stub
+    DaysBetween.java                     real isLeapYear + isLeapYearStub.
+                                         daysBetween2Dates uses the real
+                                         predicate by default and works for
+                                         arbitrary years; constructing with
+                                         `new DaysBetween(true)` switches it
+                                         to stub mode for driver tests.
     VerifyIsLeapYear.java                hollow seam, intended to be Mockito-mocked
     DaysBetween_VerifyIsLeapYearMock.java   same daysBetween2Dates logic, but
                                          delegates the leap-year check to an
@@ -42,10 +46,12 @@ src/main/java/DaysBetween/
 
 src/test/java/DaysBetween/
     AppTest_IsLeapYear_BBT.java                              EC + BVA tests for the real isLeapYear
-    AppTest_DaysBetween2Dates_IsLeapYearStub.java            driver tests through isLeapYearStub
+    AppTest_DaysBetween2Dates_General.java                   regression tests: production daysBetween2Dates works for arbitrary years
+    AppTest_DaysBetween2Dates_IsLeapYearStub.java            driver tests through isLeapYearStub (stub mode)
     AppTest_DaysBetween2Dates_IsLeapYearMock.java            Mockito tests for daysBetween2Dates
     AppTest_LibraryReturnSystem_IsLeapYearStub.java          app integration test (stub-based)
     AppTest_LibraryReturnSystem_IsLeapYearMock.java          app integration test (Mockito-mocked)
+    AppTest_MyDate_Validation.java                           regression tests: MyDate rejects impossible dates
 ```
 
 The test class names start with `AppTest_` to match the example's
@@ -66,12 +72,14 @@ Expected output (counts):
 
 ```
 AppTest_IsLeapYear_BBT                              -> 11 tests
+AppTest_DaysBetween2Dates_General                   ->  7 tests
 AppTest_DaysBetween2Dates_IsLeapYearStub            ->  9 tests
 AppTest_DaysBetween2Dates_IsLeapYearMock            ->  6 tests
 AppTest_LibraryReturnSystem_IsLeapYearStub          ->  8 tests
 AppTest_LibraryReturnSystem_IsLeapYearMock          ->  8 tests
+AppTest_MyDate_Validation                           -> 18 tests
 
-Tests run: 42, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 67, Failures: 0, Errors: 0, Skipped: 0
 ```
 
 ## How each lab requirement is covered

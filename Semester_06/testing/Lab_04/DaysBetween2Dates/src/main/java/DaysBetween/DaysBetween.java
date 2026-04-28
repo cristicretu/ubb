@@ -4,13 +4,15 @@ package DaysBetween;
  * Mirrors the role of LongSeq in the StubsIsPrime example:
  *
  *   - isLeapYear         : the real implementation (the unit).
- *   - isLeapYearStub     : a stub that returns hard-coded values for a
- *                          handful of years, used by daysBetween2Dates
- *                          when integration-testing with stubs.
- *   - daysBetween2Dates  : the function under test; it depends on
- *                          isLeapYear and is here wired against the
- *                          STUB version for stub-based integration
- *                          tests (drivers).
+ *   - isLeapYearStub     : a hand-coded stub for the same predicate,
+ *                          used by stub-based driver tests.
+ *   - daysBetween2Dates  : the production function. By default it
+ *                          uses the real isLeapYear, so it works for
+ *                          arbitrary years; in stub mode (opt-in via
+ *                          the boolean constructor) it routes the
+ *                          predicate through isLeapYearStub instead,
+ *                          which is the driver/stub pattern asked for
+ *                          by the lab.
  */
 public class DaysBetween {
 
@@ -18,8 +20,24 @@ public class DaysBetween {
             31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
     };
 
+    /** When true, daysBetween2Dates routes the leap-year check through isLeapYearStub. */
+    private final boolean useStub;
+
+    /** Production constructor: daysBetween2Dates uses the real isLeapYear. */
     public DaysBetween() {
-        System.out.println("DaysBetween (stub-based) ...");
+        this(false);
+    }
+
+    /**
+     * Driver constructor: when {@code useStub} is true, daysBetween2Dates
+     * routes the leap-year check through the hard-coded
+     * {@link #isLeapYearStub(int)} method, so stub-based driver tests
+     * can demonstrate the integration-testing-with-stubs pattern.
+     */
+    public DaysBetween(boolean useStub) {
+        this.useStub = useStub;
+        System.out.println("DaysBetween ("
+                + (useStub ? "stub-based" : "real") + ") ...");
     }
 
     /**
@@ -43,12 +61,12 @@ public class DaysBetween {
     }
 
     /**
-     * Stub for isLeapYear, used by daysBetween2Dates when integration
-     * tests are driven from outside without the real implementation.
+     * Stub for isLeapYear, used by daysBetween2Dates when running
+     * in stub mode (driver-style integration tests).
      *
      * The stub answers only for the years that show up in the lab
-     * test cases. Any unexpected year throws, so a missing test wiring
-     * is loud rather than silently wrong.
+     * test cases. Any unexpected year throws, so a missing test
+     * wiring is loud rather than silently wrong.
      */
     public boolean isLeapYearStub(int year) throws MyValueException {
         if (year < 1) {
@@ -87,12 +105,17 @@ public class DaysBetween {
         }
     }
 
+    /** Routes through the real or the stubbed predicate, depending on {@link #useStub}. */
+    private boolean leapYearForCalc(int year) throws MyValueException {
+        return useStub ? isLeapYearStub(year) : isLeapYear(year);
+    }
+
     /** Days from January 1st of d.year (inclusive) to d (exclusive). */
     long daysFromYearStart(MyDate d) throws MyValueException {
         long days = 0;
         for (int m = 1; m < d.getMonth(); m++) {
             days += DAYS_IN_MONTH[m - 1];
-            if (m == 2 && isLeapYearStub(d.getYear())) {
+            if (m == 2 && leapYearForCalc(d.getYear())) {
                 days += 1;
             }
         }
@@ -101,12 +124,13 @@ public class DaysBetween {
     }
 
     private long daysInYear(int year) throws MyValueException {
-        return isLeapYearStub(year) ? 366 : 365;
+        return leapYearForCalc(year) ? 366 : 365;
     }
 
     /**
      * Absolute number of days between d1 and d2, computed via the
-     * (stubbed) leap-year predicate.
+     * leap-year predicate (real one by default; stub when this
+     * instance was created in stub mode).
      */
     public long daysBetween2Dates(MyDate d1, MyDate d2) throws MyValueException {
         if (d1 == null || d2 == null) {
