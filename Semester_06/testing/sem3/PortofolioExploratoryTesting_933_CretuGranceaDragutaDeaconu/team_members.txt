@@ -1,0 +1,18 @@
+Portfolio About Exploratory Testing — Group 933
+
+Team members:
+  - Cretu Cristian      (uploads the assignment to Teams)
+  - Grancea Alexandru
+  - Deaconu Victor
+  - Draguta Vasile
+
+Chosen paper:
+  Afzal, W., Ghazi, A. N., Itkonen, J., Torkar, R., Andrews, A., Bhatti, K.
+  "An experiment on the effectiveness and efficiency of exploratory testing."
+  Empirical Software Engineering, 20(2):844-878, 2015.
+  DOI: 10.1007/s10664-014-9301-4
+
+Tool chosen for the video demo:
+  Bug Magnet (https://bugmagnet.org/) — a browser extension that provides
+  common edge-case payloads (boundary strings, Unicode, injection, dates, etc.)
+  for exploratory testing of web forms.
