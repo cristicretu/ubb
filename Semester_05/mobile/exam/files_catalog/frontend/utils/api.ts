@@ -20,7 +20,7 @@ async function fetchWithErrorHandling<T>(
 ): Promise<ApiResponse<T>> {
   try {
     log(`${options?.method || 'GET'} ${url}`, 'info');
-    
+
     const response = await fetch(url, {
       ...options,
       headers: {

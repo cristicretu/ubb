@@ -1,150 +1,453 @@
+============================================================
+MODEL: word  (corola.300.20.vec)
+============================================================
 
-'casă':
-   1. grădină              0.6187
-   2. odaie                0.6122
-   3. casa                 0.6014
-   4. bucătărie            0.5986
-   5. vilă                 0.5842
-   6. cămăruță             0.5833
-   7. sufragerie           0.5777
-   8. nevastă              0.5737
-   9. sufrageria           0.5705
-  10. caserie              0.5705
+'democrație':
+   1. democrația                0.8845
+   2. democrației               0.7812
+   3. democratism               0.7791
+   4. democrații                0.7693
+   5. democratice               0.7654
+   6. democrațiile              0.7638
+   7. democratică               0.7637
+   8. democratica               0.7526
+   9. nedemocratică             0.7523
+  10. democratic                0.7472
 
-'carte':
-   1. cartea               0.7809
-   2. cărțile              0.6761
-   3. cărți                0.6596
-   4. cărțulie             0.6471
-   5. cărticică            0.6361
-   6. cărții               0.6284
-   7. cărțulia             0.5980
-   8. librărie             0.5900
-   9. copertă              0.5764
-  10. cărticica            0.5763
+'algoritm':
+   1. algoritme                 0.8603
+   2. algoritmul                0.8274
+   3. algoritmului              0.8062
+   4. algoritmic                0.7987
+   5. algoritmuri               0.7985
+   6. algoritmică               0.7594
+   7. algoritmice               0.7446
+   8. algorithm                 0.7247
+   9. algoritmii                0.7210
+  10. algoritmi                 0.7138
 
-'școală':
-   1. școala               0.8088
-   2. grădiniță            0.7493
-   3. liceu                0.7089
-   4. gimnaziu             0.6947
-   5. școlii               0.6787
-   6. școli                0.6696
-   7. învățătoare          0.6664
-   8. pedagogă             0.6606
-   9. școlă                0.6572
-  10. facultate            0.6565
+'nostalgie':
+   1. nostalgia                 0.8119
+   2. nostalgică                0.8113
+   3. nostalgii                 0.7851
+   4. nostalgic                 0.7842
+   5. nostalgiei                0.7817
+   6. melancolie                0.7792
+   7. nostalgicul               0.7743
+   8. tristețe                  0.7680
+   9. nostalgice                0.7284
+  10. nostalgiile               0.7258
 
-'om':
-   1. omul                 0.7599
-   2. individ              0.6625
-   3. bărbat               0.6604
-   4. înțelept             0.6574
-   5. iubitor              0.6471
-   6. tânăr                0.6427
-   7. țăran                0.6317
-   8. muritor              0.6269
-   9. băiat                0.6261
-  10. deștept              0.6204
+'răsărit':
+   1. apus                      0.8766
+   2. răsăritul                 0.7914
+   3. răsărite                  0.7387
+   4. răsăritu                  0.7376
+   5. miazănoaptea              0.7351
+   6. răsăritului               0.7347
+   7. miazănoapte               0.7336
+   8. răsărind                  0.7136
+   9. răsărită                  0.7086
+  10. răsăritean                0.7005
 
-'frumos':
-   1. frumosă              0.7846
-   2. minunat              0.7483
-   3. plăcut               0.7070
-   4. frumoasă             0.7003
-   5. superb               0.6988
-   6. splendid             0.6936
-   7. adorabil             0.6851
-   8. frumosul             0.6836
-   9. drag                 0.6820
-  10. preafrumos           0.6728
+'efemer':
+   1. efemerul                  0.7931
+   2. efemeră                   0.7628
+   3. efemeri                   0.7549
+   4. efemera                   0.7398
+   5. efemeridă                 0.7338
+   6. efemerului                0.7306
+   7. efemere                   0.7165
+   8. efemerele                 0.7117
+   9. efemeritate               0.7038
+  10. etern                     0.6843
 
-'mare':
-   1. mică                 0.7064
-   2. mic                  0.6596
-   3. dar                  0.5873
-   4. scipomar             0.5651
-   5. mai                  0.5469
-   6. cel                  0.5429
-   7. oarecare             0.5365
-   8. considerabilă        0.5337
-   9. cea                  0.5228
-  10. apreciabilă          0.5188
+'curaj':
+   1. curajul                   0.7161
+   2. îndrăzneală               0.6706
+   3. perseverență              0.6514
+   4. cutezanță                 0.6499
+   5. răbdare                   0.6439
+   6. curajos                   0.6413
+   7. lașitate                  0.6345
+   8. fermitate                 0.6341
+   9. dârzenie                  0.6294
+  10. devotament                0.6216
 
-'bun':
-   1. augur                0.6037
-   2. excelent             0.5866
-   3. rău                  0.5747
-   4. înțelept             0.5746
-   5. deștept              0.5720
-   6. bunu                 0.5510
-   7. bunul                0.5473
-   8. valoros              0.5447
-   9. harnic               0.5420
-  10. folositor            0.5377
+'zăpadă':
+   1. zăpada                    0.8479
+   2. gheață                    0.7531
+   3. ninsoare                  0.7440
+   4. viscol                    0.7348
+   5. viscolea                  0.7292
+   6. viscolind                 0.7257
+   7. nămeți                    0.7163
+   8. viscolit                  0.7132
+   9. nămeții                   0.7128
+  10. ninsoarea                 0.7127
 
-'merge':
-   1. merg                 0.7708
-   2. meargă               0.7613
-   3. pleca                0.7487
-   4. mergi                0.7376
-   5. întoarce             0.7288
-   6. mergem               0.7256
-   7. departe              0.6927
-   8. ajunge               0.6874
-   9. pleacă               0.6814
-  10. mergea               0.6687
+'filosofie':
+   1. filozofie                 0.9237
+   2. filosofia                 0.8145
+   3. teologie                  0.8037
+   4. istorie-filosofie         0.7783
+   5. filozofia                 0.7695
+   6. filosofie-istorie         0.7660
+   7. filologie                 0.7556
+   8. istorie-filozofie         0.7506
+   9. teosofie                  0.7349
+  10. epistemologie             0.7303
 
-'scrie':
-   1. scria                0.7347
-   2. citește              0.7188
-   3. scriu                0.7154
-   4. scriind              0.7107
-   5. scrii                0.6917
-   6. citească             0.6829
-   7. recitește            0.6804
-   8. spune                0.6703
-   9. scrisese             0.6615
-  10. citit                0.6558
+'mântuire':
+   1. mântuirea                 0.8455
+   2. mîntuire                  0.7755
+   3. mântuirii                 0.7709
+   4. mântuitoare               0.7572
+   5. mântui                    0.7545
+   6. îndumnezeire              0.7468
+   7. izbăvire                  0.7431
+   8. pocăință                  0.7372
+   9. mântuie                   0.7372
+  10. mântuiți                  0.7350
 
-'putere':
-   1. puterea              0.7806
-   2. putereaxe            0.6731
-   3. puterei              0.6677
-   4. puterexe             0.6596
-   5. puterii              0.6567
-   6. supraputere          0.6363
-   7. puteri               0.6335
-   8. dominație            0.6223
-   9. legitimitate         0.6206
-  10. putera               0.6200
+'strălucire':
+   1. strălucirea               0.8364
+   2. lucire                    0.8129
+   3. străluciri                0.7838
+   4. strălucirile              0.7505
+   5. strălucitoare             0.7466
+   6. strălucind                0.7430
+   7. strălucitoarea            0.7427
+   8. străluciră                0.7404
+   9. străluci                  0.7376
+  10. nălucire                  0.7306
 
 Analogies:
 
 rege - bărbat + femeie = ?
-  1. regină               0.8015
-  2. regele               0.7429
-  3. regelui              0.7211
-  4. împărăteasă          0.6917
-  5. principesă           0.6892
+  1. regină                    0.8079
+  2. regele                    0.7773
+  3. regelui                   0.7527
+  4. principesă                0.7001
+  5. împărăteasă               0.6966
 
-berlin - germania + franța = ?
-  1. paris                0.7729
-  2. londra               0.6811
-  3. montpellier          0.6443
-  4. petersburg           0.6372
-  5. parisul              0.6301
+câine - lup + pisică = ?
+  1. pisic                     0.6946
+  2. pisica                    0.6644
+  3. pisicuță                  0.6342
+  4. pisici                    0.6312
+  5. cățeluș                   0.6294
 
-frate - bărbat + femeie = ?
-  1. soră                 0.7466
-  2. nepoată              0.7087
-  3. mama                 0.6950
-  4. mătușă               0.6895
-  5. sora                 0.6861
+soare - zi + lună = ?
+  1. soarele                   0.6133
+  2. razele                    0.5668
+  3. soarelui                  0.5665
+  4. soarea                    0.5481
+  5. -nstelată                 0.5425
 
-bucurești - românia + franța = ?
-  1. paris                0.5591
-  2. bordeaux             0.5410
-  3. labonne              0.5353
-  4. saint-etienne        0.5340
-  5. bucureș              0.5296
+aur - argint + fier = ?
+  1. oțel                      0.4815
+  2. fierul                    0.4799
+  3. fierului                  0.4622
+  4. forjat                    0.4511
+  5. minereuri                 0.4477
+
+============================================================
+MODEL: lemma  (corola.300.50.vec)
+============================================================
+
+'democrație':
+   1. democratic                0.8288
+   2. democratism               0.8190
+   3. social-democrație         0.7836
+   4. democratiza               0.7715
+   5. liberal-democrație        0.7703
+   6. creștin-democrație        0.7546
+   7. democratizat              0.7472
+   8. democratizare             0.7448
+   9. nedemocratic              0.7140
+  10. liberal-democratic        0.7084
+
+'algoritm':
+   1. algoritmic                0.7971
+   2. algoritmizare             0.6819
+   3. criptare                  0.5394
+   4. criptografic              0.5302
+   5. metodă                    0.5261
+   6. codare                    0.5248
+   7. matematic                 0.5210
+   8. criptografie              0.5203
+   9. criptogramă               0.5201
+  10. iterativ                  0.5185
+
+'nostalgie':
+   1. nostalgic                 0.8403
+   2. nostalgică                0.8191
+   3. melancolie                0.7754
+   4. tristețe                  0.7648
+   5. reverie                   0.7312
+   6. sentimentalitate          0.7229
+   7. retrăire                  0.7113
+   8. regret                    0.7088
+   9. candoare                  0.6970
+  10. vis                       0.6936
+
+'răsărit':
+   1. apus                      0.8585
+   2. Răsărit                   0.8079
+   3. răsări                    0.7422
+   4. miazănoapte               0.7345
+   5. asfințit                  0.7234
+   6. miazăzi                   0.7227
+   7. zori                      0.6805
+   8. miază-noapte              0.6785
+   9. asfinți                   0.6703
+  10. răsăritean                0.6682
+
+'efemer':
+   1. efemeră                   0.8406
+   2. efemeritate               0.7634
+   3. etern                     0.6828
+   4. efemeridă                 0.6721
+   5. iluzie                    0.6562
+   6. vremelnicie               0.6534
+   7. eternitate                0.6432
+   8. neant                     0.6384
+   9. nemuritor                 0.6359
+  10. trecător                  0.6356
+
+'curaj':
+   1. îndrăzneală               0.7554
+   2. dârzenie                  0.6861
+   3. temeritate                0.6805
+   4. abnegație                 0.6792
+   5. răbdare                   0.6763
+   6. curajos                   0.6722
+   7. perseverență              0.6633
+   8. sinceritate               0.6545
+   9. înțelepciune              0.6496
+  10. modestie                  0.6488
+
+'zăpadă':
+   1. ninsoare                  0.7930
+   2. nămete                    0.7554
+   3. gheață                    0.7460
+   4. zapadă                    0.7450
+   5. viscoli                   0.7387
+   6. viscolit                  0.7287
+   7. viscol                    0.7257
+   8. omăt                      0.7117
+   9. nămeți                    0.7023
+  10. ninge                     0.6896
+
+'filosofie':
+   1. filozofie                 0.9344
+   2. metafizică                0.8048
+   3. filosofic                 0.7878
+   4. teologie                  0.7720
+   5. epistemologie             0.7491
+   6. dialectică                0.7289
+   7. filosof                   0.7276
+   8. teosofie                  0.7190
+   9. gnoseologie               0.7172
+  10. kantianism                0.7143
+
+'mântuire':
+   1. mântui                    0.7860
+   2. mântuitor                 0.7796
+   3. îndumnezeire              0.7663
+   4. Hristos                   0.7586
+   5. izbăvire                  0.7580
+   6. Dumnezeu                  0.7497
+   7. mântuit                   0.7437
+   8. Dumnezeire                0.7382
+   9. înviere                   0.7381
+  10. pocăință                  0.7326
+
+'strălucire':
+   1. strălucă                  0.8337
+   2. străluci                  0.8314
+   3. strălucitor               0.8185
+   4. lucire                    0.8059
+   5. strălumina                0.7711
+   6. splendoare                0.7700
+   7. sclipire                  0.7522
+   8. străluminare              0.7483
+   9. frumusețe                 0.7440
+  10. lumină                    0.7189
+
+Analogies:
+
+rege - bărbat + femeie = ?
+  1. regină                    0.7768
+  2. monarh                    0.7029
+  3. împărat                   0.6993
+  4. încoronare                0.6897
+  5. tron                      0.6865
+
+câine - lup + pisică = ?
+  1. cățel                     0.5591
+  2. pisici                    0.5434
+  3. câinie                    0.5389
+  4. cățeluș                   0.5370
+  5. pisic                     0.5363
+
+soare - zi + lună = ?
+  1. soarea                    0.6059
+  2. astru                     0.5855
+  3. răsări                    0.5807
+  4. cer                       0.5677
+  5. apune                     0.5676
+
+aur - argint + fier = ?
+  1. Minvest                   0.4445
+  2. cupru                     0.4371
+  3. mangan                    0.4317
+  4. MINVEST                   0.4312
+  5. chelatorie                0.4148
+
+============================================================
+MODEL: pos  (corola.300.50.pos.vec)
+============================================================
+
+'democrație'  [Nc_democrație]:
+   1. democratic (Af)           0.8361
+   2. democratism (Nc)          0.8356
+   3. democrată (Nc)            0.7954
+   4. democrat (Nc)             0.7945
+   5. democratizare (Nc)        0.7924
+   6. social-democrație (Nc)    0.7788
+   7. creștin-democrație (Nc)   0.7620
+   8. democratizat (Af)         0.7584
+   9. autocrație (Nc)           0.7456
+  10. liberal-democrație (Nc)   0.7451
+
+'algoritm'  [Nc_algoritm]:
+   1. algoritmic (Af)           0.7239
+   2. algoritmizare (Nc)        0.7190
+   3. iterație (Nc)             0.6248
+   4. codare (Nc)               0.5915
+   5. criptanaliză (Nc)         0.5853
+   6. secvențializare (Nc)      0.5667
+   7. formatare (Nc)            0.5607
+   8. iterare (Nc)              0.5519
+   9. scalare (Nc)              0.5446
+  10. criptare (Nc)             0.5431
+
+'nostalgie'  [Nc_nostalgie]:
+   1. nostalgică (Nc)           0.8703
+   2. nostalgic (Nc)            0.8322
+   3. melancolie (Nc)           0.8226
+   4. nostalgic (Af)            0.8198
+   5. tristețe (Nc)             0.8038
+   6. reverie (Nc)              0.7844
+   7. regret (Nc)               0.7662
+   8. amintire (Nc)             0.7641
+   9. nostalgic (Rg)            0.7542
+  10. duioșie (Nc)              0.7354
+
+'răsărit'  [Nc_răsărit]:
+   1. apus (Nc)                 0.8778
+   2. miazănoapte (Nc)          0.7722
+   3. asfințit (Nc)             0.7702
+   4. răsăritean (Nc)           0.7628
+   5. miazăzi (Nc)              0.7615
+   6. răsărit (Af)              0.7350
+   7. Răsărit (Np)              0.7343
+   8. zori (Nc)                 0.7287
+   9. miază-zi (Nc)             0.7254
+  10. răsărire (Nc)             0.7166
+
+'efemer'  [Nc_efemer]:
+  not in vocabulary
+
+'curaj'  [Nc_curaj]:
+   1. îndrăzneală (Nc)          0.7639
+   2. răbdare (Nc)              0.7315
+   3. dârzenie (Nc)             0.7235
+   4. eroism (Nc)               0.7123
+   5. temeritate (Nc)           0.7085
+   6. frică (Nc)                0.7071
+   7. perseverență (Nc)         0.6996
+   8. zel (Nc)                  0.6965
+   9. tupeu (Nc)                0.6922
+  10. omenie (Nc)               0.6917
+
+'zăpadă'  [Nc_zăpadă]:
+   1. nămete (Nc)               0.8009
+   2. gheață (Nc)               0.7594
+   3. ninsoare (Nc)             0.7576
+   4. viscol (Nc)               0.7450
+   5. ghețuș (Nc)               0.7329
+   6. zapadă (Nc)               0.7199
+   7. omăt (Nc)                 0.7137
+   8. ploaie (Nc)               0.7014
+   9. ceață (Nc)                0.6980
+  10. iarnă (Nc)                0.6890
+
+'filosofie'  [Nc_filosofie]:
+   1. filozofie (Nc)            0.9391
+   2. teologie (Nc)             0.8184
+   3. metafizică (Nc)           0.8146
+   4. teosofie (Nc)             0.7894
+   5. filosofic (Af)            0.7869
+   6. epistemologie (Nc)        0.7836
+   7. antropologie (Nc)         0.7762
+   8. estetică (Nc)             0.7742
+   9. filosof (Nc)              0.7689
+  10. ontologie (Nc)            0.7642
+
+'mântuire'  [Nc_mântuire]:
+   1. izbăvire (Nc)             0.8115
+   2. mântuitor (Nc)            0.7937
+   3. mântuitor (Af)            0.7845
+   4. înviere (Nc)              0.7768
+   5. îndumnezeire (Nc)         0.7725
+   6. mântui (Vm)               0.7647
+   7. pocăință (Nc)             0.7584
+   8. Hristos (Np)              0.7403
+   9. dumnezeire (Nc)           0.7403
+  10. jertfă (Nc)               0.7399
+
+'strălucire'  [Nc_strălucire]:
+   1. strălucă (Nc)             0.8398
+   2. strălucitor (Af)          0.8110
+   3. străluci (Vm)             0.8006
+   4. splendoare (Nc)           0.7945
+   5. lucire (Nc)               0.7929
+   6. sclipire (Nc)             0.7802
+   7. străluminare (Nc)         0.7549
+   8. frumusețe (Nc)            0.7466
+   9. strălumina (Vm)           0.7444
+  10. măreție (Nc)              0.7436
+
+Analogies:
+
+rege - bărbat + femeie = ?
+  1. regină (Nc)               0.8247
+  2. tron (Nc)                 0.7845
+  3. monarh (Nc)               0.7759
+  4. prinț (Nc)                0.7740
+  5. împărat (Nc)              0.7501
+
+câine - lup + pisică = ?
+  1. câinie (Nc)               0.6378
+  2. cățel (Nc)                0.6164
+  3. pisic (Nc)                0.6113
+  4. cățeluș (Nc)              0.6047
+  5. câine-lup (Nc)            0.5997
+
+soare - zi + lună = ?
+  1. soarea (Nc)               0.5840
+  2. răsări (Vm)               0.5698
+  3. înstela (Vm)              0.5610
+  4. asfințit (Nc)             0.5585
+  5. înstelat (Af)             0.5572
+
+aur - argint + fier = ?
+  1. fer (Nc)                  0.5679
+  2. î (Nc)                    0.5395
+  3. aramă (Nc)                0.5245
+  4. os (Nc)                   0.5214
+  5. jad (Nc)                  0.5165
+

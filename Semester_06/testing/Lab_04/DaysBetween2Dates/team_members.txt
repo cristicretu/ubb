@@ -1,0 +1,9 @@
+Lab 04 - Take-Home: Integration testing, stubs and drivers
+
+Team members:
+  - Cretu Cristian
+  - Cretu Luca
+  - Deaconu Victor
+  - Draguta Vasile
+
+Chosen application example: 3) Library Borrowing - Return System
