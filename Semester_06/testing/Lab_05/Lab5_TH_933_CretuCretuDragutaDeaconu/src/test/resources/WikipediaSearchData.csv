@@ -1,0 +1,3 @@
+caseName,keyword,expectedFragment
+valid_search_returns_article,Selenium (software),Selenium
+invalid_search_returns_no_results,zqxnonsense12345abc,There were no results matching the query

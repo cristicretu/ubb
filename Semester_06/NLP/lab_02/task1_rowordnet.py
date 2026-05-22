@@ -3,9 +3,9 @@ import rowordnet as rwn
 wn = rwn.RoWordNet()
 
 words = {
-    "nouns": ["casă", "carte", "drum"],
-    "verbs": ["merge", "scrie", "gândi"],
-    "adjectives": ["frumos", "mare"],
+    "nouns": ["cunoștință", "răscruce", "dăinuire"],
+    "verbs": ["zămisli", "cutreiera", "înfăptui"],
+    "adjectives": ["neînduplecat", "strălucitor"],
 }
 
 out = open("task1_results.txt", "w", encoding="utf-8")
