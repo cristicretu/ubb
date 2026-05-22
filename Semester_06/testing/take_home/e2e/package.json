@@ -1,0 +1,16 @@
+{
+  "name": "wc2026-e2e",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Playwright GUI/Web tests for the SSVV take-home World Cup 2026 tracker",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "@types/node": "^20.12.7",
+    "typescript": "^5.4.5"
+  }
+}
