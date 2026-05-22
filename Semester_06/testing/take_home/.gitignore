@@ -1,0 +1,14 @@
+node_modules/
+dist/
+build/
+coverage/
+
+# Playwright
+playwright-report/
+test-results/
+.playwright/
+
+# OS / editor
+.DS_Store
+*.log
+.vite/
