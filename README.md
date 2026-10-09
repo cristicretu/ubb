@@ -4,6 +4,8 @@ Every lab, seminar, project and exam I did for the Computer Science bachelor at 
 
 **[cristicretu.github.io/ubb](https://cristicretu.github.io/ubb)**: the same thing, searchable.
 
+**[ubb-schedule.vercel.app](https://ubb-schedule.vercel.app)**: your timetable in Google or Apple Calendar. Pick your group, subscribe once, it follows every change the faculty makes.
+
 ## Read this first
 
 The code is here so you can read it. Copy-pasting it into your submission is the worst possible use of it. Teachers know this repo exists, the written exam doesn't care what you pasted, and you learn nothing.
@@ -77,8 +79,8 @@ One team project, swapped and merged with other teams every few weeks. Four repo
 
 ## Tools
 
-- [ubb-schedule.vercel.app](https://ubb-schedule.vercel.app): your timetable in Google Calendar, one click
-- [cn-exam-sand.vercel.app](https://cn-exam-sand.vercel.app): every question from the Computer Networks Moodle final
+- [ubb-schedule.vercel.app](https://ubb-schedule.vercel.app): your timetable in Google/Apple Calendar or Outlook. Every program, odd/even weeks, holidays left out, stays in sync
+- [cn-exam-sand.vercel.app](https://cn-exam-sand.vercel.app): 673 questions from the Computer Networks Moodle final. Practice, exam mode, mistakes deck
 
 ## Things that will waste your afternoon
 

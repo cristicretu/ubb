@@ -4,6 +4,8 @@ Semester 3 · Year 2 · Python, C, Cisco Packet Tracer
 
 Socket programming (TCP and UDP clients and servers in Python and C) in the first half, then IP addressing, subnetting and static routing in Cisco Packet Tracer.
 
+Studying for the final? [cn-exam-sand.vercel.app](https://cn-exam-sand.vercel.app) has every question from the Moodle exam, with an exam mode and a deck of the ones you got wrong.
+
 ## Contents
 
 | Folder | What it is |
