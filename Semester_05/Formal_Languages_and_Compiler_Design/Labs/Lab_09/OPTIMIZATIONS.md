@@ -179,7 +179,7 @@ printf("Parsing successful! (%.2f ms)\n", elapsed);
 
 ## Results
 
-- **Same output** - `diff lab7/output.txt lab9/output.txt` shows no differences
+- **Same output** - `diff Lab_07/output.txt Lab_09/output.txt` shows no differences
 - **Clean compile** - No warnings with `-Wall -Wextra`
 - **Faster** - Bit vectors alone make FIRST/FOLLOW computation order of magnitude faster
 

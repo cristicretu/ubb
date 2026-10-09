@@ -1,30 +1,34 @@
-# UBB Computer Science
+# ubb
 
-My labs, seminars, projects and exam prep from the Computer Science bachelor at Babeș-Bolyai University, Cluj-Napoca (English line, 2023–2026).
+Every lab, seminar, project and exam I did for the Computer Science bachelor at Babeș-Bolyai University, Cluj. 2023 to 2026. 6 semesters, 27 courses, 3,600 files. Nothing hidden.
 
-**Browse it as a website: [cristicretu.github.io/ubb](https://cristicretu.github.io/ubb)**
+**[cristicretu.github.io/ubb](https://cristicretu.github.io/ubb)**: the same thing, searchable.
 
-Every course folder has its own README that says what each lab is and how to run it. Start there.
+## Read this first
 
-## How the repo is organized
+The code is here so you can read it. Copy-pasting it into your submission is the worst possible use of it. Teachers know this repo exists, the written exam doesn't care what you pasted, and you learn nothing.
+
+Use it to unblock yourself, then close the tab and write your own. Run it, break it, rewrite it better, send a PR.
+
+## Layout
 
 ```
-Semester_04/
-└── Web_Programming/
-    ├── README.md        what's in here, how to run it
-    ├── Labs/Lab_01 ...  weekly lab assignments
-    ├── Seminars/        seminar code (when there is any)
-    └── Exam/            practice subjects, solved past exams
+Semester_0N/
+└── Course_Name/
+    ├── README.md      what every lab does, how to run it
+    ├── Labs/Lab_NN    one folder per lab
+    ├── Seminars/
+    └── Exam/          past subjects, practice, solutions
 ```
 
-Semesters 1–2 are Year 1, 3–4 are Year 2 and 5–6 are Year 3.
+Every course has a README. If something doesn't run, the README says why.
 
 ## Year 1
 
-| Semester | Course | Languages |
+| Sem | Course | Stack |
 | --- | --- | --- |
 | 1 | [Fundamentals of Programming](Semester_01/Fundamentals_of_Programming) | Python |
-| 1 | [Computer System Architecture](Semester_01/Computer_System_Architecture) | x86 Assembly (NASM) |
+| 1 | [Computer System Architecture](Semester_01/Computer_System_Architecture) | x86 asm (NASM) |
 | 1 | [Computational Logic](Semester_01/Computational_Logic) | Python |
 | 1 | [Linear Algebra](Semester_01/Linear_Algebra) | Python, C++ |
 | 1 | [Mathematical Analysis](Semester_01/Mathematical_Analysis) | Python, Jupyter |
@@ -36,22 +40,22 @@ Semesters 1–2 are Year 1, 3–4 are Year 2 and 5–6 are Year 3.
 
 ## Year 2
 
-| Semester | Course | Languages |
+| Sem | Course | Stack |
 | --- | --- | --- |
 | 3 | [Advanced Programming Methods](Semester_03/Advanced_Programming_Methods) | Java, JavaFX |
-| 3 | [Databases](Semester_03/Databases) | T-SQL (SQL Server) |
+| 3 | [Databases](Semester_03/Databases) | T-SQL |
 | 3 | [Computer Networks](Semester_03/Computer_Networks) | C, Python, Packet Tracer |
 | 3 | [Logic and Functional Programming](Semester_03/Logic_and_Functional_Programming) | Prolog, Lisp |
 | 3 | [Probability and Statistics](Semester_03/Probability_and_Statistics) | MATLAB |
-| 4 | [Artificial Intelligence](Semester_04/Artificial_Intelligence) | Python, Jupyter |
+| 4 | [Artificial Intelligence](Semester_04/Artificial_Intelligence) | Python, PyTorch |
 | 4 | [Database Management Systems](Semester_04/Database_Management_Systems) | C#, T-SQL |
 | 4 | [Systems for Design and Implementation (MPP)](Semester_04/Systems_for_Design_and_Implementation) | TypeScript, Next.js, Prisma |
 | 4 | [Web Programming](Semester_04/Web_Programming) | PHP, JSP, ASP.NET, Angular |
-| 4 | Software Engineering | C#, WinUI 3 ([separate repos](#software-engineering-projects)) |
+| 4 | [Software Engineering](#software-engineering) | C#, WinUI 3 |
 
 ## Year 3
 
-| Semester | Course | Languages |
+| Sem | Course | Stack |
 | --- | --- | --- |
 | 5 | [Formal Languages and Compiler Design](Semester_05/Formal_Languages_and_Compiler_Design) | C, C++, Flex, ANTLR |
 | 5 | [Parallel and Distributed Programming](Semester_05/Parallel_and_Distributed_Programming) | C++, C#, Java, MPI |
@@ -62,30 +66,31 @@ Semesters 1–2 are Year 1, 3–4 are Year 2 and 5–6 are Year 3.
 | 6 | [Large Language Models](Semester_06/Large_Language_Models) | Python, Jupyter |
 | 6 | [Natural Language Processing](Semester_06/Natural_Language_Processing) | Python |
 
-## Software Engineering projects
+## Software Engineering
 
-The SE course (semester 4) is a team project that gets swapped and merged between teams during the semester:
+One team project, swapped and merged with other teams every few weeks. Four repos, one per phase:
 
-1. [Duo](https://github.com/cristicretu/UBB-SE-2025-Messi/tree/main/Duo): the first project, a community forum for a learning platform
-2. [MarketMinds](https://github.com/cristicretu/UBB-SE-2025-MarketMinds): after swapping projects with another team
+1. [Duo](https://github.com/cristicretu/UBB-SE-2025-Messi/tree/main/Duo): what we started with, a forum for a learning platform
+2. [MarketMinds](https://github.com/cristicretu/UBB-SE-2025-MarketMinds): another team's project, handed to us
 3. [MarketMessi](https://github.com/cristicretu/UBB-SE-2025-MarketMessi): first merge
-4. [Marketplace](https://github.com/cristicretu/UBB-SE-2025-Marketplace): final merge
+4. [Marketplace](https://github.com/cristicretu/UBB-SE-2025-Marketplace): final merge, web + desktop
 
-## Tools I made for UBB students
+## Tools
 
-- [UBB schedule → Google Calendar](https://ubb-schedule.vercel.app): import your timetable into your calendar
-- [Computer Networks exam practice](https://cn-exam-sand.vercel.app): every question from the CN Moodle final
+- [ubb-schedule.vercel.app](https://ubb-schedule.vercel.app): your timetable in Google Calendar, one click
+- [cn-exam-sand.vercel.app](https://cn-exam-sand.vercel.app): every question from the Computer Networks Moodle final
 
-## Setup guides
+## Things that will waste your afternoon
 
-- **C++ / Qt (OOP):** configure CMake and Qt with [this gist](https://gist.github.com/cristicretu/ceceeff14ff6335959274dfe8b4e7061)
-- **JavaFX (MAP):** follow [this gist](https://gist.github.com/cristicretu/b9853999dc825f83d65442d6264ecf78)
-- **Assembly on an M1/M2 Mac (ASC):** run a [Windows 11 ARM VM](https://princessdharmy.medium.com/installing-windows-11-on-macbook-m1-arm64-e1e7e0f52ce0)
-- **No valgrind on macOS (OS):** `MallocStackLogging=YES leaks -quiet -atExit --list -- ./a.out`
-- **Packet Tracer (Networks):** download it from [Cisco NetAcad](https://www.netacad.com/resources/lab-downloads?courseLang=en-US)
+- **Qt + CMake** on a Mac: [gist](https://gist.github.com/cristicretu/ceceeff14ff6335959274dfe8b4e7061)
+- **JavaFX** never finds its modules: [gist](https://gist.github.com/cristicretu/b9853999dc825f83d65442d6264ecf78)
+- **Assembly** needs Windows. On Apple Silicon, run a [Windows 11 ARM VM](https://princessdharmy.medium.com/installing-windows-11-on-macbook-m1-arm64-e1e7e0f52ce0)
+- **No valgrind on macOS.** Use `MallocStackLogging=YES leaks -quiet -atExit --list -- ./a.out`
+- **No `pthread_barrier_t` on macOS.** [Operating Systems](Semester_02/Operating_Systems) ships a drop-in
+- **Packet Tracer** is behind a [NetAcad login](https://www.netacad.com/resources/lab-downloads?courseLang=en-US)
 
-## Using this code
+## Contributing
 
-Read it, run it, learn from it. If you hand it in as your own, it's on you: teachers at UBB know this repo exists, and copied labs are easy to spot. Code is [MIT licensed](LICENSE).
+Found a bug? PR. Better solution? PR. Your year has a different subject? PR it into `Exam/`.
 
-Found a bug or have a better solution? Open an issue or a PR.
+[MIT](LICENSE). Take it.

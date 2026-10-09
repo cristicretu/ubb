@@ -205,3 +205,13 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# build outputs
+Lab_03/scanner
+Lab_03/simple
+Lab_04/fa_processor
+Lab_05/scanner
+Lab_06/lexer
+Lab_06/parser
+Lab_07/ll1parser
+Lab_09/ll1parser

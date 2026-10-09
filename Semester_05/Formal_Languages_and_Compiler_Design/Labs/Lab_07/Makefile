@@ -16,13 +16,13 @@ $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 run: $(TARGET)
-	./$(TARGET) grammar.txt ../lab6/output/pif.txt output.txt
+	./$(TARGET) grammar.txt ../Lab_06/output/pif.txt output.txt
 	@echo ""
 	@cat output.txt
 
 test: $(TARGET)
 	@echo "=== Running parser on lab6 PIF ==="
-	./$(TARGET) grammar.txt ../lab6/output/pif.txt output.txt
+	./$(TARGET) grammar.txt ../Lab_06/output/pif.txt output.txt
 
 clean:
 	rm -f $(TARGET) $(OBJS) output.txt
