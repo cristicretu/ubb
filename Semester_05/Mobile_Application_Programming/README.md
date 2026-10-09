@@ -17,6 +17,7 @@ You build a mobile CRUD app that works offline and syncs with a server, then pas
 | [Exam/taxi_app](Exam/taxi_app) | Cabs: create, filter by color, delete, driver view |
 | [Exam/recipe_app](Exam/recipe_app) | Recipes: list by type, create, delete, low-rated report, increment rating |
 | [Exam/restaurant_app](Exam/restaurant_app) | Restaurant orders, server only (no frontend) |
+| [Exam/exam-2026-2b](Exam/exam-2026-2b) | The actual 2026 exam: salary/payments app. Subject in `Exam.md`, starter server from the professor, my Expo frontend |
 
 Every exam app is a `server/` (Express + `ws`, in-memory data with seed values) and a `frontend/` (Expo Router with tabs, AsyncStorage cache, offline pending queue, WebSocket alerts).
 
