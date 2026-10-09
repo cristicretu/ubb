@@ -1,0 +1,75 @@
+program -> PROGRAM stmtList END
+
+stmtList -> stmt stmtList | epsilon
+
+stmt -> declStmt | inputStmt | outputStmt | ifStmt | forStmt | funcDef | returnStmt | exprStmt
+
+declStmt -> LET assignTarget ASSIGN expr SEMI
+
+assignTarget -> IDENTIFIER arrayAccessOpt
+
+arrayAccessOpt -> LBRACKET expr RBRACKET | epsilon
+
+inputStmt -> READ IDENTIFIER SEMI
+
+outputStmt -> SAY exprList SEMI
+
+ifStmt -> IF LPAREN condition RPAREN block elseOpt
+
+elseOpt -> ELSE block | epsilon
+
+forStmt -> FOR LPAREN IDENTIFIER ASSIGN expr SEMI condition SEMI IDENTIFIER ASSIGN expr RPAREN block
+
+funcDef -> FN IDENTIFIER LPAREN paramListOpt RPAREN block
+
+returnStmt -> RETURN expr SEMI
+
+exprStmt -> expr SEMI
+
+block -> LBRACE stmtList RBRACE
+
+paramListOpt -> paramList | epsilon
+
+paramList -> IDENTIFIER paramListTail
+
+paramListTail -> COMMA IDENTIFIER paramListTail | epsilon
+
+exprList -> expr exprListTail
+
+exprListTail -> COMMA expr exprListTail | epsilon
+
+condition -> comparison conditionTail
+
+conditionTail -> logicalOp comparison conditionTail | epsilon
+
+comparison -> expr compOp expr
+
+compOp -> EQ | NEQ | GT | LT | GTE | LTE
+
+logicalOp -> AND | OR | XOR
+
+expr -> term exprTail
+
+exprTail -> addOp term exprTail | epsilon
+
+addOp -> PLUS | MINUS
+
+term -> factor termTail
+
+termTail -> mulOp factor termTail | epsilon
+
+mulOp -> MULT | DIV | FLOORDIV | MOD | GCD | LCM | POWER | DOT
+
+factor -> MINUS primary postfixOpt | primary postfixOpt
+
+postfixOpt -> FACTORIAL | SIGMOID | RELU | epsilon
+
+primary -> IDENTIFIER primaryTail | NUMBER | STRING | LPAREN expr RPAREN | vector
+
+primaryTail -> LPAREN exprListOpt RPAREN | LBRACKET expr RBRACKET | epsilon
+
+exprListOpt -> exprList | epsilon
+
+vector -> LBRACKET vectorBody RBRACKET
+
+vectorBody -> exprList | epsilon

@@ -1,0 +1,271 @@
+Productions used during parsing:
+1: program -> PROGRAM stmtList END
+2: stmtList -> stmt stmtList
+3: stmt -> inputStmt
+4: inputStmt -> READ IDENTIFIER SEMI
+5: stmtList -> stmt stmtList
+6: stmt -> declStmt
+7: declStmt -> LET assignTarget ASSIGN expr SEMI
+8: assignTarget -> IDENTIFIER arrayAccessOpt
+9: arrayAccessOpt -> epsilon
+10: expr -> term exprTail
+11: term -> factor termTail
+12: factor -> primary postfixOpt
+13: primary -> NUMBER
+14: postfixOpt -> epsilon
+15: termTail -> epsilon
+16: exprTail -> epsilon
+17: stmtList -> stmt stmtList
+18: stmt -> forStmt
+19: forStmt -> FOR LPAREN IDENTIFIER ASSIGN expr SEMI condition SEMI IDENTIFIER ASSIGN expr RPAREN block
+20: expr -> term exprTail
+21: term -> factor termTail
+22: factor -> primary postfixOpt
+23: primary -> NUMBER
+24: postfixOpt -> epsilon
+25: termTail -> epsilon
+26: exprTail -> epsilon
+27: condition -> comparison conditionTail
+28: comparison -> expr compOp expr
+29: expr -> term exprTail
+30: term -> factor termTail
+31: factor -> primary postfixOpt
+32: primary -> IDENTIFIER primaryTail
+33: primaryTail -> epsilon
+34: postfixOpt -> epsilon
+35: termTail -> epsilon
+36: exprTail -> epsilon
+37: compOp -> LTE
+38: expr -> term exprTail
+39: term -> factor termTail
+40: factor -> primary postfixOpt
+41: primary -> IDENTIFIER primaryTail
+42: primaryTail -> epsilon
+43: postfixOpt -> epsilon
+44: termTail -> epsilon
+45: exprTail -> epsilon
+46: conditionTail -> epsilon
+47: expr -> term exprTail
+48: term -> factor termTail
+49: factor -> primary postfixOpt
+50: primary -> IDENTIFIER primaryTail
+51: primaryTail -> epsilon
+52: postfixOpt -> epsilon
+53: termTail -> epsilon
+54: exprTail -> addOp term exprTail
+55: addOp -> PLUS
+56: term -> factor termTail
+57: factor -> primary postfixOpt
+58: primary -> NUMBER
+59: postfixOpt -> epsilon
+60: termTail -> epsilon
+61: exprTail -> epsilon
+62: block -> LBRACE stmtList RBRACE
+63: stmtList -> stmt stmtList
+64: stmt -> declStmt
+65: declStmt -> LET assignTarget ASSIGN expr SEMI
+66: assignTarget -> IDENTIFIER arrayAccessOpt
+67: arrayAccessOpt -> epsilon
+68: expr -> term exprTail
+69: term -> factor termTail
+70: factor -> primary postfixOpt
+71: primary -> IDENTIFIER primaryTail
+72: primaryTail -> epsilon
+73: postfixOpt -> epsilon
+74: termTail -> mulOp factor termTail
+75: mulOp -> MULT
+76: factor -> primary postfixOpt
+77: primary -> IDENTIFIER primaryTail
+78: primaryTail -> epsilon
+79: postfixOpt -> epsilon
+80: termTail -> epsilon
+81: exprTail -> epsilon
+82: stmtList -> epsilon
+83: stmtList -> stmt stmtList
+84: stmt -> outputStmt
+85: outputStmt -> SAY exprList SEMI
+86: exprList -> expr exprListTail
+87: expr -> term exprTail
+88: term -> factor termTail
+89: factor -> primary postfixOpt
+90: primary -> IDENTIFIER primaryTail
+91: primaryTail -> epsilon
+92: postfixOpt -> epsilon
+93: termTail -> epsilon
+94: exprTail -> epsilon
+95: exprListTail -> epsilon
+96: stmtList -> epsilon
+
+Parse Tree (Father-Sibling Representation)
+Index  | Symbol               | Parent | RightSibling
+------------------------------------------------------
+1      | program              | 0      | 0           
+2      | PROGRAM              | 1      | 3           
+3      | stmtList             | 1      | 4           
+4      | END                  | 1      | 0           
+5      | stmt                 | 3      | 6           
+6      | stmtList             | 3      | 0           
+7      | inputStmt            | 5      | 0           
+8      | READ                 | 7      | 9           
+9      | IDENTIFIER           | 7      | 10          
+10     | SEMI                 | 7      | 0           
+11     | stmt                 | 6      | 12          
+12     | stmtList             | 6      | 0           
+13     | declStmt             | 11     | 0           
+14     | LET                  | 13     | 15          
+15     | assignTarget         | 13     | 16          
+16     | ASSIGN               | 13     | 17          
+17     | expr                 | 13     | 18          
+18     | SEMI                 | 13     | 0           
+19     | IDENTIFIER           | 15     | 20          
+20     | arrayAccessOpt       | 15     | 0           
+21     | epsilon              | 20     | 0           
+22     | term                 | 17     | 23          
+23     | exprTail             | 17     | 0           
+24     | factor               | 22     | 25          
+25     | termTail             | 22     | 0           
+26     | primary              | 24     | 27          
+27     | postfixOpt           | 24     | 0           
+28     | NUMBER               | 26     | 0           
+29     | epsilon              | 27     | 0           
+30     | epsilon              | 25     | 0           
+31     | epsilon              | 23     | 0           
+32     | stmt                 | 12     | 33          
+33     | stmtList             | 12     | 0           
+34     | forStmt              | 32     | 0           
+35     | FOR                  | 34     | 36          
+36     | LPAREN               | 34     | 37          
+37     | IDENTIFIER           | 34     | 38          
+38     | ASSIGN               | 34     | 39          
+39     | expr                 | 34     | 40          
+40     | SEMI                 | 34     | 41          
+41     | condition            | 34     | 42          
+42     | SEMI                 | 34     | 43          
+43     | IDENTIFIER           | 34     | 44          
+44     | ASSIGN               | 34     | 45          
+45     | expr                 | 34     | 46          
+46     | RPAREN               | 34     | 47          
+47     | block                | 34     | 0           
+48     | term                 | 39     | 49          
+49     | exprTail             | 39     | 0           
+50     | factor               | 48     | 51          
+51     | termTail             | 48     | 0           
+52     | primary              | 50     | 53          
+53     | postfixOpt           | 50     | 0           
+54     | NUMBER               | 52     | 0           
+55     | epsilon              | 53     | 0           
+56     | epsilon              | 51     | 0           
+57     | epsilon              | 49     | 0           
+58     | comparison           | 41     | 59          
+59     | conditionTail        | 41     | 0           
+60     | expr                 | 58     | 61          
+61     | compOp               | 58     | 62          
+62     | expr                 | 58     | 0           
+63     | term                 | 60     | 64          
+64     | exprTail             | 60     | 0           
+65     | factor               | 63     | 66          
+66     | termTail             | 63     | 0           
+67     | primary              | 65     | 68          
+68     | postfixOpt           | 65     | 0           
+69     | IDENTIFIER           | 67     | 70          
+70     | primaryTail          | 67     | 0           
+71     | epsilon              | 70     | 0           
+72     | epsilon              | 68     | 0           
+73     | epsilon              | 66     | 0           
+74     | epsilon              | 64     | 0           
+75     | LTE                  | 61     | 0           
+76     | term                 | 62     | 77          
+77     | exprTail             | 62     | 0           
+78     | factor               | 76     | 79          
+79     | termTail             | 76     | 0           
+80     | primary              | 78     | 81          
+81     | postfixOpt           | 78     | 0           
+82     | IDENTIFIER           | 80     | 83          
+83     | primaryTail          | 80     | 0           
+84     | epsilon              | 83     | 0           
+85     | epsilon              | 81     | 0           
+86     | epsilon              | 79     | 0           
+87     | epsilon              | 77     | 0           
+88     | epsilon              | 59     | 0           
+89     | term                 | 45     | 90          
+90     | exprTail             | 45     | 0           
+91     | factor               | 89     | 92          
+92     | termTail             | 89     | 0           
+93     | primary              | 91     | 94          
+94     | postfixOpt           | 91     | 0           
+95     | IDENTIFIER           | 93     | 96          
+96     | primaryTail          | 93     | 0           
+97     | epsilon              | 96     | 0           
+98     | epsilon              | 94     | 0           
+99     | epsilon              | 92     | 0           
+100    | addOp                | 90     | 101         
+101    | term                 | 90     | 102         
+102    | exprTail             | 90     | 0           
+103    | PLUS                 | 100    | 0           
+104    | factor               | 101    | 105         
+105    | termTail             | 101    | 0           
+106    | primary              | 104    | 107         
+107    | postfixOpt           | 104    | 0           
+108    | NUMBER               | 106    | 0           
+109    | epsilon              | 107    | 0           
+110    | epsilon              | 105    | 0           
+111    | epsilon              | 102    | 0           
+112    | LBRACE               | 47     | 113         
+113    | stmtList             | 47     | 114         
+114    | RBRACE               | 47     | 0           
+115    | stmt                 | 113    | 116         
+116    | stmtList             | 113    | 0           
+117    | declStmt             | 115    | 0           
+118    | LET                  | 117    | 119         
+119    | assignTarget         | 117    | 120         
+120    | ASSIGN               | 117    | 121         
+121    | expr                 | 117    | 122         
+122    | SEMI                 | 117    | 0           
+123    | IDENTIFIER           | 119    | 124         
+124    | arrayAccessOpt       | 119    | 0           
+125    | epsilon              | 124    | 0           
+126    | term                 | 121    | 127         
+127    | exprTail             | 121    | 0           
+128    | factor               | 126    | 129         
+129    | termTail             | 126    | 0           
+130    | primary              | 128    | 131         
+131    | postfixOpt           | 128    | 0           
+132    | IDENTIFIER           | 130    | 133         
+133    | primaryTail          | 130    | 0           
+134    | epsilon              | 133    | 0           
+135    | epsilon              | 131    | 0           
+136    | mulOp                | 129    | 137         
+137    | factor               | 129    | 138         
+138    | termTail             | 129    | 0           
+139    | MULT                 | 136    | 0           
+140    | primary              | 137    | 141         
+141    | postfixOpt           | 137    | 0           
+142    | IDENTIFIER           | 140    | 143         
+143    | primaryTail          | 140    | 0           
+144    | epsilon              | 143    | 0           
+145    | epsilon              | 141    | 0           
+146    | epsilon              | 138    | 0           
+147    | epsilon              | 127    | 0           
+148    | epsilon              | 116    | 0           
+149    | stmt                 | 33     | 150         
+150    | stmtList             | 33     | 0           
+151    | outputStmt           | 149    | 0           
+152    | SAY                  | 151    | 153         
+153    | exprList             | 151    | 154         
+154    | SEMI                 | 151    | 0           
+155    | expr                 | 153    | 156         
+156    | exprListTail         | 153    | 0           
+157    | term                 | 155    | 158         
+158    | exprTail             | 155    | 0           
+159    | factor               | 157    | 160         
+160    | termTail             | 157    | 0           
+161    | primary              | 159    | 162         
+162    | postfixOpt           | 159    | 0           
+163    | IDENTIFIER           | 161    | 164         
+164    | primaryTail          | 161    | 0           
+165    | epsilon              | 164    | 0           
+166    | epsilon              | 162    | 0           
+167    | epsilon              | 160    | 0           
+168    | epsilon              | 158    | 0           
+169    | epsilon              | 156    | 0           
+170    | epsilon              | 150    | 0           

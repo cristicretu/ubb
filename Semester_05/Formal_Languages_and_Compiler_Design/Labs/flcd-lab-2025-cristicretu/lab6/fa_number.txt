@@ -1,0 +1,21 @@
+# States
+states: q0, q1, q2, q3
+
+# Input alphabet
+# D = digit [0-9]
+# P = decimal point
+alphabet: D, P
+
+# Transitions: from_state, symbol, to_state
+transitions:
+q0, D, q1
+q1, D, q1
+q1, P, q2
+q2, D, q3
+q3, D, q3
+
+# Initial state
+initial: q0
+
+# Accepting states
+final: q1, q3

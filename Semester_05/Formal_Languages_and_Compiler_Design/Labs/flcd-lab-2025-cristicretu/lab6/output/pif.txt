@@ -1,0 +1,49 @@
+ST Identifiers (3 entries)
+  0: n
+  1: fact
+  2: i
+
+ST Constants (1 entries)
+  0: 1
+
+PIF (38 tokens)
+  0 | PROGRAM      | -1 | -
+  1 | READ         | -1 | -
+  2 | IDENTIFIER   | 531 | n
+  3 | SEMI         | -1 | -
+  4 | LET          | -1 | -
+  5 | IDENTIFIER   | 3 | fact
+  6 | ASSIGN       | -1 | -
+  7 | NUMBER       | 470 | 1
+  8 | SEMI         | -1 | -
+  9 | FOR          | -1 | -
+  10 | LPAREN       | -1 | -
+  11 | IDENTIFIER   | 526 | i
+  12 | ASSIGN       | -1 | -
+  13 | NUMBER       | 470 | 1
+  14 | SEMI         | -1 | -
+  15 | IDENTIFIER   | 526 | i
+  16 | LTE          | -1 | -
+  17 | IDENTIFIER   | 531 | n
+  18 | SEMI         | -1 | -
+  19 | IDENTIFIER   | 526 | i
+  20 | ASSIGN       | -1 | -
+  21 | IDENTIFIER   | 526 | i
+  22 | PLUS         | -1 | -
+  23 | NUMBER       | 470 | 1
+  24 | RPAREN       | -1 | -
+  25 | LBRACE       | -1 | -
+  26 | LET          | -1 | -
+  27 | IDENTIFIER   | 3 | fact
+  28 | ASSIGN       | -1 | -
+  29 | IDENTIFIER   | 3 | fact
+  30 | MULT         | -1 | -
+  31 | IDENTIFIER   | 526 | i
+  32 | SEMI         | -1 | -
+  33 | RBRACE       | -1 | -
+  34 | SAY          | -1 | -
+  35 | IDENTIFIER   | 3 | fact
+  36 | SEMI         | -1 | -
+  37 | END          | -1 | -
+End PIF
+

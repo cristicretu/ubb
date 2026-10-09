@@ -1,0 +1,28 @@
+```
+program
+    let a = [1, 2, 3];
+    let b = [4, 5, 6];
+    
+    # Dot product
+    let dot = a <.> b;
+    say "Dot product:", dot;
+    
+    let sum = [0, 0, 0];
+    for (i = 0; i < 3; i = i + 1) {
+        let sum[i] = a[i] + b[i];
+    }
+    say "Element-wise sum:", sum;
+end
+```
+
+
+```
+program
+    read n;
+    let fact = 1;
+    for (i = 1; i <= n; i = i + 1) {
+        let fact = fact * i;
+    }
+    say fact;
+end
+```

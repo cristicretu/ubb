@@ -413,3 +413,20 @@ poetry.toml
 pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python,c++,assembler,pycharm+all,clion
+
+# --- added during repo cleanup ---
+**/.DS_Store
+*.dSYM/
+.vs/
+.vscode/
+.idea/
+.claude/
+.expect/
+.expo/
+.pnpm-store/
+node_modules/
+*.fdb_latexmk
+*.fls
+*.aux
+*.synctex.gz
+**/webdriver/**/chromedriver

@@ -1,0 +1,56 @@
+Productions:
+program
+ -> statementList
+ -> statement
+ -> inputStmt
+ -> statement
+ -> declStmt
+ -> expression
+ -> term
+ -> factor
+ -> primary
+ -> statement
+ -> forStmt
+ -> expression
+ -> term
+ -> factor
+ -> primary
+ -> condition
+ -> comparison
+ -> expression
+ -> term
+ -> factor
+ -> primary
+ -> comparisonOp
+ -> expression
+ -> term
+ -> factor
+ -> primary
+ -> expression
+ -> term
+ -> factor
+ -> primary
+ -> term
+ -> factor
+ -> primary
+ -> block
+ -> statementList
+ -> statement
+ -> declStmt
+ -> expression
+ -> term
+ -> factor
+ -> primary
+ -> factor
+ -> primary
+ -> statement
+ -> outputStmt
+ -> expressionList
+ -> expression
+ -> term
+ -> factor
+ -> primary
+
+
+Parse tree:
+(program program (statementList (statement (inputStmt read n ;)) (statement (declStmt let fact = (expression (term (factor (primary 1)))) ;)) (statement (forStmt for ( i = (expression (term (factor (primary 1)))) ; (condition (comparison (expression (term (factor (primary i)))) (comparisonOp <=) (expression (term (factor (primary n)))))) ; i = (expression (term (factor (primary i))) + (term (factor (primary 1)))) ) (block { (statementList (statement (declStmt let fact = (expression (term (factor (primary fact)) * (factor (primary i)))) ;))) }))) (statement (outputStmt say (expressionList (expression (term (factor (primary fact))))) ;))) end <EOF>)

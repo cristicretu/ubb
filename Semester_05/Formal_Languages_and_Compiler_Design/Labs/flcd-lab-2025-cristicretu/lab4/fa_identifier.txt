@@ -1,0 +1,30 @@
+# Finite Automaton for Identifiers
+# Language: Avra
+# Pattern: [a-zA-Z_][a-zA-Z0-9_]*
+
+# States
+states: q0, q1
+
+# Input alphabet
+# L = letter [a-zA-Z]
+# D = digit [0-9]
+# U = underscore
+alphabet: L, D, U
+
+# Transitions: from_state, symbol, to_state
+transitions:
+q0, L, q1
+q0, U, q1
+q1, L, q1
+q1, D, q1
+q1, U, q1
+
+# Initial state
+initial: q0
+
+# Accepting states
+final: q1
+
+# Examples
+# Valid: x, counter, _temp, MAX_VALUE, var123, myVar_final
+# Invalid: 123abc, 9var, -value

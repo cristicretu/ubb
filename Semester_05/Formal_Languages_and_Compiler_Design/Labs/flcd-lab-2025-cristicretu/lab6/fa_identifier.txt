@@ -1,0 +1,22 @@
+# States
+states: q0, q1
+
+# Input alphabet
+# L = letter [a-zA-Z]
+# D = digit [0-9]
+# U = underscore
+alphabet: L, D, U
+
+# Transitions: from_state, symbol, to_state
+transitions:
+q0, L, q1
+q0, U, q1
+q1, L, q1
+q1, D, q1
+q1, U, q1
+
+# Initial state
+initial: q0
+
+# Accepting states
+final: q1

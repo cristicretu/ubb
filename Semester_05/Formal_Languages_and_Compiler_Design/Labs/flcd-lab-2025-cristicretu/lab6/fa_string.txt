@@ -1,0 +1,21 @@
+# States
+states: q0, q1, q2
+
+# Input alphabet
+# Q = quote (")
+# C = any character except " and newline
+alphabet: Q, C
+
+# Transitions: from_state, symbol, to_state
+transitions:
+q0, Q, q1
+q1, C, q1
+q1, Q, q2
+
+# Initial state
+initial: q0
+
+# Accepting states
+final: q2
+
+

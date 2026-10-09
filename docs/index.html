@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UBB Computer Science</title>
+<meta name="description" content="Labs, seminars, projects and exam prep for every course in the UBB Computer Science bachelor.">
+<style>
+  :root {
+    --bg: #fff; --fg: #1a1a1a; --muted: #6b6b6b; --line: #e6e6e6; --link: #0b57d0; --mark: #fff3b0;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #111; --fg: #e8e8e8; --muted: #9a9a9a; --line: #2a2a2a; --link: #8ab4f8; --mark: #5a4a00; }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  main { max-width: 760px; margin: 0 auto; padding: 48px 16px 80px; }
+  h1 { font-size: 24px; margin: 0 0 4px; }
+  h2 { font-size: 15px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 40px 0 8px; font-weight: 600; }
+  p { margin: 0 0 12px; }
+  a { color: var(--link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .muted { color: var(--muted); }
+  input {
+    width: 100%; margin: 20px 0 0; padding: 10px 12px; font: inherit; color: inherit;
+    background: transparent; border: 1px solid var(--line); border-radius: 6px;
+  }
+  input:focus { outline: 2px solid var(--link); outline-offset: -1px; }
+  ul { list-style: none; margin: 0; padding: 0; }
+  li { padding: 10px 0; border-top: 1px solid var(--line); }
+  li:last-child { border-bottom: 1px solid var(--line); }
+  .row { display: flex; gap: 12px; align-items: baseline; justify-content: space-between; flex-wrap: wrap; }
+  .name { font-weight: 600; }
+  .sem { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 44px; }
+  .langs { font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted); }
+  .sum { color: var(--muted); font-size: 15px; margin-top: 2px; }
+  .empty { padding: 16px 0; color: var(--muted); display: none; }
+  footer { margin-top: 48px; font-size: 14px; color: var(--muted); }
+  kbd { font: 12px ui-monospace, monospace; border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>UBB Computer Science</h1>
+  <p class="muted">Labs, seminars, projects and exam prep from the CS bachelor at Babeș-Bolyai University, Cluj-Napoca. Each course links to its folder on GitHub, where a README explains every lab and how to run it.</p>
+
+  <input id="q" type="search" placeholder="Search courses, languages, topics  (press /)" autocomplete="off" aria-label="Search courses">
+
+  <div id="list"></div>
+  <p class="empty" id="empty">No course matches that.</p>
+
+  <h2>Software Engineering projects</h2>
+  <p class="muted">Semester 4. A team project swapped and merged between teams during the semester.</p>
+  <ul>
+    <li><a href="https://github.com/cristicretu/UBB-SE-2025-Messi/tree/main/Duo">Duo</a> <span class="muted">· first project, community forum for a learning platform</span></li>
+    <li><a href="https://github.com/cristicretu/UBB-SE-2025-MarketMinds">MarketMinds</a> <span class="muted">· after swapping projects</span></li>
+    <li><a href="https://github.com/cristicretu/UBB-SE-2025-MarketMessi">MarketMessi</a> <span class="muted">· first merge</span></li>
+    <li><a href="https://github.com/cristicretu/UBB-SE-2025-Marketplace">Marketplace</a> <span class="muted">· final merge</span></li>
+  </ul>
+
+  <h2>Tools</h2>
+  <ul>
+    <li><a href="https://ubb-schedule.vercel.app">UBB schedule → Google Calendar</a> <span class="muted">· import your timetable</span></li>
+    <li><a href="https://cn-exam-sand.vercel.app">Computer Networks exam practice</a> <span class="muted">· every question from the CN Moodle final</span></li>
+  </ul>
+
+  <h2>Setup</h2>
+  <ul>
+    <li><a href="https://gist.github.com/cristicretu/ceceeff14ff6335959274dfe8b4e7061">CMake + Qt</a> <span class="muted">· for OOP</span></li>
+    <li><a href="https://gist.github.com/cristicretu/b9853999dc825f83d65442d6264ecf78">JavaFX</a> <span class="muted">· for Advanced Programming Methods</span></li>
+    <li><a href="https://princessdharmy.medium.com/installing-windows-11-on-macbook-m1-arm64-e1e7e0f52ce0">Windows 11 VM on Apple Silicon</a> <span class="muted">· for Assembly</span></li>
+    <li><a href="https://www.netacad.com/resources/lab-downloads?courseLang=en-US">Packet Tracer</a> <span class="muted">· for Computer Networks</span></li>
+  </ul>
+
+  <footer>
+    <p>Read it, run it, learn from it. Handing it in as your own is on you. Teachers know this repo exists.</p>
+    <p><a href="https://github.com/cristicretu/ubb">github.com/cristicretu/ubb</a> · MIT license · Found a mistake? Open an issue.</p>
+  </footer>
+</main>
+
+<script>
+const REPO = "https://github.com/cristicretu/ubb/tree/main/";
+// [semester, folder, name, languages, summary]
+const COURSES = [
+  [1, "Semester_01/Fundamentals_of_Programming", "Fundamentals of Programming", "Python", "Python labs from sorting to layered apps with tests, persistence, undo and GUIs."],
+  [1, "Semester_01/Computer_System_Architecture", "Computer System Architecture", "x86 Assembly (NASM)", "32-bit NASM labs: arithmetic, bit operations, strings, printf/scanf and file I/O."],
+  [1, "Semester_01/Computational_Logic", "Computational Logic", "Python", "Number base arithmetic and conversions homework, plus photos of past logic exams."],
+  [1, "Semester_01/Linear_Algebra", "Linear Algebra", "Python, C++", "Counting programs for partitions, associative operations, bases and subspaces over Z2."],
+  [1, "Semester_01/Mathematical_Analysis", "Mathematical Analysis", "Python, Jupyter", "Numerical seminar homeworks: series rearrangement, gradient descent, derivatives, integrals, ridge regression."],
+  [2, "Semester_02/Data_Structures_and_Algorithms", "Data Structures and Algorithms", "C++", "ADT implementations: bag, sparse matrix, sorted map, hash set, BST multimap."],
+  [2, "Semester_02/Object_Oriented_Programming", "Object-Oriented Programming", "C, C++, Qt", "Dog adoption app from C++ console to Qt GUI, plus lab test and exam practice."],
+  [2, "Semester_02/Operating_Systems", "Operating Systems", "C, Bash", "grep/sed/awk and Bash scripts, then C processes, pipes, FIFOs, threads and synchronization."],
+  [2, "Semester_02/Graph_Algorithms", "Graph Algorithms", "C++, Python", "Directed graph class grown with SCC, Dijkstra, DAG paths and Hamiltonian cycles."],
+  [2, "Semester_02/Dynamical_Systems", "Dynamical Systems", "Maple", "Maple worksheets for ODEs, eigenvalues and orbits, plus solved past exams."],
+  [3, "Semester_03/Advanced_Programming_Methods", "Advanced Programming Methods (MAP)", "Java, JavaFX", "Toy language interpreter in Java, grown lab by lab into a JavaFX GUI."],
+  [3, "Semester_03/Databases", "Databases", "T-SQL", "SQL Server Formula 1 database: queries, versioning procedures, indexes, exam practice."],
+  [3, "Semester_03/Computer_Networks", "Computer Networks", "C, Python, Packet Tracer", "TCP/UDP socket clients and servers, subnetting, and Packet Tracer routing labs."],
+  [3, "Semester_03/Logic_and_Functional_Programming", "Logic and Functional Programming (PLF)", "Prolog, Lisp", "Recursive list, backtracking and tree problems in Prolog and Common Lisp."],
+  [3, "Semester_03/Probability_and_Statistics", "Probability and Statistics", "MATLAB", "MATLAB scripts for distributions, simulations, confidence intervals and hypothesis tests."],
+  [4, "Semester_04/Artificial_Intelligence", "Artificial Intelligence", "Python, PyTorch, scikit-learn", "Jupyter labs on regression, neural networks, CNNs, search problems and genetic algorithms."],
+  [4, "Semester_04/Database_Management_Systems", "Database Management Systems", "C#, T-SQL", "WinForms master-detail apps on SQL Server and T-SQL transactions with rollback."],
+  [4, "Semester_04/Systems_for_Design_and_Implementation", "Systems for Design and Implementation (MPP)", "TypeScript, Next.js, Prisma", "Next.js workout tracker semester project and an election candidates exam app."],
+  [4, "Semester_04/Web_Programming", "Web Programming", "PHP, JS, Angular, ASP.NET, JSP", "Static pages, PHP/Angular/ASP.NET car dealership, JSP game, many exam practice apps."],
+  [5, "Semester_05/Formal_Languages_and_Compiler_Design", "Formal Languages and Compiler Design", "C, C++, Flex, ANTLR", "Toy language spec, Flex scanner, finite automata and an LL(1) parser in C."],
+  [5, "Semester_05/Parallel_and_Distributed_Programming", "Parallel and Distributed Programming", "C++, C#, Java, MPI", "Threads, locks, async, MPI, distributed shared memory and GPU polynomial multiplication."],
+  [5, "Semester_05/Mobile_Application_Programming", "Mobile Application Programming", "React Native, Expo", "Offline-first Expo car tracker and exam templates with Express and WebSocket servers."],
+  [5, "Semester_05/Public_Key_Cryptography", "Public Key Cryptography", "Python", "GCD, Miller-Rabin, factoring, Hill, ElGamal, RSA and McEliece in Python scripts."],
+  [5, "Semester_05/Robotics", "Robotics", "Python, ROS, OpenCV", "ROS scripts for a PuppyPi robot dog: gaits, color tracking, ball kicking."],
+  [6, "Semester_06/Software_Verification_and_Validation", "Software Verification and Validation (SSVV)", "Java, TypeScript", "BBT, WBT, mocks, Serenity web tests and a fully tested take-home app."],
+  [6, "Semester_06/Large_Language_Models", "Large Language Models", "Python, Jupyter", "T5 fine-tuning, LangChain chains, RAG with Chroma, and LLM evaluation with DeepEval."],
+  [6, "Semester_06/Natural_Language_Processing", "Natural Language Processing", "Python", "spaCy analysis, RoWordNet lookups and Romanian word embeddings with gensim."]
+];
+
+const list = document.getElementById("list");
+const empty = document.getElementById("empty");
+const q = document.getElementById("q");
+
+function render(term) {
+  const t = term.trim().toLowerCase();
+  list.innerHTML = "";
+  let shown = 0;
+  for (const year of [1, 2, 3]) {
+    const items = COURSES.filter(c => Math.ceil(c[0] / 2) === year)
+      .filter(c => !t || c.slice(1).join(" ").toLowerCase().includes(t));
+    if (!items.length) continue;
+    shown += items.length;
+    const h = document.createElement("h2");
+    h.textContent = "Year " + year;
+    const ul = document.createElement("ul");
+    for (const [sem, path, name, langs, sum] of items) {
+      const li = document.createElement("li");
+      li.innerHTML =
+        `<div class="row"><span><span class="sem">Sem ${sem}</span> ` +
+        `<a class="name" href="${REPO + path}"></a></span><span class="langs"></span></div>` +
+        `<div class="sum"></div>`;
+      li.querySelector(".name").textContent = name;
+      li.querySelector(".langs").textContent = langs;
+      li.querySelector(".sum").textContent = sum;
+      ul.appendChild(li);
+    }
+    list.append(h, ul);
+  }
+  empty.style.display = shown ? "none" : "block";
+}
+
+q.addEventListener("input", () => render(q.value));
+document.addEventListener("keydown", e => {
+  if (e.key === "/" && document.activeElement !== q) { e.preventDefault(); q.focus(); }
+  if (e.key === "Escape") { q.value = ""; render(""); q.blur(); }
+});
+render("");
+</script>
+</body>
+</html>
